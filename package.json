@@ -1,0 +1,16 @@
+{
+  "name": "RAM",
+  "version": "0.0.1",
+  "description": "Distelli Registry Action Monitor",
+  "main": "index.js",
+  "repository": {
+    "url": "https://github.com/Distelli/RAM.git",
+    "type": "git"
+  },
+  "author": "Distelli Inc.",
+  "license": "MIT",
+  "dependencies": {
+    "graphql": "^0.8.2",
+    "graphql-relay": "^0.4.4"
+  }
+}
