@@ -26,6 +26,22 @@
     <connection>scm:git:git@github.com:Distelli/RAM.git</connection>
     <url>https://github.com/Distelli/RAM.git</url>
   </scm>
+  <repositories>
+    <repository>
+      <id>distelli-mvn-repo</id>
+      <url>s3://distelli-mvn-repo/content/repositories/releases/</url>
+      <releases><enabled>true</enabled></releases>
+      <snapshots><enabled>true</enabled></snapshots>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>distelli-mvn-repo</id>
+      <url>s3://distelli-mvn-repo/content/repositories/releases/</url>
+      <releases><enabled>true</enabled></releases>
+      <snapshots><enabled>true</enabled></snapshots>
+    </pluginRepository>
+  </pluginRepositories>
   <properties>
     <guice.version>4.1.0</guice.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -81,6 +97,7 @@
         <plugin>
           <groupId>com.distelli.graphql</groupId>
           <artifactId>graphql-apigen</artifactId>
+          <version>1.0-SNAPSHOT</version>
           <executions>
             <execution>
               <id>apigen</id>
@@ -166,5 +183,12 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <extensions>
+      <extension>
+        <groupId>org.springframework.build</groupId>
+        <artifactId>aws-maven</artifactId>
+        <version>5.0.0.RELEASE</version>
+      </extension>
+    </extensions>
   </build>
 </project>

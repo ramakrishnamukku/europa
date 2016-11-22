@@ -1,3 +1,11 @@
 type Repository @java(package:"com.distelli.RAM") {
     name: String
 }
+
+type QueryRAM @java(package:"com.distelli.RAM") {
+    repositories(domain:String): [Repository]
+}
+
+type MutateRAM @java(package:"com.distelli.RAM") {
+    repository(domain:String, name:String): Repository
+}
