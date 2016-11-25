@@ -22,6 +22,9 @@
       <plugin>
         <groupId>com.distelli.graphql</groupId>
         <artifactId>graphql-apigen</artifactId>
+        <configuration>
+          <guiceModuleName>com.distelli.ram.RAMModule</guiceModuleName>
+        </configuration>
       </plugin>
     </plugins>
   </build>
