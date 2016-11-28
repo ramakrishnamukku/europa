@@ -9,7 +9,8 @@
   },
   "author": "Distelli Inc.",
   "scripts": {
-    "watch": "./node_modules/.bin/webpack --config webpack.config.js --progress --colors --display-error-details --watch"
+    "watch": "./node_modules/.bin/webpack --config webpack.config.js --progress --colors --display-error-details --watch",
+    "build": "./node_modules/.bin/webpack --config webpack.config.js --progress --colors --display-error-details"
   },
   "dependencies": {
     "babel-core": "^6.13.2",

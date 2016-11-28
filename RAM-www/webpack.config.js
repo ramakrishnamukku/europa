@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const compiler = {
   entry: {
@@ -11,11 +12,11 @@ const compiler = {
       {
         exclude: /node_modules/,
         loader: 'babel',
-        test: /\.js$/,
+        test: /\.(jsx|js)$/,
       },
       {
-        test: /\.scss$/,
-        loaders: ["style", "css", "sass"]
+          test: /\.scss$/,
+          loader: ExtractTextPlugin.extract('css!sass')
       },
     ],
   },
@@ -23,6 +24,11 @@ const compiler = {
     path: "./public",
     filename: "[name]",
   },
+  plugins: [
+      new ExtractTextPlugin('[name]', {
+          allChunks: true
+      })
+  ]
 };
 
 module.exports = compiler;
