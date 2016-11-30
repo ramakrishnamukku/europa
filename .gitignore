@@ -1,3 +1,11 @@
+*.class
+*~
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
 target/**
 */target/**
 node_modules
