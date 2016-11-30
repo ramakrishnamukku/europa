@@ -4,8 +4,8 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const compiler = {
   entry: {
-    'js/app.js': path.resolve(__dirname, 'js', 'app.js'),
-    'css/app.css': path.resolve(__dirname, 'scss', 'app.scss')
+      'js/app.js': path.resolve(__dirname, 'assets', 'js', 'app.js'),
+      'css/app.css': path.resolve(__dirname, 'assets', 'scss', 'app.scss')
   },
   module: {
     loaders: [

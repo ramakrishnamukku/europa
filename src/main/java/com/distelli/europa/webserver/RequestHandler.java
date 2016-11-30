@@ -89,6 +89,14 @@ public abstract class RequestHandler
         return toJson(model);
     }
 
+    public WebResponse notFound(String content)
+    {
+        WebResponse webResponse = new WebResponse();
+        webResponse.setHttpStatusCode(404);
+        webResponse.setResponseContent(content.getBytes());
+        return webResponse;
+    }
+
     public WebResponse ok(ResponseWriter responseWriter)
     {
         WebResponse response = new WebResponse(200);
@@ -136,5 +144,10 @@ public abstract class RequestHandler
     public WebResponse renderPage(RequestContext requestContext, String pageName, JSXProperties properties)
     {
         return _pageTemplate.renderPage(requestContext, pageName, properties);
+    }
+
+    public WebResponse renderPage(RequestContext requestContext, JSXProperties properties)
+    {
+        return renderPage(requestContext, "app", properties);
     }
 }

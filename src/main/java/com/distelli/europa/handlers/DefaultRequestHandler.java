@@ -22,6 +22,6 @@ public class DefaultRequestHandler extends RequestHandler
 
     public WebResponse handleRequest(RequestContext requestContext)
     {
-        return renderPage(requestContext, "TestPage", null);
+        return renderPage(requestContext, null);
     }
 }
