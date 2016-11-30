@@ -28,22 +28,6 @@ public class PageTemplate
         OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
     }
 
-    // private static final String templateContent = "<!DOCTYPE html>"+
-    // "<html lang=\"en\">"+
-    // "<head>"+
-    // "  <script src=\"/js/SSEPolyfill.js\"></script>"+
-    // "  <script src=\"/public/common.js\"></script>"+
-    // "  <script src=\"/public/vendor.js\"></script>"+
-    // "  <script>"+
-    // "    var PAGE_VIEW_MODEL = %s;"+
-    // "  </script>"+
-    // "</head>"+
-    // "<body>"+
-    // "  <div id=\"R\"></div>"+
-    // "  <script src=\"/public/%s.js\"></script>"+
-    // "</body>"+
-    // "</html>";
-
     private static final String templateContent = "<!DOCTYPE html>"+
     "<html lang=\"en\">"+
     "  <head>"+
