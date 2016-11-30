@@ -19,9 +19,6 @@
       </roles>
     </developer>
   </developers>
-  <modules>
-    <module>RAM-schema</module>
-  </modules>
   <scm>
     <connection>scm:git:git@github.com:Distelli/RAM.git</connection>
     <url>https://github.com/Distelli/RAM.git</url>
@@ -93,19 +90,6 @@
             <source>1.8</source>
             <target>1.8</target>
           </configuration>
-        </plugin>
-        <plugin>
-          <groupId>com.distelli.graphql</groupId>
-          <artifactId>graphql-apigen</artifactId>
-          <version>1.0</version>
-          <executions>
-            <execution>
-              <id>apigen</id>
-              <goals>
-                <goal>apigen</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
