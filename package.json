@@ -24,6 +24,7 @@
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
     "react-router": "2.7.0",
+    "url-loader": "^0.5.7",
     "webpack": "1.13.2"
   },
   "devDependencies": {

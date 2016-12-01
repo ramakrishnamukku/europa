@@ -1,0 +1,429 @@
+@font-face {
+    font-family: 'icomoon';
+    src:url('../fonts/distelli-icons/icomoon.eot');
+    src:url('../fonts/distelli-icons/icomoon.eot') format('embedded-opentype'),
+        url('../fonts/distelli-icons/icomoon.ttf') format('truetype'),
+        url('../fonts/distelli-icons/icomoon.woff') format('woff'),
+        url('../fonts/distelli-icons/icomoon.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-dis-blank:before {
+  content: "\e985";
+}
+.icon-dis-container:before {
+  content: "\e969";
+}
+.icon-dis-kubernetes:before {
+  content: "\e96b";
+}
+.icon-dis-gcr:before {
+  content: "\e984";
+}
+.icon-dis-pipeline:before {
+  content: "\e983";
+}
+.icon-dis-services:before {
+  content: "\e982";
+}
+.icon-dis-nodes:before {
+  content: "\e981";
+}
+.icon-dis-timecircle:before {
+  content: "\e980";
+}
+.icon-dis-badge-business:before {
+  content: "\e97d";
+}
+.icon-dis-badge-enterprise:before {
+  content: "\e97e";
+}
+.icon-dis-badge-premium:before {
+  content: "\e97f";
+}
+.icon-dis-approvals:before {
+  content: "\e97c";
+}
+.icon-dis-decline:before {
+  content: "\e97b";
+}
+.icon-dis-cloud:before {
+  content: "\e979";
+}
+.icon-dis-waiting:before {
+  content: "\e97a";
+}
+.icon-dis-disk:before {
+  content: "\e978";
+}
+.icon-dis-circle-build:before {
+  content: "\e90f";
+}
+.icon-dis-circle-check:before {
+  content: "\e975";
+}
+.icon-dis-description:before {
+  content: "\e977";
+}
+.icon-dis-mapping:before {
+  content: "\e96a";
+}
+.icon-dis-port:before {
+  content: "\e974";
+}
+.icon-dis-global:before {
+  content: "\e976";
+}
+.icon-dis-circleci:before {
+  content: "\e96f";
+}
+.icon-dis-codeship:before {
+  content: "\e970";
+}
+.icon-dis-distelli:before {
+  content: "\e971";
+}
+.icon-dis-jenkins:before {
+  content: "\e972";
+}
+.icon-dis-travis:before {
+  content: "\e973";
+}
+.icon-dis-pod:before {
+  content: "\e96c";
+}
+.icon-dis-replica:before {
+  content: "\e96d";
+}
+.icon-dis-target:before {
+  content: "\e96e";
+}
+.icon-dis-build:before {
+  content: "\e919";
+}
+.icon-dis-github:before {
+  content: "\e905";
+}
+.icon-dis-githubenterprise:before {
+  content: "\e911";
+}
+.icon-dis-cluster:before {
+  content: "\e968";
+}
+.icon-dis-layers:before {
+  content: "\e967";
+}
+.icon-dis-configure:before {
+  content: "\e966";
+}
+.icon-dis-folder-closed:before {
+  content: "\e95a";
+}
+.icon-dis-folder-open:before {
+  content: "\e965";
+}
+.icon-dis-vault:before {
+  content: "\e964";
+}
+.icon-dis-docker:before {
+  content: "\e962";
+}
+.icon-dis-security:before {
+  content: "\e963";
+}
+.icon-dis-package:before {
+  content: "\e960";
+}
+.icon-dis-release:before {
+  content: "\e961";
+}
+.icon-dis-begin:before {
+  content: "\e955";
+}
+.icon-dis-commit:before {
+  content: "\e956";
+}
+.icon-dis-contents:before {
+  content: "\e957";
+}
+.icon-dis-disconnect:before {
+  content: "\e958";
+}
+.icon-dis-end:before {
+  content: "\e959";
+}
+.icon-dis-manifest:before {
+  content: "\e95b";
+}
+.icon-dis-runsettings:before {
+  content: "\e95c";
+}
+.icon-dis-toggledown:before {
+  content: "\e95d";
+}
+.icon-dis-togglemiddle:before {
+  content: "\e95e";
+}
+.icon-dis-toggleup:before {
+  content: "\e95f";
+}
+.icon-dis-fullcontrol:before {
+  content: "\e954";
+}
+.icon-dis-agent:before {
+  content: "\e94f";
+}
+.icon-dis-billing:before {
+  content: "\e950";
+}
+.icon-dis-credential:before {
+  content: "\e951";
+}
+.icon-dis-override:before {
+  content: "\e952";
+}
+.icon-dis-push:before {
+  content: "\e953";
+}
+.icon-dis-ready:before {
+  content: "\e94e";
+}
+.icon-dis-cancel:before {
+  content: "\e94c";
+}
+.icon-dis-pause:before {
+  content: "\e94d";
+}
+.icon-dis-pill-type:before {
+  content: "\e94b";
+}
+.icon-dis-stairs:before {
+  content: "\e94a";
+}
+.icon-dis-input:before {
+  content: "\e948";
+}
+.icon-dis-output:before {
+  content: "\e949";
+}
+.icon-dis-pill-const:before {
+  content: "\e947";
+}
+.icon-dis-pill-var:before {
+  content: "\e946";
+}
+.icon-dis-const:before {
+  content: "\e944";
+}
+.icon-dis-var:before {
+  content: "\e945";
+}
+.icon-dis-workflow:before {
+  content: "\e943";
+}
+.icon-dis-queue:before {
+  content: "\e922";
+}
+.icon-dis-notification:before {
+  content: "\e941";
+}
+.icon-dis-questionmark:before {
+  content: "\e942";
+}
+.icon-dis-groups:before {
+  content: "\e93f";
+}
+.icon-dis-promote:before {
+  content: "\e940";
+}
+.icon-dis-qa:before {
+  content: "\e93e";
+}
+.icon-dis-sad:before {
+  content: "\e93d";
+}
+.icon-dis-appgroup:before {
+  content: "\e93b";
+}
+.icon-dis-user:before {
+  content: "\e93c";
+}
+.icon-dis-redirect:before {
+  content: "\e93a";
+}
+.icon-dis-download:before {
+  content: "\e939";
+}
+.icon-dis-save:before {
+  content: "\e938";
+}
+.icon-dis-calendar:before {
+  content: "\e934";
+}
+.icon-dis-private:before {
+  content: "\e935";
+}
+.icon-dis-public:before {
+  content: "\e936";
+}
+.icon-dis-snapshot:before {
+  content: "\e937";
+}
+.icon-dis-leave:before {
+  content: "\e933";
+}
+.icon-dis-hipchat:before {
+  content: "\e932";
+}
+.icon-dis-gitlab:before {
+  content: "\e930";
+}
+.icon-dis-multiple:before {
+  content: "\e931";
+}
+.icon-dis-clip:before {
+  content: "\e92f";
+}
+.icon-dis-key:before {
+  content: "\e925";
+}
+.icon-dis-label:before {
+  content: "\e92d";
+}
+.icon-dis-tag:before {
+  content: "\e92e";
+}
+.icon-dis-small-close:before {
+  content: "\e92c";
+}
+.icon-dis-radio-check:before {
+  content: "\e92a";
+}
+.icon-dis-radio-uncheck:before {
+  content: "\e92b";
+}
+.icon-dis-webhook-circle:before {
+  content: "\e928";
+}
+.icon-dis-webhook:before {
+  content: "\e929";
+}
+.icon-dis-move-down:before {
+  content: "\e926";
+}
+.icon-dis-move-up:before {
+  content: "\e927";
+}
+.icon-dis-circle-branch:before {
+  content: "\e90c";
+}
+.icon-dis-box-check:before {
+  content: "\e90d";
+}
+.icon-dis-box-uncheck:before {
+  content: "\e90e";
+}
+.icon-dis-deploy:before {
+  content: "\e910";
+}
+.icon-dis-restart:before {
+  content: "\e912";
+}
+.icon-dis-terminate:before {
+  content: "\e91b";
+}
+.icon-dis-toggle-off:before {
+  content: "\e913";
+}
+.icon-dis-toggle-on:before {
+  content: "\e914";
+}
+.icon-dis-steps:before {
+  content: "\e915";
+}
+.icon-dis-alert:before {
+  content: "\e916";
+}
+.icon-dis-app:before {
+  content: "\e917";
+}
+.icon-dis-branch:before {
+  content: "\e918";
+}
+.icon-dis-dependencies:before {
+  content: "\e91a";
+}
+.icon-dis-edit:before {
+  content: "\e91c";
+}
+.icon-dis-environment:before {
+  content: "\e91d";
+}
+.icon-dis-form:before {
+  content: "\e91e";
+}
+.icon-dis-login:before {
+  content: "\e91f";
+}
+.icon-dis-pin:before {
+  content: "\e920";
+}
+.icon-dis-progress:before {
+  content: "\e921";
+}
+.icon-dis-run:before {
+  content: "\e923";
+}
+.icon-dis-server:before {
+  content: "\e924";
+}
+.icon-dis-bitbucket:before {
+  content: "\e900";
+}
+.icon-dis-check:before {
+  content: "\e901";
+}
+.icon-dis-close:before {
+  content: "\e902";
+}
+.icon-dis-collapse:before {
+  content: "\e903";
+}
+.icon-dis-expand:before {
+  content: "\e904";
+}
+.icon-dis-left:before {
+  content: "\e906";
+}
+.icon-dis-repo:before {
+  content: "\e907";
+}
+.icon-dis-right:before {
+  content: "\e908";
+}
+.icon-dis-search:before {
+  content: "\e909";
+}
+.icon-dis-settings:before {
+  content: "\e90a";
+}
+.icon-dis-trash:before {
+  content: "\e90b";
+}
+
