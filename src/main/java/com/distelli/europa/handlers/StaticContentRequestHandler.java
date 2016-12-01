@@ -9,12 +9,27 @@
 package com.distelli.europa.handlers;
 
 import java.io.*;
+import java.util.Map;
+import java.util.HashMap;
 import org.apache.log4j.Logger;
 import com.distelli.europa.webserver.*;
 
 public class StaticContentRequestHandler extends RequestHandler
 {
     private static final Logger log = Logger.getLogger(StaticContentRequestHandler.class);
+
+    private static Map<String, String> MIME_TYPES = new HashMap<String, String>() {{
+            put("json", "application/json");
+            put("ico", "image/x-icon");
+            put("css", "text/css");
+            put("xml", "text/xml");
+            put("txt", "text/plain");
+            put("js", "application/javascript");
+            put("jpg", "image/jpeg");
+            put("jpeg", "image/jpeg");
+            put("png", "image/png");
+            put("svg", "image/svg+xml");
+        }};
 
     public StaticContentRequestHandler()
     {
@@ -43,6 +58,13 @@ public class StaticContentRequestHandler extends RequestHandler
                     }
                 };
             webResponse.setResponseWriter(responseWriter);
+            int dot = path.lastIndexOf('.');
+            String ext = path.substring(dot+1);
+            if ( dot > 0 && MIME_TYPES.containsKey(ext) ) {
+                webResponse.setContentType(MIME_TYPES.get(ext));
+            } else {
+                webResponse.setContentType("text/html");
+            }
         } catch(FileNotFoundException fnfe) {
             return notFound("<h1>PAGE NOT FOUND</h1>");
         }
