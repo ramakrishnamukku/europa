@@ -22,7 +22,7 @@ import com.distelli.persistence.Index;
 import com.distelli.persistence.Index;
 import com.distelli.persistence.PageIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.distelli.transform.jackson.TransformModule;
+import com.distelli.jackson.transform.TransformModule;
 
 /**
    This class is commented out because its an example of how to use

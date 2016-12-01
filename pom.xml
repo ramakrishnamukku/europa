@@ -11,12 +11,6 @@
 
   <repositories>
     <repository>
-      <id>distelli-mvn-repo</id>
-      <url>s3://distelli-mvn-repo/content/repositories/releases/</url>
-      <releases><enabled>true</enabled></releases>
-      <snapshots><enabled>true</enabled></snapshots>
-    </repository>
-    <repository>
       <id>ossrh</id>
       <url>https://oss.sonatype.org/content/repositories/releases/</url>
     </repository>
@@ -159,9 +153,9 @@
     </dependency>
 
     <dependency>
-      <groupId>com.distelli.transform</groupId>
-      <artifactId>DistelliTransform</artifactId>
-      <version>1.9</version>
+      <groupId>com.distelli.persistence</groupId>
+      <artifactId>jackson-transform</artifactId>
+      <version>1.2.0</version>
     </dependency>
 
     <dependency>
