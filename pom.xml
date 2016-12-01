@@ -16,6 +16,10 @@
       <releases><enabled>true</enabled></releases>
       <snapshots><enabled>true</enabled></snapshots>
     </repository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/releases/</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -145,13 +149,13 @@
     <dependency>
       <groupId>com.distelli.persistence</groupId>
       <artifactId>persistence-api</artifactId>
-      <version>1.2-SNAPSHOT</version>
+      <version>1.2.0</version>
     </dependency>
 
     <dependency>
       <groupId>com.distelli.persistence</groupId>
       <artifactId>persistence-impl</artifactId>
-      <version>1.2-SNAPSHOT</version>
+      <version>1.2.0</version>
     </dependency>
 
     <dependency>
