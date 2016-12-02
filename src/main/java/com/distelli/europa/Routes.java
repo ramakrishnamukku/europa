@@ -29,7 +29,7 @@ public class Routes
         //set the default request handler TODO: Remove this and set
         //the static content request handler as the default (or maybe
         //the NotFoundRequestHandler)!
-        ROUTES.add("GET", "/", DefaultRequestHandler.class); //TODO: Use a different handler here
+        ROUTES.add("GET", "/", DefaultRequestHandler.class);
         ROUTES.setDefaultRequestHandler(StaticContentRequestHandler.class);
     }
 }

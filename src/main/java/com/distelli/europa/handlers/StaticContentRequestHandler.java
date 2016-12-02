@@ -40,7 +40,7 @@ public class StaticContentRequestHandler extends RequestHandler
     {
         String path = requestContext.getPath();
         if(!path.startsWith("/public/"))
-            return notFound("<h1>PAGE NOT FOUND</h1>");
+            return renderPage(requestContext, null);
 
         WebResponse webResponse = new WebResponse();
         File staticFile = new File("./"+path);
