@@ -1,5 +1,8 @@
 import React, {Component} from 'react'
 import ReactDOM from 'react-dom'
+import { Router, Route, browserHistory } from 'react-router'
+import Layout from './pages/Layout'
+import AddRegistry from './pages/AddRegistry'
 
 export default class App extends Component {
   constructor(props) {
@@ -10,9 +13,9 @@ export default class App extends Component {
   }
   render() {
     return (
-        <div className="index">
-          <h1>Hello World!</h1>
-        </div>
+      <Router component={Layout} history={browserHistory}>
+        <Route component={AddRegistry} path="/new"/>
+      </Router>
     );
   }
 }

@@ -3,6 +3,12 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const compiler = {
+  resovle: {
+    alias: {
+      components: "./assets/js/components",
+      pages: "./assets/js/pages"
+    }
+  },
   entry: {
     'js/app.js': path.resolve(__dirname, 'assets', 'js', 'app.js'),
     'css/app.css': path.resolve(__dirname, 'assets', 'scss', 'app.scss')
@@ -11,7 +17,7 @@ const compiler = {
     loaders: [{
         exclude: /node_modules/,
         loader: 'babel',
-        test: /\.(jsx|js)$/,
+        test: /\.(jsx|js)$/
       }, {
         test: [/\.scss$/, /\.css$/],
         loader: ExtractTextPlugin.extract('css!sass')
