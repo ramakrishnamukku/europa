@@ -39,6 +39,7 @@ public class RegistryCredsDb
         .put("kid", String.class, "key")
         .put("sec", String.class, "secret")
         .put("region", String.class, "region")
+        .put("desc", String.class, "description")
         .put("rp", RegistryProvider.class, "provider");
         return module;
     }
