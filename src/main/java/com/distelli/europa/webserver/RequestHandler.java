@@ -16,6 +16,7 @@ import javax.servlet.http.Cookie;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.mrbean.MrBeanModule;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.distelli.europa.react.*;
 import javax.inject.Inject;
 
@@ -27,6 +28,7 @@ public abstract class RequestHandler
         OBJECT_MAPPER.registerModule(new MrBeanModule());
         OBJECT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         OBJECT_MAPPER.getJsonFactory().setCharacterEscapes(new HTMLCharacterEscapes());
+        OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
     }
 
     @Inject

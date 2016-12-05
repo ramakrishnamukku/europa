@@ -43,10 +43,17 @@ public class Europa
         else
             Log4JConfigurator.configure(logsDir, "Europa");
         Log4JConfigurator.setLogLevel("INFO");
+        String configFilePath = cmdLineArgs.getOption("config");
+        if(configFilePath == null)
+        {
+            log.fatal("Missing value for arg --config");
+            System.exit(1);
+        }
+        EuropaConfiguration europaConfiguration = EuropaConfiguration.fromFile(new File(configFilePath));
         Injector injector = Guice.createInjector(Stage.PRODUCTION,
                                                  new PersistenceModule(),
                                                  new AjaxHelperModule(),
-                                                 new EuropaInjectorModule());
+                                                 new EuropaInjectorModule(europaConfiguration));
         injector.injectMembers(this);
         _requestHandlerFactory = new RequestHandlerFactory(injector);
         _routeMatcher = Routes.getRouteMatcher();

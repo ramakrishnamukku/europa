@@ -159,6 +159,11 @@ public class RequestContext
         }
     }
 
+    public String getContentType()
+    {
+        return _contentType;
+    }
+
     private boolean unmarshallJson(HttpServletRequest request)
     {
         try

@@ -38,7 +38,7 @@ public class IndexFactoryProvider implements Provider<Index.Factory>
             @Override
             public <T> Index.Builder<T> create(Class<T> type) {
                 return _baseIndexFactory.create(type)
-                .withTableNameFormat("prefix-%s")
+                .withTableNameFormat("%s.europa") //TODO: Add prefix support
                 .withEndpoint(_endpoint)
                 .withCredProvider(() -> _creds);
             }

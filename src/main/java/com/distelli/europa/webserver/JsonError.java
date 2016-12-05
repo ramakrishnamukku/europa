@@ -15,12 +15,20 @@ public class JsonError
     public static JsonError UnsupportedHttpMethod = new JsonError("The HttpMethod is unsupported", Codes.UnsupportedHttpMethod, 400);
     public static JsonError UnsupportedOperation = new JsonError("The Operation is unsupported", Codes.UnsupportedOperation, 400);
     public static JsonError InternalServerError = new JsonError("An Internal Server Error occured", Codes.InternalServerError, 500);
+    public static JsonError BadContentType = new JsonError("The content type is unsupported", Codes.BadContentType, 400);
+    public static JsonError BadContent = new JsonError("The content field is missing or invalid", Codes.BadContent, 400);
+    public static JsonError MissingParam = new JsonError("Missing param in request", Codes.MissingParam, 400);
+    public static JsonError BadParam = new JsonError("Bad param in request", Codes.BadParam, 400);
 
     public static final class Codes {
         public static final String MalformedRequest = "MalformedRequest";
         public static final String UnsupportedHttpMethod = "UnsupportedHttpMethod";
         public static final String UnsupportedOperation = "UnsupportedOperation";
         public static final String InternalServerError = "InternalServerError";
+        public static final String BadContent = "BadContent";
+        public static final String BadContentType = "BadContentType";
+        public static final String MissingParam = "MissingParam";
+        public static final String BadParam = "BadParam";
     }
 
     private static class Error {
