@@ -12,8 +12,11 @@ export default class AddRegistry extends Component {
 				<label>
 					Docker Registry Provider
 				</label>
-				<input className="BlueBorder FullWidth" 
-					   placeholder="Select Amazon Container Registry or Google Container Registry" />
+				<select className="BlueBorder FullWidth" 
+					    placeholder="Select Amazon Container Registry or Google Container Registry" >
+				   <option>Google Container Registry</option>
+				   <option>Amazon Container Registry</option>
+				</select>
 			</div>
 		);
 	}

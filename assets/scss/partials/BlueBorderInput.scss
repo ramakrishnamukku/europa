@@ -1,4 +1,4 @@
-input.BlueBorder {
+select.BlueBorder, input.BlueBorder {
 	position: relative;
     background: #FFFFFF;
     font-size: 0.75rem;
@@ -9,9 +9,11 @@ input.BlueBorder {
     border-bottom: solid 1px #1DAFE9;
     padding: 9px;
     box-sizing: border-box;
+    border-radius: 0px;
+    -webkit-appearance: inherit;
 
 }
 
-input.BlueBorder.FullWidth {
+select.BlueBorder, input.BlueBorder.FullWidth {
 	width: 100%;
 }
