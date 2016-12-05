@@ -1,0 +1,28 @@
+.ContentRow {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    height: auto;
+    padding: 15px 0;
+    margin: 0px;
+
+    .ContentColumn {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        height: auto;
+        flex: 1;
+    }
+
+    .IconContainer {
+        color: black;
+        font-size: 1.5rem;
+        position: relative;
+    }
+
+    .ContentBody {
+        margin-left: 5px;
+        margin-top: 9px;
+        flex: 1;
+    }
+}

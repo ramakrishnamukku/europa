@@ -1,0 +1,17 @@
+input.BlueBorder {
+	position: relative;
+    background: #FFFFFF;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #1DAFE9;
+    border: 0px;
+    outline: 0px;
+    border-bottom: solid 1px #1DAFE9;
+    padding: 9px;
+    box-sizing: border-box;
+
+}
+
+input.BlueBorder.FullWidth {
+	width: 100%;
+}

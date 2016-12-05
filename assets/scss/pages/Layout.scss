@@ -1,0 +1,57 @@
+nav {
+    position: relative;
+    width: 100%;
+    background-color: $coal;
+    height: 43px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    h2 {
+        font-weight: 300;
+        font-size: 1rem;
+        color: $salmon;
+    }
+}
+
+.PageContent {
+    .MaxWidthContainer {
+        position: relative;
+        max-width: 1200px;
+        margin: 0 auto;
+
+        .ContentContainer {
+            h2.PageHeader {
+                position: relative;
+                margin: 14px 0 21px;
+                padding: 0 0 7px;
+                font-size: 2.125rem;
+                font-weight: 300;
+                color: $teal;
+                border-bottom: solid 1px #BCBEC0;
+            }
+        }
+    }
+}
+
+.FlexColumn {
+    display: flex;
+    flex-direction: column;
+}
+
+.FlexRow {
+    display: flex;
+    flex-direction: row;
+}
+
+i {
+    color: $teal;
+}
+
+label {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #38404E;
+    margin-bottom: 0.5rem;
+}

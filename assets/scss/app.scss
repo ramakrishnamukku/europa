@@ -1,19 +1,27 @@
 $light_gray: rgb(247, 247, 247);
 $pink: #F7739C;
 
-
+// Icons
 @import "vendor/css/distelli-icons.css";
-
+// Fonts
+@import "vendor/css/open-sans.css";
 // Global Colors
 @import "global/colors.scss";
+// Layout 
+@import "pages/Layout";
+// Partials
+@import "partials/BlueBorderInput";
+@import "partials/ContentRow";
 
 
-
-body {
-  background: $light_gray;
+html, body {
   height: 100vh;
-  background-color: red;
+  margin: 0px;
+  padding: 0px;
+  font-family: 'Open Sans';
+  background-color: #F5F5F7;
 }
+
 
 
 
