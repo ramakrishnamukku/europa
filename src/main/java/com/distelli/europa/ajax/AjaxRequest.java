@@ -12,13 +12,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
+import com.distelli.europa.webserver.JsonError;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 
 public class AjaxRequest
 {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    static {
+        OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
     protected String operation = null;
     protected Map<String, String> params = null;
@@ -34,9 +39,22 @@ public class AjaxRequest
         this.content = content;
     }
 
-    public Object getContent()
+    public JsonNode getContent()
     {
         return this.content;
+    }
+
+    public <T> T convertContent(Class<T> clazz)
+    {
+        return convertContent(clazz, false);
+    }
+
+    public <T> T convertContent(Class<T> clazz, boolean throwIfNull)
+    {
+        T contentObj = OBJECT_MAPPER.convertValue(this.content, clazz);
+        if(contentObj != null)
+            return contentObj;
+        throw(new AjaxClientException(JsonError.BadContent));
     }
 
     public void setOperation(String operation)
@@ -59,10 +77,67 @@ public class AjaxRequest
         return this.params;
     }
 
-    public String getParam(String key) {
+    public String getParam(String key)
+    {
+        return getParam(key, false);
+    }
+
+    public int getParamAsInt(String key, int defaultValue)
+    {
+        String param = getParam(key);
+        if(param == null)
+            return defaultValue;
+        try {
+            return Integer.parseInt(param);
+        } catch(NumberFormatException nfe) {
+            throw(new AjaxClientException("Invalid value for param '"+key+"' in request",
+                                          JsonError.Codes.BadParam,
+                                          400));
+        }
+    }
+
+
+    public String getParam(String key, boolean throwIfMissing)
+    {
+        String retVal = null;
+        if(this.params != null)
+            retVal = this.params.get(key);
+        if(retVal != null)
+            return retVal;
+        if(throwIfMissing)
+            throw(new AjaxClientException("Missing Param '"+key+"' in request",
+                                          JsonError.Codes.MissingParam,
+                                          400));
+        return null;
+    }
+
+    public <T extends Enum<T>> T getAsEnum(String key, Class<T> type)
+    {
+        return getAsEnum(key, type, false);
+    }
+
+    public <T extends Enum<T>> T getAsEnum(String key, Class<T> type, boolean throwIfMissing)
+        throws AjaxClientException
+    {
         if(this.params == null)
             return null;
-        return this.params.get(key);
+        String value = this.params.get(key);
+        T retVal = null;
+        try {
+            if(value != null)
+                retVal = Enum.valueOf(type, value);
+        } catch(IllegalArgumentException iae) {
+            retVal = null;
+        }
+
+        if(retVal != null)
+            return retVal;
+
+        if(throwIfMissing)
+            throw(new AjaxClientException("Missing Param '"+key+"' in request",
+                                          JsonError.Codes.MissingParam,
+                                          400));
+        return null;
     }
 
     public static AjaxRequest fromJson(JsonNode node)

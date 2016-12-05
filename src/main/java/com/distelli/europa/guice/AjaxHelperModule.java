@@ -25,7 +25,22 @@ public class AjaxHelperModule extends AbstractModule
 
     protected void configure()
     {
+        //Add ajax bindings here
+        //Cred CRUD helpers
+        addBinding(SaveRegistryCreds.class);
+        addBinding(ListRegistryCreds.class);
+        addBinding(GetRegistryCreds.class);
+        addBinding(DeleteRegistryCreds.class);
+        //Container CRUD helpers
+        addBinding(SaveContainerRepo.class);
+        addBinding(GetContainerRepo.class);
+        addBinding(ListContainerRepos.class);
+        addBinding(DeleteContainerRepo.class);
+    }
+
+    private void addBinding(Class<? extends AjaxHelper> clazz)
+    {
         MapBinder<String, AjaxHelper> mapbinder = MapBinder.newMapBinder(binder(), String.class, AjaxHelper.class);
-        mapbinder.addBinding("skittles").to(Skittles.class);
+        mapbinder.addBinding(clazz.getSimpleName()).to(clazz);
     }
 }
