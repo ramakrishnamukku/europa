@@ -45,6 +45,18 @@ nav {
     flex-direction: row;
 }
 
+.Flex1 {
+    flex: 1
+}
+
+.Row{
+    margin-bottom: 1rem;
+}
+
+.Column{
+    padding-right: 2rem;
+}
+
 i {
     color: $teal;
 }
@@ -54,4 +66,9 @@ label {
     font-weight: 400;
     color: #38404E;
     margin-bottom: 0.5rem;
+}
+
+label.small {
+    font-size: 0.625rem;
+
 }

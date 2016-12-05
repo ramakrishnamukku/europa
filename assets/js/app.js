@@ -4,6 +4,7 @@ import { Router, Route, browserHistory } from 'react-router'
 import Layout from './pages/Layout'
 import Overview from './pages/Overview'
 import AddRegistry from './pages/AddRegistry'
+import AddRepository from './pages/AddRepository'
 
 export default class App extends Component {
   constructor(props) {
@@ -15,7 +16,8 @@ export default class App extends Component {
       <Router  history={browserHistory}>
         <Route component={Layout} >
           <Route component={Overview} path="/" />
-          <Route component={AddRegistry} path="/new" />
+          <Route component={AddRegistry} path="/new-registry" />
+          <Route component={AddRepository} path="/new-repository" />
         </Route>
       </Router>
     );
@@ -28,5 +30,4 @@ window.MyApp = {
     var config = opts.props;
     ReactDOM.render(React.createFactory(App)(config), document.getElementById(mountPoint));
   }
-
 };

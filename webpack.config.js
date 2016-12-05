@@ -15,18 +15,16 @@ const compiler = {
   },
   module: {
     loaders: [{
-        exclude: /node_modules/,
-        loader: 'babel',
-        test: /\.(jsx|js)$/
-      }, {
-        test: [/\.scss$/, /\.css$/],
-        loader: ExtractTextPlugin.extract('css!sass')
-      },
-      {
-        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-        loader: 'url-loader?limit=100000'
-      }
-    ],
+      exclude: /node_modules/,
+      loader: 'babel',
+      test: /\.(jsx|js)$/
+    }, {
+      test: [/\.scss$/, /\.css$/],
+      loader: ExtractTextPlugin.extract('css!sass')
+    }, {
+      test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+      loader: 'url-loader?limit=100000'
+    }],
   },
   output: {
     path: "./public",
@@ -35,6 +33,10 @@ const compiler = {
   plugins: [
     new ExtractTextPlugin('[name]', {
       allChunks: true
+    }),
+    new webpack.ProvidePlugin({
+      Promise: 'imports?this=>global!exports?global.Promise!es6-promise',
+      fetch: 'imports?this=>global!exports?global.fetch!whatwg-fetch'
     })
   ]
 };

@@ -1,15 +1,28 @@
 import React, {Component} from 'react'
+import ActionBinder from './../util/ActionBinder'
+// Actions
+import * as AddRegistryActions from './../actions/AddRegistryActions'
 
 export default class Layout extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			newRegistry: {
+				provider: '',
+				region: '',
+				key: '',
+				secret: ''
+			},
+		};
 	}
-
+	getChildContext(){
+		return {
+			actions: ActionBinder([AddRegistryActions], this)
+		};
+	}
 	componentDidMount() {
 		
 	}
-
 	render() {
 		return (
 			<div className="PageContainer">
@@ -27,3 +40,11 @@ export default class Layout extends Component {
 		);
 	}
 }
+
+
+Layout.childContextTypes = {
+	actions: React.PropTypes.object,
+    userInfo: React.PropTypes.object,
+    csfrToken: React.PropTypes.string
+};
+
