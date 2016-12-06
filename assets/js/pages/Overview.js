@@ -6,10 +6,20 @@ export default class Overview extends Component {
 		this.state = {};
 	}
 
+	renderRepositories() {
+
+	}
+
 	render() {
+		console.log(this.props)
 		return (
-			<div>
-				This is the overview
+			<div className="ContentContainer">
+				<h2 className="PageHeader">
+					Repositories
+				</h2>
+				<div>
+					{this.renderRepositories()}
+				</div>
 			</div>
 		);
 	}

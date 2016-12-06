@@ -18,8 +18,8 @@ export default class App extends Component {
   }
   render() {
     return (
-      <Router  history={browserHistory}>
-        <Route component={Layout} >
+      <Router history={browserHistory}>
+        <Route component={Layout}>
           <Route component={Overview} path="/" />
           <Route component={Registries} path="/registries" />
           <Route component={AddRegistry} path="/new-registry" />
