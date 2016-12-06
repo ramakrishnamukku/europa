@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import ReactDOM from 'react-dom'
-import { Router, Route, browserHistory } from 'react-router'
+import { Router, Route, browserHistory, Redirect } from 'react-router'
 import Layout from './pages/Layout'
 
 import Overview from './pages/Overview'

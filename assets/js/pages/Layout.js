@@ -7,21 +7,21 @@ import * as AddRegistryActions from './../actions/AddRegistryActions'
 export default class Layout extends Component {
 	constructor(props) {
 		super(props);
+
+		// Main State Store
 		this.state = {
 			registries: [],
+			repositories: [],
 			addRegistry: {
 				...AddRegistryActions.addRegistryState()
 			}
 		};
 	}
-	getChildContext(){
+	getChildContext() {
 		return {
 			actions: ActionBinder([AddRegistryActions], this),
 			state: this.state
 		};
-	}
-	componentDidMount() {
-		
 	}
 	render() {
 		return (
@@ -31,7 +31,6 @@ export default class Layout extends Component {
 					<h2>
 						<Link to="/registries">Europa</Link>
 					</h2>
-
 					<div className="FlexRow NavButtonContainer">
 						<div className="Flex1">
 							<Link to="/repositories">
@@ -61,9 +60,7 @@ export default class Layout extends Component {
 	}
 }
 
-
 Layout.childContextTypes = {
 	actions: React.PropTypes.object,
 	state: React.PropTypes.object
 };
-
