@@ -12,7 +12,15 @@ export function POST(operation = '', content = {}, url = '/ajax') {
     })
   });
 
-  return fetch(request).then(res => res.json())
+  return fetch(request)
+    .then((response) => {
+      let json = response.json();
+      if (response.status >= 200 && response.status < 300) {
+        return json;
+      } else {
+        return json.then(Promise.reject.bind(Promise));
+      }
+    });
 }
 
 export function GET(operation = '', params = {}, url = '/ajax') {
@@ -35,5 +43,13 @@ export function GET(operation = '', params = {}, url = '/ajax') {
     })
   });
 
-  return fetch(request).then(res => res.json())
+  return fetch(request)
+    .then((response) => {
+      let json = response.json();
+      if (response.status >= 200 && response.status < 300) {
+        return json;
+      } else {
+        return json.then(Promise.reject.bind(Promise));
+      }
+    });
 }

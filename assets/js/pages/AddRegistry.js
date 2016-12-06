@@ -108,10 +108,9 @@ export default class AddRegistry extends Component {
 	}
 	renderAddButton(){
 		return (
-
 			<Btn onClick={() => this.context.actions.addRegistryRequest()}
 				 text="Add Registry"
-				 canClick={true}
+				 canClick={this.context.actions.canAddRegistry()}
 				 help="Clicking this button will send a test payload to the specified URL."/>
 		);
 	}

@@ -44,9 +44,18 @@ export function addRegistryRequest() {
       });
     })
     .catch((err) => {
-      console.log(err);
+      let errorMsg = `There was an error adding your registry: ${err.error.message}`
+      this.setState({
+        addRegistry: GA.modifyProperty(this.state.addRegistry, {
+          errorMsg
+        })
+      })
     });
 };
+
+export function canAddRegistry() {
+  return this.state.addRegistry.errorMsg == '' && this.state.addRegistry.errorFields.length == 0;
+}
 
 function isAddRegistryValid(validateOnInput) {
   let required = {
