@@ -3,27 +3,32 @@ $pink: #F7739C;
 
 // Icons
 @import "vendor/css/distelli-icons.css";
+
 // Fonts
 @import "vendor/css/open-sans.css";
+
 // Global Colors
 @import "global/colors.scss";
-// Layout 
+
+// Layout
 @import "pages/Layout";
+
 // Partials
 @import "partials/BlueBorderInput";
 @import "partials/ContentRow";
 @import "partials/Btn";
 @import "partials/ErrorMsg";
 
-
 html, body {
-  height: 100vh;
-  margin: 0px;
-  padding: 0px;
-  font-family: 'Open Sans';
-  background-color: #F5F5F7;
+    height: 100vh;
+    margin: 0px;
+    padding: 0px;
+    font-family: 'Open Sans';
+    background-color: #F5F5F7;
 }
 
-
-
-
+a {
+    color: inherit;
+    text-decoration: none;
+    color: $yellow;
+}

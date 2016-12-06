@@ -27,9 +27,29 @@ export default class Layout extends Component {
 		return (
 			<div className="PageContainer">
 				<nav className="TopNav">
+				 <div className="MaxWidthContainer">
 					<h2>
 						<Link to="/registries">Europa</Link>
 					</h2>
+
+					<div className="FlexRow NavButtonContainer">
+						<div className="Flex1">
+							<Link to="/repositories">
+								<i className="icon icon-dis-package"/>
+							</Link>
+						</div>
+						<div className="Flex1">
+							<Link to="/registries">
+								<i className="icon icon-dis-docker" style={{fontSize: '1.4rem'}}/>
+							</Link>
+						</div>
+						<div className="Flex1">
+							<Link to="/settings">
+								<i className="icon icon-dis-settings"/>
+							</Link>
+						</div>
+					</div>
+					</div>
 				</nav>
 				<div className="PageContent">
 					<div className="MaxWidthContainer">

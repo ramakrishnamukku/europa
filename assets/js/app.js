@@ -2,10 +2,14 @@ import React, {Component} from 'react'
 import ReactDOM from 'react-dom'
 import { Router, Route, browserHistory } from 'react-router'
 import Layout from './pages/Layout'
+
 import Overview from './pages/Overview'
-import AddRegistry from './pages/AddRegistry'
-import AddRepository from './pages/AddRepository'
+
 import Registries from './pages/Registries'
+import AddRegistry from './pages/AddRegistry'
+import Repositories from './pages/Repositories'
+import AddRepository from './pages/AddRepository'
+import Settings from './pages/settings'
 
 export default class App extends Component {
   constructor(props) {
@@ -19,7 +23,9 @@ export default class App extends Component {
           <Route component={Overview} path="/" />
           <Route component={Registries} path="/registries" />
           <Route component={AddRegistry} path="/new-registry" />
+          <Route component={Repositories} path="/repositories" />
           <Route component={AddRepository} path="/new-repository" />
+          <Route component={Settings} path="/settings" />
         </Route>
       </Router>
     );

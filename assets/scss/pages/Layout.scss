@@ -5,13 +5,38 @@ nav {
     height: 43px;
     display: flex;
     flex-direction: row;
-    justify-content: center;
-    align-items: center;
+
+    .MaxWidthContainer {
+        position: relative;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
     h2 {
         font-weight: 300;
         font-size: 1rem;
         color: $salmon;
+    }
+
+    .NavButtonContainer{
+        position: relative;
+        justify-content: center;
+        align-items: center;
+
+        a {
+            color: inherit;
+            text-decoration: none;
+
+            i {
+                font-size: 1.2rem;
+                color: $light-blue;
+                margin-left: 30px;
+            }
+        }
     }
 }
 
