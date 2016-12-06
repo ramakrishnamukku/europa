@@ -15,7 +15,7 @@ clean:
 	mvn -q clean
 
 package:
-	. ~/.distelli.config && mvn -q -DincludeScope=runtime dependency:copy-dependencies package
+	mvn -q -DincludeScope=runtime dependency:copy-dependencies package
 
 show-deps:
 	mvn dependency:tree
