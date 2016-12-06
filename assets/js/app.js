@@ -5,6 +5,7 @@ import Layout from './pages/Layout'
 import Overview from './pages/Overview'
 import AddRegistry from './pages/AddRegistry'
 import AddRepository from './pages/AddRepository'
+import Registries from './pages/Registries'
 
 export default class App extends Component {
   constructor(props) {
@@ -16,6 +17,7 @@ export default class App extends Component {
       <Router  history={browserHistory}>
         <Route component={Layout} >
           <Route component={Overview} path="/" />
+          <Route component={Registries} path="/registries" />
           <Route component={AddRegistry} path="/new-registry" />
           <Route component={AddRepository} path="/new-repository" />
         </Route>

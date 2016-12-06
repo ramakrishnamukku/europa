@@ -1,0 +1,47 @@
+.Btn {
+    position: relative;
+    height: 35px;
+    font-size: 1.0625rem;
+    font-weight: 300;
+    background-color: $light-blue;
+    color: white;
+    text-align: center;
+    display: flex;
+    width: 200px;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    &:active {
+        background-color: darken($light-blue, 10%);
+        border-bottom: solid 1px #999999;
+        top: 1px;
+    }
+}
+
+.Btn.Grey {
+    background-color: #AAAAAA;
+
+    &:hover {
+        cursor: inherit;
+    }
+
+    &:active {
+        background-color: #AAAAAA;
+        border-bottom: 0px;
+        top: 0px;
+    }
+}
+
+span.BtnContainer {
+    p.HelperText {
+        font-size: .755rem;
+        font-weight: 400;
+        font-style: italic;
+        color: $black;
+    }
+}

@@ -6,14 +6,23 @@ select.BlueBorder, input.BlueBorder {
     color: #1DAFE9;
     border: 0px;
     outline: 0px;
-    border-bottom: solid 1px #1DAFE9;
     padding: 9px;
     box-sizing: border-box;
     border-radius: 0px;
     -webkit-appearance: inherit;
+    border-bottom: solid 1px #FFFFFF;
+    transition: all 0.2s;
+
+    &:focus{
+        border-bottom: solid 1px $light-blue;
+    }
 
 }
 
 select.BlueBorder, input.BlueBorder.FullWidth {
 	width: 100%;
+}
+
+select.BlueBorder.Error, input.BlueBorder.Error {
+    border-bottom: solid 1px $red;
 }

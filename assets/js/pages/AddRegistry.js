@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 import ContentRow from './../components/ContentRow'
+import Btn from './../components/Btn'
+import ErrorMsg from './../components/ErrorMsg'
 
 export default class AddRegistry extends Component {
 	constructor(props) {
@@ -7,15 +9,26 @@ export default class AddRegistry extends Component {
 		this.state = {};
 	}
 	componentDidMount() {
-		this.context.actions.listRegistries();
+		
 	}
+	inputClassName(selector){
+		let hasSelector = this.context.state.addRegistry.errorFields.includes(selector)
+		if(hasSelector) {
+			return "BlueBorder FullWidth Error";
+		} else {
+		    return "BlueBorder FullWidth";
+		}
+	}		
 	renderSelectProvider(){
+		let provider = 'provider';
 		return (
 			<div className="FlexColumn">
 				<label>
 					Docker Registry Provider
 				</label>
-				<select className="BlueBorder FullWidth" onChange={(e) => this.context.actions.updateNewRegistryField('provider', e)}>
+				<select className={this.inputClassName(provider)} 
+						value={this.context.state.addRegistry.newRegistry[provider]}
+				        onChange={(e) => this.context.actions.updateNewRegistryField(provider, e)}>
 				   <option value="">Select Amazon Container Registry or Google Container Registry</option>
 				   <option value="GCR">Google Container Registry</option>
 				   <option value="ECR">Amazon Container Registry</option>
@@ -26,6 +39,11 @@ export default class AddRegistry extends Component {
 		);
 	}
 	renderRegistryCredentials() {
+		let keyName = 'description';
+		let region = 'region';
+		let key = 'key';
+		let secret = 'secret';
+
 		return (
 			<div className="FlexColumn">
 				<label>
@@ -36,15 +54,18 @@ export default class AddRegistry extends Component {
 						<label className="small">
 							Key Name
 						</label>
-						<input className="BlueBorder FullWidth" 
+						<input className={this.inputClassName(keyName)} 
+							   value={this.context.state.addRegistry.newRegistry[keyName]}
 						       placeholder="Enter Key Name.."
-							   onChange={(e) => this.context.actions.updateNewRegistryField('name', e)} />
+							   onChange={(e) => this.context.actions.updateNewRegistryField(keyName, e)} />
 					</div>
 					<div className="Flex1">
 						<label className="small">
 							Key Region
 						</label>
-						<select className="BlueBorder FullWidth" onChange={(e) => this.context.actions.updateNewRegistryField('region', e)}>
+						<select className={this.inputClassName(region)} 
+								value={this.context.state.addRegistry.newRegistry[region]}
+						        onChange={(e) => this.context.actions.updateNewRegistryField(region, e)}>
 						   <option value="">Select Region...</option>
 						   <option value="us-west-1">us-west-1</option>
 						   <option value="us-west-2">us-west-2</option>
@@ -58,20 +79,40 @@ export default class AddRegistry extends Component {
 						<label className="small">
 							Public Key
 						</label>
-						<input className="BlueBorder FullWidth" 
+						<input className={this.inputClassName(key)} 
+							   value={this.context.state.addRegistry.newRegistry[key]}
 							   placeholder="Enter Public Key.."
-							   onChange={(e) => this.context.actions.updateNewRegistryField('key', e)} />
+							   onChange={(e) => this.context.actions.updateNewRegistryField(key, e)} />
 					</div>
 					<div className="Flex1">
 						<label className="small">
 							Private Key
 						</label>
-						<input className="BlueBorder FullWidth" 
+						<input className={this.inputClassName(secret)}
+							   value={this.context.state.addRegistry.newRegistry[secret]}
 							   placeholder="Enter Private Key.."
-							   onChange={(e) => this.context.actions.updateNewRegistryField('secret', e)} />
+							   onChange={(e) => this.context.actions.updateNewRegistryField(secret, e)} />
 					</div>
 				</div>
 			</div>
+		);
+	}
+	renderErrorMsg(){
+		if(this.context.state.addRegistry.errorMsg) {
+			return (
+				<ErrorMsg 
+					text={this.context.state.addRegistry.errorMsg}
+				/>
+			);
+		}	
+	}
+	renderAddButton(){
+		return (
+
+			<Btn onClick={() => this.context.actions.addRegistryRequest()}
+				 text="Add Registry"
+				 canClick={true}
+				 help="Clicking this button will send a test payload to the specified URL."/>
 		);
 	}
 	renderAddRegistry(){
@@ -85,6 +126,17 @@ export default class AddRegistry extends Component {
                 icon:'icon icon-dis-credential',
                 renderBody: this.renderRegistryCredentials.bind(this)
             }]
+		}, {
+			columns: [{
+                icon:'icon icon-dis-blank',
+                renderBody: this.renderErrorMsg.bind(this),
+                condition: this.context.state.addRegistry.errorMsg
+            }]
+		}, {
+			columns: [{
+                icon:'icon icon-dis-blank',
+                renderBody: this.renderAddButton.bind(this)
+            }]
 		}];
 
 		return rows.map(this.renderContentRow);
@@ -95,13 +147,7 @@ export default class AddRegistry extends Component {
 						row={row} />
 		);	
 	}
-	renderAddButton(){
-		return (
-			<div onClick={() => this.context.actions.addRegistryRequest()}>
-				Add Registry
-			</div>
-		);
-	}
+
 	render() {
 		return (
 			<div className="ContentContainer">
@@ -110,7 +156,6 @@ export default class AddRegistry extends Component {
 				</h2>
 				<div>
 					{this.renderAddRegistry()}
-				    {this.renderAddButton()}
 				</div>
 			</div>
 		);
@@ -118,9 +163,11 @@ export default class AddRegistry extends Component {
 }
 
 AddRegistry.childContextTypes = {
-    actions: React.PropTypes.object
+    actions: React.PropTypes.object,
+    state: React.PropTypes.object
 };
 
 AddRegistry.contextTypes = {
-    actions: React.PropTypes.object
+    actions: React.PropTypes.object,
+    state: React.PropTypes.object
 };

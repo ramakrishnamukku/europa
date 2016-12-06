@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import {Link} from 'react-router'
 import ActionBinder from './../util/ActionBinder'
 // Actions
 import * as AddRegistryActions from './../actions/AddRegistryActions'
@@ -7,17 +8,16 @@ export default class Layout extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			newRegistry: {
-				provider: '',
-				region: '',
-				key: '',
-				secret: ''
-			},
+			registries: [],
+			addRegistry: {
+				...AddRegistryActions.addRegistryState()
+			}
 		};
 	}
 	getChildContext(){
 		return {
-			actions: ActionBinder([AddRegistryActions], this)
+			actions: ActionBinder([AddRegistryActions], this),
+			state: this.state
 		};
 	}
 	componentDidMount() {
@@ -28,7 +28,7 @@ export default class Layout extends Component {
 			<div className="PageContainer">
 				<nav className="TopNav">
 					<h2>
-						Europa
+						<Link to="/registries">Europa</Link>
 					</h2>
 				</nav>
 				<div className="PageContent">
@@ -44,7 +44,6 @@ export default class Layout extends Component {
 
 Layout.childContextTypes = {
 	actions: React.PropTypes.object,
-    userInfo: React.PropTypes.object,
-    csfrToken: React.PropTypes.string
+	state: React.PropTypes.object
 };
 
