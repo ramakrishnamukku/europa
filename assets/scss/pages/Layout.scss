@@ -5,6 +5,7 @@ nav {
     height: 43px;
     display: flex;
     flex-direction: row;
+    padding: 1px 0 0;
 
     .MaxWidthContainer {
         position: relative;
@@ -14,6 +15,11 @@ nav {
         display: flex;
         justify-content: space-between;
         align-items: center;
+
+        .logo a img {
+            width: 90px;
+            height: auto;
+        }
     }
 
     h2 {
