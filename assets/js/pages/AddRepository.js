@@ -28,7 +28,7 @@ export default class AddRepository extends Component {
 				<label>
 					Docker Image Repository
 				</label>
-				<input className="BlueBorder FullWidth" 
+				<input className="BlueBorder FullWidth"
 						       placeholder="Enter Key Name.."
 							   onChange={(e) => this.context.actions.updateNewRegistryField('registryProvider', e)} />
 			</div>
@@ -53,14 +53,16 @@ export default class AddRepository extends Component {
 		return (
 			<ContentRow key={index}
 						row={row} />
-		);	
+		);
 	}
 	render() {
 		return (
 			<div className="ContentContainer">
-				<h2 className="PageHeader">
-					Let's get started...
-				</h2>
+				<div className="PageHeader">
+					<h2>
+						New Repository
+					</h2>
+				</div>
 				<div>
 					{this.renderAddRepository()}
 				</div>

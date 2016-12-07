@@ -25,9 +25,11 @@ export default class Registries extends Component {
 	render() {
 		return (
 			<div className="ContentContainer">
-				<h2 className="PageHeader">
-					Your Registries
-				</h2>
+				<div className="PageHeader">
+					<h2>
+						Registries
+					</h2>
+				</div>
 				<div>
 					{this.renderRegistries()}
 				</div>

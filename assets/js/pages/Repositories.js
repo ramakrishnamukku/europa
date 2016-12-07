@@ -10,12 +10,14 @@ export default class Repositories extends Component {
 	render() {
 		return (
 			<div className="ContentContainer">
-				<h2 className="PageHeader">
-					Monitored Repositories
-				</h2>
-				<div>
-					<Btn text="Add Repository"
-							 onClick={ () => console.log("todo") } />
+				<div className="PageHeader">
+					<h2>
+						Monitored Repositories
+					</h2>
+					<div>
+						<Btn text="Add Repository"
+								 onClick={ () => console.log("todo") } />
+					</div>
 				</div>
 			</div>
 		);
