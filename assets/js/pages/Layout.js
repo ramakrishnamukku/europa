@@ -3,6 +3,7 @@ import {Link} from 'react-router'
 import ActionBinder from './../util/ActionBinder'
 // Actions
 import * as AddRegistryActions from './../actions/AddRegistryActions'
+import * as AddRepoActions from './../actions/AddRepoActions'
 
 export default class Layout extends Component {
 	constructor(props) {
@@ -10,13 +11,16 @@ export default class Layout extends Component {
 		this.state = {
 			registries: [],
 			addRegistry: {
-				...AddRegistryActions.addRegistryState()
+				...AddRegistryActions.addRegistryState(),
+			},
+			addRepo: {
+				...AddRepoActions.addRepoState()
 			}
 		};
 	}
 	getChildContext(){
 		return {
-			actions: ActionBinder([AddRegistryActions], this),
+			actions: ActionBinder([AddRegistryActions, AddRepoActions], this),
 			state: this.state
 		};
 	}
@@ -60,7 +64,6 @@ export default class Layout extends Component {
 		);
 	}
 }
-
 
 Layout.childContextTypes = {
 	actions: React.PropTypes.object,

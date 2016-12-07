@@ -8,9 +8,6 @@ export default class AddRegistry extends Component {
 		super(props);
 		this.state = {};
 	}
-	componentDidMount() {
-		
-	}
 	inputClassName(selector){
 		let hasSelector = this.context.state.addRegistry.errorFields.includes(selector)
 		if(hasSelector) {
@@ -111,7 +108,7 @@ export default class AddRegistry extends Component {
 			<Btn onClick={() => this.context.actions.addRegistryRequest()}
 				 text="Add Registry"
 				 canClick={this.context.actions.canAddRegistry()}
-				 help="Clicking this button will send a test payload to the specified URL."/>
+				 help="Clicking this button will add the specifed credentials to the monitor."/>
 		);
 	}
 	renderAddRegistry(){
@@ -134,7 +131,8 @@ export default class AddRegistry extends Component {
 		}, {
 			columns: [{
                 icon:'icon icon-dis-blank',
-                renderBody: this.renderAddButton.bind(this)
+                renderBody: this.renderAddButton.bind(this),
+                condition: this.props.standaloneMode
             }]
 		}];
 
@@ -146,13 +144,9 @@ export default class AddRegistry extends Component {
 						row={row} />
 		);	
 	}
-
 	render() {
 		return (
 			<div className="ContentContainer">
-				<h2 className="PageHeader">
-					Let's get started...
-				</h2>
 				<div>
 					{this.renderAddRegistry()}
 				</div>
@@ -160,6 +154,10 @@ export default class AddRegistry extends Component {
 		);
 	}
 }
+
+AddRegistry.propTypes = {
+	standaloneMode: React.PropTypes.bool
+};
 
 AddRegistry.childContextTypes = {
     actions: React.PropTypes.object,

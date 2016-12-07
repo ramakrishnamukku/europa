@@ -8,8 +8,6 @@ export default function AddRegistryReducers(state, action) {
     }
 }
 
-
-
 function updateNewRegistry(state, data){
 	return {
 		...state,

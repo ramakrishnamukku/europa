@@ -33,24 +33,29 @@ export function updateNewRegistryField(prop, e, eIsValue = false) {
 };
 
 export function addRegistryRequest() {
-  if (!isAddRegistryValid.call(this, true)) {
-    return;
-  }
 
-  RAjax.POST('SaveRegistryCreds', this.state.addRegistry.newRegistry)
-    .then((res) => {
-      this.setState({
-        addRegistry: GA.modifyProperty(this.state.addRegistry, addRegistryState())
-      });
-    })
-    .catch((err) => {
-      let errorMsg = `There was an error adding your registry: ${err.error.message}`
-      this.setState({
-        addRegistry: GA.modifyProperty(this.state.addRegistry, {
-          errorMsg
-        })
+  return new Promise((resolve, reject) => {
+    if (!isAddRegistryValid.call(this, true)) {
+       reject();
+       return;
+    }
+
+    RAjax.POST('SaveRegistryCreds', this.state.addRegistry.newRegistry)
+      .then((res) => {
+        resolve();
+        // this.setState({
+        //   addRegistry: GA.modifyProperty(this.state.addRegistry, addRegistryState())
+        // }, () => resolve());
       })
-    });
+      .catch((err) => {
+        let errorMsg = `There was an error adding your registry: ${err.error.message}`
+        this.setState({
+          addRegistry: GA.modifyProperty(this.state.addRegistry, {
+            errorMsg
+          })
+        }, () => reject());
+      });
+  });
 };
 
 export function canAddRegistry() {
