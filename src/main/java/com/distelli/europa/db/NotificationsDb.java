@@ -38,7 +38,7 @@ public class NotificationsDb
              (item) -> getRangeKey(item.getType(), item.getId()))
 
         .put("id", String.class, "id")
-        .put("type", String.class, "type")
+        .put("type", NotificationType.class, "type")
         .put("region", String.class, "region")
         .put("rp", RegistryProvider.class, "repoProvider")
         .put("rnam", String.class, "repoName")
