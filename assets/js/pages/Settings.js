@@ -10,11 +10,14 @@ export default class Settings extends Component {
 	render() {
 		return (
 			<div className="ContentContainer">
-				<h2 className="PageHeader">
-					Settings
-				</h2>
+				<div className="PageHeader">
+					<h2>
+						Settings
+					</h2>
+				</div>
+
 				<div>
-					
+
 				</div>
 			</div>
 		);

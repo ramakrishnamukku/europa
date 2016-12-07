@@ -15,7 +15,7 @@ export default class AddRegistry extends Component {
 		} else {
 		    return "BlueBorder FullWidth";
 		}
-	}		
+	}
 	renderSelectProvider(){
 		let provider = 'provider';
 		return (
@@ -23,7 +23,7 @@ export default class AddRegistry extends Component {
 				<label>
 					Docker Registry Provider
 				</label>
-				<select className={this.inputClassName(provider)} 
+				<select className={this.inputClassName(provider)}
 						value={this.context.state.addRegistry.newRegistry[provider]}
 				        onChange={(e) => this.context.actions.updateNewRegistryField(provider, e)}>
 				   <option value="">Select Amazon Container Registry or Google Container Registry</option>
@@ -51,7 +51,7 @@ export default class AddRegistry extends Component {
 						<label className="small">
 							Key Name
 						</label>
-						<input className={this.inputClassName(keyName)} 
+						<input className={this.inputClassName(keyName)}
 							   value={this.context.state.addRegistry.newRegistry[keyName]}
 						       placeholder="Enter Key Name.."
 							   onChange={(e) => this.context.actions.updateNewRegistryField(keyName, e)} />
@@ -60,7 +60,7 @@ export default class AddRegistry extends Component {
 						<label className="small">
 							Key Region
 						</label>
-						<select className={this.inputClassName(region)} 
+						<select className={this.inputClassName(region)}
 								value={this.context.state.addRegistry.newRegistry[region]}
 						        onChange={(e) => this.context.actions.updateNewRegistryField(region, e)}>
 						   <option value="">Select Region...</option>
@@ -76,7 +76,7 @@ export default class AddRegistry extends Component {
 						<label className="small">
 							Public Key
 						</label>
-						<input className={this.inputClassName(key)} 
+						<input className={this.inputClassName(key)}
 							   value={this.context.state.addRegistry.newRegistry[key]}
 							   placeholder="Enter Public Key.."
 							   onChange={(e) => this.context.actions.updateNewRegistryField(key, e)} />
@@ -97,11 +97,11 @@ export default class AddRegistry extends Component {
 	renderErrorMsg(){
 		if(this.context.state.addRegistry.errorMsg) {
 			return (
-				<ErrorMsg 
+				<ErrorMsg
 					text={this.context.state.addRegistry.errorMsg}
 				/>
 			);
-		}	
+		}
 	}
 	renderAddButton(){
 		return (
@@ -142,7 +142,7 @@ export default class AddRegistry extends Component {
 		return (
 			<ContentRow key={index}
 						row={row} />
-		);	
+		);
 	}
 	render() {
 		return (

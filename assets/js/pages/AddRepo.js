@@ -120,9 +120,11 @@ export default class AddRepository extends Component {
 	render() {
 		return (
 			<div className="ContentContainer">
-				<h2 className="PageHeader">
-					Let's get started...
-				</h2>
+				<div className="PageHeader">
+					<h2>
+						Add Registry
+					</h2>
+				</div>
 				<div>
 				    {this.renderAddRegistry()}
 					{this.renderAddRepository()}

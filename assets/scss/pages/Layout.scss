@@ -54,20 +54,27 @@ nav {
 
         .ContentContainer {
             display: flex;
-            flex-flow: row nowrap;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: solid 1px #BCBEC0;
-            margin: 0 0 0;
-            padding: 16px 0 18px;
+            flex-direction: column;
+            flex-wrap: nowrap;
 
-            h2.PageHeader {
-                position: relative;
-                font-size: 2.125rem;
-                font-weight: 300;
-                color: $teal;
-                margin: 0;
+            .PageHeader {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: solid 1px #BCBEC0;
+                margin: 0 0 0;
+                padding: 16px 0 18px;
 
+                h2 {
+                    position: relative;
+                    font-size: 2.125rem;
+                    font-weight: 300;
+                    color: $teal;
+                    margin: 0;
+
+                }
             }
         }
     }
