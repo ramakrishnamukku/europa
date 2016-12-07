@@ -1,3 +1,3 @@
 #!/bin/bash -e
 
-./target/bin/Europa --log-to-console $@
+./target/bin/Europa --port 5050 --log-to-console $@

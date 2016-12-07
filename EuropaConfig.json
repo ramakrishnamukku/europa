@@ -1,5 +1,0 @@
-{
-    "dbEndpoint":"mysql://distelli-alpha.cedf018eguc7.us-east-1.rds.amazonaws.com:3306/europa_alpha",
-    "dbUser": "",
-    "dbPass": ""
-}
