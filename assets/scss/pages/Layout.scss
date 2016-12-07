@@ -16,9 +16,14 @@ nav {
         justify-content: space-between;
         align-items: center;
 
-        .logo a img {
-            width: 90px;
-            height: auto;
+        .Logo {
+            height: 32px;
+            a {
+                img {
+                    width: 90px;
+                    height: auto;
+                }
+            }
         }
     }
 
@@ -28,7 +33,7 @@ nav {
         color: $salmon;
     }
 
-    .NavButtonContainer{
+    .NavButtonContainer {
         position: relative;
         justify-content: center;
         align-items: center;
@@ -73,10 +78,22 @@ nav {
                     font-weight: 300;
                     color: $teal;
                     margin: 0;
-
                 }
             }
         }
+    }
+}
+
+.NoContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h3 {
+        color: $black;
+        font-weight: 400;
+        font-size: 1.6rem;
     }
 }
 
@@ -91,19 +108,32 @@ nav {
 }
 
 .Flex1 {
-    flex: 1
+    flex: 1;
 }
 
-.Row{
+.Row {
     margin-bottom: 1rem;
 }
 
-.Column{
+.Column {
     padding-right: 2rem;
 }
 
-.SpaceBetween{
+.RowPadding {
+    padding: 14px 0;
+}
+
+.SpaceBetween {
     justify-content: space-between;
+}
+
+.PageLoader {
+    position: relative;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 600px;
 }
 
 i {
@@ -119,5 +149,4 @@ label {
 
 label.small {
     font-size: 0.625rem;
-
 }

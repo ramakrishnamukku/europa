@@ -6,11 +6,19 @@ export default class ErrorMsg extends Component {
 		super(props);
 		this.state = {};
 	}
+	renderClose(){
+		if(this.props.close && typeof this.props.close == 'function') {
+			return (
+				<i className="icon icon-dis-close Red" onClick={() => this.props.close()}/>
+			)
+		}
+	}
 	render(){
 		return (
-			<p className="ErrorMsg" style={this.props.style}>
-				{(this.props.text) ? this.props.text : ''}
-			</p>
+			<div className="ErrorMsg FlexColumn" style={this.props.style}>
+				<p>{(this.props.text) ? this.props.text : ''}</p>
+				{this.renderClose()}
+			</div>
 		);
 	}
 }
@@ -18,6 +26,7 @@ export default class ErrorMsg extends Component {
 
 ErrorMsg.PropTypes = {
 	style: React.PropTypes.object,
-	text: React.PropTypes.string
+	text: React.PropTypes.string,
+	close: React.PropTypes.func
 };
 

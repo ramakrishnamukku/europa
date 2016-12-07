@@ -1,10 +1,25 @@
-.ErrorMsg{
-	color: $red;
-	font-weight: 600;
-	font-size: 0.8rem;
-	position: relative;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	margin: 0px;
+.ErrorMsg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    p {
+        color: $red;
+        font-weight: 600;
+        font-size: 0.8rem;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 0 7px;
+    }
+
+    i.icon-dis-close {
+        color: $red;
+        font-size: 1rem;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
 }

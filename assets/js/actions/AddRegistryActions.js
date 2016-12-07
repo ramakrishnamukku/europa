@@ -92,16 +92,3 @@ function isAddRegistryValid(validateOnInput) {
     return true
   }
 };
-
-export function listRegistries() {
-  RAjax.GET('ListRegistryCreds', {})
-    .then((res) => {
-      console.log(res);
-      this.setState({
-        registries: res
-      })
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};

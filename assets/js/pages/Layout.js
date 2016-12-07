@@ -16,6 +16,7 @@ export default class Layout extends Component {
 		// Main State Store
 		this.state = {
 			registries: [],
+			registriesXHR: false,
 			repositories: [],
 			registry: {
 				...RegistryActions.registriesState(),
@@ -42,7 +43,7 @@ export default class Layout extends Component {
 			<div className="PageContainer">
 				<nav className="TopNav">
 				 <div className="MaxWidthContainer">
-					<div className="logo">
+					<div className="Logo">
 						<Link to="/repositories">
 							<img src="assets/images/distelli-europa-logo.svg"
 									 alt="Distelli Europa" />
@@ -50,17 +51,17 @@ export default class Layout extends Component {
 					</div>
 					<div className="FlexRow NavButtonContainer">
 						<div className="Flex1">
-							<Link to="/repositories">
-								<i className="icon icon-dis-package"/>
+							<Link to="/repositories" data-tip="View Repositories" data-for="ToolTipBottom">
+								<i className="icon icon-dis-contents"/>
 							</Link>
 						</div>
 						<div className="Flex1">
-							<Link to="/registries">
-								<i className="icon icon-dis-docker" style={{fontSize: '1.4rem'}}/>
+							<Link to="/registries" data-tip="View Registries" data-for="ToolTipBottom">
+								<i className="icon icon-dis-docker" style={{fontSize: '1.5rem'}}/>
 							</Link>
 						</div>
 						<div className="Flex1">
-							<Link to="/settings">
+							<Link to="/settings" data-tip="Settings" data-for="ToolTipBottom">
 								<i className="icon icon-dis-settings"/>
 							</Link>
 						</div>
@@ -70,7 +71,8 @@ export default class Layout extends Component {
 				<div className="PageContent">
 					<div className="MaxWidthContainer">
 						{this.props.children}
-						<ReactTooltip id="ToolTip" place="top" type="dark" effect="float"/>
+						<ReactTooltip id="ToolTipBottom" place="top" type="dark" effect="float"/>
+						<ReactTooltip id="ToolTipTop" place="top" type="dark" effect="float"/>
 					</div>
 				</div>
 			</div>
