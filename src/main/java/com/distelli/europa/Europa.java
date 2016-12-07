@@ -62,7 +62,7 @@ public class Europa
     public void start()
     {
         WebServlet servlet = new WebServlet(_routeMatcher, _requestHandlerFactory);
-        WebServer webServer = new WebServer(8080, servlet, "/");
+        WebServer webServer = new WebServer(5050, servlet, "/");
         webServer.setCacheControl("max-age=300");
         webServer.setEtags(true);
         webServer.start();
