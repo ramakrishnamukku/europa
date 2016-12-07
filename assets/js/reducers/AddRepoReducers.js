@@ -9,11 +9,23 @@ export default function AddRepoReducers(state, action) {
 }
 
 function updateNewRepo(state, data){
+	let newRepo = {
+		...state.newRepo
+	};
+
+	let keys = data.value.split('/');
+	if(keys.length > 1) {
+		newRepo = keys.reduce((cur, key) => {
+			return cur[key]
+		}, newRepo) 
+	}
+
+	console.log(newRepo)
+
 	return {
 		...state,
 		newRepo: {
 			...state.newRepo,
-			[data.prop]: data.value
 		}
 	};
 }

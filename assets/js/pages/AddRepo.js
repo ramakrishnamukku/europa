@@ -4,8 +4,9 @@ import ContentRow from './../components/ContentRow'
 import Btn from './../components/Btn'
 
 let dockerRepoKey = 'dockerImage'
-let webhookKey = "webhookUrl";
-let secretKey = "secret"
+let targetKey = "notification/target";
+let typeKey = "notification/type";
+let secretKey = "notification/secret";
 
 export default class AddRepository extends Component {
 	constructor(props) {
@@ -47,10 +48,10 @@ export default class AddRepository extends Component {
 					<label>
 						Docker Image Repository
 					</label>
-					<input className={this.inputClassName(webhookKey)} 
-					       value={this.context.state.addRepo.newRepo[webhookKey]}
+					<input className={this.inputClassName(targetKey)} 
+					       value={this.context.state.addRepo.newRepo[targetKey]}
 						   placeholder="Enter Webhook URL.."
-					       onChange={(e) => this.context.actions.updateNewRepoField(webhookKey, e)} />
+					       onChange={(e) => this.context.actions.updateNewRepoField(targetKey, e)} />
 				</div>
 				<div className="Row">
 					<label>
@@ -68,7 +69,7 @@ export default class AddRepository extends Component {
 		return (
 			<Btn onClick={() => this.context.actions.testWebhookUrl()}
 				 text="Test Webhook"
-				 canClick={!!this.context.state.addRepo.newRepo[webhookKey]}
+				 canClick={!!this.context.state.addRepo.newRepo[targetKey]}
 				 help="Clicking this button will send a payload to the specified URL."/>
 		);
 	}

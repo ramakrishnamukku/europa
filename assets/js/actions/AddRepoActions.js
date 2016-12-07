@@ -9,9 +9,16 @@ export function addRepoState() {
     errorFields: [],
     validateOnInput: false,
     newRepo: {
-      dockerImage: '',
-      webhookUrl: '',
-      secret: ''
+    	repo: {
+    		provider: '',
+    		region: '',
+    		name: ''
+    	},
+    	notification: {
+    	    target: '',
+    	    type:  '',
+    		secret: ''
+    	}
     }
   }
 }
@@ -33,20 +40,20 @@ export function updateNewRepoField(prop, e, eIsValue = false) {
 export function addRepoRequest() {
   if (!isAddRepoValid.call(this, true)) return;
 
-  // RAjax.POST('SaveRegistryCreds', this.state.addRegistry.newRegistry)
-  //   .then((res) => {
-  //     this.setState({
-  //       addRegistry: GA.modifyProperty(this.state.addRegistry, addRegistryState())
-  //     });
-  //   })
-  //   .catch((err) => {
-  //     let errorMsg = `There was an error adding your registry: ${err.error.message}`
-  //     this.setState({
-  //       addRegistry: GA.modifyProperty(this.state.addRegistry, {
-  //         errorMsg
-  //       })
-  //     })
-  //   });
+  RAjax.POST('SaveContainerRepo', this.state.addRegistry.newRegistry)
+    .then((res) => {
+      this.setState({
+        addRegistry: GA.modifyProperty(this.state.addRegistry, addRegistryState())
+      });
+    })
+    .catch((err) => {
+      let errorMsg = `There was an error adding your registry: ${err.error.message}`
+      this.setState({
+        addRegistry: GA.modifyProperty(this.state.addRegistry, {
+          errorMsg
+        })
+      })
+    });
 }
 
 export function canAddRepo(){
@@ -55,9 +62,16 @@ export function canAddRepo(){
 
 function isAddRepoValid(validateOnInput) {
   let required = {
-    dockerImage: 'Docker Image Repository',
-    webhookUrl: 'Webhook URL'
-  }
+  	repo: {
+  		provider: '',
+  		region: '',
+  		name: ''
+  	},
+  	notification: {
+  		target: 'Target',
+  		type: 'Type',
+  	}
+  };
 
   let errorFields = Validate.call(this, this.state.addRepo.newRepo, required);
 
