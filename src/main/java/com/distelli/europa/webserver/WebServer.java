@@ -21,7 +21,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 public class WebServer implements Runnable
 {
     private static final Logger log = Logger.getLogger(WebServer.class);
-    private int _port = 8080;
+    private int _port = 5050;
     private HttpServlet _servlet = null;
     private String _path = null;
     private String _assetsPath = "/_assets/*";

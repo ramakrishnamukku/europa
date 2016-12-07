@@ -5,6 +5,7 @@ nav {
     height: 43px;
     display: flex;
     flex-direction: row;
+    padding: 1px 0 0;
 
     .MaxWidthContainer {
         position: relative;
@@ -14,6 +15,11 @@ nav {
         display: flex;
         justify-content: space-between;
         align-items: center;
+
+        .logo a img {
+            width: 90px;
+            height: auto;
+        }
     }
 
     h2 {
@@ -47,14 +53,21 @@ nav {
         margin: 0 auto;
 
         .ContentContainer {
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: solid 1px #BCBEC0;
+            margin: 0 0 0;
+            padding: 16px 0 18px;
+
             h2.PageHeader {
                 position: relative;
-                margin: 14px 0 21px;
-                padding: 0 0 7px;
                 font-size: 2.125rem;
                 font-weight: 300;
                 color: $teal;
-                border-bottom: solid 1px #BCBEC0;
+                margin: 0;
+
             }
         }
     }

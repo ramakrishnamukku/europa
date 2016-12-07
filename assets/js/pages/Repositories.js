@@ -11,10 +11,11 @@ export default class Repositories extends Component {
 		return (
 			<div className="ContentContainer">
 				<h2 className="PageHeader">
-					Your Repositories
+					Monitored Repositories
 				</h2>
 				<div>
-					
+					<Btn text="Add Repository"
+							 onClick={ () => console.log("todo") } />
 				</div>
 			</div>
 		);

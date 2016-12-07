@@ -8,8 +8,11 @@ import * as AddRepoActions from './../actions/AddRepoActions'
 export default class Layout extends Component {
 	constructor(props) {
 		super(props);
+
+		// Main State Store
 		this.state = {
 			registries: [],
+			repositories: [],
 			addRegistry: {
 				...AddRegistryActions.addRegistryState(),
 			},
@@ -18,24 +21,23 @@ export default class Layout extends Component {
 			}
 		};
 	}
-	getChildContext(){
+	getChildContext() {
 		return {
 			actions: ActionBinder([AddRegistryActions, AddRepoActions], this),
 			state: this.state
 		};
-	}
-	componentDidMount() {
-		
 	}
 	render() {
 		return (
 			<div className="PageContainer">
 				<nav className="TopNav">
 				 <div className="MaxWidthContainer">
-					<h2>
-						<Link to="/registries">Europa</Link>
-					</h2>
-
+					<div className="logo">
+						<Link to="/repositories">
+							<img src="assets/images/distelli-europa-logo.svg"
+									 alt="Distelli Europa" />
+						</Link>
+					</div>
 					<div className="FlexRow NavButtonContainer">
 						<div className="Flex1">
 							<Link to="/repositories">
@@ -69,4 +71,3 @@ Layout.childContextTypes = {
 	actions: React.PropTypes.object,
 	state: React.PropTypes.object
 };
-

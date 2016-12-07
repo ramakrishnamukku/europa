@@ -5,12 +5,26 @@ export default class Overview extends Component {
 		super(props);
 		this.state = {};
 	}
-
 	render() {
 		return (
-			<div>
-				This is the overview
+			<div className="ContentContainer">
+				<h2 className="PageHeader">
+					TODO, detect repos
+				</h2>
+				<div>
+					todo
+				</div>
 			</div>
 		);
 	}
 }
+
+Overview.childContextTypes = {
+    actions: React.PropTypes.object,
+    state: React.PropTypes.object
+};
+
+Overview.contextTypes = {
+    actions: React.PropTypes.object,
+    state: React.PropTypes.object
+};

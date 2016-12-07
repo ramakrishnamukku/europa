@@ -39,7 +39,7 @@ public class StaticContentRequestHandler extends RequestHandler
     public WebResponse handleRequest(RequestContext requestContext)
     {
         String path = requestContext.getPath();
-        if(!path.startsWith("/public/"))
+        if(!path.startsWith("/public/") && !path.startsWith("/assets/"))
             return renderPage(requestContext, null);
 
         WebResponse webResponse = new WebResponse();
