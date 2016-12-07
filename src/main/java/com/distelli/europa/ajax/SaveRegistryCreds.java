@@ -14,6 +14,7 @@ import com.distelli.europa.models.*;
 import com.distelli.europa.webserver.*;
 import com.distelli.europa.util.*;
 
+import java.util.regex.*;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -24,6 +25,8 @@ public class SaveRegistryCreds implements AjaxHelper
 
     @Inject
     private RegistryCredsDb _db;
+
+    private final Pattern registryCredNamePattern = Pattern.compile("[a-zA-Z0-9_-]+");
 
     public SaveRegistryCreds()
     {
@@ -36,6 +39,7 @@ public class SaveRegistryCreds implements AjaxHelper
                                                        true); //throw if null
         //Validate that the fields we want are non-null
         FieldValidator.validateNonNull(cred, "provider", "region", "key", "secret");
+        FieldValidator.validateMatch(cred, "name", registryCredNamePattern);
         cred.setCreated(System.currentTimeMillis());
         //save in the db
         _db.save(cred);

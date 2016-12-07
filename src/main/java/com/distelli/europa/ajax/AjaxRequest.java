@@ -51,7 +51,23 @@ public class AjaxRequest
 
     public <T> T convertContent(Class<T> clazz, boolean throwIfNull)
     {
+        if(this.content == null)
+            return null;
+
         T contentObj = OBJECT_MAPPER.convertValue(this.content, clazz);
+        if(contentObj != null)
+            return contentObj;
+        throw(new AjaxClientException(JsonError.BadContent));
+    }
+
+    public <T> T convertContent(String jsonPointer, Class<T> clazz, boolean throwIfNull)
+    {
+        if(this.content == null)
+            return null;
+        JsonNode dataNode = this.content.at(jsonPointer);
+        if(dataNode.isMissingNode())
+            return null;
+        T contentObj = OBJECT_MAPPER.convertValue(dataNode, clazz);
         if(contentObj != null)
             return contentObj;
         throw(new AjaxClientException(JsonError.BadContent));

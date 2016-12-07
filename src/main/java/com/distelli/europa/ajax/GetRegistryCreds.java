@@ -31,6 +31,7 @@ public class GetRegistryCreds implements AjaxHelper
        Params:
        - Provider (reqired)
        - Region (required)
+       - Name (required)
     */
     public Object get(AjaxRequest ajaxRequest)
     {
@@ -38,6 +39,7 @@ public class GetRegistryCreds implements AjaxHelper
                                                           RegistryProvider.class,
                                                           true); //throw if missing
         String region = ajaxRequest.getParam("region", true);
-        return _db.getCred(provider, region);
+        String name = ajaxRequest.getParam("name", true);
+        return _db.getCred(provider, region, name);
     }
 }

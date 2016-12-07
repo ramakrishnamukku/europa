@@ -24,6 +24,8 @@ public class SaveContainerRepo implements AjaxHelper
 
     @Inject
     private ContainerRepoDb _db;
+    @Inject
+    private NotificationsDb _notificationDb;
 
     public SaveContainerRepo()
     {
@@ -32,12 +34,20 @@ public class SaveContainerRepo implements AjaxHelper
 
     public Object get(AjaxRequest ajaxRequest)
     {
-        ContainerRepo repo = ajaxRequest.convertContent(ContainerRepo.class,
+        ContainerRepo repo = ajaxRequest.convertContent("/repo", ContainerRepo.class,
                                                        true); //throw if null
         //Validate that the fields we want are non-null
         FieldValidator.validateNonNull(repo, "provider", "region", "name");
-        //save in the db
+
+        Notification notification = ajaxRequest.convertContent("/notification", Notification.class,
+                                                               true);
+        FieldValidator.validateNonNull(notification, "type", "target");
+        //save the repo in the db
         _db.save(repo);
+        notification.setRepoProvider(repo.getProvider());
+        notification.setRegion(repo.getRegion());
+        notification.setRepoName(repo.getName());
+        _notificationDb.save(notification);
         return JsonSuccess.Success;
     }
 }

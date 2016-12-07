@@ -39,7 +39,8 @@ public class DeleteRegistryCreds implements AjaxHelper
                                                           RegistryProvider.class,
                                                           true); //throw if missing
         String region = ajaxRequest.getParam("region", true);
-        _db.deleteCred(provider, region);
+        String name = ajaxRequest.getParam("name", true);
+        _db.deleteCred(provider, region, name);
         return JsonSuccess.Success;
     }
 }

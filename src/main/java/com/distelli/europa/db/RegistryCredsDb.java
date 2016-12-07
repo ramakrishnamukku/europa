@@ -16,7 +16,9 @@ import com.distelli.persistence.PageIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.distelli.jackson.transform.TransformModule;
 
+import com.distelli.europa.ajax.*;
 import com.distelli.europa.models.*;
+import com.distelli.europa.webserver.*;
 import org.apache.log4j.Logger;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
@@ -34,7 +36,7 @@ public class RegistryCredsDb
         .put("hk", String.class,
              (item) -> getHashKey(item))
         .put("rk", String.class,
-             (item) -> getRangeKey(item.getProvider(), item.getRegion()))
+             (item) -> getRangeKey(item.getProvider(), item.getRegion(), item.getName()))
         .put("ctime", Long.class, "created")
         .put("kid", String.class, "key")
         .put("sec", String.class, "secret")
@@ -62,18 +64,22 @@ public class RegistryCredsDb
         return "1";
     }
 
-    private static final String getRangeKey(RegistryProvider provider, String region)
+    private static final String getRangeKey(RegistryProvider provider, String region, String name)
     {
-        return String.format("%s:%s",
+        return String.format("%s:%s:%s",
                              provider.toString().toLowerCase(),
-                             region.toString().toLowerCase());
+                             region.toLowerCase(),
+                             name.toLowerCase());
     }
 
     public void save(RegistryCred cred)
     {
         String region = cred.getRegion();
+        String name = cred.getName();
         if(region == null || region.contains(":"))
-            throw(new IllegalArgumentException("Invalid Region "+region+" in Registry Cred"));
+            throw(new AjaxClientException("Invalid Region "+region+" in Registry Cred", JsonError.Codes.BadContent, 400));
+        if(name == null || name.contains(":"))
+            throw(new AjaxClientException("Invalid Name "+name+" in Registry Cred", JsonError.Codes.BadContent, 400));
         _main.putItem(cred);
     }
 
@@ -90,15 +96,15 @@ public class RegistryCredsDb
         .list();
     }
 
-    public RegistryCred getCred(RegistryProvider provider, String region)
+    public RegistryCred getCred(RegistryProvider provider, String region, String name)
     {
         return _main.getItem(getHashKey(null),
-                             getRangeKey(provider, region));
+                             getRangeKey(provider, region, name));
     }
 
-    public void deleteCred(RegistryProvider provider, String region)
+    public void deleteCred(RegistryProvider provider, String region, String name)
     {
         _main.deleteItem(getHashKey(null),
-                         getRangeKey(provider, region));
+                         getRangeKey(provider, region, name));
     }
 }
