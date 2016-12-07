@@ -1,0 +1,70 @@
+.RegistryList {
+    margin: 15px 0px;
+
+    .RegistryItem {
+        border-bottom: solid 1px #BCBEC0;
+        padding: 9px;
+        transition: all 0.3s;
+
+        &:hover {
+            background-color: lighten($backgroundColor, 2%);
+        }
+
+        .Inside {
+            align-items: center;
+
+            .ProviderIcon {
+                height: 28px;
+                width: 28px;
+                border: 0px;
+                outline: 0px;
+                margin-right: 11px;
+            }
+
+            .Provider {
+                font-weight: 700;
+                font-size: 1rem;
+                color: $black;
+                flex: 1;
+            }
+
+            .Key {
+                font-weight: 400;
+                font-size: 1rem;
+                color: $grey;
+                flex: 1;
+                margin-right: 11px;
+            }
+
+            .Region {
+                color: $grey;
+                flex: 1;
+
+                .Label {
+                    color: $black;
+                    flex: 1;
+                    font-size: 1rem;
+                }
+            }
+
+            .Pipe {
+                margin: 0px 9px;
+                color: $grey;
+            }
+
+            .Actions {
+                i {
+                    color: $light-blue;
+                    flex: 1;
+                    margin: 0px 7px;
+                    transition: all 0.3s;
+
+                    &:hover {
+                        cursor: pointer;
+                        color: darken($light-blue, 15%);
+                    }
+                }
+            }
+        }
+    }
+}

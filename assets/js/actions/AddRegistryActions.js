@@ -9,7 +9,7 @@ export function addRegistryState() {
     errorFields: [],
     validateOnInput: false,
     newRegistry: {
-      description: '',
+      name: '',
       provider: '',
       region: '',
       key: '',
@@ -96,6 +96,7 @@ function isAddRegistryValid(validateOnInput) {
 export function listRegistries() {
   RAjax.GET('ListRegistryCreds', {})
     .then((res) => {
+      console.log(res);
       this.setState({
         registries: res
       })

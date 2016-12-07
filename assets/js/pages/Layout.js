@@ -1,9 +1,13 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router'
+import ReactTooltip from 'react-tooltip'
 import ActionBinder from './../util/ActionBinder'
+
 // Actions
 import * as AddRegistryActions from './../actions/AddRegistryActions'
 import * as AddRepoActions from './../actions/AddRepoActions'
+import * as RegistryActions from './../actions/RegistryActions'
+
 
 export default class Layout extends Component {
 	constructor(props) {
@@ -13,6 +17,9 @@ export default class Layout extends Component {
 		this.state = {
 			registries: [],
 			repositories: [],
+			registry: {
+				...RegistryActions.registriesState(),
+			},
 			addRegistry: {
 				...AddRegistryActions.addRegistryState(),
 			},
@@ -21,9 +28,12 @@ export default class Layout extends Component {
 			}
 		};
 	}
+	componentDidUpdate(prevProps, prevState) {
+		ReactTooltip.rebuild()
+	}
 	getChildContext() {
 		return {
-			actions: ActionBinder([AddRegistryActions, AddRepoActions], this),
+			actions: ActionBinder([AddRegistryActions, AddRepoActions, RegistryActions], this),
 			state: this.state
 		};
 	}
@@ -60,6 +70,7 @@ export default class Layout extends Component {
 				<div className="PageContent">
 					<div className="MaxWidthContainer">
 						{this.props.children}
+						<ReactTooltip id="ToolTip" place="top" type="dark" effect="float"/>
 					</div>
 				</div>
 			</div>

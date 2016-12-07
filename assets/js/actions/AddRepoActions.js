@@ -23,14 +23,14 @@ export function addRepoState() {
   }
 }
 
-export function updateNewRepoField(prop, e, eIsValue = false) {
+export function updateNewRepoField(keyPath, e, eIsValue = false) {
   let value = (eIsValue) ? e : e.target.value;
 
   this.setState({
     addRepo: Reducers(this.state.addRepo, {
       type: 'UPDATE_NEW_REPO',
       data: {
-        prop,
+        keyPath,
         value
       }
     })
@@ -40,16 +40,14 @@ export function updateNewRepoField(prop, e, eIsValue = false) {
 export function addRepoRequest() {
   if (!isAddRepoValid.call(this, true)) return;
 
-  RAjax.POST('SaveContainerRepo', this.state.addRegistry.newRegistry)
+  RAjax.POST('SaveContainerRepo', this.state.addRepo.newRepo)
     .then((res) => {
-      this.setState({
-        addRegistry: GA.modifyProperty(this.state.addRegistry, addRegistryState())
-      });
+    	console.log(res);
     })
     .catch((err) => {
-      let errorMsg = `There was an error adding your registry: ${err.error.message}`
+      let errorMsg = `There was an error adding your repository: ${err.error.message}`
       this.setState({
-        addRegistry: GA.modifyProperty(this.state.addRegistry, {
+        addRepo: GA.modifyProperty(this.state.addRepo, {
           errorMsg
         })
       })

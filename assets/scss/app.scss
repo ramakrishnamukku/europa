@@ -1,5 +1,6 @@
 $light_gray: rgb(247, 247, 247);
 $pink: #F7739C;
+$backgroundColor: #F5F5F7;
 
 // Icons
 @import "vendor/css/distelli-icons.css";
@@ -12,23 +13,55 @@ $pink: #F7739C;
 
 // Layout
 @import "pages/Layout";
+@import "pages/Registries";
 
 // Partials
+
 @import "partials/BlueBorderInput";
-@import "partials/ContentRow";
 @import "partials/Btn";
+@import "partials/CenteredConfirm";
+@import "partials/ContentRow";
 @import "partials/ErrorMsg";
+@import "partials/Loader";
 
 html, body {
     height: 100vh;
     margin: 0px;
     padding: 0px;
     font-family: 'Open Sans';
-    background-color: #F5F5F7;
+    background-color: $backgroundColor;
 }
 
 a {
     color: inherit;
     text-decoration: none;
     color: $yellow;
+}
+
+div.Button {
+    width: 100px;
+    height: 28px;
+    margin: 7px 2px 0;
+    color: #FFFFFF;
+    transition: all 0.3s;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+@mixin Button($bgColor) {
+	@extend div.Button;
+	background-color: $bgColor;
+	&:hover{
+		background-color: lighten($bgColor, 5%);
+	}
+}
+
+div.ButtonPink{
+	@include Button($pink);
+}
+
+div.ButtonBlue{
+	@include Button($light-blue);
 }

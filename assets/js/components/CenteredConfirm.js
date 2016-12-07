@@ -1,4 +1,4 @@
-import { Component, PropTypes } from 'react'
+import React, { Component, PropTypes } from 'react'
 
 export default  class CenteredConfirm extends Component {
   constructor(props) {
@@ -16,16 +16,15 @@ export default  class CenteredConfirm extends Component {
   }
   render(){
     return (
-      <div className="generic-sidebar-delete-item">
+      <div className="CenteredDelete">
         {this.renderMsg()}
         <div>
-          <div className="button btn-confirm"
+          <div className="ButtonBlue"
                style={this.props.confirmButtonStyle}
                onClick={this.props.onConfirm}>
             {this.props.confirmButtonText}
           </div>
-          <div className="button btn-cancel"
-               style={{background: "#ed718e"}}
+          <div className="ButtonPink"
                onClick={this.props.onCancel}>
             Cancel
           </div>
@@ -37,19 +36,17 @@ export default  class CenteredConfirm extends Component {
 
 CenteredConfirm.contextTypes = {
   actions: React.PropTypes.object,
-  userInfo: React.PropTypes.object,
-  csfrToken: React.PropTypes.string,
 };
 
 CenteredConfirm.propTypes = {
   message: React.PropTypes.string,
   confirmButtonText:  React.PropTypes.string,
-  confirmButtonStyle: React.PropTypes.string,
+  confirmButtonStyle: React.PropTypes.object,
   onConfirm: React.PropTypes.func.isRequired,
   onCancel: React.PropTypes.func.isRequired
 };
 
-CenterdConfrim.defaultProps = {
+CenteredConfirm.defaultProps = {
   message: "Are you sure?",
   confirmButtonStyle: "Continue"
 };

@@ -36,7 +36,7 @@ export default class AddRegistry extends Component {
 		);
 	}
 	renderRegistryCredentials() {
-		let keyName = 'description';
+		let keyName = 'name';
 		let region = 'region';
 		let key = 'key';
 		let secret = 'secret';

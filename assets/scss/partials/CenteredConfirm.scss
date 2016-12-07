@@ -1,0 +1,21 @@
+.CenteredDelete {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    padding: 7px 0 21px;
+
+    div {
+        display: flex;
+        flex: 1;
+        flex-flow: row nowrap;
+        align-items: center;
+        justify-content: center;
+
+        span {
+            display: block;
+            margin: 0 0 4px;
+            color: $red;
+            font-size: 1rem;
+        }
+    }
+}
