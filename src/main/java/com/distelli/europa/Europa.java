@@ -26,6 +26,7 @@ public class Europa
 
     private RequestHandlerFactory _requestHandlerFactory = null;
     private RouteMatcher _routeMatcher = null;
+    private int _port = 8080;
     public Europa(String[] args)
     {
         CmdLineArgs cmdLineArgs = new CmdLineArgs(args);
@@ -49,6 +50,17 @@ public class Europa
             log.fatal("Missing value for arg --config");
             System.exit(1);
         }
+        String portStr = cmdLineArgs.getOption("port");
+        if(portStr != null)
+        {
+            try {
+                _port = Integer.parseInt(portStr);
+            } catch(NumberFormatException nfe) {
+                log.fatal("Invalid value for --port "+portStr);
+                System.exit(1);
+            }
+        }
+
         EuropaConfiguration europaConfiguration = EuropaConfiguration.fromFile(new File(configFilePath));
         Injector injector = Guice.createInjector(Stage.PRODUCTION,
                                                  new PersistenceModule(),
@@ -62,7 +74,7 @@ public class Europa
     public void start()
     {
         WebServlet servlet = new WebServlet(_routeMatcher, _requestHandlerFactory);
-        WebServer webServer = new WebServer(5050, servlet, "/");
+        WebServer webServer = new WebServer(_port, servlet, "/");
         webServer.setCacheControl("max-age=300");
         webServer.setEtags(true);
         webServer.start();

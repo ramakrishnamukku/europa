@@ -1,9 +1,5 @@
 package com.distelli.europa.models;
 
-import java.util.Arrays;
-import java.util.Objects;
-
-
 public enum RegistryProvider
 {
     DOCKERHUB,
