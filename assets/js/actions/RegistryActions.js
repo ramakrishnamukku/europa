@@ -3,7 +3,7 @@ import * as RAjax from './../util/RAjax'
 import Validate from './../util/Validate'
 
 
-export function registriesState() {
+export function registryState() {
   return {
     registrySelectedForDelete: null,
     deleteRegistryXHR: false,
@@ -11,9 +11,15 @@ export function registriesState() {
   }
 }
 
+export function resetRegistryState() {
+  this.setState({
+    registry: GA.modifyProperty(this.state.registry, registryState.call(this))
+  });
+}
+
 export function listRegistries() {
   this.setState({
-    registriesXHR: true
+    registriesXHR: (this.state.registries.length) ? false : true
   }, () => {
     RAjax.GET('ListRegistryCreds', {})
       .then((res) => {
@@ -24,7 +30,7 @@ export function listRegistries() {
       })
       .catch((err) => {
         this.setState({
-        	registriesXHR: false
+          registriesXHR: false
         });
       });
   });
@@ -52,13 +58,12 @@ export function deleteRegistry() {
             deleteRegistryXHR: false
           })
         }, () => {
-          console.log(this.state.registry.registrySelectedForDelete);
-          console.log(res);
+          listRegistries.call(this);
         });
       })
       .catch((err) => {
 
-      	let errorMsg = `Failed to delete registry credentials: ${err.error.message}`;
+        let errorMsg = `Failed to delete registry credentials: ${err.error.message}`;
         this.setState({
           registry: GA.modifyProperty(this.state.registry, {
             deleteRegistryXHR: false,

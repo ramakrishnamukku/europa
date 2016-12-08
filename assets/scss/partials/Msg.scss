@@ -1,4 +1,4 @@
-.ErrorMsg {
+.Msg {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -23,3 +23,14 @@
         }
     }
 }
+
+
+.Msg.Success {
+    p {
+        color: $green;
+    }
+    i.icon-dis-close {
+        color: $green;
+    }
+}
+

@@ -19,7 +19,7 @@ export default class Layout extends Component {
 			registriesXHR: false,
 			repositories: [],
 			registry: {
-				...RegistryActions.registriesState(),
+				...RegistryActions.registryState(),
 			},
 			addRegistry: {
 				...AddRegistryActions.addRegistryState(),
@@ -30,12 +30,14 @@ export default class Layout extends Component {
 		};
 	}
 	componentDidUpdate(prevProps, prevState) {
-		ReactTooltip.rebuild()
+		ReactTooltip.hide();
+		ReactTooltip.rebuild();
 	}
 	getChildContext() {
 		return {
 			actions: ActionBinder([AddRegistryActions, AddRepoActions, RegistryActions], this),
-			state: this.state
+			state: this.state,
+			router: this.context.router
 		};
 	}
 	render() {
@@ -80,7 +82,17 @@ export default class Layout extends Component {
 	}
 }
 
+
+Layout.contextTypes = {
+	router: React.PropTypes.object
+};
+
 Layout.childContextTypes = {
 	actions: React.PropTypes.object,
-	state: React.PropTypes.object
+	state: React.PropTypes.object,
+	router: React.PropTypes.object
 };
+
+
+
+

@@ -1,12 +1,16 @@
 import React, {Component} from 'react'
 import ContentRow from './../components/ContentRow'
+import Loader from './../components/Loader'
 import Btn from './../components/Btn'
-import ErrorMsg from './../components/ErrorMsg'
+import Msg from './../components/Msg'
 
 export default class AddRegistry extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
+	}
+	componentWillUnmount() {
+		this.context.actions.resetAddRegistryState();	
 	}
 	inputClassName(selector){
 		let hasSelector = this.context.state.addRegistry.errorFields.includes(selector)
@@ -41,6 +45,13 @@ export default class AddRegistry extends Component {
 		let key = 'key';
 		let secret = 'secret';
 
+		let readOnly = {};
+
+		if(this.props.isEdit) {
+			readOnly['readOnly'] = 'readOnly';
+			readOnly['disabled'] = 'disabled';
+		}
+
 		return (
 			<div className="FlexColumn">
 				<label>
@@ -49,20 +60,22 @@ export default class AddRegistry extends Component {
 				<div className="FlexRow Row">
 					<div className="Flex1 Column">
 						<label className="small">
-							Key Name
+							Key Name {(this.props.isEdit) ? '( Read Only )' : null}
 						</label>
 						<input className={this.inputClassName(keyName)}
 							   value={this.context.state.addRegistry.newRegistry[keyName]}
 						       placeholder="Enter Key Name.."
-							   onChange={(e) => this.context.actions.updateNewRegistryField(keyName, e)} />
+							   onChange={(e) => this.context.actions.updateNewRegistryField(keyName, e)} 
+							   {...readOnly}/>
 					</div>
 					<div className="Flex1">
 						<label className="small">
-							Key Region
+							Key Region {(this.props.isEdit) ? '( Read Only )' : null}
 						</label>
 						<select className={this.inputClassName(region)}
 								value={this.context.state.addRegistry.newRegistry[region]}
-						        onChange={(e) => this.context.actions.updateNewRegistryField(region, e)}>
+						        onChange={(e) => this.context.actions.updateNewRegistryField(region, e)}
+								{...readOnly}>
 						   <option value="">Select Region...</option>
 						   <option value="us-west-1">us-west-1</option>
 						   <option value="us-west-2">us-west-2</option>
@@ -97,18 +110,35 @@ export default class AddRegistry extends Component {
 	renderErrorMsg(){
 		if(this.context.state.addRegistry.errorMsg) {
 			return (
-				<ErrorMsg
+				<Msg
 					text={this.context.state.addRegistry.errorMsg}
 				/>
 			);
 		}
 	}
+	renderSuccessMsg(){
+		if(this.context.state.addRegistry.success) {
+
+			let message = `Successfully ${(this.props.isEdit) ? 'updated' : 'added'} registry credentials`;
+
+			return (
+				<Msg text={message} 
+				     isSuccess={true}
+				     close={() => this.context.actions.clearAddRegistrySuccess()}/>
+			);
+		}
+	}
+	renderLoader(){
+		return (
+			<Loader />
+		);
+	}
 	renderAddButton(){
 		return (
 			<Btn onClick={() => this.context.actions.addRegistryRequest()}
-				 text="Add Registry"
+				 text={(this.props.isEdit) ? 'Save Registry' : 'Add Registry'}
 				 canClick={this.context.actions.canAddRegistry()}
-				 help="Clicking this button will add the specifed credentials to the monitor."/>
+				 help="Clicking this button will save the specifed credentials to the monitor."/>
 		);
 	}
 	renderAddRegistry(){
@@ -127,6 +157,18 @@ export default class AddRegistry extends Component {
                 icon:'icon icon-dis-blank',
                 renderBody: this.renderErrorMsg.bind(this),
                 condition: this.context.state.addRegistry.errorMsg
+            }]
+		}, {
+			columns: [{
+                icon:'icon icon-dis-blank',
+                renderBody: this.renderLoader.bind(this),
+                condition: this.context.state.addRegistry.XHR
+            }]
+		}, {
+			columns: [{
+                icon:'icon icon-dis-blank',
+                renderBody: this.renderSuccessMsg.bind(this),
+                condition: this.context.state.addRegistry.success
             }]
 		}, {
 			columns: [{
@@ -156,15 +198,18 @@ export default class AddRegistry extends Component {
 }
 
 AddRegistry.propTypes = {
-	standaloneMode: React.PropTypes.bool
+	standaloneMode: React.PropTypes.bool,
+	isEdit: React.PropTypes.bool
 };
 
 AddRegistry.childContextTypes = {
     actions: React.PropTypes.object,
-    state: React.PropTypes.object
+    state: React.PropTypes.object,
+    router: React.PropTypes.object
 };
 
 AddRegistry.contextTypes = {
     actions: React.PropTypes.object,
-    state: React.PropTypes.object
+    state: React.PropTypes.object,
+    router: React.PropTypes.object
 };

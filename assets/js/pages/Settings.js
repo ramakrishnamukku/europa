@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import Btn from './../components/Btn'
-import ErrorMsg from './../components/ErrorMsg'
 
 export default class Settings extends Component {
 	constructor(props) {

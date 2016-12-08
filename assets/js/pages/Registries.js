@@ -5,9 +5,8 @@ import Btn from './../components/Btn'
 import ContentRow from './../components/ContentRow'
 import RegistryProviderIcons from './../util/RegistryProviderIcons'
 import CenteredConfirm from './../components/CenteredConfirm'
-import ErrorMsg from './../components/ErrorMsg'
+import Msg from './../components/Msg'
 import Loader from './../components/Loader'
-
 
 export default class Registries extends Component {
 	constructor(props) {
@@ -16,6 +15,9 @@ export default class Registries extends Component {
 	}
 	componentDidMount() {
 		this.context.actions.listRegistries();
+	}
+	componentWillUnmount() {
+		this.context.actions.resetRegistryState();	
 	}
 	renderRegistries(){
 		if(this.context.state.registriesXHR) {
@@ -49,7 +51,7 @@ export default class Registries extends Component {
 					{reg.provider}
 				</span>
 				<span className="Key">
-				&nbsp;&ndash;&nbsp;{reg.description}
+				&nbsp;&ndash;&nbsp;{reg.name}
 				</span>
 				<span className="Region">
 					<span className="Label">
@@ -59,7 +61,8 @@ export default class Registries extends Component {
 				</span>
 				<span className="Pipe">|</span>
 				<span className="Actions">
-					<i className="icon icon-dis-edit" data-tip="Edit Credentials" data-for="ToolTipTop"/>
+					<i className="icon icon-dis-edit" data-tip="Edit Credentials" data-for="ToolTipTop"
+					   onClick={() => this.setRegistryForEdit(reg)}/>
 					<i className="icon icon-dis-trash" data-tip="Delete Credentials" data-for="ToolTipTop" 
 						onClick={() => this.context.actions.setRegistryForDelete(reg)}
 					/>
@@ -68,6 +71,10 @@ export default class Registries extends Component {
 				{this.renderConfirmDeleteRegistry(reg)}
 			</div>
 		);
+	}
+	setRegistryForEdit(reg){
+		this.context.actions.setRegistryForEdit(reg)
+		.then(() => this.context.router.push('/edit-registry'))
 	}
 	renderNoRegistries(){
 		return (
@@ -84,7 +91,7 @@ export default class Registries extends Component {
 			if(this.context.state.registry.deleteRegistryErrorMsg) {
 				return (
 					<div className="RowPadding">
-						<ErrorMsg text={this.context.state.registry.deleteRegistryErrorMsg} 
+						<Msg text={this.context.state.registry.deleteRegistryErrorMsg} 
 								  close={() => this.context.actions.setRegistryForDelete()}/>
 					</div>
 				)
@@ -116,7 +123,7 @@ export default class Registries extends Component {
 						{rLength}&nbsp;{(rLength == 1) ? 'Registry' : 'Registries'}
 					</h2>
 					<div className="FlexRow">
-						<div className="Flex1 Column">
+						<div className="Flex1">
 							<Link to="/new-registry">
 								<Btn text="Add Registry"
 									 onClick={ () => {} } />
@@ -134,10 +141,12 @@ export default class Registries extends Component {
 
 Registries.childContextTypes = {
     actions: React.PropTypes.object,
-    state: React.PropTypes.object
+    state: React.PropTypes.object,
+    router: React.PropTypes.object
 };
 
 Registries.contextTypes = {
     actions: React.PropTypes.object,
-    state: React.PropTypes.object
+    state: React.PropTypes.object,
+    router: React.PropTypes.object
 };

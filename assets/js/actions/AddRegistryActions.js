@@ -5,9 +5,12 @@ import Validate from './../util/Validate'
 
 export function addRegistryState() {
   return {
+    isEdit: false,
     errorMsg: '',
     errorFields: [],
     validateOnInput: false,
+    success: null,
+    XHR: false,
     newRegistry: {
       name: '',
       provider: '',
@@ -16,6 +19,12 @@ export function addRegistryState() {
       secret: ''
     },
   }
+}
+
+export function resetAddRegistryState(){
+  this.setState({
+    addRegistry: GA.modifyProperty(this.state.addRegistry, addRegistryState.call(this))
+  });
 }
 
 export function updateNewRegistryField(prop, e, eIsValue = false) {
@@ -36,27 +45,57 @@ export function addRegistryRequest() {
 
   return new Promise((resolve, reject) => {
     if (!isAddRegistryValid.call(this, true)) {
-       reject();
-       return;
+      reject();
+      return;
     }
 
-    RAjax.POST('SaveRegistryCreds', this.state.addRegistry.newRegistry)
-      .then((res) => {
-        resolve();
-        // this.setState({
-        //   addRegistry: GA.modifyProperty(this.state.addRegistry, addRegistryState())
-        // }, () => resolve());
+    this.setState({
+      addRegistry: GA.modifyProperty(this.state.addRegistry, {
+        XHR: true
       })
-      .catch((err) => {
-        let errorMsg = `There was an error adding your registry: ${err.error.message}`
-        this.setState({
-          addRegistry: GA.modifyProperty(this.state.addRegistry, {
-            errorMsg
-          })
-        }, () => reject());
-      });
+    }, () => {
+      RAjax.POST('SaveRegistryCreds', this.state.addRegistry.newRegistry)
+        .then((res) => {
+          this.setState({
+            addRegistry: GA.modifyProperty(this.state.addRegistry, {
+              success: true,
+              XHR: false
+            })
+          }, () => resolve());
+        })
+        .catch((err) => {
+          let errorMsg = `There was an error adding your registry: ${err.error.message}`
+          this.setState({
+            addRegistry: GA.modifyProperty(this.state.addRegistry, {
+              errorMsg,
+              success: false,
+              XHR: false
+            })
+          }, () => reject());
+        });
+    });
+
   });
 };
+
+export function setRegistryForEdit(reg) {
+  return new Promise((resolve, reject) => {
+    this.setState({
+      addRegistry: GA.modifyProperty(this.state.addRegistry, {
+        isEdit: true,
+        newRegistry: reg
+      })
+    }, () => resolve());
+  });
+}
+
+export function clearAddRegistrySuccess() {
+  this.setState({
+    addRegistry: GA.modifyProperty(this.state.addRegistry, {
+      success: null
+    })
+  });
+}
 
 export function canAddRegistry() {
   return this.state.addRegistry.errorMsg == '' && this.state.addRegistry.errorFields.length == 0;
@@ -67,7 +106,8 @@ function isAddRegistryValid(validateOnInput) {
     provider: 'Registry Provider',
     region: 'Region',
     key: 'Public Key',
-    secret: 'Secret Key'
+    secret: 'Secret Key',
+    name: 'Key Name'
   };
 
   let errorFields = Validate.call(this, this.state.addRegistry.newRegistry, required);

@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 import Btn from './../components/Btn'
-import ErrorMsg from './../components/ErrorMsg'
 
 export default class Repositories extends Component {
 	constructor(props) {
@@ -19,12 +18,6 @@ export default class Repositories extends Component {
 						<div className="Flex1 Column">
 							<Link to="/new-repository">
 								<Btn text="Add Repository"
-									 onClick={ () => {} } />
-							</Link>
-						</div>
-						<div className="Flex1">
-							<Link to="/new-registry">
-								<Btn text="Add Registry"
 									 onClick={ () => {} } />
 							</Link>
 						</div>
