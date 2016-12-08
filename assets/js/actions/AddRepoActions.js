@@ -8,6 +8,7 @@ export function addRepoState() {
     errorMsg: '',
     errorFields: [],
     validateOnInput: false,
+    newRepoCredsType: 'EXISTING',
     newRepo: {
     	repo: {
     		provider: '',
@@ -15,12 +16,18 @@ export function addRepoState() {
     		name: ''
     	},
     	notification: {
-    	    target: '',
-    	    type:  '',
-    		secret: ''
+  	    target: '',
+  	    type:  'webhoook',
+  		  secret: ''
     	}
     }
   }
+}
+
+export function resetAddRepoState(){
+  this.setState({
+    addRepo: GA.modifyProperty(this.state.addRepo, addRepoState.call(this))
+  })
 }
 
 export function updateNewRepoField(keyPath, e, eIsValue = false) {
@@ -36,6 +43,25 @@ export function updateNewRepoField(keyPath, e, eIsValue = false) {
     })
   });
 };
+
+export function setNewRepoCredsType(type){
+  this.setState({
+    addRepo: GA.modifyProperty(this.state.addRepo, {
+      newRepoCredsType: type
+    })
+  });
+}
+
+export function selectCredsForNewRepo(e){
+  let creds = JSON.parse(e.target.value);
+  
+  delete creds['created']
+  delete creds['secret']
+  delete creds['key']
+  delete creds['name']
+
+  updateNewRepoField.call(this, 'repo', creds, true);
+}
 
 export function addRepoRequest() {
   if (!isAddRepoValid.call(this, true)) return;

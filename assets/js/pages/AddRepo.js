@@ -3,7 +3,7 @@ import AddRegistry from './../components/AddRegistry'
 import ContentRow from './../components/ContentRow'
 import Btn from './../components/Btn'
 
-let dockerRepoKey = 'dockerImage'
+let dockerRepoNameKey = 'repo/name';
 let targetKey = "notification/target";
 let typeKey = "notification/type";
 let secretKey = "notification/secret";
@@ -12,6 +12,9 @@ export default class AddRepository extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
+	}
+	componentWillUnmount() {
+		this.context.actions.resetAddRepoState();
 	}
 	inputClassName(selector){
 		let hasSelector = this.context.state.addRepo.errorFields.includes(selector)
@@ -34,10 +37,10 @@ export default class AddRepository extends Component {
 				<label>
 					Docker Image Repository
 				</label>
-				<input className={this.inputClassName(dockerRepoKey)} 
+				<input className={this.inputClassName(dockerRepoNameKey)} 
 				       placeholder="Enter Docker Repository.."
-				       value={this.context.state.addRepo.newRepo[dockerRepoKey]}
-					   onChange={(e) => this.context.actions.updateNewRepoField(dockerRepoKey, e)} />
+				       value={this.context.state.addRepo.newRepo[dockerRepoNameKey]}
+					   onChange={(e) => this.context.actions.updateNewRepoField(dockerRepoNameKey, e)} />
 			</div>
 		);
 	}
@@ -83,9 +86,13 @@ export default class AddRepository extends Component {
 		);
 	}
 	addRepo(){
-		this.context.actions.addRegistryRequest()
+		if(this.context.state.addRepo.newRepoCredsType == 'NEW') {
+			this.context.actions.addRegistryRequest()
 			.then(this.context.actions.addRepoRequest)
 			.catch(() => console.error('Add Registry Errors -- Skipping add repo'))
+		} else {
+			this.context.actions.addRepoRequest();
+		}
 	}
 	renderAddRepository(){
 		let rows = [{

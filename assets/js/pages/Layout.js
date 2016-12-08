@@ -29,6 +29,9 @@ export default class Layout extends Component {
 			}
 		};
 	}
+	componentDidMount() {
+		RegistryActions.listRegistries.call(this)
+	}
 	componentDidUpdate(prevProps, prevState) {
 		ReactTooltip.hide();
 		ReactTooltip.rebuild();

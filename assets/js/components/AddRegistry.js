@@ -4,6 +4,12 @@ import Loader from './../components/Loader'
 import Btn from './../components/Btn'
 import Msg from './../components/Msg'
 
+let provider = 'provider';
+let keyName = 'name';
+let region = 'region';
+let key = 'key';
+let secret = 'secret';
+
 export default class AddRegistry extends Component {
 	constructor(props) {
 		super(props);
@@ -21,15 +27,21 @@ export default class AddRegistry extends Component {
 		}
 	}
 	renderSelectProvider(){
-		let provider = 'provider';
+		let readOnly = {};
+
+		if(this.props.isEdit) {
+			readOnly['readOnly'] = 'readOnly';
+			readOnly['disabled'] = 'disabled';
+		}
 		return (
 			<div className="FlexColumn">
 				<label>
-					Docker Registry Provider
+					Docker Registry Provider {(this.props.isEdit) ? '( Read Only )' : null}
 				</label>
 				<select className={this.inputClassName(provider)}
 						value={this.context.state.addRegistry.newRegistry[provider]}
-				        onChange={(e) => this.context.actions.updateNewRegistryField(provider, e)}>
+				        onChange={(e) => this.context.actions.updateNewRegistryField(provider, e)}
+		       			{...readOnly}>
 				   <option value="">Select Amazon Container Registry or Google Container Registry</option>
 				   <option value="GCR">Google Container Registry</option>
 				   <option value="ECR">Amazon Container Registry</option>
@@ -40,72 +52,134 @@ export default class AddRegistry extends Component {
 		);
 	}
 	renderRegistryCredentials() {
-		let keyName = 'name';
-		let region = 'region';
-		let key = 'key';
-		let secret = 'secret';
-
-		let readOnly = {};
-
-		if(this.props.isEdit) {
-			readOnly['readOnly'] = 'readOnly';
-			readOnly['disabled'] = 'disabled';
-		}
-
 		return (
 			<div className="FlexColumn">
 				<label>
 					Registry Credentials
 				</label>
-				<div className="FlexRow Row">
-					<div className="Flex1 Column">
-						<label className="small">
-							Key Name {(this.props.isEdit) ? '( Read Only )' : null}
-						</label>
-						<input className={this.inputClassName(keyName)}
-							   value={this.context.state.addRegistry.newRegistry[keyName]}
-						       placeholder="Enter Key Name.."
-							   onChange={(e) => this.context.actions.updateNewRegistryField(keyName, e)} 
-							   {...readOnly}/>
-					</div>
+				{this.renderChooseCredsTypes()}
+				{this.renderExistingRegistryCredentials()}
+				{this.renderNewRegistryCredentials()}
+			</div>
+		);
+	}
+	renderExistingRegistryCredentials() {
+		if(this.context.state.addRepo.newRepoCredsType == 'EXISTING' && !this.props.standaloneMode) {
+			return (
+				<div className="Flex1 FlexColumn">
+					<label className="small">
+						Select Credentials
+					</label>
 					<div className="Flex1">
-						<label className="small">
-							Key Region {(this.props.isEdit) ? '( Read Only )' : null}
-						</label>
-						<select className={this.inputClassName(region)}
-								value={this.context.state.addRegistry.newRegistry[region]}
-						        onChange={(e) => this.context.actions.updateNewRegistryField(region, e)}
-								{...readOnly}>
-						   <option value="">Select Region...</option>
-						   <option value="us-west-1">us-west-1</option>
-						   <option value="us-west-2">us-west-2</option>
-						   <option value="us-east-1">us-east-1</option>
-						   <option value="us-east-2">us-east-2</option>
+						<select className="BlueBorder FullWidth"
+						        onChange={(e) => this.context.actions.selectCredsForNewRepo(e)}>
+						    <option value="">Select Credentials</option>
+							{this.context.state.registries.map((reg, index) => {
+								return (
+									<option value={JSON.stringify(reg)} key={index}>{reg.provider} - {reg.name} - {reg.region}</option>
+								);
+							})}
 						</select>
 					</div>
 				</div>
-				<div className="FlexRow Row">
-					<div className="Flex1 Column">
-						<label className="small">
-							Public Key
-						</label>
-						<input className={this.inputClassName(key)}
-							   value={this.context.state.addRegistry.newRegistry[key]}
-							   placeholder="Enter Public Key.."
-							   onChange={(e) => this.context.actions.updateNewRegistryField(key, e)} />
+			);
+		}
+	}
+	renderNewRegistryCredentials(){
+		if(this.context.state.addRepo.newRepoCredsType == 'NEW' || this.props.standaloneMode) {
+
+			let readOnly = {};
+
+			if(this.props.isEdit) {
+				readOnly['readOnly'] = 'readOnly';
+				readOnly['disabled'] = 'disabled';
+			}
+
+			return (
+				<div className="FlexColumn">
+					<div className="FlexRow Row">
+						<div className="Flex1 Column">
+							<label className="small">
+								Key Name {(this.props.isEdit) ? '( Read Only )' : null}
+							</label>
+							<input className={this.inputClassName(keyName)}
+								   value={this.context.state.addRegistry.newRegistry[keyName]}
+							       placeholder="Enter Key Name.."
+								   onChange={(e) => this.context.actions.updateNewRegistryField(keyName, e)} 
+								   {...readOnly}/>
+						</div>
+						<div className="Flex1">
+							<label className="small">
+								Key Region {(this.props.isEdit) ? '( Read Only )' : null}
+							</label>
+							<select className={this.inputClassName(region)}
+									value={this.context.state.addRegistry.newRegistry[region]}
+							        onChange={(e) => this.context.actions.updateNewRegistryField(region, e)}
+									{...readOnly}>
+							   <option value="">Select Region...</option>
+							   <option value="us-west-1">us-west-1</option>
+							   <option value="us-west-2">us-west-2</option>
+							   <option value="us-east-1">us-east-1</option>
+							   <option value="us-east-2">us-east-2</option>
+							</select>
+						</div>
 					</div>
-					<div className="Flex1">
-						<label className="small">
-							Private Key
-						</label>
-						<input className={this.inputClassName(secret)}
-							   value={this.context.state.addRegistry.newRegistry[secret]}
-							   placeholder="Enter Private Key.."
-							   onChange={(e) => this.context.actions.updateNewRegistryField(secret, e)} />
+					<div className="FlexRow Row">
+						<div className="Flex1 Column">
+							<label className="small">
+								Public Key
+							</label>
+							<input className={this.inputClassName(key)}
+								   value={this.context.state.addRegistry.newRegistry[key]}
+								   placeholder="Enter Public Key.."
+								   onChange={(e) => this.context.actions.updateNewRegistryField(key, e)} />
+						</div>
+						<div className="Flex1">
+							<label className="small">
+								Private Key
+							</label>
+							<input className={this.inputClassName(secret)}
+								   value={this.context.state.addRegistry.newRegistry[secret]}
+								   placeholder="Enter Private Key.."
+								   onChange={(e) => this.context.actions.updateNewRegistryField(secret, e)} />
+						</div>
 					</div>
 				</div>
-			</div>
-		);
+			);
+		}
+	}
+	renderChooseCredsTypes(){
+		if(!this.props.standaloneMode) {
+
+			let isNew = this.context.state.addRepo.newRepoCredsType == 'NEW';
+			let activeClassName = 'icon icon-dis-radio-check';
+			let inActiveClassName = 'icon icon-dis-radio-uncheck';
+			let newClassName, existingClassName;
+
+			if(isNew) {
+				newClassName = activeClassName;
+				existingClassName = inActiveClassName
+			} else {
+				newClassName = inActiveClassName;
+				existingClassName =  activeClassName;
+			}
+
+			return (
+				<div className="FlexRow">
+					<div className="Flex1 FlexRow">
+						<div className="Flex1 FlexRow" onClick={() => this.context.actions.setNewRepoCredsType('EXISTING')}>
+							<i className={existingClassName}/>
+							<label>Existing Credentials</label>
+						</div>
+						<div className="Flex1 FlexRow" onClick={() => this.context.actions.setNewRepoCredsType('NEW')}>
+							<i className={newClassName}/>
+							<label>New Credentials</label>
+						</div>
+					</div>
+					<div className="Flex1"></div>
+				</div>
+			);
+		}
 	}
 	renderErrorMsg(){
 		if(this.context.state.addRegistry.errorMsg) {
