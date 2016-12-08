@@ -47,7 +47,6 @@ public class NotificationsDb
         return module;
     }
 
-
     private static final String getHashKey(RegistryProvider repoProvider, String region, String repoName)
     {
         return String.format("%s:%s:%s",
