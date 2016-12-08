@@ -34,8 +34,9 @@ public class ContainerRepoDb
         .put("hk", String.class,
              (item) -> getHashKey(item))
         .put("rk", String.class,
-             (item) -> getRangeKey(item.getProvider(), item.getRegion(), item.getName()))
+             (item) -> getRangeKey(item.getProvider(), item.getRegion(), item.getCredName(), item.getName()))
         .put("name", String.class, "name")
+        .put("cname", String.class, "credName")
         .put("region", String.class, "region")
         .put("rp", RegistryProvider.class, "provider");
         return module;
@@ -46,11 +47,12 @@ public class ContainerRepoDb
         return "1";
     }
 
-    private static final String getRangeKey(RegistryProvider provider, String region, String name)
+    private static final String getRangeKey(RegistryProvider provider, String region, String credName, String name)
     {
-        return String.format("%s:%s:%s",
+        return String.format("%s:%s:%s:%s",
                              provider.toString().toLowerCase(),
                              region.toLowerCase(),
+                             credName.toLowerCase(),
                              name.toLowerCase());
     }
 
@@ -78,10 +80,10 @@ public class ContainerRepoDb
         _main.putItem(repo);
     }
 
-    public void deleteRepo(RegistryProvider provider, String region, String name)
+    public void deleteRepo(RegistryProvider provider, String region, String credName, String name)
     {
         _main.deleteItem(getHashKey(null),
-                         getRangeKey(provider, region, name));
+                         getRangeKey(provider, region, credName, name));
     }
 
     public List<ContainerRepo> listRepos(PageIterator pageIterator)
@@ -107,9 +109,9 @@ public class ContainerRepoDb
         .list();
     }
 
-    public ContainerRepo getRepo(RegistryProvider provider, String region, String name)
+    public ContainerRepo getRepo(RegistryProvider provider, String region, String credName, String name)
     {
         return _main.getItem(getHashKey(null),
-                             getRangeKey(provider, region, name));
+                             getRangeKey(provider, region, credName, name));
     }
 }

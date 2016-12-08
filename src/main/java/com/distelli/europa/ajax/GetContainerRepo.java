@@ -42,7 +42,8 @@ public class GetContainerRepo implements AjaxHelper
                                                           RegistryProvider.class,
                                                           true); //throw if missing
         String region = ajaxRequest.getParam("region", true);
+        String credName = ajaxRequest.getParam("credName", true);
         String name = ajaxRequest.getParam("name", true);
-        return _db.getRepo(provider, region, name);
+        return _db.getRepo(provider, region, credName, name);
     }
 }

@@ -37,7 +37,7 @@ public class SaveContainerRepo implements AjaxHelper
         ContainerRepo repo = ajaxRequest.convertContent("/repo", ContainerRepo.class,
                                                        true); //throw if null
         //Validate that the fields we want are non-null
-        FieldValidator.validateNonNull(repo, "provider", "region", "name");
+        FieldValidator.validateNonNull(repo, "provider", "region", "credName", "name");
 
         Notification notification = ajaxRequest.convertContent("/notification", Notification.class,
                                                                true);
