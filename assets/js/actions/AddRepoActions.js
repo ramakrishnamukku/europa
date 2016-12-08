@@ -13,6 +13,7 @@ export function addRepoState() {
     	repo: {
     		provider: '',
     		region: '',
+        credName: '',
     		name: ''
     	},
     	notification: {
@@ -58,7 +59,9 @@ export function selectCredsForNewRepo(e){
   delete creds['created']
   delete creds['secret']
   delete creds['key']
-  delete creds['name']
+  
+  creds['credName'] = creds['name'];
+  delete creds[name];
 
   updateNewRepoField.call(this, 'repo', creds, true);
 }
