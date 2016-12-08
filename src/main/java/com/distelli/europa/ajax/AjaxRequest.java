@@ -23,6 +23,7 @@ public class AjaxRequest
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     static {
         OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        OBJECT_MAPPER.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
     }
 
     protected String operation = null;
@@ -51,26 +52,31 @@ public class AjaxRequest
 
     public <T> T convertContent(Class<T> clazz, boolean throwIfNull)
     {
-        if(this.content == null)
-            return null;
-
-        T contentObj = OBJECT_MAPPER.convertValue(this.content, clazz);
-        if(contentObj != null)
-            return contentObj;
-        throw(new AjaxClientException(JsonError.BadContent));
+        if(this.content != null)
+        {
+            T contentObj = OBJECT_MAPPER.convertValue(this.content, clazz);
+            if(contentObj != null)
+                return contentObj;
+        }
+        if(throwIfNull)
+            throw(new AjaxClientException(JsonError.BadContent));
+        return null;
     }
 
     public <T> T convertContent(String jsonPointer, Class<T> clazz, boolean throwIfNull)
     {
-        if(this.content == null)
-            return null;
-        JsonNode dataNode = this.content.at(jsonPointer);
-        if(dataNode.isMissingNode())
-            return null;
-        T contentObj = OBJECT_MAPPER.convertValue(dataNode, clazz);
-        if(contentObj != null)
-            return contentObj;
-        throw(new AjaxClientException(JsonError.BadContent));
+        T contentObj = null;
+        if(this.content != null)
+        {
+            JsonNode dataNode = this.content.at(jsonPointer);
+            if(!dataNode.isMissingNode())
+                contentObj= OBJECT_MAPPER.convertValue(dataNode, clazz);
+            if(contentObj != null)
+                return contentObj;
+        }
+        if(throwIfNull)
+            throw(new AjaxClientException(JsonError.BadContent));
+        return null;
     }
 
     public void setOperation(String operation)

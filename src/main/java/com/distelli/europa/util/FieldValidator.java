@@ -63,4 +63,26 @@ public class FieldValidator
                                       JsonError.Codes.BadContent,
                                       400));
     }
+
+    public static void validateEquals(Object obj, String field, Object expectedValue)
+    {
+        Object value = getValueForField(obj, field);
+        if(value == null)
+            throw(new AjaxClientException("Missing value '"+value+"' for field '"+field+"' "+
+                                          "in content. Value must be: "+expectedValue,
+                                          JsonError.Codes.BadContent,
+                                          400));
+        Class<?> expectedClass = expectedValue.getClass();
+        Class<?> actualClass = value.getClass();
+        if(!actualClass.equals(expectedClass))
+            throw(new AjaxClientException("Invalid value '"+value+"' for field '"+field+"' "+
+                                          "in content. Value must be: "+expectedValue,
+                                          JsonError.Codes.BadContent,
+                                          400));
+        if(!value.equals(expectedValue))
+            throw(new AjaxClientException("Invalid value '"+value+"' for field '"+field+"' "+
+                                          "in content. Value must be: "+expectedValue,
+                                          JsonError.Codes.BadContent,
+                                          400));
+    }
 }
