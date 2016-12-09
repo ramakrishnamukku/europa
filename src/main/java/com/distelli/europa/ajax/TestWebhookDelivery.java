@@ -34,14 +34,11 @@ public class TestWebhookDelivery implements AjaxHelper
         ContainerRepo repo = ajaxRequest.convertContent("/repo", ContainerRepo.class,
                                                        true); //throw if null
         //Validate that the fields we want are non-null
-        FieldValidator.validateNonNull(repo, "provider", "region", "name");
+        FieldValidator.validateNonNull(repo, "credId", "name");
 
         Notification notification = ajaxRequest.convertContent("/notification", Notification.class,
                                                                true);
         FieldValidator.validateNonNull(notification, "type", "target");
-        //NotificationType type = notification.getType();
-        // if(type != NotificationType.WEBHOOK)
-        //     throw(new AjaxClientException("Invalid value for field 'type' in notification. Valid values: [WEBHOOK]"));
         FieldValidator.validateEquals(notification, "type", NotificationType.WEBHOOK);
         Random rand = new Random(System.currentTimeMillis());
         int random = rand.nextInt(10);

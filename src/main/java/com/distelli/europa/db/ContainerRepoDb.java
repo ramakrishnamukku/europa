@@ -41,6 +41,7 @@ public class ContainerRepoDb
         .put("sidx", String.class,
              (item) -> getSecondaryKey(item.getProvider(), item.getRegion(), item.getName()))
         .put("prov", RegistryProvider.class, "provider")
+        .put("region", String.class, "region")
         .put("name", String.class, "name")
         .put("cid", String.class, "credId");
         return module;
