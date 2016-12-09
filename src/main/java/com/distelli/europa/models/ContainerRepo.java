@@ -8,9 +8,9 @@ import lombok.*;
 @AllArgsConstructor
 public class ContainerRepo
 {
-    private String id = null;
-    private String name = null;
-    private String credId = null;
-    private String region = null;
-    private RegistryProvider provider = null;
+    protected String id = null;
+    protected String name = null;
+    protected String credId = null;
+    protected String region = null;
+    protected RegistryProvider provider = null;
 }

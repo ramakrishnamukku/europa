@@ -40,7 +40,7 @@ public class ContainerRepoDb
              (item) -> item.getId().toLowerCase())
         .put("sidx", String.class,
              (item) -> getSecondaryKey(item.getProvider(), item.getRegion(), item.getName()))
-        .put("prov", String.class, "provider")
+        .put("prov", RegistryProvider.class, "provider")
         .put("name", String.class, "name")
         .put("cid", String.class, "credId");
         return module;
