@@ -3,6 +3,7 @@ import ContentRow from './../components/ContentRow'
 import Loader from './../components/Loader'
 import Btn from './../components/Btn'
 import Msg from './../components/Msg'
+import RadioButton from './../components/RadioButton'
 
 let provider = 'provider';
 let keyName = 'name';
@@ -34,8 +35,8 @@ export default class AddRegistry extends Component {
 			readOnly['disabled'] = 'disabled';
 		}
 		return (
-			<div className="FlexColumn">
-				<label>
+			<div className="Flex1">
+				<label className="small">
 					Docker Registry Provider {(this.props.isEdit) ? '( Read Only )' : null}
 				</label>
 				<select className={this.inputClassName(provider)}
@@ -97,6 +98,9 @@ export default class AddRegistry extends Component {
 
 			return (
 				<div className="FlexColumn">
+				 	<div className="FlexRow Row"> 
+						{this.renderSelectProvider()}
+					</div>
 					<div className="FlexRow Row">
 						<div className="Flex1 Column">
 							<label className="small">
@@ -150,33 +154,18 @@ export default class AddRegistry extends Component {
 	}
 	renderChooseCredsTypes(){
 		if(!this.props.standaloneMode) {
-
-			let isNew = this.context.state.addRepo.newRepoCredsType == 'NEW';
-			let activeClassName = 'icon icon-dis-radio-check';
-			let inActiveClassName = 'icon icon-dis-radio-uncheck';
-			let newClassName, existingClassName;
-
-			if(isNew) {
-				newClassName = activeClassName;
-				existingClassName = inActiveClassName
-			} else {
-				newClassName = inActiveClassName;
-				existingClassName =  activeClassName;
-			}
-
 			return (
-				<div className="FlexRow">
-					<div className="Flex1 FlexRow">
-						<div className="Flex1 FlexRow" onClick={() => this.context.actions.setNewRepoCredsType('EXISTING')}>
-							<i className={existingClassName}/>
-							<label>Existing Credentials</label>
-						</div>
-						<div className="Flex1 FlexRow" onClick={() => this.context.actions.setNewRepoCredsType('NEW')}>
-							<i className={newClassName}/>
-							<label>New Credentials</label>
-						</div>
+				<div className="FlexRow RowPadding">
+					<div className="Column">
+						<RadioButton onClick={() => this.context.actions.setNewRepoCredsType('EXISTING')} 
+									 isChecked={this.context.state.addRepo.newRepoCredsType == 'EXISTING'}
+									 label="Existing Credentials" />
 					</div>
-					<div className="Flex1"></div>
+					<div className="Column">
+						<RadioButton onClick={() => this.context.actions.setNewRepoCredsType('NEW')} 
+							  		 isChecked={this.context.state.addRepo.newRepoCredsType == 'NEW'}
+									 label="New Credentials" />
+					</div>
 				</div>
 			);
 		}
@@ -217,11 +206,6 @@ export default class AddRegistry extends Component {
 	}
 	renderAddRegistry(){
 		let rows = [{
-			columns: [{
-                icon:'icon icon-dis-docker',
-                renderBody: this.renderSelectProvider.bind(this)
-            }]
-		}, {
 			columns: [{
                 icon:'icon icon-dis-credential',
                 renderBody: this.renderRegistryCredentials.bind(this)

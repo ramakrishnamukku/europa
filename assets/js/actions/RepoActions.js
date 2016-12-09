@@ -15,9 +15,7 @@ export function addRepoState() {
     showNotificationTestResults: false,
     newRepo: {
       repo: {
-        provider: '',
-        region: '',
-        credName: '',
+        credId: '',
         name: ''
       },
       notification: {
@@ -54,8 +52,6 @@ export function listRepos() {
   });
 }
 
-
-
 export function updateNewRepoField(keyPath, e, eIsValue = false) {
   let value = (eIsValue) ? e : e.target.value;
 
@@ -81,19 +77,12 @@ export function setNewRepoCredsType(type) {
 export function selectCredsForNewRepo(e) {
   let creds = JSON.parse(e.target.value);
 
-  delete creds['created']
-  delete creds['secret']
-  delete creds['key']
-
-  creds['credName'] = creds['name'];
-  delete creds[name];
-
-  updateNewRepoField.call(this, 'repo', creds, true);
+  updateNewRepoField.call(this, 'repo', {credId: creds.id}, true);
 }
 
 
 export function testNotification(){
-  RAjax.POST('TestWebhookDelivery', this.state.addRepo.newRepo)
+  RAjax.POST('TestWebhookDelivery', {notification: this.state.addRepo.newRepo.notification})
   .then((res) => {
     this.setState({
       addRepo: GA.modifyProperty(this.state.addRepo, {
@@ -107,7 +96,7 @@ export function testNotification(){
   });
 }
 
-export function toggleShowNotification(){
+export function toggleShowNotificationTestResults(){
   this.setState({
     addRepo: GA.modifyProperty(this.state.addRepo, {
       showNotificationTestResults: !this.state.addRepo.showNotificationTestResults
@@ -158,12 +147,11 @@ export function canAddRepo() {
 }
 
 function isAddRepoValid(validateOnInput) {
+
   let required = {
     repo: {
-      provider: 'Repo Provider',
-      region: 'Region',
-      name: 'Docker Image Repository',
-      credName: 'Credentials'
+      credId: 'Registry Provider',
+      name: 'Credentials'
     },
     notification: {
       target: 'Webhook Target',

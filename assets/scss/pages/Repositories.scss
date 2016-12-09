@@ -1,73 +1,72 @@
-.NotificationTestStatusContainer {
-    .NotificationTestActions {
+.NotificationTestActions {
+    display: flex;
+    flex-direction: row;
+    margin-left: 28px;
+
+    .TestAction {
+        flex: 1;
         display: flex;
+        color: $light-blue;
+        font-size: 1.1875rem;
+        font-weight: 300;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    @mixin StatusColor($color) {
+        color: $color;
+
+        * {
+           color: $color; 
+        }
+    }
+
+    .Status {
+        @extend .TestAction;
+
         flex-direction: row;
-        width: 100%;
+        color: #FFFFFF;
 
-        .TestAction {
-            flex: 1;
-            display: flex;
-            background-color: #FFFFFF;
-            color: $light-blue;
-            font-size: 1.1875rem;
-            font-weight: 300;
-            justify-content: center;
-            align-items: center;
-            height: 55px;
-        }
-
-        .Status {
-            @extend .TestAction;
-            flex-direction: row;
+        i {
             color: #FFFFFF;
-
-            i {
-                color: #FFFFFF;
-                font-size: 1.6rem;
-                margin-right: 14px;
-
-
-            }
-
-
-            span.StatusText {
-                font-weight: 600;
-            }
-
-            span.Label {
-                font-weight: 300;
-            }
-
-            span.StatusCode {
-                font-weight: 600;
-            }
-
-
+            font-size: 1.6rem;
+            margin-right: 14px;
         }
 
-        .Status.Success {
-            background-color: $green;
+        span.StatusText {
+            font-weight: 600;
         }
 
-        .Status.Error {
-            background-color: $red;
+        span.Label {
+            font-weight: 300;
         }
 
-        .Status.Warning {
-            background-color: $yellow;
+        span.StatusCode {
+            font-weight: 600;
         }
+    }
 
-        .Status.InActive{
-            background-color: $grey;
-        }
+    .Status.Success {
+        @include StatusColor($green);
+    }
 
+    .Status.Error {
+        @include StatusColor($red);
+    }
 
-        .ToggleDetails {
-            @extend .TestAction;
+    .Status.Warning {
+        @include StatusColor($yellow);
+    }
 
-            &:hover {
-                cursor: pointer;
-            }
+    .Status.InActive {
+        @include StatusColor($grey);   
+    }
+
+    .ToggleDetails {
+        @extend .TestAction;
+
+        &:hover {
+            cursor: pointer;
         }
     }
 }

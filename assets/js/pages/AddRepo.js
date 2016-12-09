@@ -5,6 +5,7 @@ import Btn from './../components/Btn'
 import Msg from './../components/Msg'
 import Loader from './../components/Loader'
 import WebhookData from './../components/WebhookData'
+import isEmpty from './../util/IsEmpty'
 
 let dockerRepoNameKey = 'repo/name';
 let targetKey = "notification/target";
@@ -72,17 +73,42 @@ export default class AddRepository extends Component {
 			</div>
 		);
 	}
-	renderTestWebhookButton(){
+	renderTestNotification(){
+		let webhookData = this.context.state.addRepo.testNotification;
+		
 		return (
-			<Btn onClick={() => this.context.actions.testNotification()}
-				 text="Test Webhook"
-				 canClick={true}
-				 help="Clicking this button will send a payload to the specified URL."/>
+			<div className="FlexColumn">
+				<div className="FlexRow">
+					<Btn onClick={() => this.context.actions.testNotification()}
+						 text="Test Webhook"
+						 canClick={true}/>
+					 
+					{this.renderTestNotificationStatus(webhookData)}
+					{this.renderHideShowWebhookData()}
+				</div>
+				<div className="FlexRow">
+					{this.renderWebhookData(webhookData)}
+				</div>
+			</div>
 		);
 	}
-	renderNotificationTestStatus(){
-		let test = this.context.state.addRepo.testNotification;
-		let statusCode = (test.response) ? test.response.httpStatusCode : null;
+	renderHideShowWebhookData(){
+		if(!isEmpty(this.context.state.addRepo.testNotification)) {
+
+			let buttonText = (this.context.state.addRepo.showNotificationTestResults) ? 'Hide Webhook Content' : 'Show Webhook Content'
+			
+			return (
+				<div className="FlexRow Flex1 AlignCenter FlexEndJustify">
+					<div className="ThickBlueText" onClick={() => this.context.actions.toggleShowNotificationTestResults()}>
+						{buttonText}
+					</div>
+				</div>
+			);
+		}
+	}
+	renderTestNotificationStatus(webhookData){
+		
+		let statusCode = (webhookData.response) ? webhookData.response.httpStatusCode : null;
 
 		let icon = 'icon icon-dis-blank';
 		let statusText = "See Test Results Here";
@@ -120,22 +146,18 @@ export default class AddRepository extends Component {
 		className = "Status " + className;
 
 		return (
-			<div className="NotificationTestStatusContainer">
-				<div className="NotificationTestActions">
-					<div className={className}>
-						<i className={icon}/>
-						<span className="StatusText">{statusText}</span>
-						<span className="Label">&nbsp;{(statusCode )? '- Response Code:' : null}&nbsp;</span>
-						<span className="StatusCode">{statusCode}</span>
-					</div>
-					<div className="ToggleDetails"> Show Notification Test Details </div>
+			<div className="NotificationTestActions">
+				<div className={className}>
+					<i className={icon}/>
+					<span className="StatusText">{statusText}</span>
+					<span className="Label">&nbsp;{(statusCode )? '- Response Code:' : null}&nbsp;</span>
+					<span className="StatusCode">{statusCode}</span>
 				</div>
-				{this.renderWebhookData(test)}
 			</div>
 		);
 	}
 	renderWebhookData(webhookData){
-		if(webhookData) {
+		if(this.context.state.addRepo.showNotificationTestResults) {
 			return (
 				<WebhookData webhookData={webhookData}/>
 			)
@@ -169,12 +191,15 @@ export default class AddRepository extends Component {
 	}
 	renderAddRepoButton(){
 		let canAdd = this.context.actions.canAddRepo();
+
 		return (
-			<Btn className="GradientBlueGreenButton"
-				 onClick={() => this.addRepo()}
-				 text="Add Repository"
-				 canClick={canAdd}
-				 />
+			<div className="FlexRow JustifyCenter RowPadding">
+				<Btn className="LargeBlueButton"
+					 onClick={() => this.addRepo()}
+					 text="Add Repository"
+					 canClick={canAdd}
+					 />
+			</div>
 		);
 	}
 	addRepo(){
@@ -200,7 +225,7 @@ export default class AddRepository extends Component {
 		}, {
 			columns: [{
                 icon:'icon icon-dis-blank',
-                renderBody: this.renderTestWebhookButton.bind(this)
+                renderBody: this.renderTestNotification.bind(this)
             }]
 		}, {
 			columns: [{
@@ -219,11 +244,6 @@ export default class AddRepository extends Component {
                 icon:'icon icon-dis-blank',
                 renderBody: this.renderSuccessMsg.bind(this),
                 condition: this.context.state.addRepo.success
-            }]
-		}, {
-			columns: [{
-                icon:'icon icon-dis-blank',
-                renderBody: this.renderNotificationTestStatus.bind(this),
             }]
 		}, {
 			columns: [{

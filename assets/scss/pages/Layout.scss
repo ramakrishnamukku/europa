@@ -105,6 +105,30 @@ nav {
     }
 }
 
+
+.LargeBlueButton {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    height: 45px;
+    background-color: $light-blue;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    font-weight: 300;
+    font-size: 1.4rem;
+    width: 50%;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    &:active {
+        background-color: darken($light-blue, 5%);
+        top: 1px;
+    }
+}
+
 .NoContent {
     display: flex;
     flex-direction: column;
@@ -152,12 +176,34 @@ nav {
     align-items: center;
 }
 
+.JustifyCenter {
+    justify-content: center;
+}
+
 .FlexEnd {
     align-items: flex-end;
 }
 
+.FlexEndJustify {
+    justify-content: flex-end;
+}
+
 .SpaceBetween {
     justify-content: space-between;
+}
+
+.RadioButton {
+    justify-content: center;
+    align-items: center;
+    
+    &:hover {
+        cursor: pointer;
+    }
+
+    i {
+        margin-right: 5px;
+    }
+
 }
 
 .PageLoader {
@@ -167,6 +213,18 @@ nav {
     justify-content: center;
     align-items: center;
     height: 600px;
+}
+
+
+.ThickBlueText {
+    color: $light-blue;
+    font-weight: 900;
+    transition: all 0.3s;
+
+    &:hover {
+        cursor: pointer;
+        color: darken($light-blue, 5%);
+    }
 }
 
 i {

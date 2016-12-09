@@ -61,7 +61,7 @@ export function addRegistryRequest() {
               success: true,
               XHR: false
             })
-          }, () => resolve());
+          }, () => resolve(res.id));
         })
         .catch((err) => {
           let errorMsg = `There was an error adding your registry: ${err.error.message}`

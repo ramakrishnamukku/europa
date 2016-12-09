@@ -1,0 +1,55 @@
+.WebhookData {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: #FFFFFF;
+    width: 100%;
+    margin-top: 14px;
+
+    .Controls {
+        padding: 14px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        border-bottom: solid 1px #BCBEC0;
+
+        .Title {
+            display: flex;
+            align-content: center;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .ChooseType {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .Redeliver {
+            display: flex;
+            align-content: center;
+            align-items: center;
+            justify-content: flex-end;
+        }
+    }
+
+    .Data {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        background-color: #FFFFFF;
+        padding: 14px;
+
+        .Title {
+            font-size: 0.8rem;
+            color: $green;
+            font-weight: 400;
+        }
+
+        .DataHeaders {}
+
+        .DataBody {}
+    }
+}
