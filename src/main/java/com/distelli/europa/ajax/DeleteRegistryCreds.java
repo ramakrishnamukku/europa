@@ -35,12 +35,9 @@ public class DeleteRegistryCreds implements AjaxHelper
     */
     public Object get(AjaxRequest ajaxRequest)
     {
-        RegistryProvider provider = ajaxRequest.getAsEnum("provider",
-                                                          RegistryProvider.class,
-                                                          true); //throw if missing
-        String region = ajaxRequest.getParam("region", true);
-        String name = ajaxRequest.getParam("name", true);
-        _db.deleteCred(provider, region, name);
+        String id = ajaxRequest.getParam("id",
+                                         true); //throw if missing
+        _db.deleteCred(id);
         return JsonSuccess.Success;
     }
 }

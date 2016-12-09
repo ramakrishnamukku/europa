@@ -3,6 +3,9 @@ package com.distelli.europa.models;
 import lombok.*;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Notification
 {
     protected String id = null;
@@ -12,10 +15,4 @@ public class Notification
     protected String secret = null;
     protected String target = null;
     protected NotificationType type = null;
-
-    @Builder
-    public Notification()
-    {
-
-    }
 }
