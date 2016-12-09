@@ -16,7 +16,9 @@ import com.distelli.persistence.PageIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.distelli.jackson.transform.TransformModule;
 
+import com.distelli.europa.ajax.*;
 import com.distelli.europa.models.*;
+import com.distelli.europa.webserver.*;
 import org.apache.log4j.Logger;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
@@ -27,18 +29,20 @@ public class ContainerRepoDb
     private static final Logger log = Logger.getLogger(ContainerRepoDb.class);
 
     private Index<ContainerRepo> _main;
+    private Index<ContainerRepo> _secondaryIndex;
 
     private static final ObjectMapper om = new ObjectMapper();
     private static TransformModule createTransforms(TransformModule module) {
         module.createTransform(ContainerRepo.class)
         .put("hk", String.class,
              (item) -> getHashKey(item))
-        .put("rk", String.class,
-             (item) -> getRangeKey(item.getProvider(), item.getRegion(), item.getCredName(), item.getName()))
+        .put("id", String.class,
+             (item) -> item.getId().toLowerCase())
+        .put("sidx", String.class,
+             (item) -> getSecondaryKey(item.getProvider(), item.getRegion(), item.getName()))
+        .put("prov", String.class, "provider")
         .put("name", String.class, "name")
-        .put("cname", String.class, "credName")
-        .put("region", String.class, "region")
-        .put("rp", RegistryProvider.class, "provider");
+        .put("cid", String.class, "credId");
         return module;
     }
 
@@ -47,12 +51,11 @@ public class ContainerRepoDb
         return "1";
     }
 
-    private static final String getRangeKey(RegistryProvider provider, String region, String credName, String name)
+    private static final String getSecondaryKey(RegistryProvider provider, String region, String name)
     {
         return String.format("%s:%s:%s:%s",
                              provider.toString().toLowerCase(),
                              region.toLowerCase(),
-                             credName.toLowerCase(),
                              name.toLowerCase());
     }
 
@@ -61,11 +64,20 @@ public class ContainerRepoDb
         om.registerModule(createTransforms(new TransformModule()));
         _main = indexFactory.create(ContainerRepo.class)
         .withTableName("repos")
-        .withNoEncrypt("hk", "rk")
+        .withNoEncrypt("hk", "id", "sidx")
         .withHashKeyName("hk")
-        .withRangeKeyName("rk")
+        .withRangeKeyName("id")
         .withConvertValue(om::convertValue)
-        .withConvertMarker(convertMarkerFactory.create("hk", "rk"))
+        .withConvertMarker(convertMarkerFactory.create("hk", "id"))
+        .build();
+
+        _main = indexFactory.create(ContainerRepo.class)
+        .withIndexName("repos", "provider-index")
+        .withNoEncrypt("hk", "id", "sidx")
+        .withHashKeyName("hk")
+        .withRangeKeyName("sidx")
+        .withConvertValue(om::convertValue)
+        .withConvertMarker(convertMarkerFactory.create("hk", "sidx"))
         .build();
     }
 
@@ -73,17 +85,20 @@ public class ContainerRepoDb
     {
         String region = repo.getRegion();
         if(region == null || region.contains(":"))
-            throw(new IllegalArgumentException("Invalid Region "+region+" in Container Repo"));
+            throw(new AjaxClientException("Invalid Region "+region+" in Container Repo", JsonError.Codes.BadContent, 400));
         String name = repo.getName();
         if(name == null || name.contains(":"))
-            throw(new IllegalArgumentException("Invalid Name "+name+" in Container Repo"));
+            throw(new AjaxClientException("Invalid Name "+name+" in Container Repo", JsonError.Codes.BadContent, 400));
+        String id = repo.getId();
+        if(id == null)
+            throw(new IllegalArgumentException("Invalid id "+id+" in container repo"));
         _main.putItem(repo);
     }
 
-    public void deleteRepo(RegistryProvider provider, String region, String credName, String name)
+    public void deleteRepo(String id)
     {
         _main.deleteItem(getHashKey(null),
-                         getRangeKey(provider, region, credName, name));
+                         id.toLowerCase());
     }
 
     public List<ContainerRepo> listRepos(PageIterator pageIterator)
@@ -94,7 +109,7 @@ public class ContainerRepoDb
     public List<ContainerRepo> listRepos(RegistryProvider provider, PageIterator pageIterator)
     {
         String rangeKey = String.format("%s:", provider.toString().toLowerCase());
-        return _main.queryItems(getHashKey(null), pageIterator)
+        return _secondaryIndex.queryItems(getHashKey(null), pageIterator)
         .beginsWith(rangeKey)
         .list();
     }
@@ -109,9 +124,9 @@ public class ContainerRepoDb
         .list();
     }
 
-    public ContainerRepo getRepo(RegistryProvider provider, String region, String credName, String name)
+    public ContainerRepo getRepo(String id)
     {
         return _main.getItem(getHashKey(null),
-                             getRangeKey(provider, region, credName, name));
+                             id.toLowerCase());
     }
 }

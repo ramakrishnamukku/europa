@@ -8,6 +8,7 @@
 */
 package com.distelli.europa.ajax;
 
+import java.util.UUID;
 import org.apache.log4j.Logger;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
@@ -23,7 +24,9 @@ public class SaveContainerRepo implements AjaxHelper
     private static final Logger log = Logger.getLogger(SaveContainerRepo.class);
 
     @Inject
-    private ContainerRepoDb _db;
+    private RegistryCredsDb _credsDb;
+    @Inject
+    private ContainerRepoDb _reposDb;
     @Inject
     private NotificationsDb _notificationDb;
 
@@ -37,13 +40,20 @@ public class SaveContainerRepo implements AjaxHelper
         ContainerRepo repo = ajaxRequest.convertContent("/repo", ContainerRepo.class,
                                                        true); //throw if null
         //Validate that the fields we want are non-null
-        FieldValidator.validateNonNull(repo, "provider", "region", "credName", "name");
+        FieldValidator.validateNonNull(repo, "credId", "name");
+        //Now get the cred from the credId
+        RegistryCred cred = _credsDb.getCred(repo.getCredId());
+        if(cred == null)
+            throw(new AjaxClientException("Invalid Registry Cred: "+repo.getCredId(), JsonError.Codes.BadContent, 400));
+        repo.setProvider(cred.getProvider());
+        repo.setRegion(cred.getRegion());
+        repo.setId(UUID.randomUUID().toString());
 
         Notification notification = ajaxRequest.convertContent("/notification", Notification.class,
                                                                true);
         FieldValidator.validateNonNull(notification, "type", "target");
         //save the repo in the db
-        _db.save(repo);
+        _reposDb.save(repo);
         notification.setRepoProvider(repo.getProvider());
         notification.setRegion(repo.getRegion());
         notification.setRepoName(repo.getName());

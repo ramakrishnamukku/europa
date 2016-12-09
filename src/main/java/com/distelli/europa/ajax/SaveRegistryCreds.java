@@ -8,6 +8,7 @@
 */
 package com.distelli.europa.ajax;
 
+import java.util.UUID;
 import org.apache.log4j.Logger;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
@@ -41,8 +42,10 @@ public class SaveRegistryCreds implements AjaxHelper
         FieldValidator.validateNonNull(cred, "provider", "region", "key", "secret");
         FieldValidator.validateMatch(cred, "name", registryCredNamePattern);
         cred.setCreated(System.currentTimeMillis());
+        String id = UUID.randomUUID().toString();
+        cred.setId(id);
         //save in the db
         _db.save(cred);
-        return JsonSuccess.Success;
+        return id;
     }
 }

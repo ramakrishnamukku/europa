@@ -29,14 +29,18 @@ public class RegistryCredsDb
     private static final Logger log = Logger.getLogger(RegistryCredsDb.class);
 
     private Index<RegistryCred> _main;
+    private Index<RegistryCred> _secondaryIndex;
 
     private static final ObjectMapper om = new ObjectMapper();
     private static TransformModule createTransforms(TransformModule module) {
         module.createTransform(RegistryCred.class)
         .put("hk", String.class,
              (item) -> getHashKey(item))
-        .put("rk", String.class,
-             (item) -> getRangeKey(item.getProvider(), item.getRegion(), item.getName()))
+        .put("id", String.class, "id")
+        .put("sidx", String.class,
+             (item) -> getSecondaryRangeKey(item.getProvider(),
+                                            item.getRegion(),
+                                            item.getName()))
         .put("ctime", Long.class, "created")
         .put("kid", String.class, "key")
         .put("sec", String.class, "secret")
@@ -52,11 +56,20 @@ public class RegistryCredsDb
         om.registerModule(createTransforms(new TransformModule()));
         _main = indexFactory.create(RegistryCred.class)
         .withTableName("creds")
-        .withNoEncrypt("hk", "rk")
+        .withNoEncrypt("hk", "id", "pidx")
         .withHashKeyName("hk")
-        .withRangeKeyName("rk")
+        .withRangeKeyName("id")
         .withConvertValue(om::convertValue)
         .withConvertMarker(convertMarkerFactory.create("hk", "rk"))
+        .build();
+
+        _secondaryIndex = indexFactory.create(RegistryCred.class)
+        .withIndexName("creds", "provider-name")
+        .withNoEncrypt("hk", "id", "sidx")
+        .withHashKeyName("hk")
+        .withRangeKeyName("sidx")
+        .withConvertValue(om::convertValue)
+        .withConvertMarker(convertMarkerFactory.create("hk", "sidx"))
         .build();
     }
 
@@ -65,7 +78,7 @@ public class RegistryCredsDb
         return "1";
     }
 
-    private static final String getRangeKey(RegistryProvider provider, String region, String name)
+    private static final String getSecondaryRangeKey(RegistryProvider provider, String region, String name)
     {
         return String.format("%s:%s:%s",
                              provider.toString().toLowerCase(),
@@ -81,6 +94,9 @@ public class RegistryCredsDb
             throw(new AjaxClientException("Invalid Region "+region+" in Registry Cred", JsonError.Codes.BadContent, 400));
         if(name == null || name.contains(":"))
             throw(new AjaxClientException("Invalid Name "+name+" in Registry Cred", JsonError.Codes.BadContent, 400));
+        String id = cred.getId();
+        if(id == null)
+            throw(new IllegalArgumentException("Invalid id "+id+" in Registry Cred"));
         _main.putItem(cred);
     }
 
@@ -92,20 +108,26 @@ public class RegistryCredsDb
     public List<RegistryCred> listCredsForProvider(RegistryProvider provider, PageIterator pageIterator)
     {
         String rangeKey = String.format("%s:", provider.toString().toLowerCase());
-        return _main.queryItems(getHashKey(null), pageIterator)
+        return _secondaryIndex.queryItems(getHashKey(null), pageIterator)
         .beginsWith(rangeKey)
         .list();
     }
 
-    public RegistryCred getCred(RegistryProvider provider, String region, String name)
+    public RegistryCred getCred(String id)
     {
         return _main.getItem(getHashKey(null),
-                             getRangeKey(provider, region, name));
+                             id.toLowerCase());
     }
 
-    public void deleteCred(RegistryProvider provider, String region, String name)
+    public RegistryCred getCred(RegistryProvider provider, String region, String name)
+    {
+        return _secondaryIndex.getItem(getHashKey(null),
+                                       getSecondaryRangeKey(provider, region, name));
+    }
+
+    public void deleteCred(String id)
     {
         _main.deleteItem(getHashKey(null),
-                         getRangeKey(provider, region, name));
+                         id.toLowerCase());
     }
 }

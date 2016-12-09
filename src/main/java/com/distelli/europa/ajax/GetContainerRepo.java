@@ -32,18 +32,12 @@ public class GetContainerRepo implements AjaxHelper
 
     /**
        Params:
-       - Provider (reqired)
-       - Region (required)
-       - Name (required)
+       - id (reqired)
     */
     public Object get(AjaxRequest ajaxRequest)
     {
-        RegistryProvider provider = ajaxRequest.getAsEnum("provider",
-                                                          RegistryProvider.class,
-                                                          true); //throw if missing
-        String region = ajaxRequest.getParam("region", true);
-        String credName = ajaxRequest.getParam("credName", true);
-        String name = ajaxRequest.getParam("name", true);
-        return _db.getRepo(provider, region, credName, name);
+        String id = ajaxRequest.getParam("id",
+                                         true); //throw if missing
+        return _db.getRepo(id);
     }
 }
