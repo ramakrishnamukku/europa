@@ -53,7 +53,7 @@ public class ContainerRepoDb
 
     private static final String getSecondaryKey(RegistryProvider provider, String region, String name)
     {
-        return String.format("%s:%s:%s:%s",
+        return String.format("%s:%s:%s",
                              provider.toString().toLowerCase(),
                              region.toLowerCase(),
                              name.toLowerCase());
