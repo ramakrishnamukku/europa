@@ -14,6 +14,11 @@ export default class Btn extends Component {
 		}
 	}
 	getClassName(){
+
+		if(this.props.className) {
+			return this.props.className;
+		}
+
 		if(this.canClick()) {
 			return 'Btn';
 		} 
@@ -22,7 +27,7 @@ export default class Btn extends Component {
 	}
 	renderButton(){
 		return (
-			<div className={this.getClassName()} onClick={() => this.onClick()}>
+			<div style={this.props.btnStyle || {}} className={this.getClassName()} onClick={() => this.onClick()}>
 				{this.props.text}
 			</div>
 		);
@@ -47,7 +52,9 @@ Btn.propTypes = {
 	onClick: React.PropTypes.func.isRequired,
 	color: React.PropTypes.string,
 	canClick: React.PropTypes.bool,
-	help: React.PropTypes.string
+	help: React.PropTypes.string,
+	btnStyle: React.PropTypes.object,
+	className: React.PropTypes.string
 };
 
 Btn.childContextTypes = {

@@ -18,6 +18,7 @@ nav {
 
         .Logo {
             height: 32px;
+
             a {
                 img {
                     width: 90px;
@@ -84,6 +85,26 @@ nav {
     }
 }
 
+.GradientBlueGreenButton {
+    background: -moz-linear-gradient(left, #00a79d 0%, #326de6 100%);
+    background: -webkit-linear-gradient(left, #00a79d 0%, #326de6 100%);
+    background: linear-gradient(to right, #00a79d 0%, #326de6 100%);
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    font-weight: 300;
+    align-items: center;
+    width: 400px;
+    height: 40px;
+    margin: 0 6px;
+    color: #fff;
+    font-size: 1.4rem;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
 .NoContent {
     display: flex;
     flex-direction: column;
@@ -111,6 +132,10 @@ nav {
     flex: 1;
 }
 
+.Flex2 {
+    flex: 2;
+}
+
 .Row {
     margin-bottom: 1rem;
 }
@@ -125,6 +150,10 @@ nav {
 
 .AlignCenter {
     align-items: center;
+}
+
+.FlexEnd {
+    align-items: flex-end;
 }
 
 .SpaceBetween {

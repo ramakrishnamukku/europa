@@ -5,7 +5,7 @@ import ActionBinder from './../util/ActionBinder'
 
 // Actions
 import * as AddRegistryActions from './../actions/AddRegistryActions'
-import * as AddRepoActions from './../actions/AddRepoActions'
+import * as RepoActions from './../actions/RepoActions'
 import * as RegistryActions from './../actions/RegistryActions'
 
 
@@ -16,6 +16,7 @@ export default class Layout extends Component {
 		// Main State Store
 		this.state = {
 			registries: [],
+			repos: [],
 			registriesXHR: false,
 			repositories: [],
 			registry: {
@@ -25,12 +26,13 @@ export default class Layout extends Component {
 				...AddRegistryActions.addRegistryState(),
 			},
 			addRepo: {
-				...AddRepoActions.addRepoState()
+				...RepoActions.addRepoState()
 			}
 		};
 	}
 	componentDidMount() {
 		RegistryActions.listRegistries.call(this)
+		RepoActions.listRepos.call(this)
 	}
 	componentDidUpdate(prevProps, prevState) {
 		ReactTooltip.hide();
@@ -38,7 +40,7 @@ export default class Layout extends Component {
 	}
 	getChildContext() {
 		return {
-			actions: ActionBinder([AddRegistryActions, AddRepoActions, RegistryActions], this),
+			actions: ActionBinder([AddRegistryActions, RepoActions, RegistryActions], this),
 			state: this.state,
 			router: this.context.router
 		};

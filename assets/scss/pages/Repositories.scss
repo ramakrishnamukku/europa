@@ -1,0 +1,139 @@
+.NotificationTestStatusContainer {
+    .NotificationTestActions {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+
+        .TestAction {
+            flex: 1;
+            display: flex;
+            background-color: #FFFFFF;
+            color: $light-blue;
+            font-size: 1.1875rem;
+            font-weight: 300;
+            justify-content: center;
+            align-items: center;
+            height: 55px;
+        }
+
+        .Status {
+            @extend .TestAction;
+            flex-direction: row;
+            color: #FFFFFF;
+
+            i {
+                color: #FFFFFF;
+                font-size: 1.6rem;
+                margin-right: 14px;
+
+
+            }
+
+
+            span.StatusText {
+                font-weight: 600;
+            }
+
+            span.Label {
+                font-weight: 300;
+            }
+
+            span.StatusCode {
+                font-weight: 600;
+            }
+
+
+        }
+
+        .Status.Success {
+            background-color: $green;
+        }
+
+        .Status.Error {
+            background-color: $red;
+        }
+
+        .Status.Warning {
+            background-color: $yellow;
+        }
+
+        .Status.InActive{
+            background-color: $grey;
+        }
+
+
+        .ToggleDetails {
+            @extend .TestAction;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.RepoList {
+    margin: 15px 0px;
+
+    .RepoItem {
+        border-bottom: solid 1px #BCBEC0;
+        padding: 9px;
+        transition: all 0.3s;
+
+        &:hover {
+            background-color: lighten($backgroundColor, 2%);
+        }
+
+        .Inside {
+            align-items: center;
+
+            .ProviderIcon {
+                height: 28px;
+                width: 28px;
+                border: 0px;
+                outline: 0px;
+                margin-right: 11px;
+            }
+
+            .RepoName {
+                font-size: 0.75rem;
+                font-weight: 900;
+                color: $light-blue;
+            }
+
+            .RepoProvider {
+                font-size: 0.75rem;
+                font-weight: 400;
+                color: $grey;
+            }
+
+            .Label {
+                font-weight: 400;
+                font-size: 0.75rem;
+                color: $black;
+            }
+
+            .LastPushed {
+                font-weight: 400;
+                font-size: 0.75rem;
+                color: $grey;
+            }
+
+            .Tag {
+                border-radius: 3px;
+                background-color: $blue;
+                padding: 2px 4px;
+                font-size: 0.65rem;
+                color: #FFFFFF;
+                margin-left: 7px;
+                text-transform: uppercase;
+            }
+
+            .LastWebhookStatus {
+                font-size: 0.75rem;
+                font-weight: 900;
+                color: $green;
+            }
+        }
+    }
+}

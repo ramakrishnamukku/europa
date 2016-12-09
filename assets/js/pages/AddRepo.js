@@ -2,6 +2,9 @@ import React, {Component} from 'react'
 import AddRegistry from './../components/AddRegistry'
 import ContentRow from './../components/ContentRow'
 import Btn from './../components/Btn'
+import Msg from './../components/Msg'
+import Loader from './../components/Loader'
+import WebhookData from './../components/WebhookData'
 
 let dockerRepoNameKey = 'repo/name';
 let targetKey = "notification/target";
@@ -28,6 +31,7 @@ export default class AddRepository extends Component {
 		return (
 			<AddRegistry 
 				standaloneMode={false}
+				isEdit={false}
 			/>
 		);
 	}
@@ -70,19 +74,107 @@ export default class AddRepository extends Component {
 	}
 	renderTestWebhookButton(){
 		return (
-			<Btn onClick={() => this.context.actions.testWebhookUrl()}
+			<Btn onClick={() => this.context.actions.testNotification()}
 				 text="Test Webhook"
-				 canClick={!!this.context.state.addRepo.newRepo[targetKey]}
+				 canClick={true}
 				 help="Clicking this button will send a payload to the specified URL."/>
 		);
 	}
-	renderAddRepoButton(){
-		let canAdd = (this.context.actions.canAddRegistry() && this.context.actions.canAddRepo());
+	renderNotificationTestStatus(){
+		let test = this.context.state.addRepo.testNotification;
+		let statusCode = (test.response) ? test.response.httpStatusCode : null;
+
+		let icon = 'icon icon-dis-blank';
+		let statusText = "See Test Results Here";
+		let className = "InActive";
+
+		let isSuccess = null;
+		let isWarning = null;
+		let isError = null;
+
+		if (statusCode) {
+			isSuccess = 200 <= statusCode && statusCode <= 299;
+			isWarning = (0 <= statusCode && statusCode <= 199) || (300 <= statusCode && statusCode <= 399);
+			isError = 400 <= statusCode;	
+		}
+
+
+		if (isSuccess) {
+			icon = 'icon icon-dis-check'
+			statusText = 'Success';
+			className="Success";
+		}
+
+		if(isWarning) {
+			icon = 'icon icon-dis-warning';
+			statusText = "Warning";
+			className="Warning";
+		}
+
+		if(isError) {
+			icon = "icon icon-dis-alert";
+			statusText = "Error";
+			className = "Error";
+		}
+
+		className = "Status " + className;
+
 		return (
-			<Btn onClick={() => this.addRepo()}
+			<div className="NotificationTestStatusContainer">
+				<div className="NotificationTestActions">
+					<div className={className}>
+						<i className={icon}/>
+						<span className="StatusText">{statusText}</span>
+						<span className="Label">&nbsp;{(statusCode )? '- Response Code:' : null}&nbsp;</span>
+						<span className="StatusCode">{statusCode}</span>
+					</div>
+					<div className="ToggleDetails"> Show Notification Test Details </div>
+				</div>
+				{this.renderWebhookData(test)}
+			</div>
+		);
+	}
+	renderWebhookData(webhookData){
+		if(webhookData) {
+			return (
+				<WebhookData webhookData={webhookData}/>
+			)
+		};
+	}
+	renderErrorMsg(){
+		if(this.context.state.addRepo.errorMsg) {
+			return (
+				<Msg
+					text={this.context.state.addRepo.errorMsg}
+				/>
+			);
+		}
+	}
+	renderSuccessMsg(){
+		if(this.context.state.addRepo.success) {
+
+			let message = 'Successfullt added repository to monitor';
+
+			return (
+				<Msg text={message} 
+				     isSuccess={true}
+				     close={() => this.context.actions.clearAddRepoSuccess()}/>
+			);
+		}
+	}
+	renderLoader(){
+		return (
+			<Loader />
+		);
+	}
+	renderAddRepoButton(){
+		let canAdd = this.context.actions.canAddRepo();
+		return (
+			<Btn className="GradientBlueGreenButton"
+				 onClick={() => this.addRepo()}
 				 text="Add Repository"
 				 canClick={canAdd}
-				 help="Clicking this button will send a payload to the specified URL."/>
+				 />
 		);
 	}
 	addRepo(){
@@ -109,6 +201,29 @@ export default class AddRepository extends Component {
 			columns: [{
                 icon:'icon icon-dis-blank',
                 renderBody: this.renderTestWebhookButton.bind(this)
+            }]
+		}, {
+			columns: [{
+                icon:'icon icon-dis-blank',
+                renderBody: this.renderErrorMsg.bind(this),
+                condition: this.context.state.addRepo.errorMsg
+            }]
+		}, {
+			columns: [{
+                icon:'icon icon-dis-blank',
+                renderBody: this.renderLoader.bind(this),
+                condition: this.context.state.addRepo.XHR
+            }]
+		}, {
+			columns: [{
+                icon:'icon icon-dis-blank',
+                renderBody: this.renderSuccessMsg.bind(this),
+                condition: this.context.state.addRepo.success
+            }]
+		}, {
+			columns: [{
+                icon:'icon icon-dis-blank',
+                renderBody: this.renderNotificationTestStatus.bind(this),
             }]
 		}, {
 			columns: [{

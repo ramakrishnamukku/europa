@@ -44,29 +44,29 @@ export default class Registries extends Component {
 		return (
 			<div key={index}
 				 className="Flex1 RegistryItem FlexColumn">
-				 <div className="Inside FlexRow">
-				<img className="ProviderIcon"
-				     src={RegistryProviderIcons(reg.provider)}/>
-				<span className="Provider">
-					{reg.provider}
-				</span>
-				<span className="Key">
-				&nbsp;&ndash;&nbsp;{reg.name}
-				</span>
-				<span className="Region">
-					<span className="Label">
-						Region:&nbsp;
+				<div className="Inside FlexRow">
+					<img className="ProviderIcon"
+					     src={RegistryProviderIcons(reg.provider)}/>
+					<span className="Provider">
+						{reg.provider}
 					</span>
-					{reg.region}
-				</span>
-				<span className="Pipe">|</span>
-				<span className="Actions">
-					<i className="icon icon-dis-edit" data-tip="Edit Credentials" data-for="ToolTipTop"
-					   onClick={() => this.setRegistryForEdit(reg)}/>
-					<i className="icon icon-dis-trash" data-tip="Delete Credentials" data-for="ToolTipTop" 
-						onClick={() => this.context.actions.setRegistryForDelete(reg)}
-					/>
-				</span>
+					<span className="Key">
+					&nbsp;&ndash;&nbsp;{reg.name}
+					</span>
+					<span className="Region">
+						<span className="Label">
+							Region:&nbsp;
+						</span>
+						{reg.region}
+					</span>
+					<span className="Pipe">|</span>
+					<span className="Actions">
+						<i className="icon icon-dis-edit" data-tip="Edit Credentials" data-for="ToolTipTop"
+						   onClick={() => this.setRegistryForEdit(reg)}/>
+						<i className="icon icon-dis-trash" data-tip="Delete Credentials" data-for="ToolTipTop" 
+							onClick={() => this.context.actions.setRegistryForDelete(reg)}
+						/>
+					</span>
 				</div>
 				{this.renderConfirmDeleteRegistry(reg)}
 			</div>

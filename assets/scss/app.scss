@@ -14,15 +14,18 @@ $backgroundColor: #F5F5F7;
 // Layout
 @import "pages/Layout";
 @import "pages/Registries";
+@import "pages/Repositories";
+
 
 // Partials
-
 @import "partials/BlueBorderInput";
 @import "partials/Btn";
 @import "partials/CenteredConfirm";
 @import "partials/ContentRow";
 @import "partials/Msg";
 @import "partials/Loader";
+@import "partials/WebhookData";
+
 
 html, body {
     height: 100vh;
