@@ -31,11 +31,6 @@ public class TestWebhookDelivery implements AjaxHelper
 
     public Object get(AjaxRequest ajaxRequest)
     {
-        ContainerRepo repo = ajaxRequest.convertContent("/repo", ContainerRepo.class,
-                                                       true); //throw if null
-        //Validate that the fields we want are non-null
-        FieldValidator.validateNonNull(repo, "credId", "name");
-
         Notification notification = ajaxRequest.convertContent("/notification", Notification.class,
                                                                true);
         FieldValidator.validateNonNull(notification, "type", "target");
