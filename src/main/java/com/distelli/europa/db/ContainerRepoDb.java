@@ -71,7 +71,7 @@ public class ContainerRepoDb
         .withConvertMarker(convertMarkerFactory.create("hk", "id"))
         .build();
 
-        _main = indexFactory.create(ContainerRepo.class)
+        _secondaryIndex = indexFactory.create(ContainerRepo.class)
         .withIndexName("repos", "provider-index")
         .withNoEncrypt("hk", "id", "sidx")
         .withHashKeyName("hk")

@@ -29,17 +29,15 @@ public class GetRegistryCreds implements AjaxHelper
 
     /**
        Params:
-       - Provider (reqired)
-       - Region (required)
-       - Name (required)
+       - id (reqired)
     */
     public Object get(AjaxRequest ajaxRequest)
     {
-        RegistryProvider provider = ajaxRequest.getAsEnum("provider",
-                                                          RegistryProvider.class,
-                                                          true); //throw if missing
-        String region = ajaxRequest.getParam("region", true);
-        String name = ajaxRequest.getParam("name", true);
-        return _db.getCred(provider, region, name);
+        String id = ajaxRequest.getParam("id",
+                                         true); //throw if missing
+        RegistryCred cred = _db.getCred(id);
+        if(cred != null)
+            cred.setSecret(null);
+        return cred;
     }
 }

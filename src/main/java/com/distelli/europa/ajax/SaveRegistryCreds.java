@@ -9,6 +9,7 @@
 package com.distelli.europa.ajax;
 
 import java.util.UUID;
+import java.util.HashMap;
 import org.apache.log4j.Logger;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
@@ -46,6 +47,8 @@ public class SaveRegistryCreds implements AjaxHelper
         cred.setId(id);
         //save in the db
         _db.save(cred);
-        return id;
+        return new HashMap<String, String>() {{
+            put("id", id);
+        }};
     }
 }

@@ -10,6 +10,7 @@ package com.distelli.europa.ajax;
 
 import com.distelli.persistence.PageIterator;
 
+import java.util.List;
 import org.apache.log4j.Logger;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
@@ -38,8 +39,13 @@ public class ListRegistryCreds implements AjaxHelper
     {
         PageIterator pageIterator = new PageIterator().pageSize(1000).forward();
         RegistryProvider provider = ajaxRequest.getAsEnum("provider", RegistryProvider.class);
+        List<RegistryCred> creds;
         if(provider != null)
-            return _db.listCredsForProvider(provider, pageIterator);
-        return _db.listAllCreds(pageIterator);
+            creds = _db.listCredsForProvider(provider, pageIterator);
+        else
+            creds = _db.listAllCreds(pageIterator);
+        for(RegistryCred cred : creds)
+            cred.setSecret(null);
+        return creds;
     }
 }
