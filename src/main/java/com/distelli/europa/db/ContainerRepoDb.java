@@ -35,12 +35,12 @@ public class ContainerRepoDb
 
     private EuropaConfiguration _europaConfiguration;
 
-    private static final ObjectMapper om = new ObjectMapper();
-    private static TransformModule createTransforms(TransformModule module, EuropaConfiguration europaConfiguration) {
+    private final ObjectMapper _om = new ObjectMapper();
+    private TransformModule createTransforms(TransformModule module) {
         module.createTransform(ContainerRepo.class)
         .put("hk", String.class,
-             (item) -> getHashKey(item, europaConfiguration),
-             (item, domain) -> setHashKey(item, domain, europaConfiguration))
+             (item) -> getHashKey(item),
+             (item, domain) -> setHashKey(item, domain))
         .put("id", String.class,
              (item) -> item.getId().toLowerCase())
         .put("sidx", String.class,
@@ -52,20 +52,20 @@ public class ContainerRepoDb
         return module;
     }
 
-    private static final String getHashKey(ContainerRepo repo, EuropaConfiguration europaConfiguration)
+    private final String getHashKey(ContainerRepo repo)
     {
-        if(europaConfiguration.isMultiTenant())
+        if(_europaConfiguration.isMultiTenant())
         {
             if(repo == null)
                 throw(new IllegalArgumentException("Invalid null repo in multi-tenant setup"));
-            return getHashKey(repo.getDomain(), europaConfiguration);
+            return getHashKey(repo.getDomain());
         }
         return Constants.DOMAIN_ZERO;
     }
 
-    private static final String getHashKey(String domain, EuropaConfiguration europaConfiguration)
+    private final String getHashKey(String domain)
     {
-        if(europaConfiguration.isMultiTenant())
+        if(_europaConfiguration.isMultiTenant())
         {
             if(domain == null)
                 throw(new IllegalArgumentException("Invalid null domain in multi-tenant setup for ContainerRepo"));
@@ -75,9 +75,9 @@ public class ContainerRepoDb
         return Constants.DOMAIN_ZERO;
     }
 
-    private static final void setHashKey(ContainerRepo repo, String domain, EuropaConfiguration europaConfiguration)
+    private final void setHashKey(ContainerRepo repo, String domain)
     {
-        if(europaConfiguration.isMultiTenant())
+        if(_europaConfiguration.isMultiTenant())
         {
             if(domain == null)
                 throw(new IllegalArgumentException("Invalid null domain in multi-tenant setup for ContainerRepo"));
@@ -87,7 +87,7 @@ public class ContainerRepoDb
         repo.setDomain(null);
     }
 
-    private static final String getSecondaryKey(RegistryProvider provider, String region, String name)
+    private final String getSecondaryKey(RegistryProvider provider, String region, String name)
     {
         return String.format("%s:%s:%s",
                              provider.toString().toLowerCase(),
@@ -100,13 +100,13 @@ public class ContainerRepoDb
                               ConvertMarker.Factory convertMarkerFactory,
                               EuropaConfiguration europaConfiguration) {
         _europaConfiguration = europaConfiguration;
-        om.registerModule(createTransforms(new TransformModule(), _europaConfiguration));
+        _om.registerModule(createTransforms(new TransformModule()));
         _main = indexFactory.create(ContainerRepo.class)
         .withTableName("repos")
         .withNoEncrypt("hk", "id", "sidx")
         .withHashKeyName("hk")
         .withRangeKeyName("id")
-        .withConvertValue(om::convertValue)
+        .withConvertValue(_om::convertValue)
         .withConvertMarker(convertMarkerFactory.create("hk", "id"))
         .build();
 
@@ -115,7 +115,7 @@ public class ContainerRepoDb
         .withNoEncrypt("hk", "id", "sidx")
         .withHashKeyName("hk")
         .withRangeKeyName("sidx")
-        .withConvertValue(om::convertValue)
+        .withConvertValue(_om::convertValue)
         .withConvertMarker(convertMarkerFactory.create("hk", "sidx"))
         .build();
     }
@@ -139,13 +139,13 @@ public class ContainerRepoDb
 
     public void deleteRepo(String domain, String id)
     {
-        _main.deleteItem(getHashKey(domain, _europaConfiguration),
+        _main.deleteItem(getHashKey(domain),
                          id.toLowerCase());
     }
 
     public List<ContainerRepo> listRepos(String domain, PageIterator pageIterator)
     {
-        return _main.queryItems(getHashKey(domain, _europaConfiguration), pageIterator).list();
+        return _main.queryItems(getHashKey(domain), pageIterator).list();
     }
 
     public List<ContainerRepo> listRepos(String domain,
@@ -153,7 +153,7 @@ public class ContainerRepoDb
                                          PageIterator pageIterator)
     {
         String rangeKey = String.format("%s:", provider.toString().toLowerCase());
-        return _secondaryIndex.queryItems(getHashKey(domain, _europaConfiguration), pageIterator)
+        return _secondaryIndex.queryItems(getHashKey(domain), pageIterator)
         .beginsWith(rangeKey)
         .list();
     }
@@ -166,14 +166,14 @@ public class ContainerRepoDb
         String rangeKey = String.format("%s:%s:",
                                         provider.toString().toLowerCase(),
                                         region.toLowerCase());
-        return _main.queryItems(getHashKey(domain, _europaConfiguration), pageIterator)
+        return _main.queryItems(getHashKey(domain), pageIterator)
         .beginsWith(rangeKey)
         .list();
     }
 
     public ContainerRepo getRepo(String domain, String id)
     {
-        return _main.getItem(getHashKey(domain, _europaConfiguration),
+        return _main.getItem(getHashKey(domain),
                              id.toLowerCase());
     }
 }

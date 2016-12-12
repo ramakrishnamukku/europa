@@ -35,12 +35,12 @@ public class RegistryCredsDb
 
     private EuropaConfiguration _europaConfiguration;
 
-    private static final ObjectMapper om = new ObjectMapper();
-    private static TransformModule createTransforms(TransformModule module, EuropaConfiguration europaConfiguration) {
+    private final ObjectMapper _om = new ObjectMapper();
+    private TransformModule createTransforms(TransformModule module) {
         module.createTransform(RegistryCred.class)
         .put("hk", String.class,
-             (item) -> getHashKey(item, europaConfiguration),
-             (item, domain) -> setHashKey(item, domain, europaConfiguration))
+             (item) -> getHashKey(item),
+             (item, domain) -> setHashKey(item, domain))
         .put("id", String.class, "id")
         .put("sidx", String.class,
              (item) -> getSecondaryRangeKey(item.getProvider(),
@@ -62,13 +62,13 @@ public class RegistryCredsDb
                               EuropaConfiguration europaConfiguration)
     {
         _europaConfiguration = europaConfiguration;
-        om.registerModule(createTransforms(new TransformModule(), _europaConfiguration));
+        _om.registerModule(createTransforms(new TransformModule()));
         _main = indexFactory.create(RegistryCred.class)
         .withTableName("creds")
         .withNoEncrypt("hk", "id", "pidx")
         .withHashKeyName("hk")
         .withRangeKeyName("id")
-        .withConvertValue(om::convertValue)
+        .withConvertValue(_om::convertValue)
         .withConvertMarker(convertMarkerFactory.create("hk", "rk"))
         .build();
 
@@ -77,25 +77,25 @@ public class RegistryCredsDb
         .withNoEncrypt("hk", "id", "sidx")
         .withHashKeyName("hk")
         .withRangeKeyName("sidx")
-        .withConvertValue(om::convertValue)
+        .withConvertValue(_om::convertValue)
         .withConvertMarker(convertMarkerFactory.create("hk", "sidx"))
         .build();
     }
 
-    private static final String getHashKey(RegistryCred cred, EuropaConfiguration europaConfiguration)
+    private final String getHashKey(RegistryCred cred)
     {
-        if(europaConfiguration.isMultiTenant())
+        if(_europaConfiguration.isMultiTenant())
         {
             if(cred == null)
                 throw(new IllegalArgumentException("Invalid null cred in multi-tenant setup"));
-            return getHashKey(cred.getDomain(), europaConfiguration);
+            return getHashKey(cred.getDomain());
         }
         return Constants.DOMAIN_ZERO;
     }
 
-    private static final String getHashKey(String domain, EuropaConfiguration europaConfiguration)
+    private final String getHashKey(String domain)
     {
-        if(europaConfiguration.isMultiTenant())
+        if(_europaConfiguration.isMultiTenant())
         {
             if(domain == null)
                 throw(new IllegalArgumentException("Invalid null domain in multi-tenant setup for RegistryCred"));
@@ -105,9 +105,9 @@ public class RegistryCredsDb
         return Constants.DOMAIN_ZERO;
     }
 
-    private static final void setHashKey(RegistryCred cred, String domain, EuropaConfiguration europaConfiguration)
+    private final void setHashKey(RegistryCred cred, String domain)
     {
-        if(europaConfiguration.isMultiTenant())
+        if(_europaConfiguration.isMultiTenant())
         {
             if(domain == null)
                 throw(new IllegalArgumentException("Invalid null domain in multi-tenant setup for RegistryCred"));
@@ -117,7 +117,7 @@ public class RegistryCredsDb
         cred.setDomain(null);
     }
 
-    private static final String getSecondaryRangeKey(RegistryProvider provider, String region, String name)
+    private final String getSecondaryRangeKey(RegistryProvider provider, String region, String name)
     {
         return String.format("%s:%s:%s",
                              provider.toString().toLowerCase(),
@@ -144,32 +144,32 @@ public class RegistryCredsDb
 
     public List<RegistryCred> listAllCreds(String domain, PageIterator pageIterator)
     {
-        return _main.queryItems(getHashKey(domain, _europaConfiguration), pageIterator).list();
+        return _main.queryItems(getHashKey(domain), pageIterator).list();
     }
 
     public List<RegistryCred> listCredsForProvider(String domain, RegistryProvider provider, PageIterator pageIterator)
     {
         String rangeKey = String.format("%s:", provider.toString().toLowerCase());
-        return _secondaryIndex.queryItems(getHashKey(domain, _europaConfiguration), pageIterator)
+        return _secondaryIndex.queryItems(getHashKey(domain), pageIterator)
         .beginsWith(rangeKey)
         .list();
     }
 
     public RegistryCred getCred(String domain, String id)
     {
-        return _main.getItem(getHashKey(domain, _europaConfiguration),
+        return _main.getItem(getHashKey(domain),
                              id.toLowerCase());
     }
 
     public RegistryCred getCred(String domain, RegistryProvider provider, String region, String name)
     {
-        return _secondaryIndex.getItem(getHashKey(domain, _europaConfiguration),
+        return _secondaryIndex.getItem(getHashKey(domain),
                                        getSecondaryRangeKey(provider, region, name));
     }
 
     public void deleteCred(String domain, String id)
     {
-        _main.deleteItem(getHashKey(domain, _europaConfiguration),
+        _main.deleteItem(getHashKey(domain),
                          id.toLowerCase());
     }
 }

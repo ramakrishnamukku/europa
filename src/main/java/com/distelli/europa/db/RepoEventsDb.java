@@ -34,12 +34,12 @@ public class RepoEventsDb
     private Index<RepoEvent> _main;
 
     private EuropaConfiguration _europaConfiguration;
-    private static final ObjectMapper om = new ObjectMapper();
+    private final ObjectMapper _om = new ObjectMapper();
 
-    private static TransformModule createTransforms(TransformModule module, EuropaConfiguration europaConfiguration) {
+    private TransformModule createTransforms(TransformModule module) {
         module.createTransform(RepoEvent.class)
         .put("hk", String.class,
-             (item) -> getHashKey(item.getDomain(), item.getRepoId(), europaConfiguration))
+             (item) -> getHashKey(item.getDomain(), item.getRepoId()))
         .put("rk", String.class,
              (item) -> getRangeKey(item.getEventTime(), item.getId()))
         .put("domain", String.class, "domain")
@@ -50,9 +50,9 @@ public class RepoEventsDb
         return module;
     }
 
-    private static final String getHashKey(String domain, String repoId, EuropaConfiguration europaConfiguration)
+    private final String getHashKey(String domain, String repoId)
     {
-        if(europaConfiguration.isMultiTenant())
+        if(_europaConfiguration.isMultiTenant())
         {
             if(domain == null)
                 throw(new IllegalArgumentException("Invalid null domain for multi-tenant setup"));
@@ -64,7 +64,7 @@ public class RepoEventsDb
                              repoId.toLowerCase());
     }
 
-    private static final String getRangeKey(Long eventTime, String eventId)
+    private final String getRangeKey(Long eventTime, String eventId)
     {
         return String.format("%019d:%s",
                              eventTime,
@@ -76,13 +76,13 @@ public class RepoEventsDb
                         ConvertMarker.Factory convertMarkerFactory,
                         EuropaConfiguration europaConfiguration) {
         _europaConfiguration = europaConfiguration;
-        om.registerModule(createTransforms(new TransformModule(), europaConfiguration));
+        _om.registerModule(createTransforms(new TransformModule()));
         _main = indexFactory.create(RepoEvent.class)
         .withTableName("events")
         .withNoEncrypt("hk", "rk")
         .withHashKeyName("hk")
         .withRangeKeyName("rk")
-        .withConvertValue(om::convertValue)
+        .withConvertValue(_om::convertValue)
         .withConvertMarker(convertMarkerFactory.create("hk", "rk"))
         .build();
     }
@@ -102,6 +102,6 @@ public class RepoEventsDb
 
     public List<RepoEvent> listEvents(String domain, String repoId, PageIterator pageIterator)
     {
-        return _main.queryItems(getHashKey(domain, repoId, _europaConfiguration), pageIterator).list();
+        return _main.queryItems(getHashKey(domain, repoId), pageIterator).list();
     }
 }

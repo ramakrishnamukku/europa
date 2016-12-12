@@ -30,17 +30,16 @@ public class NotificationsDb
     private static final Logger log = Logger.getLogger(NotificationsDb.class);
 
     private Index<Notification> _main;
-    private static final ObjectMapper om = new ObjectMapper();
 
+    private final ObjectMapper _om = new ObjectMapper();
     private EuropaConfiguration _europaConfiguration;
 
-    private static TransformModule createTransforms(TransformModule module, EuropaConfiguration europaConfiguration) {
+    private TransformModule createTransforms(TransformModule module) {
         module.createTransform(Notification.class)
         .put("hk", String.class,
-             (item) -> getHashKey(item.getDomain(), item.getRepoId(), europaConfiguration))
+             (item) -> getHashKey(item.getDomain(), item.getRepoId()))
         .put("rk", String.class,
              (item) -> getRangeKey(item.getType(), item.getId()))
-
         .put("id", String.class, "id")
         .put("repoId", String.class, "repoId")
         .put("domain", String.class, "domain")
@@ -53,9 +52,9 @@ public class NotificationsDb
         return module;
     }
 
-    private static final String getHashKey(String domain, String repoId, EuropaConfiguration europaConfiguration)
+    private final String getHashKey(String domain, String repoId)
     {
-        if(europaConfiguration.isMultiTenant())
+        if(_europaConfiguration.isMultiTenant())
         {
             if(domain == null)
                 throw(new IllegalArgumentException("Invalid null domain for multi-tenant setup"));
@@ -67,7 +66,7 @@ public class NotificationsDb
                              repoId.toLowerCase());
     }
 
-    private static final String getRangeKey(NotificationType type, String id)
+    private final String getRangeKey(NotificationType type, String id)
     {
         return String.format("%s:%s",
                              type.toString().toLowerCase(),
@@ -79,13 +78,13 @@ public class NotificationsDb
                            ConvertMarker.Factory convertMarkerFactory,
                            EuropaConfiguration europaConfiguration) {
         _europaConfiguration = europaConfiguration;
-        om.registerModule(createTransforms(new TransformModule(), europaConfiguration));
+        _om.registerModule(createTransforms(new TransformModule()));
         _main = indexFactory.create(Notification.class)
         .withTableName("notifications")
         .withNoEncrypt("hk", "rk")
         .withHashKeyName("hk")
         .withRangeKeyName("rk")
-        .withConvertValue(om::convertValue)
+        .withConvertValue(_om::convertValue)
         .withConvertMarker(convertMarkerFactory.create("hk", "rk"))
         .build();
     }
@@ -105,12 +104,12 @@ public class NotificationsDb
 
     public void deleteNotification(String domain, String repoId, NotificationType type, String id)
     {
-        _main.deleteItem(getHashKey(domain, repoId, _europaConfiguration),
+        _main.deleteItem(getHashKey(domain, repoId),
                          getRangeKey(type, id));
     }
 
     public List<Notification> listNotifications(String domain, String repoId, PageIterator pageIterator)
     {
-        return _main.queryItems(getHashKey(domain, repoId, _europaConfiguration), pageIterator).list();
+        return _main.queryItems(getHashKey(domain, repoId), pageIterator).list();
     }
 }
