@@ -24,9 +24,9 @@ $backgroundColor: #F5F5F7;
 @import "partials/ContentRow";
 @import "partials/Msg";
 @import "partials/Loader";
+@import "partials/RepoEventTimeline";
 @import "partials/RepoSettings";
 @import "partials/WebhookData";
-
 
 html, body {
     height: 100vh;

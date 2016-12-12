@@ -1,7 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import AddRegistry from './../components/AddRegistry'
 import ContentRow from './../components/ContentRow'
-import Btn from './../components/Btn'
 import Msg from './../components/Msg'
 import Loader from './../components/Loader'
 import WebhookData from './../components/WebhookData'
@@ -19,7 +17,6 @@ export default class RepoSettings extends Component {
 	}
 	renderCredentials() {
 		let creds = this.state.activeRepoCreds;
-
 		return (
 			<div className="FlexColumn">
 				<div className="FlexRow SpaceBetween">
@@ -57,13 +54,49 @@ export default class RepoSettings extends Component {
 		);
 	}
 	renderWebhookInfo(){
-
+		let repo = this.props.activeRepo;
+		return (
+			<div className="FlexColumn">
+				<div className="FlexRow SpaceBetween">
+					<div className="FlexRow">
+						<label>
+							Webhook URL 
+							<span className="TealColor">&nbsp;-&nbsp;a POST will fire against this URL every time a new image is pushed to the specified registry.</span>
+						</label>
+					</div>
+				</div>
+				<div className="FlexRow Row">
+					<div className="Flex1">
+						<label className="small">URL</label>
+						<input className="BlueBorder FullWidth Dark"
+						       placeholder="Webhook URL"
+						       value={repo.name}
+							   onChange={(e) => console.log(e.target.value)} 
+							   />
+					</div>
+				</div>
+				<div className="FlexRow">
+					<div className="Flex1">
+						<label className="small">Public Key</label>
+						<input className="BlueBorder FullWidth Dark"
+						       placeholder="Secret (optional)"
+							   onChange={(e) => console.log(e.target.value)} 
+							   />
+					</div>
+				</div>
+			</div>
+		);
 	}
 	renderSettings(){
 		let rows = [{
 			columns: [{
                 icon:'icon icon-dis-credential',
                 renderBody: this.renderCredentials.bind(this)
+            }]
+		}, {
+			columns: [{
+                icon:'icon icon-dis-webhook',
+                renderBody: this.renderWebhookInfo.bind(this)
             }]
 		}];
 

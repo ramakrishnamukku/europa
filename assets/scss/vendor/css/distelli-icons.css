@@ -24,6 +24,18 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-dis-details:before {
+  content: "\e988";
+}
+.icon-dis-build-instructions:before {
+  content: "\e986";
+}
+.icon-dis-webhook-circle-solid:before {
+  content: "\e987";
+}
+.icon-dis-services:before {
+  content: "\e982";
+}
 .icon-dis-blank:before {
   content: "\e985";
 }
@@ -38,9 +50,6 @@
 }
 .icon-dis-pipeline:before {
   content: "\e983";
-}
-.icon-dis-services:before {
-  content: "\e982";
 }
 .icon-dis-nodes:before {
   content: "\e981";

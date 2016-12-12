@@ -1,0 +1,67 @@
+.RepoEventTimeline {
+    .Timline {
+        display: flex;
+        flex-direction: column;
+
+        .TimelineContainer {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    .RepoEventItem {
+        margin: 11px 0;
+        display: flex;
+        flex-direction: column;
+
+        .EventDetails {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+
+            i.icon-dis-push {
+                font-size: 1.4rem;
+                margin-right: 11px;
+            }
+
+            .EventTime {
+                color: $light-blue;
+                font-size: 0.9rem;
+                font-weight: 600;
+            }
+
+            .EventStatus {
+                .Status {
+                    color: $green;
+                    font-weight: 600;
+                }
+            }
+
+            .Actions {
+            	.Pipe {
+					margin-right: 14px;
+            	}
+
+                i.icon-dis-details {
+                    color: $light-blue;
+                    transition: all 0.3s;
+
+                    &:hover {
+                        cursor: pointer;
+                        color: darken($light-blue, 5%);
+                    }
+                }
+            }
+        }
+
+        .EventLine {
+            border-left: 1px solid $dark-border-color;
+            position: relative;
+            height: 21px;
+            margin: 8px 9px 0px;
+
+
+        }
+    }
+}

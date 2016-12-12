@@ -4,6 +4,8 @@ import WebhookData from './../components/WebhookData'
 import isEmpty from './../util/IsEmpty'
 import RegistryNames from './../util/RegistryNames'
 import RepoSettings from './../components/RepoSettings'
+import CenteredConfirm from './../components/CenteredConfirm'
+import RepoEventTimeline from './../components/RepoEventTimeline'
 
 export default class RepoDetailsPage extends Component {
 	constructor(props) {
@@ -34,6 +36,42 @@ export default class RepoDetailsPage extends Component {
 			);
 		}
 	}
+	renderDeleteRepo(){
+		if(this.context.state.repoDetails.isDeleting) {
+			return (
+				<CenteredConfirm message="Are you sure you want to delete this repository? All data will be lost."
+							     confirmButtonText="Delete"
+							     confirmButtonStyle={{}}
+							     onConfirm={() => this.context.actions.deleteActiveRepo()}
+							     onCancel={() => this.context.actions.toggleActiveRepoDelete()}/>
+			);
+		}
+	}
+	renderEventTimeline(){
+		let fakeEvents = [
+			{
+				image: 'hyper-local',
+				id:'1',
+				tag: 'latest',
+				eventContent: 'somethign 1'
+			},{
+				image: 'hyper-local',
+				id:'2',
+				tag: 'latest',
+				eventContent: 'somethign 2'
+			},{
+				image: 'hyper-local',
+				id:'3',
+				tag: 'latest',
+				eventContent: 'somethign 3'
+			}
+		];
+		return (
+			<RepoEventTimeline 
+				events={fakeEvents}
+			/>
+		);
+	}
 	renderPageLoader(){
 		return (
 			<div className="PageLoader">
@@ -50,22 +88,22 @@ export default class RepoDetailsPage extends Component {
 		let activeRepo = this.context.state.repoDetails.activeRepo;
 		return (
 			<div className="ContentContainer">
-				<div className="RepoPageHeader">
-					<div>
+				<div className="SmallPageHeader">
+					<h3>
 						{activeRepo.name}
-					</div>
-
+					</h3>
 					<div className="SubHead">
-					 	{RegistryNames[activeRepo.provider]}
+					 	<span className="PipeSeperator">|</span> {RegistryNames[activeRepo.provider]}
 					</div>
-
-					<i className="icon icon-dis-trash" />
+					<i className="icon icon-dis-trash" 
+					   onClick={() => this.context.actions.toggleActiveRepoDelete()}/>
 					<i className="icon icon-dis-settings" 
 					   onClick={() => this.context.actions.toggleActiveRepoSettings()}/>
-
 				</div>
 				<div>
+				 	{this.renderDeleteRepo()}
 				    {this.renderRepoSettings(activeRepo)}
+				    {this.renderEventTimeline()}
 				</div>
 			</div>
 		);

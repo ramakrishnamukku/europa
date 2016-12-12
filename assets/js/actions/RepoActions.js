@@ -214,7 +214,10 @@ export function repoDetailsState() {
   return {
     activeRepo: {},
     pageXHR: false,
-    showSettings: false
+    deleteXHR: false,
+    isDeleting: false,
+    showSettings: false,
+    activeEventId: null
   };
 }
 
@@ -243,10 +246,56 @@ export function setActiveRepoDetails(repoProviderRepoName) {
   });
 }
 
-export function toggleActiveRepoSettings(){
+export function toggleActiveRepoDelete() {
+  this.setState({
+    repoDetails: GA.modifyProperty(this.state.repoDetails, {
+      isDeleting: !this.state.repoDetails.isDeleting
+    })
+  })
+}
+
+export function deleteActiveRepo() {
+  this.setState({
+    repoDetails: GA.modifyProperty(this.state.repoDetails, {
+      deleteXHR: true
+    })
+  }, () => {
+    RAjax.POST('DeleteContainerRepo', {
+        id: this.state.repoDetails.activeRepo.id
+      })
+      .then((res) => {
+
+        this.setState({
+          repoDetails: GA.modifyProperty(this.state.repoDetails, {
+            deleteXHR: false
+          })
+        });
+
+      })
+      .catch((err) => {
+        
+        this.setState({
+          repoDetails: GA.modifyProperty(this.state.repoDetails, {
+            deleteXHR: false
+          })
+        });
+
+      });
+  });
+}
+
+export function toggleActiveRepoSettings() {
   this.setState({
     repoDetails: GA.modifyProperty(this.state.repoDetails, {
       showSettings: !this.state.repoDetails.showSettings
     })
   })
+}
+
+export function toggleEventDetails(eventId = null) {
+  this.setState({
+    repoDetails: GA.modifyProperty(this.state.repoDetails, {
+      activeEventId: (this.state.repoDetails.activeEventId == eventId) ? null : eventId
+    })
+  });
 }

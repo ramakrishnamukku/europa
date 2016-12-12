@@ -92,8 +92,14 @@ nav {
                     display: flex;
                     justify-content: center;
                     align-items: center;
-
                 }
+            }
+
+            .SmallPageHeader {
+                @extend .PageHeader;
+
+                align-items: baseline;
+                justify-content: flex-start;
 
                 .SubHead {
                     position: relative;
@@ -107,11 +113,34 @@ nav {
                         position: relative;
                         top: -4px;
                     }
+                }
 
+                i {
+                    position: relative;
+                    top: 2px;
+                    color: $light-blue;
+                    transition: all 0.3s;
+                    font-size: 1.3rem;
+                    margin-left: 14px;
+
+                    &:hover {
+                        cursor: pointer;
+                        color: $salmon;
+                    }
                 }
             }
         }
     }
+}
+
+.Tag {
+    border-radius: 3px;
+    background-color: $blue;
+    padding: 2px 4px;
+    font-size: 0.65rem;
+    color: #FFFFFF;
+    margin-left: 7px;
+    text-transform: uppercase;
 }
 
 .GradientBlueGreenButton {
@@ -168,6 +197,15 @@ nav {
         font-weight: 400;
         font-size: 1.6rem;
     }
+}
+
+.PageLoader {
+    position: relative;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 600px;
 }
 
 .FlexColumn {
@@ -249,13 +287,8 @@ nav {
     }
 }
 
-.PageLoader {
-    position: relative;
-    flex-direction: column;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 600px;
+.LightBlueColor {
+    color: $light-blue;
 }
 
 .TealColor {
