@@ -37,7 +37,8 @@ public class DeleteRegistryCreds implements AjaxHelper
     {
         String id = ajaxRequest.getParam("id",
                                          true); //throw if missing
-        _db.deleteCred(id);
+        String domain = ajaxRequest.getParam("domain");
+        _db.deleteCred(domain, id);
         return JsonSuccess.Success;
     }
 }

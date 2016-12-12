@@ -38,6 +38,7 @@ public class GetContainerRepo implements AjaxHelper
     {
         String id = ajaxRequest.getParam("id",
                                          true); //throw if missing
-        return _db.getRepo(id);
+        String domain = ajaxRequest.getParam("domain");
+        return _db.getRepo(domain, id);
     }
 }

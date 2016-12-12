@@ -36,7 +36,8 @@ public class DeleteContainerRepo implements AjaxHelper
     {
         String id = ajaxRequest.getParam("id",
                                          true); //throw if missing
-        _db.deleteRepo(id);
+        String domain = ajaxRequest.getParam("domain");
+        _db.deleteRepo(domain, id);
         return JsonSuccess.Success;
     }
 }

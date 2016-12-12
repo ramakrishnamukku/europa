@@ -11,4 +11,5 @@ package com.distelli.europa;
 public class Constants
 {
     public static final String LOG_TO_CONSOLE_ARG = "log-to-console";
+    public static final String DOMAIN_ZERO = "d0";
 }

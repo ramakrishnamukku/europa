@@ -38,12 +38,13 @@ public class ListRegistryCreds implements AjaxHelper
     public Object get(AjaxRequest ajaxRequest)
     {
         PageIterator pageIterator = new PageIterator().pageSize(1000).forward();
-        RegistryProvider provider = ajaxRequest.getAsEnum("provider", RegistryProvider.class);
+        RegistryProvider provider = ajaxRequest.getParamAsEnum("provider", RegistryProvider.class);
+        String domain = ajaxRequest.getParam("domain");
         List<RegistryCred> creds;
         if(provider != null)
-            creds = _db.listCredsForProvider(provider, pageIterator);
+            creds = _db.listCredsForProvider(domain, provider, pageIterator);
         else
-            creds = _db.listAllCreds(pageIterator);
+            creds = _db.listAllCreds(domain, pageIterator);
         for(RegistryCred cred : creds)
             cred.setSecret(null);
         return creds;

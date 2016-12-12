@@ -10,14 +10,20 @@ package com.distelli.europa;
 
 import java.io.File;
 
+import lombok.*;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class EuropaConfiguration
 {
+    @Getter @Setter
     private String dbEndpoint;
+    @Getter @Setter
     private String dbUser;
+    @Getter @Setter
     private String dbPass;
+    @Getter @Setter
+    private boolean multiTenant = false;
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     static {
@@ -37,29 +43,5 @@ public class EuropaConfiguration
         } catch(Throwable t) {
             throw(new RuntimeException(t));
         }
-    }
-
-    public final String getDbPass() {
-        return this.dbPass;
-    }
-
-    public final void setDbPass(String dbPass) {
-        this.dbPass = dbPass;
-    }
-
-    public final String getDbUser() {
-        return this.dbUser;
-    }
-
-    public final void setDbUser(String dbUser) {
-        this.dbUser = dbUser;
-    }
-
-    public final String getDbEndpoint() {
-        return this.dbEndpoint;
-    }
-
-    public final void setDbEndpoint(String dbEndpoint) {
-        this.dbEndpoint = dbEndpoint;
     }
 }

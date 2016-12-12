@@ -16,7 +16,9 @@ import com.distelli.persistence.Index;
 import com.distelli.persistence.PageIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.distelli.jackson.transform.TransformModule;
+import com.distelli.europa.EuropaConfiguration;
 
+import com.distelli.europa.Constants;
 import com.distelli.europa.models.*;
 import org.apache.log4j.Logger;
 import javax.inject.Inject;
@@ -30,14 +32,18 @@ public class NotificationsDb
     private Index<Notification> _main;
     private static final ObjectMapper om = new ObjectMapper();
 
-    private static TransformModule createTransforms(TransformModule module) {
+    private EuropaConfiguration _europaConfiguration;
+
+    private static TransformModule createTransforms(TransformModule module, EuropaConfiguration europaConfiguration) {
         module.createTransform(Notification.class)
         .put("hk", String.class,
-             (item) -> getHashKey(item.getRepoProvider(), item.getRegion(), item.getRepoName()))
+             (item) -> getHashKey(item.getDomain(), item.getRepoId(), europaConfiguration))
         .put("rk", String.class,
              (item) -> getRangeKey(item.getType(), item.getId()))
 
         .put("id", String.class, "id")
+        .put("repoId", String.class, "repoId")
+        .put("domain", String.class, "domain")
         .put("type", NotificationType.class, "type")
         .put("region", String.class, "region")
         .put("rp", RegistryProvider.class, "repoProvider")
@@ -47,12 +53,18 @@ public class NotificationsDb
         return module;
     }
 
-    private static final String getHashKey(RegistryProvider repoProvider, String region, String repoName)
+    private static final String getHashKey(String domain, String repoId, EuropaConfiguration europaConfiguration)
     {
-        return String.format("%s:%s:%s",
-                             repoProvider.toString().toLowerCase(),
-                             region.toLowerCase(),
-                             repoName.toLowerCase());
+        if(europaConfiguration.isMultiTenant())
+        {
+            if(domain == null)
+                throw(new IllegalArgumentException("Invalid null domain for multi-tenant setup"));
+        }
+        else
+            domain = Constants.DOMAIN_ZERO;
+        return String.format("%s:%s",
+                             domain.toLowerCase(),
+                             repoId.toLowerCase());
     }
 
     private static final String getRangeKey(NotificationType type, String id)
@@ -63,8 +75,11 @@ public class NotificationsDb
     }
 
     @Inject
-    public NotificationsDb(Index.Factory indexFactory, ConvertMarker.Factory convertMarkerFactory) {
-        om.registerModule(createTransforms(new TransformModule()));
+    public NotificationsDb(Index.Factory indexFactory,
+                           ConvertMarker.Factory convertMarkerFactory,
+                           EuropaConfiguration europaConfiguration) {
+        _europaConfiguration = europaConfiguration;
+        om.registerModule(createTransforms(new TransformModule(), europaConfiguration));
         _main = indexFactory.create(Notification.class)
         .withTableName("notifications")
         .withNoEncrypt("hk", "rk")
@@ -80,17 +95,22 @@ public class NotificationsDb
         String id = notification.getId();
         if(id == null)
             notification.setId(UUID.randomUUID().toString());
+        if(notification.getRepoId() == null)
+            throw(new IllegalArgumentException("Invalid null repo Id in notification: "+notification));
+        if(_europaConfiguration.isMultiTenant() && notification.getDomain() == null)
+            throw(new IllegalArgumentException("Invalid null domain in multi-tenant setup for Notification: "+
+                                               notification));
         _main.putItem(notification);
     }
 
-    public void deleteNotification(RegistryProvider repoProvider, String region, String repoName, NotificationType type, String id)
+    public void deleteNotification(String domain, String repoId, NotificationType type, String id)
     {
-        _main.deleteItem(getHashKey(repoProvider, region, repoName),
+        _main.deleteItem(getHashKey(domain, repoId, _europaConfiguration),
                          getRangeKey(type, id));
     }
 
-    public List<Notification> listNotifications(RegistryProvider repoProvider, String region, String repoName, PageIterator pageIterator)
+    public List<Notification> listNotifications(String domain, String repoId, PageIterator pageIterator)
     {
-        return _main.queryItems(getHashKey(repoProvider, region, repoName), pageIterator).list();
+        return _main.queryItems(getHashKey(domain, repoId, _europaConfiguration), pageIterator).list();
     }
 }

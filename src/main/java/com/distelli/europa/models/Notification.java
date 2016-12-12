@@ -8,7 +8,9 @@ import lombok.*;
 @AllArgsConstructor
 public class Notification
 {
+    protected String domain = null;
     protected String id = null;
+    protected String repoId = null;
     protected String region = null;
     protected String repoName = null;
     protected RegistryProvider repoProvider = null;

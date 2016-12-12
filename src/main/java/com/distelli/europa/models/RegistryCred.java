@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 public class RegistryCred
 {
+    protected String domain = null;
     protected String id = null;
     protected Long created = null;
     protected String description = null;

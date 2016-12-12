@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 public class ContainerRepo
 {
+    protected String domain = null;
     protected String id = null;
     protected String name = null;
     protected String credId = null;

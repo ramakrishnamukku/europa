@@ -35,5 +35,6 @@ public class EuropaInjectorModule extends AbstractModule
         .withSecret(_europaConfiguration.getDbPass());
 
         bind(Index.Factory.class).toProvider(new IndexFactoryProvider(endpoint, creds));
+        bind(EuropaConfiguration.class).toProvider(new EuropaConfigurationProvider(_europaConfiguration));
     }
 }

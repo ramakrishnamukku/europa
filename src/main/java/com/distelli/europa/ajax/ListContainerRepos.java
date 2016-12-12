@@ -40,10 +40,11 @@ public class ListContainerRepos implements AjaxHelper
     */
     public Object get(AjaxRequest ajaxRequest)
     {
-        RegistryProvider provider = ajaxRequest.getAsEnum("provider", RegistryProvider.class);
+        RegistryProvider provider = ajaxRequest.getParamAsEnum("provider", RegistryProvider.class);
         String region = ajaxRequest.getParam("region");
         int pageSize = ajaxRequest.getParamAsInt("pageSize", 100);
         String marker = ajaxRequest.getParam("marker");
+        String domain = ajaxRequest.getParam("domain");
 
         PageIterator pageIterator = new PageIterator()
         .pageSize(pageSize)
@@ -51,15 +52,15 @@ public class ListContainerRepos implements AjaxHelper
         .forward();
 
         if(provider == null && region == null)
-            return _db.listRepos(pageIterator);
+            return _db.listRepos(domain, pageIterator);
         else if(provider != null)
         {
             if(region != null)
-                return _db.listRepos(provider, region, pageIterator);
+                return _db.listRepos(domain, provider, region, pageIterator);
             else
-                return _db.listRepos(provider, pageIterator);
+                return _db.listRepos(domain, provider, pageIterator);
         }
 
-        return _db.listRepos(pageIterator);
+        return _db.listRepos(domain, pageIterator);
     }
 }

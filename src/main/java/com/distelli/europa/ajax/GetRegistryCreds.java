@@ -35,7 +35,8 @@ public class GetRegistryCreds implements AjaxHelper
     {
         String id = ajaxRequest.getParam("id",
                                          true); //throw if missing
-        RegistryCred cred = _db.getCred(id);
+        String domain = ajaxRequest.getParam("domain");
+        RegistryCred cred = _db.getCred(domain, id);
         if(cred != null)
             cred.setSecret(null);
         return cred;

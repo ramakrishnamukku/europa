@@ -16,6 +16,8 @@ import com.distelli.persistence.PageIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.distelli.jackson.transform.TransformModule;
 
+import com.distelli.europa.EuropaConfiguration;
+import com.distelli.europa.Constants;
 import com.distelli.europa.ajax.*;
 import com.distelli.europa.models.*;
 import com.distelli.europa.webserver.*;
@@ -31,11 +33,14 @@ public class ContainerRepoDb
     private Index<ContainerRepo> _main;
     private Index<ContainerRepo> _secondaryIndex;
 
+    private EuropaConfiguration _europaConfiguration;
+
     private static final ObjectMapper om = new ObjectMapper();
-    private static TransformModule createTransforms(TransformModule module) {
+    private static TransformModule createTransforms(TransformModule module, EuropaConfiguration europaConfiguration) {
         module.createTransform(ContainerRepo.class)
         .put("hk", String.class,
-             (item) -> getHashKey(item))
+             (item) -> getHashKey(item, europaConfiguration),
+             (item, domain) -> setHashKey(item, domain, europaConfiguration))
         .put("id", String.class,
              (item) -> item.getId().toLowerCase())
         .put("sidx", String.class,
@@ -47,9 +52,39 @@ public class ContainerRepoDb
         return module;
     }
 
-    private static final String getHashKey(ContainerRepo repo)
+    private static final String getHashKey(ContainerRepo repo, EuropaConfiguration europaConfiguration)
     {
-        return "1";
+        if(europaConfiguration.isMultiTenant())
+        {
+            if(repo == null)
+                throw(new IllegalArgumentException("Invalid null repo in multi-tenant setup"));
+            return getHashKey(repo.getDomain(), europaConfiguration);
+        }
+        return Constants.DOMAIN_ZERO;
+    }
+
+    private static final String getHashKey(String domain, EuropaConfiguration europaConfiguration)
+    {
+        if(europaConfiguration.isMultiTenant())
+        {
+            if(domain == null)
+                throw(new IllegalArgumentException("Invalid null domain in multi-tenant setup for ContainerRepo"));
+
+            return domain.toLowerCase();
+        }
+        return Constants.DOMAIN_ZERO;
+    }
+
+    private static final void setHashKey(ContainerRepo repo, String domain, EuropaConfiguration europaConfiguration)
+    {
+        if(europaConfiguration.isMultiTenant())
+        {
+            if(domain == null)
+                throw(new IllegalArgumentException("Invalid null domain in multi-tenant setup for ContainerRepo"));
+
+            repo.setDomain(domain);
+        }
+        repo.setDomain(null);
     }
 
     private static final String getSecondaryKey(RegistryProvider provider, String region, String name)
@@ -61,8 +96,11 @@ public class ContainerRepoDb
     }
 
     @Inject
-    protected ContainerRepoDb(Index.Factory indexFactory, ConvertMarker.Factory convertMarkerFactory) {
-        om.registerModule(createTransforms(new TransformModule()));
+    protected ContainerRepoDb(Index.Factory indexFactory,
+                              ConvertMarker.Factory convertMarkerFactory,
+                              EuropaConfiguration europaConfiguration) {
+        _europaConfiguration = europaConfiguration;
+        om.registerModule(createTransforms(new TransformModule(), _europaConfiguration));
         _main = indexFactory.create(ContainerRepo.class)
         .withTableName("repos")
         .withNoEncrypt("hk", "id", "sidx")
@@ -93,41 +131,49 @@ public class ContainerRepoDb
         String id = repo.getId();
         if(id == null)
             throw(new IllegalArgumentException("Invalid id "+id+" in container repo"));
+        if(_europaConfiguration.isMultiTenant() && repo.getDomain() == null)
+            throw(new IllegalArgumentException("Invalid null domain in multi-tenant setup for ContainerRepo: "+
+                                               repo));
         _main.putItem(repo);
     }
 
-    public void deleteRepo(String id)
+    public void deleteRepo(String domain, String id)
     {
-        _main.deleteItem(getHashKey(null),
+        _main.deleteItem(getHashKey(domain, _europaConfiguration),
                          id.toLowerCase());
     }
 
-    public List<ContainerRepo> listRepos(PageIterator pageIterator)
+    public List<ContainerRepo> listRepos(String domain, PageIterator pageIterator)
     {
-        return _main.queryItems(getHashKey(null), pageIterator).list();
+        return _main.queryItems(getHashKey(domain, _europaConfiguration), pageIterator).list();
     }
 
-    public List<ContainerRepo> listRepos(RegistryProvider provider, PageIterator pageIterator)
+    public List<ContainerRepo> listRepos(String domain,
+                                         RegistryProvider provider,
+                                         PageIterator pageIterator)
     {
         String rangeKey = String.format("%s:", provider.toString().toLowerCase());
-        return _secondaryIndex.queryItems(getHashKey(null), pageIterator)
+        return _secondaryIndex.queryItems(getHashKey(domain, _europaConfiguration), pageIterator)
         .beginsWith(rangeKey)
         .list();
     }
 
-    public List<ContainerRepo> listRepos(RegistryProvider provider, String region, PageIterator pageIterator)
+    public List<ContainerRepo> listRepos(String domain,
+                                         RegistryProvider provider,
+                                         String region,
+                                         PageIterator pageIterator)
     {
         String rangeKey = String.format("%s:%s:",
                                         provider.toString().toLowerCase(),
                                         region.toLowerCase());
-        return _main.queryItems(getHashKey(null), pageIterator)
+        return _main.queryItems(getHashKey(domain, _europaConfiguration), pageIterator)
         .beginsWith(rangeKey)
         .list();
     }
 
-    public ContainerRepo getRepo(String id)
+    public ContainerRepo getRepo(String domain, String id)
     {
-        return _main.getItem(getHashKey(null),
+        return _main.getItem(getHashKey(domain, _europaConfiguration),
                              id.toLowerCase());
     }
 }

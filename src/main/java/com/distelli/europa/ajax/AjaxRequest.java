@@ -133,12 +133,12 @@ public class AjaxRequest
         return null;
     }
 
-    public <T extends Enum<T>> T getAsEnum(String key, Class<T> type)
+    public <T extends Enum<T>> T getParamAsEnum(String key, Class<T> type)
     {
-        return getAsEnum(key, type, false);
+        return getParamAsEnum(key, type, false);
     }
 
-    public <T extends Enum<T>> T getAsEnum(String key, Class<T> type, boolean throwIfMissing)
+    public <T extends Enum<T>> T getParamAsEnum(String key, Class<T> type, boolean throwIfMissing)
         throws AjaxClientException
     {
         if(this.params == null)

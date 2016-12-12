@@ -42,7 +42,7 @@ public class SaveContainerRepo implements AjaxHelper
         //Validate that the fields we want are non-null
         FieldValidator.validateNonNull(repo, "credId", "name");
         //Now get the cred from the credId
-        RegistryCred cred = _credsDb.getCred(repo.getCredId());
+        RegistryCred cred = _credsDb.getCred(repo.getDomain(), repo.getCredId());
         if(cred == null)
             throw(new AjaxClientException("Invalid Registry Cred: "+repo.getCredId(), JsonError.Codes.BadContent, 400));
         repo.setProvider(cred.getProvider());
@@ -54,6 +54,8 @@ public class SaveContainerRepo implements AjaxHelper
         FieldValidator.validateNonNull(notification, "type", "target");
         //save the repo in the db
         _reposDb.save(repo);
+        notification.setRepoId(repo.getId());
+        notification.setDomain(repo.getDomain());
         notification.setRepoProvider(repo.getProvider());
         notification.setRegion(repo.getRegion());
         notification.setRepoName(repo.getName());
