@@ -17,7 +17,6 @@ import com.distelli.europa.webserver.*;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
 
-
 @Singleton
 public class ListContainerRepos implements AjaxHelper
 {
