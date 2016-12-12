@@ -40,7 +40,7 @@ export default class RepoEventTimeline extends Component {
 	renderTimeline(){
 		let rows = [{
 			columns: [{
-                icon:'icon icon-dis-webhook',
+                icon:'icon icon-dis-webhook-circle-solid',
                 renderBody: this.renderAllEvents.bind(this)
             }]
 		}];

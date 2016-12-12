@@ -11,7 +11,6 @@ export default class Repositories extends Component {
 		this.state = {};
 	}
 	renderRepos(){
-
 		if(this.context.state.reposXHR) {
 			return (
 				<div className="PageLoader">
@@ -19,9 +18,24 @@ export default class Repositories extends Component {
 				</div>
 			);
 		}
+
+		let filteredRepos = this.context.state.repos.filter((repo) => {
+			if(!this.context.state.reposFilterQuery) return true;
+
+			return JSON.stringify(repo).indexOf(this.context.state.reposFilterQuery) > -1
+		});
+
+		if(!filteredRepos.length) {
+			return (
+				<div className="FlexColumn">
+					No Repositories
+				</div>	
+			);
+		}
+
 		return (
 			<div className="RepoList FlexColumn">
-				{this.context.state.repos.map(this.renderRepoItem)}
+				{filteredRepos.map(this.renderRepoItem)}
 			</div>
 		);
 	}
@@ -52,6 +66,14 @@ export default class Repositories extends Component {
 			</Link>
 		);
 	}
+	renderSearchRepos(){
+		return (
+			<input className="BlueBorder Search" 
+			       placeholder="Search"
+				   onChange={(e) => this.context.actions.filterRepos(e, false)}
+			/>
+		);
+	}
 	render() {
 		return (
 			<div className="ContentContainer">
@@ -69,6 +91,7 @@ export default class Repositories extends Component {
 					</div>
 				</div>
 				<div>
+					{this.renderSearchRepos()}
 				    {this.renderRepos()}
 				</div>
 			</div>

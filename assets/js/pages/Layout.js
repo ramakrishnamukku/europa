@@ -18,6 +18,7 @@ export default class Layout extends Component {
 			registries: [],
 			registriesMap: {},
 			repos: [],
+			reposFilterQuery: null,
 			reposMap: {},
 			registriesXHR: false,
 			repositories: [],

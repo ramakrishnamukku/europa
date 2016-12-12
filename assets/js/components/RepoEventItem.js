@@ -20,7 +20,6 @@ export default class RepoEventItem extends Component {
 		}
 	}
 	render() {
-		
 		let event = this.props.event;
 
 		return (
@@ -46,6 +45,8 @@ export default class RepoEventItem extends Component {
 					<div className="Actions">
 						<span className="Pipe">|</span>
 						<i className="icon icon-dis-details"
+						   data-tip="View Details"
+						   data-for="ToolTipTop"
 						   onClick={() => this.context.actions.toggleEventDetails(event.id)}/> 
 					</div>
 				</div>

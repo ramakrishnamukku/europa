@@ -31,3 +31,18 @@ select.BlueBorder.Error, input.BlueBorder.Error {
 select.BlueBorder.Dark, input.BlueBorder.Dark {
     background-color: $backgroundColor;
 }
+
+input.BlueBorder.Search {
+    font-size: 1.2rem;
+    margin: 1rem 0;
+    font-weight: 300;
+    width: 100%;
+    background-color: $backgroundColor;
+    border-bottom: solid 1px $light-blue;
+    background: url(../images/search-icon.png);
+    background-size: 20px 20px;
+    background-position: 0px 10px;
+    background-repeat: no-repeat;
+    padding-left: 28px;
+
+}

@@ -35,6 +35,14 @@ export function listRepos() {
   });
 }
 
+export function filterRepos(e, eIsValue){
+  let value = (eIsValue) ? e : e.target.value;
+
+  this.setState({
+    reposFilterQuery: value
+  });
+}
+
 // *************************************************
 // Add Repo Actions
 // *************************************************
