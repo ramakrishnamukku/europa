@@ -3,6 +3,42 @@ import * as GA from './../reducers/GeneralReducers'
 import * as RAjax from './../util/RAjax'
 import Validate from './../util/Validate'
 
+// *************************************************
+// General Repo Actions
+// *************************************************
+
+export function listRepos() {
+  return new Promise((resolve, reject) => {
+    this.setState({
+      reposXHR: (this.state.repos.length) ? false : true
+    }, () => {
+      RAjax.GET('ListContainerRepos', {})
+        .then((res) => {
+
+          let reposMap = res.reduce((cur, repo) => {
+            cur[`${repo.provider}-${repo.name}`] = repo
+            return cur;
+          }, {});
+
+          this.setState({
+            repos: res,
+            reposMap: reposMap,
+            reposXHR: false
+          }, () => resolve());
+        })
+        .catch((err) => {
+          this.setState({
+            reposXHR: false
+          }, () => reject());
+        });
+    });
+  });
+}
+
+// *************************************************
+// Add Repo Actions
+// *************************************************
+
 export function addRepoState() {
   return {
     errorMsg: '',
@@ -24,31 +60,12 @@ export function addRepoState() {
         secret: ''
       }
     }
-  }
+  };
 }
 
 export function resetAddRepoState() {
   this.setState({
     addRepo: GA.modifyProperty(this.state.addRepo, addRepoState.call(this))
-  })
-}
-
-export function listRepos() {
-  this.setState({
-    reposXHR: (this.state.repos.length) ? false : true
-  }, () => {
-    RAjax.GET('ListContainerRepos', {})
-      .then((res) => {
-        this.setState({
-          repos: res,
-          reposXHR: false
-        })
-      })
-      .catch((err) => {
-        this.setState({
-          reposXHR: false
-        });
-      });
   });
 }
 
@@ -63,7 +80,7 @@ export function updateNewRepoField(keyPath, e, eIsValue = false) {
         value
       }
     })
-  }, () => (this.state.addRepo.validateOnInput) ? isAddRepoValid.call(this, true) : null );
+  }, () => (this.state.addRepo.validateOnInput) ? isAddRepoValid.call(this, true) : null);
 };
 
 export function setNewRepoCredsType(type) {
@@ -74,29 +91,36 @@ export function setNewRepoCredsType(type) {
   });
 }
 
-export function selectCredsForNewRepo(e) {
-  let creds = JSON.parse(e.target.value);
+export function selectCredsForNewRepo(e, value) {
+  let id;
 
-  updateNewRepoField.call(this, 'repo', {credId: creds.id}, true);
+  if (e) {
+    id = JSON.parse(e.target.value).id
+  } else if (value) {
+    id = value
+  }
+
+  updateNewRepoField.call(this, 'repo/credId', id, true);
 }
 
-
-export function testNotification(){
-  RAjax.POST('TestWebhookDelivery', {notification: this.state.addRepo.newRepo.notification})
-  .then((res) => {
-    this.setState({
-      addRepo: GA.modifyProperty(this.state.addRepo, {
-        testNotification: res
+export function testNotification() {
+  RAjax.POST('TestWebhookDelivery', {
+      notification: this.state.addRepo.newRepo.notification
+    })
+    .then((res) => {
+      this.setState({
+        addRepo: GA.modifyProperty(this.state.addRepo, {
+          testNotification: res
+        })
       })
     })
-  })
-  .catch((err) => {
-    console.error('Webhook Req failed');
-    console.error(err);
-  });
+    .catch((err) => {
+      console.error('Webhook Req failed');
+      console.error(err);
+    });
 }
 
-export function toggleShowNotificationTestResults(){
+export function toggleShowNotificationTestResults() {
   this.setState({
     addRepo: GA.modifyProperty(this.state.addRepo, {
       showNotificationTestResults: !this.state.addRepo.showNotificationTestResults
@@ -119,7 +143,7 @@ export function addRepoRequest() {
             XHR: false,
             success: true
           })
-        })
+        }, () => listRepos.call(this))
       })
       .catch((err) => {
         let errorMsg = `There was an error adding your repository: ${err.error.message}`
@@ -151,7 +175,7 @@ function isAddRepoValid(validateOnInput) {
   let required = {
     repo: {
       credId: 'Registry Provider',
-      name: 'Credentials'
+      name: 'Docker Repository'
     },
     notification: {
       target: 'Webhook Target',
@@ -179,4 +203,50 @@ function isAddRepoValid(validateOnInput) {
     });
     return true
   }
+}
+
+// *************************************************
+// Repo Detail Actions
+// *************************************************
+
+
+export function repoDetailsState() {
+  return {
+    activeRepo: {},
+    pageXHR: false,
+    showSettings: false
+  };
+}
+
+export function resetRepoDetailsState() {
+  this.setState({
+    repoDetails: GA.modifyProperty(this.state.addRepo, repoDetailsState.call(this))
+  });
+}
+
+export function toggleRepoDetailsPageXHR() {
+  this.setState({
+    repoDetails: GA.modifyProperty(this.state.repoDetails, {
+      pageXHR: !this.state.repoDetails.XHR
+    })
+  });
+}
+
+export function setActiveRepoDetails(repoProviderRepoName) {
+  let repo = this.state.reposMap[repoProviderRepoName];
+
+  this.setState({
+    repoDetails: GA.modifyProperty(this.state.repoDetails, {
+      activeRepo: repo,
+      pageXHR: false
+    })
+  });
+}
+
+export function toggleActiveRepoSettings(){
+  this.setState({
+    repoDetails: GA.modifyProperty(this.state.repoDetails, {
+      showSettings: !this.state.repoDetails.showSettings
+    })
+  })
 }

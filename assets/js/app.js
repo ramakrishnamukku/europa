@@ -9,6 +9,7 @@ import Registries from './pages/Registries'
 import AddRegistryPage from './pages/AddRegistryPage'
 import EditRegistryPage from './pages/EditRegistryPage'
 import Repositories from './pages/Repositories'
+import RepoDetailsPage from './pages/RepoDetailsPage'
 import AddRepo from './pages/AddRepo'
 import Settings from './pages/settings'
 
@@ -26,6 +27,7 @@ export default class App extends Component {
           <Route component={AddRegistryPage} path="/new-registry" />
           <Route component={EditRegistryPage} path="/edit-registry" />
           <Route component={Repositories} path="/repositories" />
+          <Route component={RepoDetailsPage} path="/repository/:repo" />
           <Route component={AddRepo} path="/new-repository" />
           <Route component={Settings} path="/settings" />
         </Route>

@@ -16,7 +16,9 @@ export default class Layout extends Component {
 		// Main State Store
 		this.state = {
 			registries: [],
+			registriesMap: {},
 			repos: [],
+			reposMap: {},
 			registriesXHR: false,
 			repositories: [],
 			registry: {
@@ -27,6 +29,9 @@ export default class Layout extends Component {
 			},
 			addRepo: {
 				...RepoActions.addRepoState()
+			},
+			repoDetails: {
+				...RepoActions.repoDetailsState()
 			}
 		};
 	}
@@ -52,7 +57,7 @@ export default class Layout extends Component {
 				 <div className="MaxWidthContainer">
 					<div className="Logo">
 						<Link to="/repositories">
-							<img src="assets/images/distelli-europa-logo.svg"
+							<img src="http://localhost:5050/assets/images/distelli-europa-logo.svg"
 									 alt="Distelli Europa" />
 						</Link>
 					</div>

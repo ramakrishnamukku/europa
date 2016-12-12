@@ -11,7 +11,7 @@ select.BlueBorder, input.BlueBorder {
     border-radius: 0px;
     -webkit-appearance: inherit;
     border-bottom: solid 1px #FFFFFF;
-    transition: all 0.2s;
+    transition: all 0.3s;
 
     &:focus{
         border-bottom: solid 1px $light-blue;

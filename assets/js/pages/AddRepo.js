@@ -51,8 +51,8 @@ export default class AddRepository extends Component {
 	}
 	renderWebhook(){
 		return (
-			<div className="FlexColumn">
-				<div className="Row">
+			<div className="">
+				<div className="Row FlexColumn">
 					<label>
 						Docker Image Repository
 					</label>
@@ -61,7 +61,7 @@ export default class AddRepository extends Component {
 						   placeholder="Enter Webhook URL.."
 					       onChange={(e) => this.context.actions.updateNewRepoField(targetKey, e)} />
 				</div>
-				<div className="Row">
+				<div className="Row FlexColumn">
 					<label>
 						Secret (optional)
 					</label>
@@ -95,7 +95,8 @@ export default class AddRepository extends Component {
 	renderHideShowWebhookData(){
 		if(!isEmpty(this.context.state.addRepo.testNotification)) {
 
-			let buttonText = (this.context.state.addRepo.showNotificationTestResults) ? 'Hide Webhook Content' : 'Show Webhook Content'
+			let buttonText = (this.context.state.addRepo.showNotificationTestResults) ? 'Hide Webhook Content' 
+																					  : 'Show Webhook Content';
 			
 			return (
 				<div className="FlexRow Flex1 AlignCenter FlexEndJustify">
@@ -205,7 +206,8 @@ export default class AddRepository extends Component {
 	addRepo(){
 		if(this.context.state.addRepo.newRepoCredsType == 'NEW') {
 			this.context.actions.addRegistryRequest()
-			.then(this.context.actions.addRepoRequest)
+			.then((credId) => this.context.actions.selectCredsForNewRepo(null, credId))
+			.then(() => this.context.actions.addRepoRequest())
 			.catch(() => console.error('Add Registry Errors -- Skipping add repo'))
 		} else {
 			this.context.actions.addRepoRequest();

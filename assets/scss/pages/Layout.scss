@@ -1,3 +1,5 @@
+$max-width: 1080px;
+
 nav {
     position: relative;
     width: 100%;
@@ -9,7 +11,7 @@ nav {
 
     .MaxWidthContainer {
         position: relative;
-        max-width: 1200px;
+        max-width: $max-width;
         margin: 0 auto;
         width: 100%;
         display: flex;
@@ -55,7 +57,7 @@ nav {
 .PageContent {
     .MaxWidthContainer {
         position: relative;
-        max-width: 1200px;
+        max-width: $max-width;
         margin: 0 auto;
 
         .ContentContainer {
@@ -79,6 +81,33 @@ nav {
                     font-weight: 300;
                     color: $teal;
                     margin: 0;
+                }
+
+                h3 {
+                    position: relative;
+                    font-size: 1.8rem;
+                    font-weight: 300;
+                    color: $light-blue;
+                    margin: 0;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                }
+
+                .SubHead {
+                    position: relative;
+                    color: $grey;
+                    font-weight: 300;
+                    font-size: 1.4rem;
+                    align-self: flex-end;
+                    margin: 0px 0px 0 7px;
+
+                    .PipeSeperator {
+                        position: relative;
+                        top: -4px;
+                    }
+
                 }
             }
         }
@@ -104,7 +133,6 @@ nav {
         cursor: pointer;
     }
 }
-
 
 .LargeBlueButton {
     position: relative;
@@ -195,15 +223,30 @@ nav {
 .RadioButton {
     justify-content: center;
     align-items: center;
-    
-    &:hover {
-        cursor: pointer;
+
+    label {
+        color: $black;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    label.Inactive {
+        color: $grey;
     }
 
     i {
         margin-right: 5px;
+
+        &:hover {
+            cursor: pointer;
+        }
     }
 
+    i.Inactive {
+        color: $grey;
+    }
 }
 
 .PageLoader {
@@ -215,6 +258,9 @@ nav {
     height: 600px;
 }
 
+.TealColor {
+    color: $teal;
+}
 
 .ThickBlueText {
     color: $light-blue;

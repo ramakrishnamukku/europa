@@ -27,8 +27,8 @@ export default class Repositories extends Component {
 	}
 	renderRepoItem(repo, index){
 		return (
-			<div key={index}
-			     className="Flex1 RepoItem FlexColumn">
+			<Link to={`/repository/${repo.provider}-${repo.name}`}  key={index}>
+			<div className="Flex1 RepoItem FlexColumn">
 				<div className="Inside FlexRow">
 					<img className="ProviderIcon"
 					     src={RegistryProviderIcons(repo.provider)}/>
@@ -49,6 +49,7 @@ export default class Repositories extends Component {
 					</div>
 				</div>
 			</div>
+			</Link>
 		);
 	}
 	render() {

@@ -24,6 +24,7 @@ $backgroundColor: #F5F5F7;
 @import "partials/ContentRow";
 @import "partials/Msg";
 @import "partials/Loader";
+@import "partials/RepoSettings";
 @import "partials/WebhookData";
 
 
@@ -33,6 +34,10 @@ html, body {
     padding: 0px;
     font-family: 'Open Sans';
     background-color: $backgroundColor;
+}
+
+body {
+    overflow-y: scroll;
 }
 
 a {

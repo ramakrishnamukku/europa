@@ -4,6 +4,7 @@ import Loader from './../components/Loader'
 import Btn from './../components/Btn'
 import Msg from './../components/Msg'
 import RadioButton from './../components/RadioButton'
+import RegistryNames from './../util/RegistryNames'
 
 let provider = 'provider';
 let keyName = 'name';
@@ -44,10 +45,11 @@ export default class AddRegistry extends Component {
 				        onChange={(e) => this.context.actions.updateNewRegistryField(provider, e)}
 		       			{...readOnly}>
 				   <option value="">Select Amazon Container Registry or Google Container Registry</option>
-				   <option value="GCR">Google Container Registry</option>
-				   <option value="ECR">Amazon Container Registry</option>
-				   <option value="DOCKERHUB">DockerHub</option>
-				   <option value="PRIVATE">Private Registry</option>
+				   {Object.keys(RegistryNames).map((key) => {
+				   		return (
+				   			<option key={key} value={key}>{RegistryNames[key]}</option>
+				   		);
+				   })}
 				</select>
 			</div>
 		);
@@ -67,7 +69,7 @@ export default class AddRegistry extends Component {
 	renderExistingRegistryCredentials() {
 		if(this.context.state.addRepo.newRepoCredsType == 'EXISTING' && !this.props.standaloneMode) {
 			return (
-				<div className="Flex1 FlexColumn">
+				<div className="Flex1">
 					<label className="small">
 						Select Credentials
 					</label>
@@ -216,25 +218,31 @@ export default class AddRegistry extends Component {
                 renderBody: this.renderErrorMsg.bind(this),
                 condition: this.context.state.addRegistry.errorMsg
             }]
-		}, {
-			columns: [{
-                icon:'icon icon-dis-blank',
-                renderBody: this.renderLoader.bind(this),
-                condition: this.context.state.addRegistry.XHR
-            }]
-		}, {
-			columns: [{
-                icon:'icon icon-dis-blank',
-                renderBody: this.renderSuccessMsg.bind(this),
-                condition: this.context.state.addRegistry.success
-            }]
-		}, {
-			columns: [{
-                icon:'icon icon-dis-blank',
-                renderBody: this.renderAddButton.bind(this),
-                condition: this.props.standaloneMode
-            }]
 		}];
+
+		if(this.props.standaloneMode) {
+			let standAloneRows = [{
+				columns: [{
+	                icon:'icon icon-dis-blank',
+	                renderBody: this.renderLoader.bind(this),
+	                condition: this.context.state.addRegistry.XHR
+	            }]
+			}, {
+				columns: [{
+	                icon:'icon icon-dis-blank',
+	                renderBody: this.renderSuccessMsg.bind(this),
+	                condition: this.context.state.addRegistry.success
+	            }]
+			}, {
+				columns: [{
+	                icon:'icon icon-dis-blank',
+	                renderBody: this.renderAddButton.bind(this),
+	                condition: this.props.standaloneMode
+	            }]
+			}]
+
+			rows = rows.concat(standAloneRows);
+		}
 
 		return rows.map(this.renderContentRow);
 	}

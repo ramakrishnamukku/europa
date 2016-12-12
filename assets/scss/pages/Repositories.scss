@@ -72,10 +72,11 @@
 }
 
 .RepoList {
-    margin: 15px 0px;
+    margin: 0px;
+    background-color: $curtain-color;
 
     .RepoItem {
-        border-bottom: solid 1px #BCBEC0;
+        border-bottom: solid 1px $border-color;
         padding: 9px;
         transition: all 0.3s;
 

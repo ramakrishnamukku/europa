@@ -1,0 +1,22 @@
+.RepoSettingsContainer {
+	position: relative;
+	background-color: #FFFFFF;
+	width: auto;
+	padding: 0 14px;
+
+	.Value {
+		color: $teal;
+		font-size: 0.9rem;
+	}
+
+	i.icon-dis-close {
+		color: $light-blue;
+		transition: all 0.3s;
+		font-size: 1.1rem;
+
+		&:hover {
+			cursor: pointer;
+			color: darken($light-blue, 5%);
+		}
+	}
+}

@@ -23,8 +23,15 @@ export function listRegistries() {
   }, () => {
     RAjax.GET('ListRegistryCreds', {})
       .then((res) => {
+
+        let registriesMap = res.reduce((cur, repo) => {
+            cur[repo.id] = repo
+            return cur;
+          }, {});
+
         this.setState({
           registries: res,
+          registriesMap: registriesMap,
           registriesXHR: false
         })
       })

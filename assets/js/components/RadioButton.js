@@ -12,8 +12,14 @@ export default class RadioButton extends Component {
 	}
 	renderLabel(){
 		if(this.props.label) {
+			let className = this.props.labelClassName || '';
+
+			if(!this.props.isChecked) {
+				className += ' Inactive';
+			}
+
 			return (
-				<label className={this.props.labelClassName}
+				<label className={className}
 				       style={{margin: '0'}}>
 			 		{this.props.label}
 			 	</label>
@@ -21,7 +27,8 @@ export default class RadioButton extends Component {
 		}
 	}
 	renderIcon(){
-		let className = (this.props.isChecked) ? 'icon icon-dis-radio-check' : 'icon icon-dis-radio-uncheck';
+		let className = (this.props.isChecked) ? 'icon icon-dis-radio-check' 
+											   : 'icon icon-dis-radio-uncheck Inactive';
 
 		if(this.props.iconClassName) {
 			className += ` ${this.props.iconClassName}`;
