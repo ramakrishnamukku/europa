@@ -42,7 +42,8 @@ public class ContainerRepoDb
              (item) -> getHashKey(item),
              (item, domain) -> setHashKey(item, domain))
         .put("id", String.class,
-             (item) -> item.getId().toLowerCase())
+             (item) -> item.getId().toLowerCase(),
+             (item, id) -> item.setId(id))
         .put("sidx", String.class,
              (item) -> getSecondaryKey(item.getProvider(), item.getRegion(), item.getName()))
         .put("prov", RegistryProvider.class, "provider")
