@@ -10,6 +10,9 @@ export default class Repositories extends Component {
 		super(props);
 		this.state = {};
 	}
+	componentDidMount() {
+		this.context.actions.listRepos();
+	}
 	renderRepos(){
 		if(this.context.state.reposXHR) {
 			return (
@@ -26,11 +29,7 @@ export default class Repositories extends Component {
 		});
 
 		if(!filteredRepos.length) {
-			return (
-				<div className="FlexColumn">
-					No Repositories
-				</div>	
-			);
+			return this.renderNoRepositories();
 		}
 
 		return (
@@ -41,7 +40,7 @@ export default class Repositories extends Component {
 	}
 	renderRepoItem(repo, index){
 		return (
-			<Link to={`/repository/${repo.provider}-${repo.name}`}  key={index}>
+			<Link to={`/repository/${repo.id}`}  key={index}>
 			<div className="Flex1 RepoItem FlexColumn">
 				<div className="Inside FlexRow">
 					<img className="ProviderIcon"
@@ -72,6 +71,15 @@ export default class Repositories extends Component {
 			       placeholder="Search"
 				   onChange={(e) => this.context.actions.filterRepos(e, false)}
 			/>
+		);
+	}
+	renderNoRepositories(){
+		return (
+			<div className="NoContent">
+				<h3>
+					No Repositories in saved in Monitor
+				</h3>		
+			</div>
 		);
 	}
 	render() {

@@ -54,7 +54,7 @@ export default class AddRepository extends Component {
 			<div className="">
 				<div className="Row FlexColumn">
 					<label>
-						Docker Image Repository
+						Webhook URL
 					</label>
 					<input className={this.inputClassName(targetKey)} 
 					       value={this.context.state.addRepo.newRepo[targetKey]}
@@ -207,11 +207,14 @@ export default class AddRepository extends Component {
 		if(this.context.state.addRepo.newRepoCredsType == 'NEW') {
 			this.context.actions.addRegistryRequest()
 			.then((credId) => this.context.actions.selectCredsForNewRepo(null, credId))
-			.then(() => this.context.actions.addRepoRequest())
+			.then(() => this.context.actions.addRepoRequest(this.toRepoList))
 			.catch(() => console.error('Add Registry Errors -- Skipping add repo'))
 		} else {
-			this.context.actions.addRepoRequest();
+			this.context.actions.addRepoRequest(this.toRepoList.bind(this));
 		}
+	}
+	toRepoList(){
+		this.context.router.push('/repositories');
 	}
 	renderAddRepository(){
 		let rows = [{
@@ -221,7 +224,7 @@ export default class AddRepository extends Component {
             }]
 		}, {
 			columns: [{
-                icon:'icon icon-dis-webhook',
+                icon:'icon icon-dis-webhook-circle-solid',
                 renderBody: this.renderWebhook.bind(this)
             }]
 		}, {
@@ -267,7 +270,7 @@ export default class AddRepository extends Component {
 			<div className="ContentContainer">
 				<div className="PageHeader">
 					<h2>
-						Add Registry
+						Add Repository
 					</h2>
 				</div>
 				<div>
@@ -280,11 +283,13 @@ export default class AddRepository extends Component {
 }
 
 AddRepository.childContextTypes = {
-    actions: React.PropTypes.object,
-    state: React.PropTypes.object
+	actions: React.PropTypes.object,
+    state: React.PropTypes.object,
+    router: React.PropTypes.object
 };
 
 AddRepository.contextTypes = {
-    actions: React.PropTypes.object,
-    state: React.PropTypes.object
+	actions: React.PropTypes.object,
+    state: React.PropTypes.object,
+    router: React.PropTypes.object
 };

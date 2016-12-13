@@ -16,7 +16,7 @@ export function listRepos() {
         .then((res) => {
 
           let reposMap = res.reduce((cur, repo) => {
-            cur[`${repo.provider}-${repo.name}`] = repo
+            cur[repo.id] = repo
             return cur;
           }, {});
 
@@ -42,6 +42,17 @@ export function filterRepos(e, eIsValue){
     reposFilterQuery: value
   });
 }
+
+export function listRepoEvents(repoId){
+  RAjax.GET('ListRepoEvents', {repoId})
+  .then((res) => {
+    console.log(res);
+  })
+  .catch((err) => {
+    console.log(err);
+  })
+}
+
 
 // *************************************************
 // Add Repo Actions
@@ -136,7 +147,7 @@ export function toggleShowNotificationTestResults() {
   });
 }
 
-export function addRepoRequest() {
+export function addRepoRequest(afterAddCb) {
   if (!isAddRepoValid.call(this, true)) return;
 
   this.setState({
@@ -151,9 +162,14 @@ export function addRepoRequest() {
             XHR: false,
             success: true
           })
-        }, () => listRepos.call(this))
+        }, () => {
+          listRepos.call(this)
+
+          if(afterAddCb) afterAddCb();
+        })
       })
       .catch((err) => {
+        console.error(err);
         let errorMsg = `There was an error adding your repository: ${err.error.message}`
         this.setState({
           addRepo: GA.modifyProperty(this.state.addRepo, {
@@ -243,8 +259,8 @@ export function toggleRepoDetailsPageXHR() {
   });
 }
 
-export function setActiveRepoDetails(repoProviderRepoName) {
-  let repo = this.state.reposMap[repoProviderRepoName];
+export function setActiveRepoDetails(repoId) {
+  let repo = this.state.reposMap[repoId];
 
   this.setState({
     repoDetails: GA.modifyProperty(this.state.repoDetails, {
@@ -262,32 +278,30 @@ export function toggleActiveRepoDelete() {
   })
 }
 
-export function deleteActiveRepo() {
+export function deleteActiveRepo(afterDeleteCb) {
   this.setState({
     repoDetails: GA.modifyProperty(this.state.repoDetails, {
       deleteXHR: true
     })
   }, () => {
-    RAjax.POST('DeleteContainerRepo', {
+    RAjax.GET('DeleteContainerRepo', {
         id: this.state.repoDetails.activeRepo.id
       })
       .then((res) => {
-
         this.setState({
           repoDetails: GA.modifyProperty(this.state.repoDetails, {
             deleteXHR: false
           })
+        }, () => {
+          if(afterDeleteCb) afterDeleteCb();
         });
-
       })
       .catch((err) => {
-        
         this.setState({
           repoDetails: GA.modifyProperty(this.state.repoDetails, {
             deleteXHR: false
           })
         });
-
       });
   });
 }

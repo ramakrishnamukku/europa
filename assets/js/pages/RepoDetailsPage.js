@@ -15,17 +15,23 @@ export default class RepoDetailsPage extends Component {
 		};
 	}
 	componentWillMount() {
+		let repoId = this.props.params.repoId
+
 		if(isEmpty(this.context.state.reposMap)) {
 			this.context.actions.toggleRepoDetailsPageXHR()
 			this.context.actions.listRepos().then(() => {
-				this.context.actions.setActiveRepoDetails(this.props.params.repo);	
+				this.context.actions.setActiveRepoDetails(repoId);
+				this.context.actions.listRepoEvents(repoId);
 			});			
 		} else {
-			this.context.actions.setActiveRepoDetails(this.props.params.repo);
+			this.context.actions.setActiveRepoDetails(repoId);
 		}
 	}
 	componentWillUnmount() {
 		this.context.actions.resetRepoDetailsState();
+	}
+	toRepoList(){
+		this.context.router.push('/repositories');
 	}
 	renderRepoSettings(activeRepo){
 		if(this.context.state.repoDetails.showSettings) {
@@ -37,12 +43,19 @@ export default class RepoDetailsPage extends Component {
 		}
 	}
 	renderDeleteRepo(){
+
+		if(this.context.state.repoDetails.deleteXHR) {
+			return (
+				<Loader />
+			);
+		}
+
 		if(this.context.state.repoDetails.isDeleting) {
 			return (
 				<CenteredConfirm message="Are you sure you want to delete this repository? All data will be lost."
 							     confirmButtonText="Delete"
 							     confirmButtonStyle={{}}
-							     onConfirm={() => this.context.actions.deleteActiveRepo()}
+							     onConfirm={() => this.context.actions.deleteActiveRepo(this.toRepoList.bind(this))}
 							     onCancel={() => this.context.actions.toggleActiveRepoDelete()}/>
 			);
 		}
