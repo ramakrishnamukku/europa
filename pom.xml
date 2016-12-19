@@ -16,15 +16,6 @@
     </repository>
   </repositories>
 
-  <pluginRepositories>
-    <pluginRepository>
-      <id>distelli-mvn-repo</id>
-      <url>s3://distelli-mvn-repo/content/repositories/releases/</url>
-      <releases><enabled>true</enabled></releases>
-      <snapshots><enabled>true</enabled></snapshots>
-    </pluginRepository>
-  </pluginRepositories>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -143,19 +134,19 @@
     <dependency>
       <groupId>com.distelli.persistence</groupId>
       <artifactId>persistence-api</artifactId>
-      <version>1.2.0</version>
+      <version>1.2.2</version>
     </dependency>
 
     <dependency>
       <groupId>com.distelli.persistence</groupId>
       <artifactId>persistence-impl</artifactId>
-      <version>1.2.0</version>
+      <version>1.2.2</version>
     </dependency>
 
     <dependency>
       <groupId>com.distelli.persistence</groupId>
       <artifactId>jackson-transform</artifactId>
-      <version>1.2.0</version>
+      <version>1.2.2</version>
     </dependency>
 
     <dependency>
@@ -169,6 +160,12 @@
 	  <artifactId>lombok</artifactId>
 	  <version>1.16.12</version>
 	</dependency>
+
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-ecr</artifactId>
+      <version>1.11.68</version>
+    </dependency>
 
   </dependencies>
 </project>

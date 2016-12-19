@@ -15,6 +15,9 @@ import com.distelli.cred.CredPair;
 import com.google.inject.AbstractModule;
 import com.distelli.persistence.Index;
 import com.distelli.europa.EuropaConfiguration;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.distelli.persistence.impl.mysql.MysqlDataSource;
+import com.distelli.europa.monitor.*;
 
 public class EuropaInjectorModule extends AbstractModule
 {
@@ -36,5 +39,19 @@ public class EuropaInjectorModule extends AbstractModule
 
         bind(Index.Factory.class).toProvider(new IndexFactoryProvider(endpoint, creds));
         bind(EuropaConfiguration.class).toProvider(new EuropaConfigurationProvider(_europaConfiguration));
+        bind(MysqlDataSource.class).toInstance(new MysqlDataSource() {
+                public int getMaximumPoolSize()
+                {
+                    return _europaConfiguration.getDbMaxPoolSize();
+                }
+            });
+
+        install(new FactoryModuleBuilder()
+                .implement(MonitorTask.class, EcrMonitorTask.class)
+                .build(EcrMonitorTask.Factory.class));
+
+        install(new FactoryModuleBuilder()
+                .implement(MonitorTask.class, GcrMonitorTask.class)
+                .build(GcrMonitorTask.Factory.class));
     }
 }

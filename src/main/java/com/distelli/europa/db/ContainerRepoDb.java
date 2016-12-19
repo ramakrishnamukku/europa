@@ -49,6 +49,7 @@ public class ContainerRepoDb
         .put("prov", RegistryProvider.class, "provider")
         .put("region", String.class, "region")
         .put("name", String.class, "name")
+        .put("rid", String.class, "registryId")
         .put("cid", String.class, "credId");
         return module;
     }

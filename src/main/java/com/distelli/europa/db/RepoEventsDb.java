@@ -16,6 +16,7 @@ import com.distelli.persistence.ConvertMarker;
 import com.distelli.persistence.Index;
 import com.distelli.persistence.Index;
 import com.distelli.persistence.PageIterator;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.distelli.jackson.transform.TransformModule;
 import com.distelli.europa.EuropaConfiguration;
@@ -46,6 +47,10 @@ public class RepoEventsDb
         .put("repoId", String.class, "repoId")
         .put("id", String.class, "id")
         .put("type", RepoEventType.class, "eventType")
+        .put("size", Long.class, "imageSize")
+        .put("sha", String.class, "imageSha")
+        .put("tags", new TypeReference<List<String>>(){}, "imageTags")
+        .put("mid", String.class, "imageManifestId")
         .put("etime", Long.class, "eventTime");
         return module;
     }

@@ -14,11 +14,13 @@ import org.apache.log4j.Logger;
 import com.distelli.europa.util.*;
 import com.distelli.europa.webserver.*;
 import com.distelli.europa.guice.*;
+import com.distelli.europa.monitor.*;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Stage;
 import com.distelli.persistence.impl.PersistenceModule;
+import javax.inject.Inject;
 
 public class Europa
 {
@@ -27,6 +29,11 @@ public class Europa
     private RequestHandlerFactory _requestHandlerFactory = null;
     private RouteMatcher _routeMatcher = null;
     private int _port = 8080;
+
+    @Inject
+    private MonitorQueue _monitorQueue;
+    private Thread _monitorThread;
+
     public Europa(String[] args)
     {
         CmdLineArgs cmdLineArgs = new CmdLineArgs(args);
@@ -73,6 +80,10 @@ public class Europa
 
     public void start()
     {
+        RepoMonitor monitor = new RepoMonitor(_monitorQueue);
+        _monitorThread = new Thread(monitor);
+        _monitorThread.start();
+
         WebServlet servlet = new WebServlet(_routeMatcher, _requestHandlerFactory);
         WebServer webServer = new WebServer(_port, servlet, "/");
         webServer.setCacheControl("max-age=300");

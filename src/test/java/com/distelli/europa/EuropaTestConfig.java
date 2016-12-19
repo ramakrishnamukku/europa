@@ -1,46 +1,41 @@
 /*
   $Id: $
-  @file EuropaConfiguration.java
-  @brief Contains the EuropaConfiguration.java class
+  @file EuropaTestConfig.java
+  @brief Contains the EuropaTestConfig.java class
 
   @author Rahul Singh [rsingh]
   Copyright (c) 2013, Distelli Inc., All Rights Reserved.
 */
 package com.distelli.europa;
 
-import java.io.File;
-
 import lombok.*;
+import java.io.File;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class EuropaConfiguration
+public class EuropaTestConfig
 {
     @Getter @Setter
-    private String dbEndpoint;
+    private String awsAccessKey;
     @Getter @Setter
-    private String dbUser;
+    private String awsSecretKey;
     @Getter @Setter
-    private String dbPass;
-    @Getter @Setter
-    private boolean multiTenant = false;
-    @Getter @Setter
-    private int dbMaxPoolSize = 6;
+    private String awsRegion;
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     static {
         OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public EuropaConfiguration()
+    public EuropaTestConfig()
     {
 
     }
 
-    public static final EuropaConfiguration fromFile(File configFile)
+    public static final EuropaTestConfig fromFile(File configFile)
     {
         try {
-            EuropaConfiguration config = OBJECT_MAPPER.readValue(configFile, EuropaConfiguration.class);
+            EuropaTestConfig config = OBJECT_MAPPER.readValue(configFile, EuropaTestConfig.class);
             return config;
         } catch(Throwable t) {
             throw(new RuntimeException(t));
