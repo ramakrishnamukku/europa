@@ -25,7 +25,7 @@ public class EuropaConfiguration
     @Getter @Setter
     private boolean multiTenant = false;
     @Getter @Setter
-    private int dbMaxPoolSize = 6;
+    private int dbMaxPoolSize = 2;
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     static {

@@ -21,6 +21,7 @@ import com.distelli.persistence.PageIterator;
 import static org.hamcrest.CoreMatchers.*;
 
 import javax.inject.Inject;
+import com.distelli.europa.clients.*;
 import com.google.inject.Guice;
 import static org.junit.Assert.*;
 
@@ -94,7 +95,7 @@ public class TestECRClient
         .id(credId)
         .build();
         ECRClient ecrClient = new ECRClient(cred);
-        PageIterator pageIterator = new PageIterator().pageSize(2).marker(null);
+        PageIterator pageIterator = new PageIterator().pageSize(100).marker(null);
         List<ContainerRepo> repos = ecrClient.listRepositories(pageIterator);
         assertThat(repos, is(not(nullValue())));
         for(ContainerRepo repo : repos)
@@ -116,8 +117,7 @@ public class TestECRClient
                 System.out.println("DockerImage: "+imageId);
                 assertThat(imageId.getRepoUri(), is(not(nullValue())));
                 assertThat(imageId.getRepoUri(), equalTo(repo.getRepoUri()));
-                assertThat(imageId.getTag(), is(not(nullValue())));
-                assertThat(imageId.getDigest(), is(not(nullValue())));
+                assertThat(imageId.getSha(), is(not(nullValue())));
             }
         }
     }

@@ -50,7 +50,7 @@ public class Europa
             Log4JConfigurator.configure(true);
         else
             Log4JConfigurator.configure(logsDir, "Europa");
-        Log4JConfigurator.setLogLevel("INFO");
+        Log4JConfigurator.setLogLevel("DEBUG");
         String configFilePath = cmdLineArgs.getOption("config");
         if(configFilePath == null)
         {

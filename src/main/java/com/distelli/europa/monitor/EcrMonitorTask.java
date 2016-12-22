@@ -164,6 +164,8 @@ public class EcrMonitorTask extends MonitorTask
             return imageIdList;
 
         PageIterator iter = new PageIterator().pageSize(100);
+        if(log.isDebugEnabled())
+            log.debug("Listing images from repo: "+_repo);
         do {
             List<DockerImageId> images = _ecrClient.listImages(_repo, iter);
             imageIdList.addAll(images);
