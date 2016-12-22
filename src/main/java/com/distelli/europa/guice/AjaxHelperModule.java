@@ -37,6 +37,7 @@ public class AjaxHelperModule extends AbstractModule
         addBinding(ListContainerRepos.class);
         addBinding(DeleteContainerRepo.class);
         addBinding(TestWebhookDelivery.class);
+        addBinding(ListRepoEvents.class);
     }
 
     private void addBinding(Class<? extends AjaxHelper> clazz)
