@@ -1,3 +1,7 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
 import React, {Component} from 'react'
 import AddRegistry from './../components/AddRegistry'
 import ContentRow from './../components/ContentRow'
@@ -6,6 +10,7 @@ import Msg from './../components/Msg'
 import Loader from './../components/Loader'
 import WebhookData from './../components/WebhookData'
 import isEmpty from './../util/IsEmpty'
+import NPECheck from './../util/NPECheck'
 
 let dockerRepoNameKey = 'repo/name';
 let targetKey = "notification/target";
@@ -50,16 +55,32 @@ export default class AddRepository extends Component {
 		);
 	}
 	renderWebhook(){
+		let webhookData = this.context.state.addRepo.testNotification;
+		let statusCode = NPECheck(webhookData, 'response/httpStatusCode', null);
+		let status = NPECheck(this.context.state, 'addRepo/testNotificationStatus', null);
+		let className = this.inputClassName(targetKey);
+
+		if(status == 'SUCCESS') className += ' SuccessBg';
+		if(status == 'ERROR') className += ' ErrorBg';
+
 		return (
 			<div className="">
 				<div className="Row FlexColumn">
 					<label>
 						Webhook URL
 					</label>
-					<input className={this.inputClassName(targetKey)} 
-					       value={this.context.state.addRepo.newRepo[targetKey]}
-						   placeholder="Enter Webhook URL.."
-					       onChange={(e) => this.context.actions.updateNewRepoField(targetKey, e)} />
+					<div className="FlexRow">
+						
+							<input className={className} 
+							       value={this.context.state.addRepo.newRepo[targetKey]}
+								   placeholder="Enter Webhook URL.."
+							       onChange={(e) => this.context.actions.updateNewRepoField(targetKey, e)} />
+						<div>
+							{this.renderTestNotificationStatus(status, statusCode)}
+						</div>
+						{this.renderTestNotification()}
+						
+					</div>
 				</div>
 				<div className="Row FlexColumn">
 					<label>
@@ -74,71 +95,31 @@ export default class AddRepository extends Component {
 		);
 	}
 	renderTestNotification(){
-		let webhookData = this.context.state.addRepo.testNotification;
-		
 		return (
-			<div className="FlexColumn">
-				<div className="FlexRow">
-					<Btn onClick={() => this.context.actions.testNotification()}
-						 text="Test Webhook"
-						 canClick={true}/>
-					 
-					{this.renderTestNotificationStatus(webhookData)}
-					{this.renderHideShowWebhookData()}
-				</div>
-				<div className="FlexRow">
-					{this.renderWebhookData(webhookData)}
-				</div>
-			</div>
+			<Btn style={{marginLeft: '7px'}}
+				 onClick={() => this.context.actions.testNotification()}
+				 text="Test Webhook"
+				 canClick={true}/>
 		);
 	}
-	renderHideShowWebhookData(){
-		if(!isEmpty(this.context.state.addRepo.testNotification)) {
-
-			let buttonText = (this.context.state.addRepo.showNotificationTestResults) ? 'Hide Webhook Content' 
-																					  : 'Show Webhook Content';
-			
-			return (
-				<div className="FlexRow Flex1 AlignCenter FlexEndJustify">
-					<div className="ThickBlueText" onClick={() => this.context.actions.toggleShowNotificationTestResults()}>
-						{buttonText}
-					</div>
-				</div>
-			);
-		}
-	}
-	renderTestNotificationStatus(webhookData){
-		
-		let statusCode = (webhookData.response) ? webhookData.response.httpStatusCode : null;
-
+	renderTestNotificationStatus(status, statusCode){
 		let icon = 'icon icon-dis-blank';
 		let statusText = "See Test Results Here";
 		let className = "InActive";
 
-		let isSuccess = null;
-		let isWarning = null;
-		let isError = null;
-
-		if (statusCode) {
-			isSuccess = 200 <= statusCode && statusCode <= 299;
-			isWarning = (0 <= statusCode && statusCode <= 199) || (300 <= statusCode && statusCode <= 399);
-			isError = 400 <= statusCode;	
-		}
-
-
-		if (isSuccess) {
+		if (status == 'SUCCESS') {
 			icon = 'icon icon-dis-check'
 			statusText = 'Success';
 			className="Success";
 		}
 
-		if(isWarning) {
+		if(status == 'WARNING') {
 			icon = 'icon icon-dis-warning';
 			statusText = "Warning";
 			className="Warning";
 		}
 
-		if(isError) {
+		if(status == 'ERROR') {
 			icon = "icon icon-dis-alert";
 			statusText = "Error";
 			className = "Error";
@@ -149,10 +130,12 @@ export default class AddRepository extends Component {
 		return (
 			<div className="NotificationTestActions">
 				<div className={className}>
-					<i className={icon}/>
-					<span className="StatusText">{statusText}</span>
-					<span className="Label">&nbsp;{(statusCode )? '- Response Code:' : null}&nbsp;</span>
-					<span className="StatusCode">{statusCode}</span>
+					<span className="StatusText">{statusText}</span>&nbsp;
+					<span className="StatusCode">{ (statusCode) ? `(${statusCode})` : null}</span>&nbsp;
+					<span className="ViewTestResults" 
+						  onClick={() => this.context.actions.toggleShowNotificationTestResults()}>
+						{ (statusCode) ? ' - View Details' : null}
+					</span>
 				</div>
 			</div>
 		);
@@ -160,7 +143,9 @@ export default class AddRepository extends Component {
 	renderWebhookData(webhookData){
 		if(this.context.state.addRepo.showNotificationTestResults) {
 			return (
-				<WebhookData webhookData={webhookData}/>
+				<WebhookData webhookData={webhookData} 
+							 modal={true}
+							 close={ () => this.context.actions.toggleShowNotificationTestResults() }/>
 			)
 		};
 	}
@@ -181,7 +166,7 @@ export default class AddRepository extends Component {
 			return (
 				<Msg text={message} 
 				     isSuccess={true}
-				     close={() => this.context.actions.clearAddRepoSuccess()}/>
+				     close={ () => this.context.actions.clearAddRepoSuccess() }/>
 			);
 		}
 	}
@@ -196,10 +181,9 @@ export default class AddRepository extends Component {
 		return (
 			<div className="FlexRow JustifyCenter RowPadding">
 				<Btn className="LargeBlueButton"
-					 onClick={() => this.addRepo()}
-					 text="Add Repository"
-					 canClick={canAdd}
-					 />
+					 onClick={ () => this.addRepo() }
+					 text="Connect Repository"
+					 canClick={canAdd} />
 			</div>
 		);
 	}
@@ -219,18 +203,13 @@ export default class AddRepository extends Component {
 	renderAddRepository(){
 		let rows = [{
 			columns: [{
-                icon:'icon icon-dis-container',
+                icon:'icon icon-dis-disk',
                 renderBody: this.renderDockerRepository.bind(this)
             }]
 		}, {
 			columns: [{
                 icon:'icon icon-dis-webhook-circle-solid',
                 renderBody: this.renderWebhook.bind(this)
-            }]
-		}, {
-			columns: [{
-                icon:'icon icon-dis-blank',
-                renderBody: this.renderTestNotification.bind(this)
             }]
 		}, {
 			columns: [{
@@ -270,10 +249,11 @@ export default class AddRepository extends Component {
 			<div className="ContentContainer">
 				<div className="PageHeader">
 					<h2>
-						Add Repository
+						Connect a repository
 					</h2>
 				</div>
 				<div>
+					{this.renderWebhookData(this.context.state.addRepo.testNotification)}
 				    {this.renderAddRegistry()}
 					{this.renderAddRepository()}
 				</div>

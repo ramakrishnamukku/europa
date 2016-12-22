@@ -1,48 +1,58 @@
 select.BlueBorder, input.BlueBorder {
-	position: relative;
-    background: #FFFFFF;
+    position: relative;
+    background: $backgroundColor;
     font-size: 0.75rem;
     font-weight: 400;
     color: #1DAFE9;
     border: 0px;
     outline: 0px;
-    padding: 9px;
+    padding: 10px;
     box-sizing: border-box;
     border-radius: 0px;
     -webkit-appearance: inherit;
     border-bottom: solid 1px #FFFFFF;
     transition: all 0.3s;
 
-    &:focus{
+    &:focus {
         border-bottom: solid 1px $light-blue;
     }
-
 }
 
 select.BlueBorder, input.BlueBorder.FullWidth {
-	width: 100%;
+    width: 100%;
 }
 
 select.BlueBorder.Error, input.BlueBorder.Error {
     border-bottom: solid 1px $red;
 }
 
-
 select.BlueBorder.Dark, input.BlueBorder.Dark {
     background-color: $backgroundColor;
 }
 
 input.BlueBorder.Search {
-    font-size: 1.2rem;
-    margin: 1rem 0;
+    font-size: 1.125rem;
     font-weight: 300;
+    color: #808285;
+    margin: 1rem 0 0;
     width: 100%;
     background-color: $backgroundColor;
-    border-bottom: solid 1px $light-blue;
     background: url(../images/search-icon.png);
     background-size: 20px 20px;
-    background-position: 0px 10px;
+    background-position: 0px 8px;
     background-repeat: no-repeat;
     padding-left: 28px;
 
+    &:focus {
+        border-bottom: solid 1px $light-blue;
+    }
 }
+
+select.BlueBorder.SuccessBg, input.BlueBorder.SuccessBg {
+    background-color: $light-green;
+}
+
+select.BlueBorder.ErrorBg, input.BlueBorder.ErrorBg {
+    background-color: $light-red;
+}
+

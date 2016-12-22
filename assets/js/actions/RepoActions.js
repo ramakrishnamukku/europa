@@ -1,7 +1,12 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
 import Reducers from './../reducers/AddRepoReducers'
 import * as GA from './../reducers/GeneralReducers'
 import * as RAjax from './../util/RAjax'
 import Validate from './../util/Validate'
+import NPECheck from './../util/NPECheck'
 
 // *************************************************
 // General Repo Actions
@@ -35,7 +40,7 @@ export function listRepos() {
   });
 }
 
-export function filterRepos(e, eIsValue){
+export function filterRepos(e, eIsValue) {
   let value = (eIsValue) ? e : e.target.value;
 
   this.setState({
@@ -43,14 +48,16 @@ export function filterRepos(e, eIsValue){
   });
 }
 
-export function listRepoEvents(repoId){
-  RAjax.GET('ListRepoEvents', {repoId})
-  .then((res) => {
-    console.log(res);
-  })
-  .catch((err) => {
-    console.log(err);
-  })
+export function listRepoEvents(repoId) {
+  RAjax.GET('ListRepoEvents', {
+      repoId
+    })
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
 }
 
 
@@ -67,6 +74,7 @@ export function addRepoState() {
     success: null,
     XHR: false,
     testNotification: {},
+    testNotificationStatus: null,
     showNotificationTestResults: false,
     newRepo: {
       repo: {
@@ -127,9 +135,17 @@ export function testNotification() {
       notification: this.state.addRepo.newRepo.notification
     })
     .then((res) => {
+      let statusCode = NPECheck(res, 'response/httpStatusCode', null);
+      let testNotificationStatus;
+
+      if (200 <= statusCode && statusCode <= 299) testNotificationStatus = 'SUCCESS';
+      if ((0 <= statusCode && statusCode <= 199) || (300 <= statusCode && statusCode <= 399)) testNotificationStatus = 'WARNING';
+      if (400 <= statusCode) testNotificationStatus = 'ERROR';
+
       this.setState({
         addRepo: GA.modifyProperty(this.state.addRepo, {
-          testNotification: res
+          testNotification: res,
+          testNotificationStatus
         })
       })
     })
@@ -165,7 +181,7 @@ export function addRepoRequest(afterAddCb) {
         }, () => {
           listRepos.call(this)
 
-          if(afterAddCb) afterAddCb();
+          if (afterAddCb) afterAddCb();
         })
       })
       .catch((err) => {
@@ -293,7 +309,7 @@ export function deleteActiveRepo(afterDeleteCb) {
             deleteXHR: false
           })
         }, () => {
-          if(afterDeleteCb) afterDeleteCb();
+          if (afterDeleteCb) afterDeleteCb();
         });
       })
       .catch((err) => {

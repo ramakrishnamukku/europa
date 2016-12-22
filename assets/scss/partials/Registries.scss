@@ -1,9 +1,25 @@
+.RegistryLegend {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    border-radius: 3px;
+    background-color: darken($curtain-color, 5%);
+
+    span {
+        flex: 1;
+        font-weight: 600;
+        color: $black;
+    }
+}
+
 .RegistryList {
     background-color: $curtain-color;
+    border-radius: 3px;
 
     .RegistryItem {
         border-bottom: solid 1px $border-color;
-        padding: 9px;
+        padding: 10px;
         transition: all 0.3s;
 
         &:hover {
@@ -21,38 +37,17 @@
                 margin-right: 11px;
             }
 
-            .Provider {
-                font-weight: 700;
-                font-size: 1rem;
-                color: $black;
-                flex: 1;
-            }
-
-            .Key {
+            span.ListValue {
                 font-weight: 400;
                 font-size: 1rem;
                 color: $grey;
                 flex: 1;
-                margin-right: 11px;
-            }
-
-            .Region {
-                color: $grey;
-                flex: 1;
-
-                .Label {
-                    color: $black;
-                    flex: 1;
-                    font-size: 1rem;
-                }
-            }
-
-            .Pipe {
-                margin: 0px 9px;
-                color: $grey;
             }
 
             .Actions {
+                flex: 1;
+
+
                 i {
                     color: $light-blue;
                     flex: 1;

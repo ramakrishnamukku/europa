@@ -1,17 +1,25 @@
+.WebhookData.Modal {
+    margin-top: -200px;
+}
+
 .WebhookData {
     position: relative;
     display: flex;
     flex-direction: column;
     background-color: #FFFFFF;
     width: 100%;
+    max-width: 800px;
     margin-top: 14px;
+    padding: 10px;
+    border: 1px solid $light-blue;
+    border-top: 3px solid $light-blue;
 
     .Controls {
-        padding: 14px;
+        padding: 0 0 10px;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        font-size: 0.9rem;
+        font-size: 0.75rem;
         border-bottom: solid 1px $border-color;
 
         .Title {
@@ -32,6 +40,19 @@
             align-content: center;
             align-items: center;
             justify-content: flex-end;
+            margin-right: 10px;
+        }
+
+        .Close {
+            display: flex;
+            align-content: center;
+            align-items: center;
+            justify-content: flex-end;
+
+            i.icon-dis-close {
+                @extend .Clickable;
+                font-size: 1.4rem;
+            }
         }
     }
 

@@ -1,11 +1,8 @@
 import React, {Component} from 'react'
 import ReactDOM from 'react-dom'
-import { Router, Route, browserHistory, Redirect } from 'react-router'
+import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import Layout from './pages/Layout'
-
 import Overview from './pages/Overview'
-
-import Registries from './pages/Registries'
 import AddRegistryPage from './pages/AddRegistryPage'
 import EditRegistryPage from './pages/EditRegistryPage'
 import Repositories from './pages/Repositories'
@@ -22,8 +19,6 @@ export default class App extends Component {
     return (
       <Router history={browserHistory}>
         <Route component={Layout}>
-          <Route component={Overview} path="/" />
-          <Route component={Registries} path="/registries" />
           <Route component={AddRegistryPage} path="/new-registry" />
           <Route component={EditRegistryPage} path="/edit-registry" />
           <Route component={Repositories} path="/repositories" />

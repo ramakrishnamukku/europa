@@ -36,7 +36,19 @@ export default class Registries extends Component {
 
 		return (
 			<div className="RegistryList FlexColumn">
+				{this.renderLegend()}
 				{registries.map(this.renderRegistryItem.bind(this))}
+			</div>
+		);
+	}
+	renderLegend(){
+		return (
+			<div className="RegistryLegend">
+				<span>Provider</span>
+				<span>Key Name</span>
+				<span>Access Key</span>
+				<span>Region</span>
+				<span>+ Add Credential</span>
 			</div>
 		);
 	}
@@ -45,21 +57,14 @@ export default class Registries extends Component {
 			<div key={index}
 				 className="Flex1 RegistryItem FlexColumn">
 				<div className="Inside FlexRow">
-					<img className="ProviderIcon"
-					     src={RegistryProviderIcons(reg.provider)}/>
-					<span className="Provider">
+					
+					<span className="ListValue">
+						<img className="ProviderIcon"src={RegistryProviderIcons(reg.provider)}/>
 						{reg.provider}
 					</span>
-					<span className="Key">
-					&nbsp;&ndash;&nbsp;{reg.name}
-					</span>
-					<span className="Region">
-						<span className="Label">
-							Region:&nbsp;
-						</span>
-						{reg.region}
-					</span>
-					<span className="Pipe">|</span>
+					<span className="ListValue">{reg.name}</span>
+					<span className="ListValue">{reg.name}</span>
+					<span className="ListValue">{reg.region}</span>
 					<span className="Actions">
 						<i className="icon icon-dis-edit" data-tip="Edit Credentials" data-for="ToolTipTop"
 						   onClick={() => this.setRegistryForEdit(reg)}/>
@@ -113,29 +118,7 @@ export default class Registries extends Component {
 		}
 	}
 	render() {
-		let registries = this.context.state.registries;
-		let rLength = registries.length;
-
-		return (
-			<div className="ContentContainer">
-				<div className="PageHeader">
-					<h2>
-						{rLength}&nbsp;{(rLength == 1) ? 'Registry' : 'Registries'}
-					</h2>
-					<div className="FlexRow">
-						<div className="Flex1">
-							<Link to="/new-registry">
-								<Btn text="Add Registry"
-									 onClick={ () => {} } />
-							</Link>
-						</div>
-					</div>
-				</div>
-				<div>
-					{this.renderRegistries()}
-				</div>
-			</div>
-		);
+		return this.renderRegistries()
 	}
 }
 

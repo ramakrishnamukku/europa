@@ -27,7 +27,7 @@ export default class Btn extends Component {
 	}
 	renderButton(){
 		return (
-			<div style={this.props.btnStyle || {}} className={this.getClassName()} onClick={() => this.onClick()}>
+			<div style={this.props.style || {}} className={this.getClassName()} onClick={() => this.onClick()}>
 				{this.props.text}
 			</div>
 		);
@@ -53,7 +53,7 @@ Btn.propTypes = {
 	color: React.PropTypes.string,
 	canClick: React.PropTypes.bool,
 	help: React.PropTypes.string,
-	btnStyle: React.PropTypes.object,
+	style: React.PropTypes.object,
 	className: React.PropTypes.string
 };
 

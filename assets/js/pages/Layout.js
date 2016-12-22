@@ -1,3 +1,7 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
 import React, {Component} from 'react'
 import {Link} from 'react-router'
 import ReactTooltip from 'react-tooltip'
@@ -63,16 +67,6 @@ export default class Layout extends Component {
 						</Link>
 					</div>
 					<div className="FlexRow NavButtonContainer">
-						<div className="Flex1">
-							<Link to="/repositories" data-tip="View Repositories" data-for="ToolTipBottom">
-								<i className="icon icon-dis-contents"/>
-							</Link>
-						</div>
-						<div className="Flex1">
-							<Link to="/registries" data-tip="View Registries" data-for="ToolTipBottom">
-								<i className="icon icon-dis-docker" style={{fontSize: '1.5rem'}}/>
-							</Link>
-						</div>
 						<div className="Flex1">
 							<Link to="/settings" data-tip="Settings" data-for="ToolTipBottom">
 								<i className="icon icon-dis-settings"/>

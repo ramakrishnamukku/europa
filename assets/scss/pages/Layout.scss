@@ -23,8 +23,7 @@ nav {
 
             a {
                 img {
-                    width: 90px;
-                    height: auto;
+                    height: 30px;
                 }
             }
         }
@@ -54,6 +53,17 @@ nav {
     }
 }
 
+.ScreenCover {
+    top: 43px;
+    left: 0px;
+    position: fixed;
+    height: calc(100% - 43px);
+    width: 100%;
+    background-color: rgba(0,0,0,0.3);
+    z-index: 10000;
+    display: flex;
+}
+
 .PageContent {
     .MaxWidthContainer {
         position: relative;
@@ -71,9 +81,8 @@ nav {
                 flex-wrap: nowrap;
                 justify-content: space-between;
                 align-items: center;
-                border-bottom: solid 1px #BCBEC0;
                 margin: 0 0 0;
-                padding: 16px 0 18px;
+                padding: 16px 0 0;
 
                 h2 {
                     position: relative;
@@ -135,11 +144,12 @@ nav {
 
 .Tag {
     border-radius: 3px;
-    background-color: $blue;
-    padding: 2px 4px;
-    font-size: 0.65rem;
+    background-color: $purple; 
+    padding: 2px 6px;
+    font-size: 0.55rem;
+    font-weight: 400;
     color: #FFFFFF;
-    margin-left: 7px;
+    margin: 4px 7px 0 0;
     text-transform: uppercase;
 }
 
@@ -167,14 +177,15 @@ nav {
     position: relative;
     display: flex;
     flex-direction: row;
-    height: 45px;
+    height: 48px;
     background-color: $light-blue;
     color: white;
     justify-content: center;
     align-items: center;
     font-weight: 300;
-    font-size: 1.4rem;
-    width: 50%;
+    font-size: 1.25rem;
+    width: 485px;
+    max-width: 50%;
 
     &:hover {
         cursor: pointer;
@@ -193,9 +204,9 @@ nav {
     align-items: center;
 
     h3 {
-        color: $black;
-        font-weight: 400;
-        font-size: 1.6rem;
+        color: $teal;
+        font-weight: 300;
+        font-size: 2.125rem;
     }
 }
 
@@ -206,6 +217,17 @@ nav {
     justify-content: center;
     align-items: center;
     height: 600px;
+}
+
+
+.Clickable {
+    color: $light-blue;
+    transition: color 0.3s;
+
+    &:hover {
+        cursor: pointer;
+        color: darken($light-blue, 10%);
+    }
 }
 
 .FlexColumn {
@@ -224,6 +246,10 @@ nav {
 
 .Flex2 {
     flex: 2;
+}
+
+.Flex3 {
+    flex: 3;
 }
 
 .Row {

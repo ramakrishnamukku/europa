@@ -1,3 +1,7 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 import RegistryProviderIcons from './../util/RegistryProviderIcons'
@@ -12,6 +16,9 @@ export default class Repositories extends Component {
 	}
 	componentDidMount() {
 		this.context.actions.listRepos();
+	}
+	toAddRepo(){
+		this.context.router.push('/new-repository');
 	}
 	renderRepos(){
 		if(this.context.state.reposXHR) {
@@ -52,8 +59,11 @@ export default class Repositories extends Component {
 					<div className="Flex2 FlexColumn">
 						<span className="Label">Last Event:</span>
 						<div className="FlexRow AlignCenter">
-							<span className="LastPushed">Pushed image hyper-local with tag: </span>
-							<span className="Tag">Latest</span>
+							<span className="LastPushed">Pushed image <span className="LightBlueColor">hyper-local</span></span>
+							<span className="Label">&nbsp;&ndash;&nbsp;7 Days Agos</span>
+						</div>
+						<div className="FlexRow">
+							<span className="Tag">Latest</span>	
 						</div>
 					</div>
 					<div className="FlexColumn">
@@ -73,21 +83,12 @@ export default class Repositories extends Component {
 			/>
 		);
 	}
-	renderNoRepositories(){
-		return (
-			<div className="NoContent">
-				<h3>
-					No Repositories in saved in Monitor
-				</h3>		
-			</div>
-		);
-	}
-	render() {
+	renderRepositories(){
 		return (
 			<div className="ContentContainer">
 				<div className="PageHeader">
 					<h2>
-						Monitored Repositories
+						{`${this.context.state.repos.length} Repositories`} 
 					</h2>
 					<div className="FlexRow">
 						<div className="Flex1">
@@ -100,10 +101,33 @@ export default class Repositories extends Component {
 				</div>
 				<div>
 					{this.renderSearchRepos()}
-				    {this.renderRepos()}
+					{this.renderRepos()}		
 				</div>
 			</div>
 		);
+	}
+	renderNoRepositories(){
+		return (
+			<div className="ContentContainer">
+				<div className="NoContent">
+					<h3>
+						You have no repositories to monitor
+					</h3>		
+					<Btn className="LargeBlueButton"
+						 onClick={() => this.toAddRepo()}
+						 text="Add Repository"
+						 canClick={true} />
+				</div>
+			</div>
+		);
+
+	}
+	render() {
+		if(this.context.state.repos.length) {
+			return this.renderRepositories()
+		} else {
+			return this.renderNoRepositories();
+		}
 	}
 }
 

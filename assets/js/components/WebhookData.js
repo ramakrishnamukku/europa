@@ -1,3 +1,7 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
 import React, {Component} from 'react'
 import AddRegistry from './../components/AddRegistry'
 import Btn from './../components/Btn'
@@ -28,9 +32,14 @@ export default class WebhookData extends Component {
 				</div>
 					{this.renderChooseType()}
 				<div className="Flex1 Redeliver">
-					<Btn onClick={() => console.log('todo')}
-						 text="Redeliver"
-						 />
+					<Btn onClick={ () => console.log('todo') }
+						 style={{height: '22px', width: '105px', fontSize: '0.75rem'}}
+						 text="Redeliver" />
+				</div>
+				<div className="Close">
+					<i className="icon icon-dis-close" 
+					   onClick={ () => this.props.close() }
+					/>
 				</div>
 			</div>
 		);
@@ -100,7 +109,6 @@ export default class WebhookData extends Component {
 		);
 	}
 	render() {
-
 		if(!this.props.webhookData || !Object.keys(this.props.webhookData).length) {
 			return (
 				<div className="WebhookData">
@@ -109,10 +117,15 @@ export default class WebhookData extends Component {
 			);		
 		}
 
+		let className = 'WebhookData';
+		if(this.props.modal) className += ' Modal';
+
 		return (
-			<div className="WebhookData">
-				{this.renderControls()}
-				{this.renderData()}
+			<div className="ScreenCover JustifyCenter AlignCenter">
+				<div className={className}>
+					{this.renderControls()}
+					{this.renderData()}
+				</div>
 			</div>
 		);
 
@@ -121,15 +134,19 @@ export default class WebhookData extends Component {
 }
 
 WebhookData.propTypes = {
-	webhookData: React.PropTypes.object.isRequired
+	webhookData: React.PropTypes.object.isRequired,
+	close: React.PropTypes.func,
+	modal: React.PropTypes.bool,
 };
 
 WebhookData.childContextTypes = {
     actions: React.PropTypes.object,
-    state: React.PropTypes.object
+    state: React.PropTypes.object,
+    router: React.PropTypes.object
 };
 
 WebhookData.contextTypes = {
     actions: React.PropTypes.object,
-    state: React.PropTypes.object
+    state: React.PropTypes.object,
+    router: React.PropTypes.object
 };
