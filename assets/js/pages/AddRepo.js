@@ -191,13 +191,13 @@ export default class AddRepository extends Component {
 		if(this.context.state.addRepo.newRepoCredsType == 'NEW') {
 			this.context.actions.addRegistryRequest()
 			.then((credId) => this.context.actions.selectCredsForNewRepo(null, credId))
-			.then(() => this.context.actions.addRepoRequest(this.toRepoList))
+			.then(() => this.context.actions.addRepoRequest(this.toRepoDetails).bind(this))
 			.catch(() => console.error('Add Registry Errors -- Skipping add repo'))
 		} else {
-			this.context.actions.addRepoRequest(this.toRepoList.bind(this));
+			this.context.actions.addRepoRequest(this.toRepoDetails.bind(this));
 		}
 	}
-	toRepoList(){
+	toRepoDetails(repoId){
 		this.context.router.push('/repositories');
 	}
 	renderAddRepository(){

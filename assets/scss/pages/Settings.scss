@@ -1,0 +1,40 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
+.SideBarContainer {
+    display: flex;
+    flex-direction: column;
+    background-color: $curtain-color;
+    border-radius: 3px;
+    min-height: 200px;
+
+    div.SideBarItem {
+        height: 40px;
+        padding: 0 10px;
+        display: flex;
+        align-items: center;
+        color: $light-blue;
+        font-size: 0.875rem;
+        font-weight: 400;
+        transition: all 0.3s;
+
+        &:hover {
+            background-color: lighten($backgroundColor, 2%);
+            cursor: pointer;
+        }
+
+        &:first-child {
+        	border-radius: 3px 3px 0 0;
+        }
+
+        &:last-of-type{
+			border-radius: 0 0 3px 3px;	
+        }
+    }
+
+    div.SideBarItem.Active {
+        background-color: $teal;
+        color: white;
+    }
+}

@@ -1,3 +1,7 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
 export function POST(operation = '', content = {}, url = '/ajax') {
   let request = new Request(url, {
     method: 'POST',

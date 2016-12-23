@@ -1,3 +1,7 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
 import React, {Component} from 'react'
 import Registries from './../components/Registries'
 import Btn from './../components/Btn'
@@ -12,6 +16,32 @@ export default class Settings extends Component {
 			<Registries />
 		);
 	}
+	getSideBarItemClassName(key){
+		let section = this.context.state.settings.section;
+		return (key == section) ? 'SideBarItem Active' : 'SideBarItem';
+	}	
+	renderSideBar(){
+		let credKey = 'CREDENTIALS';
+		let dbKey = "DB";
+		let settingsKey = "SETTINGS"
+
+		return (
+			<div className="SideBarContainer">
+				<div className={this.getSideBarItemClassName(credKey)} 
+					 onClick={() => this.context.actions.setSettingsSection(credKey)}>
+					Credentials
+				</div>
+				<div className={this.getSideBarItemClassName(dbKey)} 
+					 onClick={() => this.context.actions.setSettingsSection(dbKey)}>
+					DB
+				</div>
+				<div className={this.getSideBarItemClassName(settingsKey)} 
+					 onClick={() => this.context.actions.setSettingsSection(settingsKey)}>
+					Settings
+				</div>
+			</div>
+		);
+	}
 	render() {
 		return (
 			<div className="ContentContainer">
@@ -21,8 +51,8 @@ export default class Settings extends Component {
 					</h2>
 				</div>
 				<div className="FlexRow RowPadding">
-					<div className="Flex1">
-						some shit
+					<div className="Flex1 Column">
+						{this.renderSideBar()}
 					</div>
 					<div className="Flex3">
 						{this.renderRegistries()}

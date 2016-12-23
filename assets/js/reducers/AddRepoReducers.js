@@ -1,3 +1,7 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
 import CreateOrSetPropertyValue from './../util/CreateOrSetPropertyValue'
 
 export default function AddRepoReducers(state, action) {

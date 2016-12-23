@@ -1,5 +1,8 @@
-import React, {Component} from 'react'
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
 
+import React, {Component} from 'react'
 
 export default class Msg extends Component {
 	constructor(props) {

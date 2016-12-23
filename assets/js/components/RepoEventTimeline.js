@@ -1,3 +1,7 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
 import React, {Component, PropTypes} from 'react'
 import WebhookData from './../components/WebhookData'
 import RepoEventItem from './../components/RepoEventItem'
@@ -15,48 +19,25 @@ export default class RepoEventTimeline extends Component {
 			</div>
 		);
 	}
-	renderRepoEventItem(event, index){
-		return (
-			<RepoEventItem key={index}
-						   event={event} />
-		);
-	}
 	renderAllEvents(){
 		return (
 			<div className="Timeline">
-				<div className="FlexRow SpaceBetween">
-					<div className="FlexRow">
-						<label>
-							Event History
-						</label>
-					</div>
-				</div>
 				<div className="TimelineContainer">
 					{this.props.events.map(this.renderRepoEventItem)}
 				</div>
 			</div>
 		);
 	}
-	renderTimeline(){
-		let rows = [{
-			columns: [{
-                icon:'icon icon-dis-webhook-circle-solid',
-                renderBody: this.renderAllEvents.bind(this)
-            }]
-		}];
-
-		return rows.map(this.renderContentRow);
-	}
-	renderContentRow(row, index){
+	renderRepoEventItem(event, index){
 		return (
-			<ContentRow key={index}
-						row={row} />
+			<RepoEventItem key={index}
+						   event={event} />
 		);
 	}
 	render() {
 		return (
 			<div className="RepoEventTimeline">
-				{this.renderTimeline()}
+				{this.renderAllEvents()}
 			</div>
 		);
 	}	

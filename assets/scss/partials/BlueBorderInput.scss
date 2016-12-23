@@ -12,8 +12,8 @@ select.BlueBorder, input.BlueBorder {
     -webkit-appearance: inherit;
     border-bottom: solid 1px #FFFFFF;
     transition: all 0.3s;
-
-    &:focus {
+    
+    &:focus, &:hover {
         border-bottom: solid 1px $light-blue;
     }
 }
@@ -26,8 +26,8 @@ select.BlueBorder.Error, input.BlueBorder.Error {
     border-bottom: solid 1px $red;
 }
 
-select.BlueBorder.Dark, input.BlueBorder.Dark {
-    background-color: $backgroundColor;
+select.BlueBorder.White, input.BlueBorder.White {
+    background-color: white;
 }
 
 input.BlueBorder.Search {

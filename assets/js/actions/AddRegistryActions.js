@@ -1,3 +1,7 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
 import Reducers from './../reducers/AddRegistryReducers'
 import * as GA from './../reducers/GeneralReducers'
 import * as RAjax from './../util/RAjax'
@@ -5,6 +9,7 @@ import Validate from './../util/Validate'
 
 export function addRegistryState() {
   return {
+    showModal: false,
     isEdit: false,
     errorMsg: '',
     errorFields: [],
@@ -78,10 +83,21 @@ export function addRegistryRequest() {
   });
 };
 
+export function toggleShowAddEditRegistryModal() {
+  return new Promise((resolve, reject) => {
+    this.setState({
+      addRegistry: GA.modifyProperty(this.state.addRegistry, {
+          showModal: !this.state.addRegistry.showModal
+      })
+    }, () => resolve() )
+  });
+}
+
 export function setRegistryForEdit(reg) {
   return new Promise((resolve, reject) => {
     this.setState({
       addRegistry: GA.modifyProperty(this.state.addRegistry, {
+        showModal: true,
         isEdit: true,
         newRegistry: reg
       })

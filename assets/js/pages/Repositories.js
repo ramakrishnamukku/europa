@@ -21,14 +21,6 @@ export default class Repositories extends Component {
 		this.context.router.push('/new-repository');
 	}
 	renderRepos(){
-		if(this.context.state.reposXHR) {
-			return (
-				<div className="PageLoader">
-					<Loader />
-				</div>
-			);
-		}
-
 		let filteredRepos = this.context.state.repos.filter((repo) => {
 			if(!this.context.state.reposFilterQuery) return true;
 
@@ -123,7 +115,13 @@ export default class Repositories extends Component {
 
 	}
 	render() {
-		if(this.context.state.repos.length) {
+		if(this.context.state.reposXHR) {
+			return (
+				<div className="PageLoader">
+					<Loader />
+				</div>
+			);
+		} else if(this.context.state.repos.length) {
 			return this.renderRepositories()
 		} else {
 			return this.renderNoRepositories();

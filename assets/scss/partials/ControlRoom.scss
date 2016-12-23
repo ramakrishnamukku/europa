@@ -1,0 +1,24 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
+.ControlRoom {
+    position: relative;
+    
+    width: 100%;
+    border-radius: 3px;
+    min-height: 600px;
+
+    .Header {
+		border-radius: 3px 3px 0px 0px;
+		background-color: darken($curtain-color, 3%);	
+		height: 40px;
+		display: flex;
+    }
+
+
+    .Body {
+		background-color: $curtain-color;
+		min-height: 600px;
+    }
+}

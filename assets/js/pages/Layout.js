@@ -11,12 +11,12 @@ import ActionBinder from './../util/ActionBinder'
 import * as AddRegistryActions from './../actions/AddRegistryActions'
 import * as RepoActions from './../actions/RepoActions'
 import * as RegistryActions from './../actions/RegistryActions'
-
+import * as SettingsActions from './../actions/SettingsActions'
 
 export default class Layout extends Component {
 	constructor(props) {
 		super(props);
-
+		
 		// Main State Store
 		this.state = {
 			registries: [],
@@ -37,6 +37,9 @@ export default class Layout extends Component {
 			},
 			repoDetails: {
 				...RepoActions.repoDetailsState()
+			},
+			settings: {
+				...SettingsActions.settingsState()
 			}
 		};
 	}
@@ -49,8 +52,14 @@ export default class Layout extends Component {
 		ReactTooltip.rebuild();
 	}
 	getChildContext() {
+
+		let actions = [ AddRegistryActions, 
+					    RepoActions, 
+					    RegistryActions, 
+					    SettingsActions 
+					  ];
 		return {
-			actions: ActionBinder([AddRegistryActions, RepoActions, RegistryActions], this),
+			actions: ActionBinder(actions, this),
 			state: this.state,
 			router: this.context.router
 		};
@@ -86,7 +95,6 @@ export default class Layout extends Component {
 		);
 	}
 }
-
 
 Layout.contextTypes = {
 	router: React.PropTypes.object

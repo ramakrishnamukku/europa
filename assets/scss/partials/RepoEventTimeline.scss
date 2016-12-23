@@ -1,74 +1,57 @@
 .RepoEventTimeline {
-    .Timline {
+    .Timeline {
         display: flex;
         flex-direction: column;
+        margin-top: 1rem;
 
         .TimelineContainer {
             display: flex;
             flex-direction: column;
+            background-color: $curtain-color;
+            padding: 10px;
         }
     }
 
     .RepoEventItem {
-        margin: 11px 0;
+        margin: 0px;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        height: 60px;
+        align-items: flex-start;
+
+
+        .EventLine {
+            border-left: 2px solid $dark-border-color;
+            position: relative;
+            height: 100%;
+            margin-left: 13px;
+
+            img.EventIcon {
+                margin-left: -13px;
+                height: 26px;
+                width: 26px;
+            }
+        }
 
         .EventDetails {
             display: flex;
             flex-direction: row;
             align-items: center;
 
-            * {
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-            }
-
-            i.icon-dis-push {
-                font-size: 1.4rem;
-                margin-right: 11px;
-            }
-
-            .EventTime {
-                color: $light-blue;
-                font-size: 0.9rem;
-                font-weight: 600;
-            }
-
-            .EventStatus {
-                .Status {
-                    color: $green;
+            .EventType {
+                margin-left: 14px;
+                .Image {
+                    font-size: 0.75rem;
                     font-weight: 600;
+                    color: $black;
+                }
+
+                .Type {
+                    font-size: 0.6875rem;
+                    font-weight: 400;
+                     color: $green;
                 }
             }
-
-            .Actions {
-                .Pipe {
-                    margin-right: 14px;
-                    color: $grey;
-                }
-
-                i.icon-dis-details {
-                    color: $light-blue;
-                    transition: all 0.3s;
-                    font-size: 1.1rem;
-                    position: relative;
-                    top: 2px;
-
-                    &:hover {
-                        cursor: pointer;
-                        color: darken($light-blue, 5%);
-                    }
-                }
-            }
-        }
-
-        .EventLine {
-            border-left: 1px solid $dark-border-color;
-            position: relative;
-            height: 21px;
-            margin: 8px 9px 0px;
         }
     }
 }

@@ -1,25 +1,70 @@
-.RegistryLegend {
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
+.RegistryListLegend {
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 10px;
-    border-radius: 3px;
-    background-color: darken($curtain-color, 5%);
+    border-radius: 3px 3px 0px 0px;
+    flex: 1;
+    padding: 0 10px;
 
     span {
         flex: 1;
         font-weight: 600;
         color: $black;
+        font-size: 0.75rem;
+    }
+
+    span.AddCred {
+        @extend .Clickable;
+
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+}
+
+.AddEditRegistryLegend {
+    @extend .RegistryListLegend;
+
+    background-color: $salmon;
+
+    span {
+        color: white;
+        font-weight: 600;
+        margin: 0 10px;
+    }
+
+    span.Close {
+        flex: 0;
+        i.icon-dis-close {
+            color: white;
+            font-size: 1.2rem;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.AddEditRegistryCreds {
+    display: flex;
+    flex-direction: row;
+
+    .Flex1 {
+        padding: 0 10px;
     }
 }
 
 .RegistryList {
-    background-color: $curtain-color;
     border-radius: 3px;
 
     .RegistryItem {
         border-bottom: solid 1px $border-color;
-        padding: 10px;
+        padding: 5px 10px;
         transition: all 0.3s;
 
         &:hover {
@@ -39,18 +84,21 @@
 
             span.ListValue {
                 font-weight: 400;
-                font-size: 1rem;
-                color: $grey;
+                font-size: 0.75rem;
+                color: $black;
                 flex: 1;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
             }
 
             .Actions {
                 flex: 1;
-
+                display: flex;
+                justify-content: flex-end;
 
                 i {
                     color: $light-blue;
-                    flex: 1;
                     margin: 0px 7px;
                     transition: all 0.3s;
 

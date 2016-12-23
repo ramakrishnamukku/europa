@@ -1,3 +1,7 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
 import React, {Component} from 'react'
 import { Link } from 'react-router'
 import ReactTooltip from 'react-tooltip'
@@ -7,6 +11,8 @@ import RegistryProviderIcons from './../util/RegistryProviderIcons'
 import CenteredConfirm from './../components/CenteredConfirm'
 import Msg from './../components/Msg'
 import Loader from './../components/Loader'
+import ControlRoom from './../components/ControlRoom'
+import AddRegistry from './../components/AddRegistry'
 
 export default class Registries extends Component {
 	constructor(props) {
@@ -19,36 +25,20 @@ export default class Registries extends Component {
 	componentWillUnmount() {
 		this.context.actions.resetRegistryState();	
 	}
-	renderRegistries(){
-		if(this.context.state.registriesXHR) {
-			return (
-				<div className="PageLoader">
-					<Loader />
-				</div>	
-			);
-		}
-
-		let registries = this.context.state.registries;
-
-		if(!registries.length) {
-			return this.renderNoRegistries()
-		}
-
-		return (
-			<div className="RegistryList FlexColumn">
-				{this.renderLegend()}
-				{registries.map(this.renderRegistryItem.bind(this))}
-			</div>
-		);
+	setRegistryForEdit(reg){
+		this.context.actions.setRegistryForEdit(reg)
 	}
 	renderLegend(){
 		return (
-			<div className="RegistryLegend">
+			<div className="RegistryListLegend">
 				<span>Provider</span>
 				<span>Key Name</span>
 				<span>Access Key</span>
 				<span>Region</span>
-				<span>+ Add Credential</span>
+				<span className="AddCred" 
+					  onClick={ () => this.context.actions.toggleShowAddEditRegistryModal() }>
+					  + Add Credential
+				</span>
 			</div>
 		);
 	}
@@ -66,9 +56,9 @@ export default class Registries extends Component {
 					<span className="ListValue">{reg.name}</span>
 					<span className="ListValue">{reg.region}</span>
 					<span className="Actions">
-						<i className="icon icon-dis-edit" data-tip="Edit Credentials" data-for="ToolTipTop"
+						<i className="icon icon-dis-settings" data-tip="Settings" data-for="ToolTipTop"
 						   onClick={() => this.setRegistryForEdit(reg)}/>
-						<i className="icon icon-dis-trash" data-tip="Delete Credentials" data-for="ToolTipTop" 
+						<i className="icon icon-dis-disconnect" data-tip="Disconnect" data-for="ToolTipTop" 
 							onClick={() => this.context.actions.setRegistryForDelete(reg)}
 						/>
 					</span>
@@ -76,10 +66,6 @@ export default class Registries extends Component {
 				{this.renderConfirmDeleteRegistry(reg)}
 			</div>
 		);
-	}
-	setRegistryForEdit(reg){
-		this.context.actions.setRegistryForEdit(reg)
-		.then(() => this.context.router.push('/edit-registry'))
 	}
 	renderNoRegistries(){
 		return (
@@ -109,7 +95,7 @@ export default class Registries extends Component {
 			}
 			
 			return (
-				<CenteredConfirm message="Are you sure you want to delete this registry?"
+				<CenteredConfirm message="Are you sure you want to disconnect this registry?"
 							     confirmButtonText="Delete"
 							     confirmButtonStyle={{}}
 							     onConfirm={() => this.context.actions.deleteRegistry()}
@@ -117,8 +103,56 @@ export default class Registries extends Component {
 			);	
 		}
 	}
+	renderAddEditRegistryLegend(){
+		return (
+			<div className="AddEditRegistryLegend">
+				<span>Provider</span>
+				<span>Key Name</span>
+				<span>Access Key</span>
+				<span>Private Key</span>
+				<span>Region</span>
+				<span  className="Close"
+					   onClick={ () => this.context.actions.toggleShowAddEditRegistryModal() }>
+					<i className="icon icon-dis-close" />
+				</span>
+			</div>
+		);
+	}
+	renderAddEditRegistry(){
+		let isEdit = this.context.state.addRegistry.isEdit;
+		return (
+			<ControlRoom renderHeaderContent={() => this.renderAddEditRegistryLegend()}
+						 renderBodyContent={() => <AddRegistry standaloneMode={true} isEdit={isEdit} /> } />
+			
+		);
+	}
+	renderContent(){
+		if(this.context.state.addRegistry.showModal) {
+			return this.renderAddEditRegistry();
+		}
+
+		let registries = this.context.state.registries;
+
+		return (
+			<ControlRoom renderHeaderContent={() => this.renderLegend()}
+					     renderBodyContent={() => registries.map(this.renderRegistryItem.bind(this))}/>
+				
+		);
+	}
 	render() {
-		return this.renderRegistries()
+		if(this.context.state.registriesXHR) {
+			return (
+				<div className="PageLoader">
+					<Loader />
+				</div>	
+			);
+		}
+
+		return (
+			<div className="RegistryList FlexColumn">
+				{this.renderContent()}
+			</div>
+		);
 	}
 }
 

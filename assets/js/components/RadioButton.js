@@ -1,3 +1,7 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
 import React, {Component, PropTypes} from 'react'
 import ContentRow from './../components/ContentRow'
 import Loader from './../components/Loader'

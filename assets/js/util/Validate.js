@@ -1,3 +1,7 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
 export default function validate(postData, required, curKey = "") {
   let names = [];
   let keys = [];

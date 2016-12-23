@@ -10,12 +10,13 @@
         flex-flow: row nowrap;
         align-items: center;
         justify-content: center;
+        font-size: 0.875rem;
 
         span {
             display: block;
             margin: 0 0 4px;
             color: $red;
-            font-size: 1rem;
+            font-size: 0.875rem; 
         }
     }
 }

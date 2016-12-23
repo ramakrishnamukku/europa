@@ -1,3 +1,7 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
 export default function AddRegistryReducers(state, action) {
     switch (action.type) {
         case 'UPDATE_NEW_REGISTRY':

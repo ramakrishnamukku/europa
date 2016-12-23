@@ -59,7 +59,7 @@ nav {
     position: fixed;
     height: calc(100% - 43px);
     width: 100%;
-    background-color: rgba(0,0,0,0.3);
+    background-color: rgba(0, 0, 0, 0.3);
     z-index: 10000;
     display: flex;
 }
@@ -104,38 +104,26 @@ nav {
                 }
             }
 
-            .SmallPageHeader {
-                @extend .PageHeader;
+            .SmallHeader {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+                align-items: center;
+                margin: 0 0 0;
+                padding: 16px 0 0;
 
-                align-items: baseline;
-                justify-content: flex-start;
-
-                .SubHead {
-                    position: relative;
-                    color: $grey;
+                h3 {
+                    color: $light-blue;
+                    font-size: 1.5625rem;
                     font-weight: 300;
-                    font-size: 1.4rem;
-                    align-self: flex-end;
-                    margin: 0px 0px 0 7px;
-
-                    .PipeSeperator {
-                        position: relative;
-                        top: -4px;
-                    }
+                    margin: 0;
                 }
 
-                i {
-                    position: relative;
-                    top: 2px;
-                    color: $light-blue;
-                    transition: all 0.3s;
-                    font-size: 1.3rem;
-                    margin-left: 14px;
-
-                    &:hover {
-                        cursor: pointer;
-                        color: $salmon;
-                    }
+                span {
+                    font-size: 0.75rem;
+                    font-weight: 400;
+                    color: $grey;
                 }
             }
         }
@@ -144,7 +132,7 @@ nav {
 
 .Tag {
     border-radius: 3px;
-    background-color: $purple; 
+    background-color: $purple;
     padding: 2px 6px;
     font-size: 0.55rem;
     font-weight: 400;
@@ -219,7 +207,6 @@ nav {
     height: 600px;
 }
 
-
 .Clickable {
     color: $light-blue;
     transition: color 0.3s;
@@ -252,12 +239,16 @@ nav {
     flex: 3;
 }
 
+.Flex3 {
+    flex: 4;
+}
+
 .Row {
     margin-bottom: 1rem;
 }
 
 .Column {
-    padding-right: 2rem;
+    padding-right: 1rem;
 }
 
 .RowPadding {

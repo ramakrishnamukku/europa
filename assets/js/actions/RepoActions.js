@@ -48,18 +48,6 @@ export function filterRepos(e, eIsValue) {
   });
 }
 
-export function listRepoEvents(repoId) {
-  RAjax.GET('ListRepoEvents', {
-      repoId
-    })
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-}
-
 
 // *************************************************
 // Add Repo Actions
@@ -257,7 +245,9 @@ export function repoDetailsState() {
     deleteXHR: false,
     isDeleting: false,
     showSettings: false,
-    activeEventId: null
+    events: [],
+    eventsXHR: false,
+    activeEventId: null,
   };
 }
 
@@ -276,13 +266,15 @@ export function toggleRepoDetailsPageXHR() {
 }
 
 export function setActiveRepoDetails(repoId) {
-  let repo = this.state.reposMap[repoId];
+  return new Promise ((resolve, reject) => {
+      let repo = this.state.reposMap[repoId];
 
-  this.setState({
-    repoDetails: GA.modifyProperty(this.state.repoDetails, {
-      activeRepo: repo,
-      pageXHR: false
-    })
+      this.setState({
+        repoDetails: GA.modifyProperty(this.state.repoDetails, {
+          activeRepo: repo,
+          pageXHR: false
+        })
+      }, () => resolve() );
   });
 }
 
@@ -320,6 +312,39 @@ export function deleteActiveRepo(afterDeleteCb) {
         });
       });
   });
+}
+
+export function listRepoEvents(repoId) {
+
+  this.setState({
+    repoDetails: GA.modifyProperty(this.state.repoDetails, {
+      eventsXHR: true
+    })
+  }, () => {
+
+    RAjax.GET('ListRepoEvents', {
+        repoId
+      })
+      .then((res) => {
+
+        this.setState({
+          repoDetails: GA.modifyProperty(this.state.repoDetails, {
+            events: res,
+            eventsXHR: false
+          })
+        });
+
+      })
+      .catch((err) => {
+
+        this.setState({
+          repoDetails: GA.modifyProperty(this.state.repoDetails, {
+            eventsXHR: false
+          })
+        });
+
+      })
+  })
 }
 
 export function toggleActiveRepoSettings() {

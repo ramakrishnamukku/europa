@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import Layout from './pages/Layout'
 import Overview from './pages/Overview'
-import AddRegistryPage from './pages/AddRegistryPage'
-import EditRegistryPage from './pages/EditRegistryPage'
 import Repositories from './pages/Repositories'
 import RepoDetailsPage from './pages/RepoDetailsPage'
 import AddRepo from './pages/AddRepo'
@@ -19,8 +17,6 @@ export default class App extends Component {
     return (
       <Router history={browserHistory}>
         <Route component={Layout}>
-          <Route component={AddRegistryPage} path="/new-registry" />
-          <Route component={EditRegistryPage} path="/edit-registry" />
           <Route component={Repositories} path="/repositories" />
           <Route component={RepoDetailsPage} path="/repository/:repoId" />
           <Route component={AddRepo} path="/new-repository" />

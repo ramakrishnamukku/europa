@@ -1,3 +1,7 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
 import React, {Component} from 'react'
 import ContentRow from './../components/ContentRow'
 import Loader from './../components/Loader'
@@ -5,6 +9,7 @@ import Btn from './../components/Btn'
 import Msg from './../components/Msg'
 import RadioButton from './../components/RadioButton'
 import RegistryNames from './../util/RegistryNames'
+import RegistryProviderIcons from './../util/RegistryProviderIcons'
 
 let provider = 'provider';
 let keyName = 'name';
@@ -22,135 +27,37 @@ export default class AddRegistry extends Component {
 	}
 	inputClassName(selector){
 		let hasSelector = this.context.state.addRegistry.errorFields.includes(selector)
+		let className;
 		if(hasSelector) {
-			return "BlueBorder FullWidth Error";
+			className = "BlueBorder FullWidth Error";
 		} else {
-		    return "BlueBorder FullWidth";
+		    className = "BlueBorder FullWidth";
 		}
-	}
-	renderSelectProvider(){
-		let readOnly = {};
 
-		if(this.props.isEdit) {
-			readOnly['readOnly'] = 'readOnly';
-			readOnly['disabled'] = 'disabled';
+		if(this.props.standaloneMode) {
+			className += ' White';
+		} else {
+			className += ' Dark';
 		}
-		return (
-			<div className="Flex1">
-				<label className="small">
-					Docker Registry Provider {(this.props.isEdit) ? '( Read Only )' : null}
-				</label>
-				<select className={this.inputClassName(provider)}
-						value={this.context.state.addRegistry.newRegistry[provider]}
-				        onChange={(e) => this.context.actions.updateNewRegistryField(provider, e)}
-		       			{...readOnly}>
-				   <option value="">Select Amazon Container Registry or Google Container Registry</option>
-				   {Object.keys(RegistryNames).map((key) => {
-				   		return (
-				   			<option key={key} value={key}>{RegistryNames[key]}</option>
-				   		);
-				   })}
-				</select>
-			</div>
-		);
+
+		return className;
 	}
 	renderRegistryCredentials() {
 		return (
 			<div className="FlexColumn">
-				<label>
-					Registry Credentials
-				</label>
+				{this.renderLabel()}
 				{this.renderChooseCredsTypes()}
-				{this.renderExistingRegistryCredentials()}
 				{this.renderNewRegistryCredentials()}
+				{this.renderExistingRegistryCredentials()}
 			</div>
 		);
 	}
-	renderExistingRegistryCredentials() {
-		if(this.context.state.addRepo.newRepoCredsType == 'EXISTING' && !this.props.standaloneMode) {
+	renderLabel(){
+		if(!this.props.standaloneMode) {
 			return (
-				<div className="Flex1">
-					<label className="small">
-						Select Credentials
-					</label>
-					<div className="Flex1">
-						<select className="BlueBorder FullWidth"
-						        onChange={(e) => this.context.actions.selectCredsForNewRepo(e)}>
-						    <option value="">Select Credentials</option>
-							{this.context.state.registries.map((reg, index) => {
-								return (
-									<option value={JSON.stringify(reg)} key={index}>{reg.provider} - {reg.name} - {reg.region}</option>
-								);
-							})}
-						</select>
-					</div>
-				</div>
-			);
-		}
-	}
-	renderNewRegistryCredentials(){
-		if(this.context.state.addRepo.newRepoCredsType == 'NEW' || this.props.standaloneMode) {
-
-			let readOnly = {};
-
-			if(this.props.isEdit) {
-				readOnly['readOnly'] = 'readOnly';
-				readOnly['disabled'] = 'disabled';
-			}
-
-			return (
-				<div className="FlexColumn">
-				 	<div className="FlexRow Row"> 
-						{this.renderSelectProvider()}
-					</div>
-					<div className="FlexRow Row">
-						<div className="Flex1 Column">
-							<label className="small">
-								Key Name {(this.props.isEdit) ? '( Read Only )' : null}
-							</label>
-							<input className={this.inputClassName(keyName)}
-								   value={this.context.state.addRegistry.newRegistry[keyName]}
-							       placeholder="Enter Key Name.."
-								   onChange={(e) => this.context.actions.updateNewRegistryField(keyName, e)} 
-								   {...readOnly}/>
-						</div>
-						<div className="Flex1">
-							<label className="small">
-								Key Region {(this.props.isEdit) ? '( Read Only )' : null}
-							</label>
-							<select className={this.inputClassName(region)}
-									value={this.context.state.addRegistry.newRegistry[region]}
-							        onChange={(e) => this.context.actions.updateNewRegistryField(region, e)}
-									{...readOnly}>
-							   <option value="">Select Region...</option>
-							   <option value="us-west-1">us-west-1</option>
-							   <option value="us-west-2">us-west-2</option>
-							   <option value="us-east-1">us-east-1</option>
-							   <option value="us-east-2">us-east-2</option>
-							</select>
-						</div>
-					</div>
-					<div className="FlexRow Row">
-						<div className="Flex1 Column">
-							<label className="small">
-								Public Key
-							</label>
-							<input className={this.inputClassName(key)}
-								   value={this.context.state.addRegistry.newRegistry[key]}
-								   placeholder="Enter Public Key.."
-								   onChange={(e) => this.context.actions.updateNewRegistryField(key, e)} />
-						</div>
-						<div className="Flex1">
-							<label className="small">
-								Private Key
-							</label>
-							<input className={this.inputClassName(secret)}
-								   value={this.context.state.addRegistry.newRegistry[secret]}
-								   placeholder="Enter Private Key.."
-								   onChange={(e) => this.context.actions.updateNewRegistryField(secret, e)} />
-						</div>
-					</div>
-				</div>
+				<label>
+					Registry Credentials
+				</label>
 			);
 		}
 	}
@@ -168,6 +75,137 @@ export default class AddRegistry extends Component {
 							  		 isChecked={this.context.state.addRepo.newRepoCredsType == 'NEW'}
 									 label="New Credentials" />
 					</div>
+				</div>
+			);
+		}
+	}
+	renderExistingRegistryCredentials() {
+		if(this.context.state.addRepo.newRepoCredsType == 'EXISTING' && !this.props.standaloneMode) {
+			return (
+				<div className="Flex1">
+					<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
+						Select Credentials
+					</label>
+					<div className="Flex1">
+						<select className="BlueBorder FullWidth"
+						        onChange={(e) => this.context.actions.selectCredsForNewRepo(e)}>
+						    <option value="">Select Credentials</option>
+							{this.context.state.registries.map((reg, index) => {
+								return (
+									<option value={JSON.stringify(reg)} key={index}>{reg.provider} - {reg.name} - {reg.region}</option>
+								);
+							})}
+						</select>
+					</div>
+				</div>
+			);
+		}
+	}
+	renderSelectProvider(readOnly, isEdit){
+		if(isEdit) {
+			return (
+				<div className="Flex1 FlexRow">
+					<img src={RegistryProviderIcons(this.context.state.addRegistry.newRegistry[provider])} />
+				</div>
+			);
+		}
+
+		return (
+			<div className="Flex1">
+				<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
+					Docker Registry Provider {(this.props.isEdit) ? '( Read Only )' : null}
+				</label>
+				<select className={this.inputClassName(provider)}
+						value={this.context.state.addRegistry.newRegistry[provider]}
+				        onChange={(e) => this.context.actions.updateNewRegistryField(provider, e)}
+		       			{...readOnly}>
+				   <option value="">Select Provider</option>
+				   {Object.keys(RegistryNames).map((key) => {
+				   		return (
+				   			<option key={key} value={key}>{RegistryNames[key]}</option>
+				   		);
+				   })}
+				</select>
+			</div>
+		);
+	}
+	renderInputKeyName(readOnly, isEdit){
+		return (
+			<div className="Flex1">
+				<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
+					Key Name {(this.props.isEdit) ? '( Read Only )' : null}
+				</label>
+				<input className={this.inputClassName(keyName)}
+					   value={this.context.state.addRegistry.newRegistry[keyName]}
+				       placeholder="Enter Key Name.."
+					   onChange={(e) => this.context.actions.updateNewRegistryField(keyName, e)} 
+					   {...readOnly}/>
+			</div>
+		);
+	}
+	renderInputPublicKey(readOnly, isEdit){
+		return (
+			<div className="Flex1">
+				<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
+					Public Key
+				</label>
+				<input className={this.inputClassName(key)}
+					   value={this.context.state.addRegistry.newRegistry[key]}
+					   placeholder="Enter Public Key.."
+					   onChange={(e) => this.context.actions.updateNewRegistryField(key, e)} />
+			</div>
+		);
+	}
+	renderInputPrivateKey(readOnly, isEdit){
+		return (
+			<div className="Flex1">
+				<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
+					Private Key
+				</label>
+				<input className={this.inputClassName(secret)}
+					   value={this.context.state.addRegistry.newRegistry[secret]}
+					   placeholder="Enter Private Key.."
+					   onChange={(e) => this.context.actions.updateNewRegistryField(secret, e)} />
+			</div>
+		);
+	}
+	renderSelectRegion(readOnly, isEdit){
+		return (
+			<div className="Flex1">
+				<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
+					Key Region {(this.props.isEdit) ? '( Read Only )' : null}
+				</label>
+				<select className={this.inputClassName(region)}
+						value={this.context.state.addRegistry.newRegistry[region]}
+				        onChange={(e) => this.context.actions.updateNewRegistryField(region, e)}
+						{...readOnly}>
+				   <option value="">Select Region...</option>
+				   <option value="us-west-1">us-west-1</option>
+				   <option value="us-west-2">us-west-2</option>
+				   <option value="us-east-1">us-east-1</option>
+				   <option value="us-east-2">us-east-2</option>
+				</select>
+			</div>
+		);
+	}
+	renderNewRegistryCredentials(){
+		if(this.context.state.addRepo.newRepoCredsType == 'NEW' || this.props.standaloneMode) {
+
+			let isEdit = this.props.isEdit;
+			let readOnly = {};
+
+			if(isEdit) {
+				readOnly['readOnly'] = 'readOnly';
+				readOnly['disabled'] = 'disabled';
+			}
+
+			return (
+				<div className="AddEditRegistryCreds" style={this.props.standaloneMode ? {} : {margin: '0 -10px'}}>
+					{this.renderSelectProvider(readOnly, isEdit)}
+					{this.renderInputKeyName(readOnly, isEdit)}
+					{this.renderInputPublicKey(readOnly, isEdit)}
+					{this.renderInputPrivateKey(readOnly, isEdit)}
+					{this.renderSelectRegion(readOnly, isEdit)}
 				</div>
 			);
 		}
@@ -198,23 +236,32 @@ export default class AddRegistry extends Component {
 			<Loader />
 		);
 	}
-	renderAddButton(){
+	renderActions(){
 		return (
-			<Btn onClick={() => this.context.actions.addRegistryRequest()}
-				 text={(this.props.isEdit) ? 'Save Registry' : 'Add Registry'}
-				 canClick={this.context.actions.canAddRegistry()}
-				 help="Clicking this button will save the specifed credentials to the monitor."/>
+			<div className="FlexRow JustifyCenter" style={{margin: '0 auto', width: '300px'}}>
+				<div className="Flex1" style={{margin: '0px 10px'}}>
+					<Btn onClick={() => this.context.actions.addRegistryRequest()}
+						 text={(this.props.isEdit) ? 'Save Registry' : 'Add Registry'}
+						 canClick={this.context.actions.canAddRegistry()} />
+					</div>
+				<div className="Flex1" style={{margin: '0px 10px'}}>
+					<Btn onClick={ () => this.context.actions.toggleShowAddEditRegistryModal() }
+						 className="Btn Cancel"
+						 text="Cancel"
+						 canClick={true} />
+				</div>
+			</div>
 		);
 	}
 	renderAddRegistry(){
 		let rows = [{
 			columns: [{
-                icon:'icon icon-dis-credential',
+				icon: (this.props.standaloneMode) ? null : 'icon icon-dis-credential',
                 renderBody: this.renderRegistryCredentials.bind(this)
             }]
 		}, {
 			columns: [{
-                icon:'icon icon-dis-blank',
+				icon: (this.props.standaloneMode) ? null : 'icon icon-dis-blank',
                 renderBody: this.renderErrorMsg.bind(this),
                 condition: this.context.state.addRegistry.errorMsg
             }]
@@ -223,20 +270,20 @@ export default class AddRegistry extends Component {
 		if(this.props.standaloneMode) {
 			let standAloneRows = [{
 				columns: [{
-	                icon:'icon icon-dis-blank',
+					icon: (this.props.standaloneMode) ? null : 'icon icon-dis-blank',
 	                renderBody: this.renderLoader.bind(this),
 	                condition: this.context.state.addRegistry.XHR
 	            }]
 			}, {
 				columns: [{
-	                icon:'icon icon-dis-blank',
+					icon: (this.props.standaloneMode) ? null : 'icon icon-dis-blank',
 	                renderBody: this.renderSuccessMsg.bind(this),
 	                condition: this.context.state.addRegistry.success
 	            }]
 			}, {
 				columns: [{
-	                icon:'icon icon-dis-blank',
-	                renderBody: this.renderAddButton.bind(this),
+					icon: (this.props.standaloneMode) ? null : 'icon icon-dis-blank',
+	                renderBody: this.renderActions.bind(this),
 	                condition: this.props.standaloneMode
 	            }]
 			}]

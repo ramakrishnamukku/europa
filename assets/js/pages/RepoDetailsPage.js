@@ -1,3 +1,7 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
 import React, {Component} from 'react'
 import Loader from './../components/Loader'
 import WebhookData from './../components/WebhookData'
@@ -24,7 +28,9 @@ export default class RepoDetailsPage extends Component {
 				this.context.actions.listRepoEvents(repoId);
 			});			
 		} else {
-			this.context.actions.setActiveRepoDetails(repoId);
+			this.context.actions.setActiveRepoDetails(repoId).then(() => {
+				this.context.actions.listRepoEvents(repoId);	
+			});
 		}
 	}
 	componentWillUnmount() {
@@ -61,27 +67,11 @@ export default class RepoDetailsPage extends Component {
 		}
 	}
 	renderEventTimeline(){
-		let fakeEvents = [
-			{
-				image: 'hyper-local',
-				id:'1',
-				tag: 'latest',
-				eventContent: 'somethign 1'
-			},{
-				image: 'hyper-local',
-				id:'2',
-				tag: 'latest',
-				eventContent: 'somethign 2'
-			},{
-				image: 'hyper-local',
-				id:'3',
-				tag: 'latest',
-				eventContent: 'somethign 3'
-			}
-		];
+		let events = this.context.state.repoDetails.events;
+
 		return (
 			<RepoEventTimeline 
-				events={fakeEvents}
+				events={events}
 			/>
 		);
 	}
@@ -92,27 +82,29 @@ export default class RepoDetailsPage extends Component {
 			</div>
 		);
 	}
+	renderHeader(activeRepo){
+		return (
+			<div className="SmallHeader FlexRow SpaceBetween">
+				<div className="FlexColumn Flex1">
+					<h3>{activeRepo.name}</h3>
+					<span>{RegistryNames[activeRepo.provider]}</span>
+				</div>
+				<div>
+					Buttons
+				</div>
+			</div>
+		);
+	}
 	render() {	
 		if(this.context.state.repoDetails.pageXHR) {
 			return this.renderPageLoader()
 		}
 
-
 		let activeRepo = this.context.state.repoDetails.activeRepo;
+
 		return (
 			<div className="ContentContainer">
-				<div className="SmallPageHeader">
-					<h3>
-						{activeRepo.name}
-					</h3>
-					<div className="SubHead">
-					 	<span className="PipeSeperator">|</span> {RegistryNames[activeRepo.provider]}
-					</div>
-					<i className="icon icon-dis-trash" 
-					   onClick={() => this.context.actions.toggleActiveRepoDelete()}/>
-					<i className="icon icon-dis-settings" 
-					   onClick={() => this.context.actions.toggleActiveRepoSettings()}/>
-				</div>
+				{this.renderHeader(activeRepo)}
 				<div>
 				 	{this.renderDeleteRepo()}
 				    {this.renderRepoSettings(activeRepo)}
