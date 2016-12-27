@@ -9,7 +9,7 @@
 package com.distelli.europa.handlers;
 
 import org.apache.log4j.Logger;
-import com.distelli.europa.webserver.*;
+import com.distelli.ventura.*;
 
 public class DefaultRequestHandler extends RequestHandler
 {

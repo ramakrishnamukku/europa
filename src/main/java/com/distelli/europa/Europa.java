@@ -12,7 +12,7 @@ import java.io.File;
 
 import org.apache.log4j.Logger;
 import com.distelli.europa.util.*;
-import com.distelli.europa.webserver.*;
+import com.distelli.ventura.*;
 import com.distelli.europa.guice.*;
 import com.distelli.europa.monitor.*;
 import com.google.inject.Guice;
@@ -71,12 +71,16 @@ public class Europa
         }
 
         EuropaConfiguration europaConfiguration = EuropaConfiguration.fromFile(new File(configFilePath));
-        Injector injector = Guice.createInjector(Stage.PRODUCTION,
-                                                 new PersistenceModule(),
-                                                 new AjaxHelperModule(),
-                                                 new EuropaInjectorModule(europaConfiguration));
+        final Injector injector = Guice.createInjector(Stage.PRODUCTION,
+                                                       new PersistenceModule(),
+                                                       new AjaxHelperModule(),
+                                                       new EuropaInjectorModule(europaConfiguration));
         injector.injectMembers(this);
-        _requestHandlerFactory = new RequestHandlerFactory(injector);
+        _requestHandlerFactory = new RequestHandlerFactory() {
+                public RequestHandler getRequestHandler(MatchedRoute route) {
+                    return injector.getInstance(route.getRequestHandler());
+                }
+            };
         _routeMatcher = Routes.getRouteMatcher();
     }
 

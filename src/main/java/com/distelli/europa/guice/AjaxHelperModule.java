@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.MapBinder;
 import com.distelli.europa.ajax.*;
-import com.distelli.europa.webserver.*;
+import com.distelli.ventura.*;
 
 public class AjaxHelperModule extends AbstractModule
 {

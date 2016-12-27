@@ -12,7 +12,7 @@ import java.io.*;
 import java.util.Map;
 import java.util.HashMap;
 import org.apache.log4j.Logger;
-import com.distelli.europa.webserver.*;
+import com.distelli.ventura.*;
 
 public class StaticContentRequestHandler extends RequestHandler
 {

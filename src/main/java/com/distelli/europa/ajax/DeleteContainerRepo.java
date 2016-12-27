@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import com.distelli.europa.models.*;
 import com.distelli.europa.db.*;
 import com.distelli.europa.monitor.*;
-import com.distelli.europa.webserver.*;
+import com.distelli.ventura.*;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
 

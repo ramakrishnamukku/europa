@@ -20,7 +20,7 @@ import com.distelli.jackson.transform.TransformModule;
 
 import com.distelli.europa.ajax.*;
 import com.distelli.europa.models.*;
-import com.distelli.europa.webserver.*;
+import com.distelli.ventura.*;
 import org.apache.log4j.Logger;
 import javax.inject.Inject;
 import com.google.inject.Singleton;

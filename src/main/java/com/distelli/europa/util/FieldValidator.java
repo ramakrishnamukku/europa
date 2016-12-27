@@ -10,7 +10,7 @@ package com.distelli.europa.util;
 
 import org.apache.log4j.Logger;
 import java.lang.reflect.*;
-import com.distelli.europa.webserver.*;
+import com.distelli.ventura.*;
 import com.distelli.europa.ajax.*;
 import java.util.regex.*;
 

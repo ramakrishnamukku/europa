@@ -173,5 +173,11 @@
       <version>1.0.0</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.distelli.ventura</groupId>
+      <artifactId>Ventura</artifactId>
+      <version>1.0.1-SNAPSHOT</version>
+    </dependency>
+
   </dependencies>
 </project>
