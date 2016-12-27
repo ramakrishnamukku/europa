@@ -8,15 +8,21 @@
 */
 package com.distelli.europa.ajax;
 
+import java.util.List;
 import java.util.UUID;
-import org.apache.log4j.Logger;
-import com.distelli.europa.db.*;
-import com.distelli.europa.monitor.*;
-import com.distelli.europa.models.*;
-import com.distelli.europa.webserver.*;
-import com.distelli.europa.util.*;
-
 import javax.inject.Inject;
+
+import org.apache.log4j.Logger;
+import com.distelli.europa.clients.*;
+import com.distelli.europa.db.*;
+import com.distelli.europa.models.*;
+import com.distelli.europa.monitor.*;
+import com.distelli.europa.util.*;
+import com.distelli.europa.webserver.*;
+import com.distelli.gcr.*;
+import com.distelli.gcr.auth.*;
+import com.distelli.gcr.models.*;
+import com.distelli.persistence.PageIterator;
 import com.google.inject.Singleton;
 
 @Singleton
@@ -51,7 +57,7 @@ public class SaveContainerRepo implements AjaxHelper
         repo.setProvider(cred.getProvider());
         repo.setRegion(cred.getRegion());
         repo.setId(UUID.randomUUID().toString());
-
+        validateContainerRepo(repo, cred);
         Notification notification = ajaxRequest.convertContent("/notification", Notification.class,
                                                                true);
         FieldValidator.validateNonNull(notification, "type", "target");
@@ -65,5 +71,46 @@ public class SaveContainerRepo implements AjaxHelper
         _notificationDb.save(notification);
         _monitorQueue.setReload(true);
         return JsonSuccess.Success;
+    }
+
+    private void validateContainerRepo(ContainerRepo repo, RegistryCred cred)
+    {
+        RegistryProvider provider = cred.getProvider();
+        switch(provider)
+        {
+        case ECR:
+            validateEcrRepo(repo, cred);
+            break;
+        case GCR:
+            validateGcrRepo(repo, cred);
+            break;
+        default:
+            throw(new AjaxClientException("Unsupported Container Registry: "+provider, JsonError.Codes.BadContent, 400));
+        }
+    }
+
+    private void validateGcrRepo(ContainerRepo repo, RegistryCred cred)
+    {
+        GcrCredentials gcrCreds = new GcrServiceAccountCredentials(cred.getSecret());
+        GcrRegion gcrRegion = GcrRegion.getRegion(cred.getRegion());
+        GcrClient gcrClient = new GcrClient(gcrCreds, gcrRegion);
+
+        GcrIterator iter = GcrIterator.builder().pageSize(1).build();
+        try {
+            List<GcrImageTag> tags = gcrClient.listImageTags(repo.getName(), iter);
+        } catch(Throwable t) {
+            throw(new AjaxClientException("Invalid Container Repository or Credentials: "+t.getMessage(), JsonError.Codes.BadContent, 400));
+        }
+   }
+
+    private void validateEcrRepo(ContainerRepo repo, RegistryCred cred)
+    {
+        ECRClient ecrClient = new ECRClient(cred);
+        PageIterator iter = new PageIterator().pageSize(1);
+        try {
+            List<DockerImageId> images = ecrClient.listImages(repo, iter);
+        } catch(Throwable t) {
+            throw(new AjaxClientException("Invalid Container Repository or Credentials: "+t.getMessage(), JsonError.Codes.BadContent, 400));
+        }
     }
 }
