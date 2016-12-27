@@ -19,4 +19,5 @@ public class DockerImageId
     protected String repoUri;
     protected String tag;
     protected String sha;
+    protected Long pushTime;
 }

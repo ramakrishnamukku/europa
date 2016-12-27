@@ -11,6 +11,7 @@ package com.distelli.europa.ajax;
 import org.apache.log4j.Logger;
 import com.distelli.europa.models.*;
 import com.distelli.europa.db.*;
+import com.distelli.europa.monitor.*;
 import com.distelli.europa.webserver.*;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
@@ -22,6 +23,8 @@ public class DeleteContainerRepo implements AjaxHelper
 
     @Inject
     private ContainerRepoDb _db;
+    @Inject
+    private MonitorQueue _monitorQueue;
 
     public DeleteContainerRepo()
     {
@@ -38,6 +41,7 @@ public class DeleteContainerRepo implements AjaxHelper
                                          true); //throw if missing
         String domain = ajaxRequest.getParam("domain");
         _db.deleteRepo(domain, id);
+        _monitorQueue.setReload(true);
         return JsonSuccess.Success;
     }
 }

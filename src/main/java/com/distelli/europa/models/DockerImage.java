@@ -8,8 +8,10 @@
 */
 package com.distelli.europa.models;
 
-import lombok.*;
+import java.util.ArrayList;
 import java.util.List;
+
+import lombok.*;
 
 @Data
 @Builder
@@ -22,4 +24,11 @@ public class DockerImage
     private String imageSha = null;
     private Long pushTime = null;
     private Long imageSize = null;
+
+    public void addImageTag(String imageTag)
+    {
+        if(this.imageTags == null)
+            imageTags = new ArrayList<String>();
+        imageTags.add(imageTag);
+    }
 }

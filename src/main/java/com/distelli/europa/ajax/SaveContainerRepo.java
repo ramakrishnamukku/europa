@@ -11,6 +11,7 @@ package com.distelli.europa.ajax;
 import java.util.UUID;
 import org.apache.log4j.Logger;
 import com.distelli.europa.db.*;
+import com.distelli.europa.monitor.*;
 import com.distelli.europa.models.*;
 import com.distelli.europa.webserver.*;
 import com.distelli.europa.util.*;
@@ -29,6 +30,8 @@ public class SaveContainerRepo implements AjaxHelper
     private ContainerRepoDb _reposDb;
     @Inject
     private NotificationsDb _notificationDb;
+    @Inject
+    private MonitorQueue _monitorQueue;
 
     public SaveContainerRepo()
     {
@@ -60,6 +63,7 @@ public class SaveContainerRepo implements AjaxHelper
         notification.setRegion(repo.getRegion());
         notification.setRepoName(repo.getName());
         _notificationDb.save(notification);
+        _monitorQueue.setReload(true);
         return JsonSuccess.Success;
     }
 }

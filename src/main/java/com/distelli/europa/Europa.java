@@ -50,7 +50,9 @@ public class Europa
             Log4JConfigurator.configure(true);
         else
             Log4JConfigurator.configure(logsDir, "Europa");
-        Log4JConfigurator.setLogLevel("DEBUG");
+        Log4JConfigurator.setLogLevel("INFO");
+        Log4JConfigurator.setLogLevel("com.distelli.europa.monitor", "DEBUG");
+        Log4JConfigurator.setLogLevel("com.distelli.gcr", "DEBUG");
         String configFilePath = cmdLineArgs.getOption("config");
         if(configFilePath == null)
         {

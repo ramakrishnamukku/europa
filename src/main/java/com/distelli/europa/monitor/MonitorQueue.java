@@ -39,6 +39,11 @@ public class MonitorQueue
 
     }
 
+    public synchronized void setReload(boolean shouldReload)
+    {
+        _shouldReload = shouldReload;
+    }
+
     private void reload()
     {
         _reposToMonitor = new ArrayList<ContainerRepo>();
@@ -47,9 +52,10 @@ public class MonitorQueue
             List<ContainerRepo> repos = _containerRepoDb.listRepos(null, pageIterator);
             _reposToMonitor.addAll(repos);
         } while(pageIterator.getMarker() != null);
+        _shouldReload = false;
     }
 
-    public MonitorTaskList getMonitorTasks()
+    public synchronized MonitorTaskList getMonitorTasks()
     {
         if(_reposToMonitor == null || _shouldReload == true)
             reload();
