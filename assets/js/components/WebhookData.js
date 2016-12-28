@@ -111,7 +111,7 @@ export default class WebhookData extends Component {
 	render() {
 		if(!this.props.webhookData || !Object.keys(this.props.webhookData).length) {
 			return (
-				<div className="WebhookData">
+				<div className="WebhookData" style={this.props.style || {}}>
 					No Webhook Data
 				</div>
 			);		
@@ -137,6 +137,7 @@ WebhookData.propTypes = {
 	webhookData: React.PropTypes.object.isRequired,
 	close: React.PropTypes.func,
 	modal: React.PropTypes.bool,
+	style: React.PropTypes.object
 };
 
 WebhookData.childContextTypes = {

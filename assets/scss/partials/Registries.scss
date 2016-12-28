@@ -13,7 +13,7 @@
     span {
         flex: 1;
         font-weight: 600;
-        color: $black;
+        color: #FFFFFF;
         font-size: 0.75rem;
     }
 
@@ -39,6 +39,7 @@
 
     span.Close {
         flex: 0;
+
         i.icon-dis-close {
             color: white;
             font-size: 1.2rem;
@@ -67,8 +68,20 @@
         padding: 5px 10px;
         transition: all 0.3s;
 
-        &:hover {
-            background-color: lighten($backgroundColor, 2%);
+        &:nth-of-type(2n - 1) {
+            background-color: $light-grey;
+
+            // &:hover {
+            //     background-color: lighten($light-grey, 2%);
+            // }
+        }
+
+        &:nth-of-type(2n) {
+            background-color: $dark-grey;
+
+            // &:hover {
+            //     background-color: lighten($dark-grey, 2%);
+            // }
         }
 
         .Inside {

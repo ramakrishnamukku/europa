@@ -20,6 +20,7 @@ $backgroundColor: #F5F5F7;
 // Partials
 @import "partials/BlueBorderInput";
 @import "partials/Btn";
+@import "partials/BtnGroup";
 @import "partials/CenteredConfirm";
 @import "partials/ContentRow";
 @import "partials/ControlRoom";
@@ -36,6 +37,8 @@ html, body {
     padding: 0px;
     font-family: 'Open Sans';
     background-color: #FFFFFF;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 body {

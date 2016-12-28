@@ -1,57 +1,149 @@
 .RepoEventTimeline {
+    display: flex;
+    flex-direction: column;
+
     .Timeline {
         display: flex;
         flex-direction: column;
         margin-top: 1rem;
 
+        .TimelineLegend {
+            padding: 10px;
+            border-radius: 3px 3px 0 0;
+            background-color: $dark-blue;
+            color: #FFFFFF;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
         .TimelineContainer {
             display: flex;
             flex-direction: column;
             background-color: $curtain-color;
-            padding: 10px;
+            padding: 21px 10px;
         }
     }
 
-    .RepoEventItem {
-        margin: 0px;
+    .RepoEventContainer {
         display: flex;
-        flex-direction: row;
-        height: 60px;
-        align-items: flex-start;
+        flex-direction: column;
 
+        .RepoEventItem {
+            margin: 0px;
+            display: flex;
+            flex-direction: row;
+            height: 90px;
+            align-items: flex-start;
 
-        .EventLine {
-            border-left: 2px solid $dark-border-color;
-            position: relative;
-            height: 100%;
-            margin-left: 13px;
+            .EventLine {
+                border-left: 2px solid $dark-border-color;
+                position: relative;
+                height: 100%;
+                margin-left: 13px;
 
-            img.EventIcon {
-                margin-left: -13px;
-                height: 26px;
-                width: 26px;
+                img.EventIcon {
+                    margin-left: -13px;
+                    height: 26px;
+                    width: 26px;
+                }
+            }
+
+            .EventDetails {
+                display: flex;
+                flex-direction: row;
+
+                // align-items: center;
+
+                .EventType {
+                    margin-left: 14px;
+
+                    .Image {
+                        font-size: 0.75rem;
+                        font-weight: 600;
+                        color: $black;
+                    }
+
+                    .Type {
+                        font-size: 0.6875rem;
+                        font-weight: 400;
+                        color: $green;
+                    }
+                }
+
+                .Time {
+                    display: flex;
+                    flex-direction: column;
+                    margin-left: 60px;
+                    padding-right: 21px;
+                    border-right: 1px solid $grey;
+
+                    .Friendly {
+                        font-size: 0.75rem;
+                        font-weight: 600;
+                        color: $black;
+                    }
+
+                    .UTC {
+                        font-size: 0.6875rem;
+                        font-weight: 600;
+                        color: $grey;
+                    }
+                }
+
+                .ImageInfo {
+                    display: flex;
+                    flex-direction: column;
+                    margin-left: 21px;
+
+                    i {
+                        margin-right: 5px;
+                        top: 2px;
+                        position: relative;
+                    }
+
+                    .Label {
+                        color: $black;
+                        font-weight: 400;
+                        font-size: 0.75rem;
+                    }
+
+                    .Value {
+                        color: $light-blue;
+                        font-weight: 400;
+                        font-size: 0.75rem;
+                    }
+
+                    .Image {}
+
+                    .Sha {}
+
+                    .Tags {
+                        display: flex;
+                        flex-direction: row;
+                    }
+                }
+
+                .Notifications {
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-around;
+                    margin-left: 245px;
+
+                    .Item {
+                        @extend .Clickable;
+
+                        color: $light-blue;
+                        font-size: 0.75rem;
+                        font-weight: 400;
+                    }
+                }
             }
         }
 
-        .EventDetails {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-
-            .EventType {
-                margin-left: 14px;
-                .Image {
-                    font-size: 0.75rem;
-                    font-weight: 600;
-                    color: $black;
-                }
-
-                .Type {
-                    font-size: 0.6875rem;
-                    font-weight: 400;
-                     color: $green;
-                }
-            }
+        .NotificationContainer {
+            width: 100%;
+            position: relative;
         }
     }
 }

@@ -11,7 +11,7 @@
 
     .Header {
 		border-radius: 3px 3px 0px 0px;
-		background-color: darken($curtain-color, 3%);	
+		background-color: $dark-blue;	
 		height: 40px;
 		display: flex;
     }

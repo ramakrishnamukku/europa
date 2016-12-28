@@ -1,0 +1,31 @@
+.BtnGroup {
+	display: flex;
+	flex-direction: row;
+
+	.IconBtn.Active {
+		background-color: $salmon;
+	}
+
+	.IconBtn {
+		height: 32px; 
+		width: 32px;
+		background-color: $light-blue;
+		color: white;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		transition: background-color 0.3s;
+
+
+		&:hover {
+			background-color: $salmon;
+			cursor: pointer;
+		}	
+
+	
+		i {
+			color: white;
+			font-size: 1.2rem;
+		}
+	}
+}

@@ -3,7 +3,7 @@ $max-width: 1080px;
 nav {
     position: relative;
     width: 100%;
-    background-color: $coal;
+    background-color: $dark-blue;
     height: 43px;
     display: flex;
     flex-direction: row;
@@ -148,7 +148,7 @@ nav {
     display: flex;
     flex-flow: row nowrap;
     justify-content: center;
-    font-weight: 300;
+    font-weight: 400;
     align-items: center;
     width: 400px;
     height: 40px;
@@ -170,7 +170,7 @@ nav {
     color: white;
     justify-content: center;
     align-items: center;
-    font-weight: 300;
+    font-weight: 400;
     font-size: 1.25rem;
     width: 485px;
     max-width: 50%;

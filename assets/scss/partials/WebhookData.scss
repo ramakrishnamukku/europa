@@ -1,5 +1,6 @@
 .WebhookData.Modal {
     margin-top: -200px;
+    width: 800px;
 }
 
 .WebhookData {
@@ -8,7 +9,6 @@
     flex-direction: column;
     background-color: #FFFFFF;
     width: 100%;
-    max-width: 800px;
     margin-top: 14px;
     padding: 10px;
     border: 1px solid $light-blue;

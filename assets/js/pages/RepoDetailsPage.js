@@ -10,6 +10,7 @@ import RegistryNames from './../util/RegistryNames'
 import RepoSettings from './../components/RepoSettings'
 import CenteredConfirm from './../components/CenteredConfirm'
 import RepoEventTimeline from './../components/RepoEventTimeline'
+import BtnGroup from './../components/BtnGroup'
 
 export default class RepoDetailsPage extends Component {
 	constructor(props) {
@@ -90,13 +91,33 @@ export default class RepoDetailsPage extends Component {
 					<span>{RegistryNames[activeRepo.provider]}</span>
 				</div>
 				<div>
-					Buttons
+					{this.renderActions()}
 				</div>
 			</div>
 		);
 	}
+	renderActions(){
+		let buttons = [
+			{
+				icon: 'icon icon-dis-terminate',
+			    onClick: () => this.context.actions.toggleActiveRepoDelete(),
+				isActive: false,
+				toolTip: 'Disconnect'
+			},
+			{
+				icon: 'icon icon-dis-settings',
+			    onClick: () => this.context.actions.toggleActiveRepoSettings(),
+				isActive: false,
+				toolTip: 'Settings'
+			}
+		];
+
+		return (
+			<BtnGroup buttons={buttons} />
+		);
+	}
 	render() {	
-		if(this.context.state.repoDetails.pageXHR) {
+		if(this.context.state.repoDetails.pageXHR || this.context.state.repoDetails.eventsXHR) {
 			return this.renderPageLoader()
 		}
 

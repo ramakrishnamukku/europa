@@ -12,16 +12,17 @@ export default class RepoEventTimeline extends Component {
 		super(props);
 		this.state = {};
 	}
-	renderWebhookData(){
+	renderLegend(){
 		return (
-			<div>
-				Webhook Data
+			<div className="TimelineLegend">
+				Event Timeline
 			</div>
 		);
 	}
 	renderAllEvents(){
 		return (
 			<div className="Timeline">
+				{this.renderLegend()}
 				<div className="TimelineContainer">
 					{this.props.events.map(this.renderRepoEventItem)}
 				</div>

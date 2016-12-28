@@ -4,10 +4,12 @@
 
 import React, {Component} from 'react'
 import { Link } from 'react-router'
+import RegistryNames from './../util/RegistryNames'
 import RegistryProviderIcons from './../util/RegistryProviderIcons'
 import Btn from './../components/Btn'
 import Msg from './../components/Msg'
 import Loader from './../components/Loader'
+import BtnGroup from './../components/BtnGroup'
 
 export default class Repositories extends Component {
 	constructor(props) {
@@ -46,10 +48,9 @@ export default class Repositories extends Component {
 					     src={RegistryProviderIcons(repo.provider)}/>
 					<div className="Flex1 FlexColumn">
 						<span className="RepoName">{repo.name}</span>
-						<span className="RepoProvider">{repo.provider}</span>
+						<span className="RepoProvider">{RegistryNames[repo.provider]}</span>
 					</div>
 					<div className="Flex2 FlexColumn">
-						<span className="Label">Last Event:</span>
 						<div className="FlexRow AlignCenter">
 							<span className="LastPushed">Pushed image <span className="LightBlueColor">hyper-local</span></span>
 							<span className="Label">&nbsp;&ndash;&nbsp;7 Days Agos</span>
@@ -58,8 +59,7 @@ export default class Repositories extends Component {
 							<span className="Tag">Latest</span>	
 						</div>
 					</div>
-					<div className="FlexColumn">
-						<span className="Label">Status of last webhook:</span>
+					<div className="FlexColumn" style={{flex: '0.45', alignItems: 'flex-end', paddingRight: '7px', justifyContent: 'center'}}>
 						<span className="LastWebhookStatus">Success</span>
 					</div>
 				</div>
@@ -75,6 +75,15 @@ export default class Repositories extends Component {
 			/>
 		);
 	}
+	renderLegend(){
+		return (
+			<div className="ReposLegend">
+				<div style={{flex: '1.105'}}>Repository</div>
+				<div className="Flex2">Last event</div>
+				<div>Last webhook status</div>
+			</div>
+		);
+	}
 	renderRepositories(){
 		return (
 			<div className="ContentContainer">
@@ -85,20 +94,23 @@ export default class Repositories extends Component {
 					<div className="FlexRow">
 						<div className="Flex1">
 							<Link to="/new-repository">
-								<Btn text="Add Repository"
-									 onClick={ () => {} } />
+								<BtnGroup buttons={[{icon: 'icon icon-dis-repo', toolTip: 'Add Repository'}]} />
 							</Link>
 						</div>
 					</div>
 				</div>
 				<div>
 					{this.renderSearchRepos()}
+					{this.renderLegend()}
 					{this.renderRepos()}		
 				</div>
 			</div>
 		);
 	}
 	renderNoRepositories(){
+		let buttons = [
+			
+		];
 		return (
 			<div className="ContentContainer">
 				<div className="NoContent">

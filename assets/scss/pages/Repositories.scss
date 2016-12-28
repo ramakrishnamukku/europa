@@ -54,7 +54,6 @@
                 cursor: pointer;
                 color: darken($light-blue, 10%);
             }
-
         }
     }
 
@@ -83,18 +82,42 @@
     }
 }
 
+.ReposLegend {
+    background-color: $dark-blue;
+    border-radius: 3px 3px 0px 0px;
+    display: flex;
+    flex-direction: row;
+    color: white;
+    padding: 10px 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
 .RepoList {
     margin: 0px;
-    background-color: $curtain-color;
+
+    a {
+        transition: all 0.3s;
+        &:nth-of-type(2n - 1) {
+            background-color: $light-grey;
+
+            &:hover {
+                background-color: lighten($light-grey, 2%);                
+            }
+        }
+
+        &:nth-of-type(2n) {
+            background-color: $dark-grey;
+
+            &:hover {
+                background-color: lighten($dark-grey, 2%);                
+            }
+        }
+    }
 
     .RepoItem {
-        border-bottom: solid 1px $border-color;
         padding: 14px;
         transition: all 0.3s;
-
-        &:hover {
-            background-color: lighten($backgroundColor, 2%);
-        }
 
         .Inside {
             .ProviderIcon {

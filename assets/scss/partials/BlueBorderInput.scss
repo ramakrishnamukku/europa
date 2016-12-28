@@ -12,7 +12,7 @@ select.BlueBorder, input.BlueBorder {
     -webkit-appearance: inherit;
     border-bottom: solid 1px #FFFFFF;
     transition: all 0.3s;
-    
+
     &:focus, &:hover {
         border-bottom: solid 1px $light-blue;
     }
@@ -36,6 +36,7 @@ input.BlueBorder.Search {
     color: #808285;
     margin: 1rem 0 0;
     width: 100%;
+    border: 0px;
     background-color: $backgroundColor;
     background: url(../images/search-icon.png);
     background-size: 20px 20px;
@@ -43,8 +44,8 @@ input.BlueBorder.Search {
     background-repeat: no-repeat;
     padding-left: 28px;
 
-    &:focus {
-        border-bottom: solid 1px $light-blue;
+    &:hover {
+        border: 0px;
     }
 }
 
@@ -55,4 +56,3 @@ select.BlueBorder.SuccessBg, input.BlueBorder.SuccessBg {
 select.BlueBorder.ErrorBg, input.BlueBorder.ErrorBg {
     background-color: $light-red;
 }
-

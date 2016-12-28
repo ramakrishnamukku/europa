@@ -145,6 +145,7 @@ export default class AddRepository extends Component {
 			return (
 				<WebhookData webhookData={webhookData} 
 							 modal={true}
+							 style={{width: '800px'}}
 							 close={ () => this.context.actions.toggleShowNotificationTestResults() }/>
 			)
 		};
