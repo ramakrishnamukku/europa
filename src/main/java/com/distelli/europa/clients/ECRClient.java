@@ -9,18 +9,17 @@
 package com.distelli.europa.clients;
 
 import java.util.*;
-import org.apache.log4j.Logger;
 import com.amazonaws.regions.*;
 import com.amazonaws.services.ecr.*;
 import com.amazonaws.auth.*;
 import com.distelli.persistence.PageIterator;
 import com.amazonaws.services.ecr.model.*;
 import com.distelli.europa.models.*;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 public class ECRClient
 {
-    private static final Logger log = Logger.getLogger(ECRClient.class);
-
     private RegistryCred _registryCred;
     private AmazonECRClient _awsEcrClient;
 

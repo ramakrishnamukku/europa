@@ -8,14 +8,13 @@
 */
 package com.distelli.europa.models;
 
+import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j;
 import java.util.Comparator;
 
-import org.apache.log4j.Logger;
-
+@Log4j
 public class DockerImageComparator implements Comparator<DockerImage>
 {
-    private static final Logger log = Logger.getLogger(DockerImageComparator.class);
-
     public DockerImageComparator()
     {
 

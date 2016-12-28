@@ -8,13 +8,12 @@
 */
 package com.distelli.europa.handlers;
 
-import org.apache.log4j.Logger;
 import com.distelli.ventura.*;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 public class DefaultRequestHandler extends RequestHandler
 {
-    private static final Logger log = Logger.getLogger(DefaultRequestHandler.class);
-
     public DefaultRequestHandler()
     {
 

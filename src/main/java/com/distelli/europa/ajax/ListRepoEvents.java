@@ -10,18 +10,17 @@ package com.distelli.europa.ajax;
 
 import com.distelli.persistence.PageIterator;
 
-import org.apache.log4j.Logger;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
 import com.distelli.ventura.*;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 @Singleton
 public class ListRepoEvents implements AjaxHelper
 {
-    private static final Logger log = Logger.getLogger(ListRepoEvents.class);
-
     @Inject
     private RepoEventsDb _db;
 

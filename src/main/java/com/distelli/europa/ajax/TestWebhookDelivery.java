@@ -8,7 +8,6 @@
 */
 package com.distelli.europa.ajax;
 
-import org.apache.log4j.Logger;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Random;
@@ -17,13 +16,12 @@ import com.distelli.ventura.*;
 import com.distelli.europa.util.*;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
+import lombok.extern.log4j.Log4j;
 
-
+@Log4j
 @Singleton
 public class TestWebhookDelivery implements AjaxHelper
 {
-    private static final Logger log = Logger.getLogger(TestWebhookDelivery.class);
-
     public TestWebhookDelivery()
     {
 

@@ -11,18 +11,17 @@ package com.distelli.europa.ajax;
 import com.distelli.persistence.PageIterator;
 
 import java.util.List;
-import org.apache.log4j.Logger;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
 import com.distelli.ventura.*;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 @Singleton
 public class ListRegistryCreds implements AjaxHelper
 {
-    private static final Logger log = Logger.getLogger(ListRegistryCreds.class);
-
     @Inject
     private RegistryCredsDb _db;
 

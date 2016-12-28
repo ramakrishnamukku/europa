@@ -14,13 +14,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
+import lombok.extern.log4j.Log4j;
 
-import org.apache.log4j.Logger;
-
+@Log4j
 public class RepoMonitor implements Runnable
 {
-    private static final Logger log = Logger.getLogger(RepoMonitor.class);
-
     private MonitorQueue _monitorQueue;
     private boolean _running = true;
 

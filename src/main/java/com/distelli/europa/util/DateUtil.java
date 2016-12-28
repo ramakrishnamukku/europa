@@ -12,13 +12,11 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import lombok.extern.log4j.Log4j;
 
-import org.apache.log4j.Logger;
-
+@Log4j
 public class DateUtil
 {
-    private static final Logger log = Logger.getLogger(DateUtil.class);
-
     private static DateFormat DATE_PARSER_WITH_TIMEZONE = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
     private static DateFormat DATE_PARSER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
     private static DateFormat ISO_8601_DATE_PARSER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSXXX");

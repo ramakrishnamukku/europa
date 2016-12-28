@@ -17,16 +17,15 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
 import com.distelli.europa.clients.*;
 import com.distelli.europa.models.*;
 import com.distelli.persistence.PageIterator;
 import com.google.inject.assistedinject.Assisted;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 public class EcrMonitorTask extends RepoMonitorTask
 {
-    private static final Logger log = Logger.getLogger(EcrMonitorTask.class);
-
     public interface Factory {
         public EcrMonitorTask create(ContainerRepo repo,
                                      CountDownLatch latch);

@@ -14,18 +14,17 @@ import java.util.concurrent.CountDownLatch;
 import javax.inject.Singleton;
 import com.distelli.persistence.PageIterator;
 
-import org.apache.log4j.Logger;
 import com.distelli.europa.models.*;
 import com.distelli.europa.db.*;
 import javax.inject.Inject;
+import lombok.extern.log4j.Log4j;
 
 //This must be annotated with @Singleton so that there is a
 //single instance of this object
+@Log4j
 @Singleton
 public class MonitorQueue
 {
-    private static final Logger log = Logger.getLogger(MonitorQueue.class);
-
     private List<ContainerRepo> _reposToMonitor;
     private boolean _shouldReload = false;
 

@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.UUID;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
 import com.distelli.europa.clients.*;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
@@ -24,12 +23,12 @@ import com.distelli.gcr.auth.*;
 import com.distelli.gcr.models.*;
 import com.distelli.persistence.PageIterator;
 import com.google.inject.Singleton;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 @Singleton
 public class SaveContainerRepo implements AjaxHelper
 {
-    private static final Logger log = Logger.getLogger(SaveContainerRepo.class);
-
     @Inject
     private RegistryCredsDb _credsDb;
     @Inject

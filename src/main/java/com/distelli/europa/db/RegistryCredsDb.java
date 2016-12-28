@@ -21,15 +21,14 @@ import com.distelli.jackson.transform.TransformModule;
 import com.distelli.europa.ajax.*;
 import com.distelli.europa.models.*;
 import com.distelli.ventura.*;
-import org.apache.log4j.Logger;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 @Singleton
 public class RegistryCredsDb
 {
-    private static final Logger log = Logger.getLogger(RegistryCredsDb.class);
-
     private Index<RegistryCred> _main;
     private Index<RegistryCred> _secondaryIndex;
 

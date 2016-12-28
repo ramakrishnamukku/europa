@@ -20,10 +20,10 @@ import lombok.*;
 public class DockerImage
 {
     @Singular
-    private List<String> imageTags = null;
-    private String imageSha = null;
-    private Long pushTime = null;
-    private Long imageSize = null;
+    protected List<String> imageTags = null;
+    protected String imageSha = null;
+    protected Long pushTime = null;
+    protected Long imageSize = null;
 
     public void addImageTag(String imageTag)
     {

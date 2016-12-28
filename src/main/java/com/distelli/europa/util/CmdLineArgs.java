@@ -11,16 +11,11 @@ package com.distelli.europa.util;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.extern.log4j.Log4j;
 
-import org.apache.log4j.Logger;
-
+@Log4j
 public class CmdLineArgs
 {
-    /**
-       @brief Logger used for error logging
-    */
-    private static final Logger log = Logger.getLogger(CmdLineArgs.class);
-
     private LockingMap _args = null;
     private String _appName = null;
     private int _port = 3000;

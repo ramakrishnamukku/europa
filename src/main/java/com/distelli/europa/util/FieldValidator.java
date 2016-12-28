@@ -8,16 +8,15 @@
 */
 package com.distelli.europa.util;
 
-import org.apache.log4j.Logger;
 import java.lang.reflect.*;
 import com.distelli.ventura.*;
 import com.distelli.europa.ajax.*;
 import java.util.regex.*;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 public class FieldValidator
 {
-    private static final Logger log = Logger.getLogger(FieldValidator.class);
-
     private static Object getValueForField(Object obj, String field)
     {
         Class<? extends Object> clazz = obj.getClass();

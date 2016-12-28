@@ -8,10 +8,7 @@
 */
 package com.distelli.europa.handlers;
 
-import org.apache.log4j.Logger;
-
 import org.eclipse.jetty.http.HttpMethod;
-import org.apache.log4j.Logger;
 import com.distelli.ventura.*;
 import com.distelli.europa.ajax.*;
 import com.distelli.europa.util.*;
@@ -20,12 +17,12 @@ import com.google.inject.Singleton;
 import java.util.Map;
 import java.util.HashMap;
 import javax.inject.Inject;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 @Singleton
 public class AjaxRequestHandler extends RequestHandler
 {
-    private static final Logger log = Logger.getLogger(AjaxRequestHandler.class);
-
     @Inject
     private Map<String, AjaxHelper> _ajaxHelperMap;
 

@@ -20,15 +20,14 @@ import com.distelli.europa.EuropaConfiguration;
 
 import com.distelli.europa.Constants;
 import com.distelli.europa.models.*;
-import org.apache.log4j.Logger;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 @Singleton
 public class NotificationsDb
 {
-    private static final Logger log = Logger.getLogger(NotificationsDb.class);
-
     private Index<Notification> _main;
 
     private final ObjectMapper _om = new ObjectMapper();

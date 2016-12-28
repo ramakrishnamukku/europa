@@ -10,7 +10,6 @@ package com.distelli.europa.guice;
 
 import java.net.URI;
 
-import org.apache.log4j.Logger;
 import com.distelli.cred.CredPair;
 import com.google.inject.AbstractModule;
 import com.distelli.persistence.Index;
@@ -18,11 +17,11 @@ import com.distelli.europa.EuropaConfiguration;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.distelli.persistence.impl.mysql.MysqlDataSource;
 import com.distelli.europa.monitor.*;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 public class EuropaInjectorModule extends AbstractModule
 {
-    private static final Logger log = Logger.getLogger(EuropaInjectorModule.class);
-
     private EuropaConfiguration _europaConfiguration;
 
     public EuropaInjectorModule(EuropaConfiguration europaConfiguration)

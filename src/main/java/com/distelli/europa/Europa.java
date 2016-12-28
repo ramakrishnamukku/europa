@@ -10,7 +10,6 @@ package com.distelli.europa;
 
 import java.io.File;
 
-import org.apache.log4j.Logger;
 import com.distelli.europa.util.*;
 import com.distelli.ventura.*;
 import com.distelli.europa.guice.*;
@@ -21,11 +20,11 @@ import com.google.inject.Provides;
 import com.google.inject.Stage;
 import com.distelli.persistence.impl.PersistenceModule;
 import javax.inject.Inject;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 public class Europa
 {
-    private static final Logger log = Logger.getLogger(Europa.class);
-
     private RequestHandlerFactory _requestHandlerFactory = null;
     private RouteMatcher _routeMatcher = null;
     private int _port = 8080;
@@ -37,9 +36,6 @@ public class Europa
     public Europa(String[] args)
     {
         CmdLineArgs cmdLineArgs = new CmdLineArgs(args);
-        //before we start the injector we have to initialize the
-        //Logger, VitoConfig and Oxygen
-
         boolean logToConsole = cmdLineArgs.hasOption(Constants.LOG_TO_CONSOLE_ARG);
         // Initialize Logging
         File logsDir = new File("./logs/");

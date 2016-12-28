@@ -8,7 +8,6 @@
 */
 package com.distelli.europa.ajax;
 
-import org.apache.log4j.Logger;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
 import com.distelli.ventura.*;
@@ -16,12 +15,12 @@ import com.distelli.europa.util.*;
 
 import javax.inject.Inject;
 import com.google.inject.Singleton;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 @Singleton
 public class GetContainerRepo implements AjaxHelper
 {
-    private static final Logger log = Logger.getLogger(GetContainerRepo.class);
-
     @Inject
     private ContainerRepoDb _db;
 

@@ -9,12 +9,12 @@
 package com.distelli.europa.guice;
 
 import com.distelli.europa.EuropaConfiguration;
-import org.apache.log4j.Logger;
 import javax.inject.Provider;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 public class EuropaConfigurationProvider implements Provider<EuropaConfiguration>
 {
-    private static final Logger log = Logger.getLogger(EuropaConfigurationProvider.class);
     private EuropaConfiguration _europaConfiguration;
 
     public EuropaConfigurationProvider(EuropaConfiguration europaConfiguration)

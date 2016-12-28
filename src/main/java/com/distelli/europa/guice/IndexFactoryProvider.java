@@ -13,14 +13,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
-import org.apache.log4j.Logger;
 import com.distelli.cred.CredPair;
 import com.distelli.persistence.Index;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 public class IndexFactoryProvider implements Provider<Index.Factory>
 {
-    private static final Logger log = Logger.getLogger(IndexFactoryProvider.class);
-
     @Inject @Named("BASE")
     private Index.Factory _baseIndexFactory;
     private URI _endpoint;

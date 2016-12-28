@@ -15,8 +15,7 @@ import java.nio.file.Paths;
 import java.net.URISyntaxException;
 
 import com.distelli.europa.models.*;
-
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 import org.eclipse.jgit.transport.URIish;
 
 /**
@@ -27,9 +26,9 @@ import org.eclipse.jgit.transport.URIish;
    3. Repo SSH Clone URI - git@github.com:Distelli/RsinghGithubTest.git
    4. Repo HTTP Clone URI - https://github.com/Distelli/RsinghGithubTest.git
 */
+@Log4j
 public class RepoUri
 {
-    private static final Logger log = Logger.getLogger(RepoUri.class);
     protected RepositoryProvider _repoProvider;
     protected RepositoryType _repoType;
     protected String _host;
