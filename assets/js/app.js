@@ -6,7 +6,7 @@ import Overview from './pages/Overview'
 import Repositories from './pages/Repositories'
 import RepoDetailsPage from './pages/RepoDetailsPage'
 import AddRepo from './pages/AddRepo'
-import Settings from './pages/settings'
+import Settings from './pages/Settings'
 
 export default class App extends Component {
   constructor(props) {
