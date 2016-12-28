@@ -3,7 +3,6 @@ SHELL := /bin/bash
 .PHONY: git-has-pushed git-is-clean
 all:
 	mvn -q -U dependency:build-classpath compile -DincludeScope=runtime -Dmdep.outputFile=target/.classpath -Dmaven.compiler.debug=false
-	build-binaries.py Europa com.distelli.europa.Europa
 
 install:
 	mvn -q install
