@@ -8,6 +8,7 @@ import ReactTooltip from 'react-tooltip'
 import ActionBinder from './../util/ActionBinder'
 
 // Actions
+import * as GeneralActions from './../actions/GeneralActions'
 import * as AddRegistryActions from './../actions/AddRegistryActions'
 import * as RepoActions from './../actions/RepoActions'
 import * as RegistryActions from './../actions/RegistryActions'

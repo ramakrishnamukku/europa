@@ -16,6 +16,7 @@ export function addRegistryState() {
     validateOnInput: false,
     success: null,
     XHR: false,
+    selectRegionDropdown: false,
     newRegistry: {
       name: '',
       provider: '',
@@ -82,6 +83,14 @@ export function addRegistryRequest() {
 
   });
 };
+
+export function toggleSelectRegionDropdown(){
+  this.setState({
+    addRegistry: GA.modifyProperty(this.state.addRegistry, {
+      selectRegionDropdown: !this.state.addRegistry.selectRegionDropdown
+    })
+  });
+}
 
 export function toggleShowAddEditRegistryModal() {
   return new Promise((resolve, reject) => {

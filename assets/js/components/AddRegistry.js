@@ -10,6 +10,8 @@ import Msg from './../components/Msg'
 import RadioButton from './../components/RadioButton'
 import RegistryNames from './../util/RegistryNames'
 import RegistryProviderIcons from './../util/RegistryProviderIcons'
+import NPECheck from './../util/NPECheck'
+import Dropdown from './../components/Dropdown'
 
 let provider = 'provider';
 let keyName = 'name';
@@ -81,25 +83,66 @@ export default class AddRegistry extends Component {
 	}
 	renderExistingRegistryCredentials() {
 		if(this.context.state.addRepo.newRepoCredsType == 'EXISTING' && !this.props.standaloneMode) {
+
+			let selectedRegistryId = NPECheck(this.context.state, 'addRepo/newRepo/repo/credId', null);
+			let selectedRegistry, selectedRegistryName = '';
+
+			if(selectedRegistryId) {
+				selectedRegistry = this.context.state.registriesMap[selectedRegistryId];
+			}
+
+			if(selectedRegistry) {
+				selectedRegistryName = `${selectedRegistry.provider} - ${selectedRegistry.name} - ${selectedRegistry.region}`
+			}
+
 			return (
 				<div className="Flex1">
 					<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
 						Select Credentials
 					</label>
-					<div className="Flex1">
-						<select className="BlueBorder FullWidth"
-						        onChange={(e) => this.context.actions.selectCredsForNewRepo(e)}>
-						    <option value="">Select Credentials</option>
-							{this.context.state.registries.map((reg, index) => {
-								return (
-									<option value={JSON.stringify(reg)} key={index}>{reg.provider} - {reg.name} - {reg.region}</option>
-								);
-							})}
-						</select>
-					</div>
+					<Dropdown isOpen={this.context.state.addRepo.selectExistingCredentialsDropdown}
+							  toggleOpen={() => this.context.actions.toggleSelectExistingCredsDropdown()}
+							  listItems={this.context.state.registries} 
+							  renderItem={(reg, index) => this.renderExistingCredentialItem(reg, index)}
+							  inputPlaceholder="Select Credentials"
+							  inputClassName="BlueBorder FullWidth"
+							  inputValue={selectedRegistryName}
+							  className="Flex1"/>
 				</div>
 			);
 		}
+	}
+	renderExistingCredentialItem(reg, index){
+		let id = reg.id;
+		let className = "ListItem FlexRow";
+
+		if(id == NPECheck(this.context.state, 'addRepo/newRepo/repo/credId', null)) {
+			className += " Active";
+		}		
+
+		return (
+			<div key={index} className={className} 
+				 onClick={ () => this.context.actions.selectCredsForNewRepo(null, id) }>
+				 <div>
+					<img src={RegistryProviderIcons(reg.provider)} />
+				</div>
+				<div className="FlexColumn">
+					<span className="Label">
+						Google Container Registry
+					</span>
+					<span className="FlexRow">
+						<span className="Cell">
+							<span className="Label">Name:</span>
+							<span className="Value">{reg.name}</span>
+						</span>
+						<span className="Cell">
+							<span className="Label">Region</span>
+							<span className="Value">{reg.region}</span>
+						</span>
+					</span>
+				</div>
+			</div>
+		);
 	}
 	renderSelectProvider(readOnly, isEdit){
 		if(isEdit) {
@@ -175,16 +218,20 @@ export default class AddRegistry extends Component {
 				<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
 					Key Region {(this.props.isEdit) ? '( Read Only )' : null}
 				</label>
-				<select className={this.inputClassName(region)}
-						value={this.context.state.addRegistry.newRegistry[region]}
-				        onChange={(e) => this.context.actions.updateNewRegistryField(region, e)}
-						{...readOnly}>
-				   <option value="">Select Region...</option>
-				   <option value="us-west-1">us-west-1</option>
-				   <option value="us-west-2">us-west-2</option>
-				   <option value="us-east-1">us-east-1</option>
-				   <option value="us-east-2">us-east-2</option>
-				</select>
+				<Dropdown isOpen={this.context.state.addRegistry.selectRegionDropdown}
+						  toggleOpen={() => this.context.actions.toggleSelectRegionDropdown()}
+						  listItems={["us-west-1", "us-west-2", "us-east-1", "us-east-2"]} 
+						  renderItem={(region, index) => this.renderRegionItem(region, index)}
+						  inputPlaceholder="Select Region"
+						  inputClassName={this.inputClassName(region)}
+						  inputValue={this.context.state.addRegistry.newRegistry[region]} />
+			</div>
+		);
+	}
+	renderRegionItem(r, index){
+		return (
+			<div key={index} className="ListItem" onClick={() => this.context.actions.updateNewRegistryField(region, r, true)}>
+				{r}
 			</div>
 		);
 	}

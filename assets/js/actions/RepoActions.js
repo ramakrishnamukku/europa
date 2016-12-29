@@ -64,6 +64,7 @@ export function addRepoState() {
     testNotification: {},
     testNotificationStatus: null,
     showNotificationTestResults: false,
+    selectExistingCredentialsDropdown: false,
     newRepo: {
       repo: {
         credId: '',
@@ -116,6 +117,14 @@ export function selectCredsForNewRepo(e, value) {
   }
 
   updateNewRepoField.call(this, 'repo/credId', id, true);
+}
+
+export function toggleSelectExistingCredsDropdown() {
+  this.setState({
+    addRepo: GA.modifyProperty(this.state.addRepo, {
+      selectExistingCredentialsDropdown: !this.state.addRepo.selectExistingCredentialsDropdown
+    })
+  });
 }
 
 export function testNotification() {
@@ -266,15 +275,15 @@ export function toggleRepoDetailsPageXHR() {
 }
 
 export function setActiveRepoDetails(repoId) {
-  return new Promise ((resolve, reject) => {
-      let repo = this.state.reposMap[repoId];
+  return new Promise((resolve, reject) => {
+    let repo = this.state.reposMap[repoId];
 
-      this.setState({
-        repoDetails: GA.modifyProperty(this.state.repoDetails, {
-          activeRepo: repo,
-          pageXHR: false
-        })
-      }, () => resolve() );
+    this.setState({
+      repoDetails: GA.modifyProperty(this.state.repoDetails, {
+        activeRepo: repo,
+        pageXHR: false
+      })
+    }, () => resolve());
   });
 }
 
