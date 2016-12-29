@@ -58,17 +58,18 @@ public class SaveContainerRepo extends AjaxHelper
         repo.setRegion(cred.getRegion());
         repo.setId(UUID.randomUUID().toString());
         validateContainerRepo(repo, cred);
-        Notification notification = ajaxRequest.convertContent("/notification", Notification.class,
-                                                               true);
-        FieldValidator.validateNonNull(notification, "type", "target");
         //save the repo in the db
         _reposDb.save(repo);
-        notification.setRepoId(repo.getId());
-        notification.setDomain(repo.getDomain());
-        notification.setRepoProvider(repo.getProvider());
-        notification.setRegion(repo.getRegion());
-        notification.setRepoName(repo.getName());
-        _notificationDb.save(notification);
+        Notification notification = ajaxRequest.convertContent("/notification", Notification.class, false);
+        if(notification != null) {
+            FieldValidator.validateNonNull(notification, "type", "target");
+            notification.setRepoId(repo.getId());
+            notification.setDomain(repo.getDomain());
+            notification.setRepoProvider(repo.getProvider());
+            notification.setRegion(repo.getRegion());
+            notification.setRepoName(repo.getName());
+            _notificationDb.save(notification);
+        }
         _monitorQueue.setReload(true);
         return JsonSuccess.Success;
     }

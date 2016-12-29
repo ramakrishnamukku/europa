@@ -39,7 +39,9 @@ public class NotificationsDb
              (item) -> getHashKey(item.getDomain(), item.getRepoId()))
         .put("rk", String.class,
              (item) -> getRangeKey(item.getType(), item.getId()))
-        .put("id", String.class, "id")
+        .put("id", String.class,
+             (item) -> item.getId().toLowerCase(),
+             (item, id) -> item.setId(id.toLowerCase()))
         .put("repoId", String.class, "repoId")
         .put("domain", String.class, "domain")
         .put("type", NotificationType.class, "type")
