@@ -23,8 +23,8 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok-maven-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -156,12 +156,6 @@
     </dependency>
 
     <dependency>
-	  <groupId>org.projectlombok</groupId>
-	  <artifactId>lombok</artifactId>
-	  <version>1.16.12</version>
-	</dependency>
-
-    <dependency>
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-java-sdk-ecr</artifactId>
       <version>1.11.68</version>
@@ -170,7 +164,7 @@
     <dependency>
       <groupId>com.distelli.gcr</groupId>
       <artifactId>gcr-sdk-java</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1</version>
     </dependency>
 
     <dependency>
