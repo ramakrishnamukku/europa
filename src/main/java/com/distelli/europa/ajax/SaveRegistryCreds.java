@@ -50,13 +50,21 @@ public class SaveRegistryCreds extends AjaxHelper
         FieldValidator.validateMatch(cred, "name", registryCredNamePattern);
         validateRegistryCreds(cred);
         cred.setCreated(System.currentTimeMillis());
-        String id = UUID.randomUUID().toString();
-        cred.setId(id);
+        String id = cred.getId();
+        if(id != null) {
+            //check that cred with that id exists
+            RegistryCred existingCred = _db.getCred(cred.getDomain(), id.toLowerCase());
+            if(existingCred == null)
+                throw(new AjaxClientException("Invalid Registry Cred Id: "+id, JsonError.Codes.BadContent, 400));
+        } else {
+            id = UUID.randomUUID().toString();
+            cred.setId(id);
+        }
         //save in the db
         _db.save(cred);
-        return new HashMap<String, String>() {{
-            put("id", id);
-        }};
+        HashMap<String, String> retVal = new HashMap<String, String>();
+        retVal.put("id", id);
+        return retVal;
     }
 
     private void validateRegistryCreds(RegistryCred cred) {

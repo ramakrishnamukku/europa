@@ -40,7 +40,9 @@ public class RegistryCredsDb
         .put("hk", String.class,
              (item) -> getHashKey(item),
              (item, domain) -> setHashKey(item, domain))
-        .put("id", String.class, "id")
+        .put("id", String.class,
+             (item) -> item.getId().toLowerCase(),
+             (item, id) -> item.setId(id.toLowerCase()))
         .put("sidx", String.class,
              (item) -> getSecondaryRangeKey(item.getProvider(),
                                             item.getRegion(),
