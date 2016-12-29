@@ -23,11 +23,12 @@ import com.distelli.gcr.auth.*;
 import com.distelli.gcr.models.*;
 import com.distelli.persistence.PageIterator;
 import com.google.inject.Singleton;
+import org.eclipse.jetty.http.HttpMethod;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
-public class SaveContainerRepo implements AjaxHelper
+public class SaveContainerRepo extends AjaxHelper
 {
     @Inject
     private RegistryCredsDb _credsDb;
@@ -40,7 +41,7 @@ public class SaveContainerRepo implements AjaxHelper
 
     public SaveContainerRepo()
     {
-
+        this.supportedHttpMethods.add(HttpMethod.POST);
     }
 
     public Object get(AjaxRequest ajaxRequest)

@@ -18,10 +18,11 @@ import lombok.extern.log4j.Log4j;
 import com.google.inject.Singleton;
 import com.distelli.europa.models.*;
 import com.amazonaws.regions.*;
+import org.eclipse.jetty.http.HttpMethod;
 
 @Log4j
 @Singleton
-public class GetRegionsForProvider implements AjaxHelper
+public class GetRegionsForProvider extends AjaxHelper
 {
     private static Map<String, String> ecrRegionToArea = new HashMap<String, String>();
     static {
@@ -40,7 +41,7 @@ public class GetRegionsForProvider implements AjaxHelper
 
     public GetRegionsForProvider()
     {
-
+        this.supportedHttpMethods.add(HttpMethod.GET);
     }
 
     public Object get(AjaxRequest ajaxRequest)

@@ -16,17 +16,18 @@ import com.distelli.ventura.*;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
+import org.eclipse.jetty.http.HttpMethod;
 
 @Log4j
 @Singleton
-public class ListRepoEvents implements AjaxHelper
+public class ListRepoEvents extends AjaxHelper
 {
     @Inject
     private RepoEventsDb _db;
 
     public ListRepoEvents()
     {
-
+        this.supportedHttpMethods.add(HttpMethod.GET);
     }
 
     public Object get(AjaxRequest ajaxRequest)

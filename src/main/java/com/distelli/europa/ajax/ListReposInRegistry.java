@@ -21,16 +21,16 @@ import com.distelli.gcr.models.*;
 import com.distelli.persistence.*;
 import com.distelli.ventura.*;
 import com.google.inject.Singleton;
-
+import org.eclipse.jetty.http.HttpMethod;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
-public class ListReposInRegistry implements AjaxHelper
+public class ListReposInRegistry extends AjaxHelper
 {
     public ListReposInRegistry()
     {
-
+        this.supportedHttpMethods.add(HttpMethod.GET);
     }
 
     public Object get(AjaxRequest ajaxRequest)

@@ -15,10 +15,11 @@ import com.distelli.ventura.*;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
+import org.eclipse.jetty.http.HttpMethod;
 
 @Log4j
 @Singleton
-public class DeleteContainerRepo implements AjaxHelper
+public class DeleteContainerRepo extends AjaxHelper
 {
     @Inject
     private ContainerRepoDb _db;
@@ -27,7 +28,7 @@ public class DeleteContainerRepo implements AjaxHelper
 
     public DeleteContainerRepo()
     {
-
+        this.supportedHttpMethods.add(HttpMethod.POST);
     }
 
     /**

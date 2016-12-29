@@ -16,17 +16,18 @@ import com.distelli.europa.util.*;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
+import org.eclipse.jetty.http.HttpMethod;
 
 @Log4j
 @Singleton
-public class GetContainerRepo implements AjaxHelper
+public class GetContainerRepo extends AjaxHelper
 {
     @Inject
     private ContainerRepoDb _db;
 
     public GetContainerRepo()
     {
-
+        this.supportedHttpMethods.add(HttpMethod.GET);
     }
 
     /**

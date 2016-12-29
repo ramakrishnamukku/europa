@@ -55,6 +55,8 @@ public class AjaxRequestHandler extends RequestHandler
             AjaxHelper ajaxHelper = _ajaxHelperMap.get(operation);
             if(ajaxHelper == null)
                 return jsonError(JsonError.UnsupportedOperation);
+            if(!ajaxHelper.isMethodSupported(httpMethod))
+                return jsonError(JsonError.UnsupportedHttpMethod);
             Object response = ajaxHelper.get(ajaxRequest);
             if(response != null)
                 return toJson(response);

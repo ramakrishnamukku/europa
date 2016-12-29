@@ -8,7 +8,18 @@
 */
 package com.distelli.europa.ajax;
 
-public interface AjaxHelper
+import org.eclipse.jetty.http.HttpMethod;
+import java.util.Set;
+import java.util.HashSet;
+
+public abstract class AjaxHelper
 {
-    public Object get(AjaxRequest ajaxRequest);
+    protected Set<HttpMethod> supportedHttpMethods = new HashSet<HttpMethod>();
+
+    public abstract Object get(AjaxRequest ajaxRequest);
+    public boolean isMethodSupported(HttpMethod httpMethod) {
+        if(supportedHttpMethods.size() == 0)
+            return true;
+        return supportedHttpMethods.contains(httpMethod);
+    }
 }

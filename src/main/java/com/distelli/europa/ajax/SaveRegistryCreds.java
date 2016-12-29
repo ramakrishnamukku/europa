@@ -25,10 +25,11 @@ import com.distelli.gcr.models.*;
 import com.distelli.persistence.PageIterator;
 import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
+import org.eclipse.jetty.http.HttpMethod;
 
 @Log4j
 @Singleton
-public class SaveRegistryCreds implements AjaxHelper
+public class SaveRegistryCreds extends AjaxHelper
 {
     @Inject
     private RegistryCredsDb _db;
@@ -37,7 +38,7 @@ public class SaveRegistryCreds implements AjaxHelper
 
     public SaveRegistryCreds()
     {
-
+        this.supportedHttpMethods.add(HttpMethod.POST);
     }
 
     public Object get(AjaxRequest ajaxRequest)

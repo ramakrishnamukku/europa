@@ -14,17 +14,18 @@ import com.distelli.ventura.*;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
+import org.eclipse.jetty.http.HttpMethod;
 
 @Log4j
 @Singleton
-public class DeleteRegistryCreds implements AjaxHelper
+public class DeleteRegistryCreds extends AjaxHelper
 {
     @Inject
     private RegistryCredsDb _db;
 
     public DeleteRegistryCreds()
     {
-
+        this.supportedHttpMethods.add(HttpMethod.POST);
     }
 
     /**
