@@ -23,11 +23,15 @@ import com.distelli.ventura.*;
 import com.google.inject.Singleton;
 import org.eclipse.jetty.http.HttpMethod;
 import lombok.extern.log4j.Log4j;
+import javax.inject.Inject;
 
 @Log4j
 @Singleton
 public class ListReposInRegistry extends AjaxHelper
 {
+    @Inject
+    private RegistryCredsDb _credsDb;
+
     public ListReposInRegistry()
     {
         this.supportedHttpMethods.add(HttpMethod.GET);
@@ -35,14 +39,34 @@ public class ListReposInRegistry extends AjaxHelper
 
     public Object get(AjaxRequest ajaxRequest)
     {
-        RegistryProvider provider = ajaxRequest.getParamAsEnum("provider", RegistryProvider.class, true);
-        String secret = ajaxRequest.getParam("secret", true);
-        String region = ajaxRequest.getParam("region", true);
+        String credId = ajaxRequest.getParam("credId");
+        String credDomain = ajaxRequest.getParam("credDomain");
+        RegistryProvider provider = null;
+        String secret = null;
+        String region = null;
+        String key = null;
+        if(credId != null)
+        {
+            RegistryCred cred = _credsDb.getCred(credDomain, credId);
+            if(cred == null)
+                throw(new AjaxClientException("Invalid CredId: "+credId, JsonError.Codes.BadParam, 400));
+            provider = cred.getProvider();
+            key = cred.getKey();
+            secret = cred.getSecret();
+            region = cred.getRegion();
+        }
+        else
+        {
+            provider = ajaxRequest.getParamAsEnum("provider", RegistryProvider.class, true);
+            secret = ajaxRequest.getParam("secret", true);
+            region = ajaxRequest.getParam("region", true);
+        }
 
         switch(provider)
         {
         case ECR:
-            String key = ajaxRequest.getParam("key", true);
+            if(key == null)
+                key = ajaxRequest.getParam("key", true);
             return listEcrRepos(key, secret, region);
         case GCR:
             return listGcrRepos(secret, region);
