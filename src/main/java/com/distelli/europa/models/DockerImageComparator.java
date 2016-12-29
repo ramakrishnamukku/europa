@@ -8,7 +8,6 @@
 */
 package com.distelli.europa.models;
 
-import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j;
 import java.util.Comparator;
 

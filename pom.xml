@@ -21,10 +21,37 @@
   </properties>
 
   <build>
+    <sourceDirectory>target/generated-sources/delombok</sourceDirectory>
+    <testSourceDirectory>target/generated-test-sources/delombok</testSourceDirectory>
     <plugins>
       <plugin>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok-maven-plugin</artifactId>
+        <version>1.16.12.0</version>
+        <executions>
+          <execution>
+            <id>delombok</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>delombok</goal>
+            </goals>
+            <configuration>
+              <addOutputDirectory>false</addOutputDirectory>
+              <sourceDirectory>src/main/java</sourceDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-delombok</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>testDelombok</goal>
+            </goals>
+            <configuration>
+              <addOutputDirectory>false</addOutputDirectory>
+              <sourceDirectory>src/test/java</sourceDirectory>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -164,7 +191,7 @@
     <dependency>
       <groupId>com.distelli.gcr</groupId>
       <artifactId>gcr-sdk-java</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
     </dependency>
 
     <dependency>

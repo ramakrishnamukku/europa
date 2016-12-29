@@ -10,7 +10,8 @@ package com.distelli.europa;
 
 import java.io.File;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

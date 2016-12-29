@@ -9,7 +9,11 @@
 package com.distelli.europa.models;
 
 import java.util.Map;
-import lombok.*;
+import lombok.Data;
+import lombok.Builder;
+import lombok.Singular;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
 @Builder

@@ -11,7 +11,11 @@ package com.distelli.europa.monitor;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import lombok.*;
+import lombok.Data;
+import lombok.Builder;
+import lombok.Singular;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
 @Builder

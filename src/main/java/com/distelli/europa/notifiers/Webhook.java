@@ -32,7 +32,9 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import com.distelli.europa.util.*;
 import com.distelli.europa.models.*;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j;
 

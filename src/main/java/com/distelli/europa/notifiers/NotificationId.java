@@ -7,7 +7,11 @@
 */
 package com.distelli.europa.notifiers;
 
-import lombok.*;
+import lombok.Data;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
 import com.distelli.europa.models.*;
 
 @Data
