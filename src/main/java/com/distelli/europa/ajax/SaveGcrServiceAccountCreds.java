@@ -1,10 +1,9 @@
 /*
   $Id: $
-  @file SaveRegistryCreds.java
-  @brief Contains the SaveRegistryCreds.java class
+  @file SaveGcrServiceAccountCreds.java
+  @brief Contains the SaveGcrServiceAccountCreds.java class
 
   @author Rahul Singh [rsingh]
-  Copyright (c) 2013, Distelli Inc., All Rights Reserved.
 */
 package com.distelli.europa.ajax;
 
@@ -30,23 +29,24 @@ import org.eclipse.jetty.http.HttpMethod;
 
 @Log4j
 @Singleton
-public class SaveRegistryCreds extends AjaxHelper
+public class SaveGcrServiceAccountCreds extends AjaxHelper
 {
     @Inject
     private RegistryCredsDb _db;
 
-    public SaveRegistryCreds()
+    public SaveGcrServiceAccountCreds()
     {
         this.supportedHttpMethods.add(HttpMethod.POST);
     }
 
     public Object get(AjaxRequest ajaxRequest)
     {
-        RegistryCred cred = ajaxRequest.convertContent(RegistryCred.class,
+        RegistryCred cred = ajaxRequest.convertContent("/cred", RegistryCred.class,
                                                        true); //throw if null
         //Validate that the fields we want are non-null
-        FieldValidator.validateNonNull(cred, "provider", "region", "key", "secret");
+        FieldValidator.validateNonNull(cred, "provider", "region");
         FieldValidator.validateMatch(cred, "name", Constants.REGISTRY_CRED_NAME_PATTERN);
+        FieldValidator.validateEquals(cred, "provider", RegistryProvider.GCR);
         validateRegistryCreds(cred);
         cred.setCreated(System.currentTimeMillis());
         String id = cred.getId();
@@ -59,6 +59,10 @@ public class SaveRegistryCreds extends AjaxHelper
             id = UUID.randomUUID().toString();
             cred.setId(id);
         }
+        //Lets get the secret
+        String secret = ajaxRequest.getContentAsString("/secret", true);
+        cred.setSecret(secret);
+
         //save in the db
         _db.save(cred);
         HashMap<String, String> retVal = new HashMap<String, String>();
@@ -67,31 +71,6 @@ public class SaveRegistryCreds extends AjaxHelper
     }
 
     private void validateRegistryCreds(RegistryCred cred) {
-        RegistryProvider provider = cred.getProvider();
-        switch(provider)
-        {
-        case ECR:
-            validateEcrCreds(cred);
-            break;
-        case GCR:
-            validateGcrCreds(cred);
-            break;
-        default:
-            throw(new AjaxClientException("Unsupported Container Registry: "+provider, JsonError.Codes.BadContent, 400));
-        }
-    }
-
-    private void validateEcrCreds(RegistryCred cred) {
-        ECRClient ecrClient = new ECRClient(cred);
-        PageIterator pageIterator = new PageIterator().pageSize(1);
-        try {
-            List<ContainerRepo> repos = ecrClient.listRepositories(pageIterator);
-        } catch(Throwable t) {
-            throw(new AjaxClientException("Invalid Credentials: "+t.getMessage(), JsonError.Codes.BadContent, 400));
-        }
-    }
-
-    private void validateGcrCreds(RegistryCred cred) {
         GcrCredentials gcrCreds = new GcrServiceAccountCredentials(cred.getSecret());
         GcrRegion gcrRegion = GcrRegion.getRegion(cred.getRegion());
         GcrClient gcrClient = new GcrClient(gcrCreds, gcrRegion);

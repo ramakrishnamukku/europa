@@ -17,6 +17,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class AjaxRequest
 {
@@ -43,6 +44,39 @@ public class AjaxRequest
     public JsonNode getContent()
     {
         return this.content;
+    }
+
+    public JsonNode getContent(String jsonPointer)
+    {
+        return getContent(jsonPointer, false);
+    }
+
+    public JsonNode getContent(String jsonPointer, boolean throwIfNull)
+    {
+        if(this.content != null)
+        {
+            JsonNode dataNode = this.content.at(jsonPointer);
+            if(!dataNode.isMissingNode())
+                return dataNode;
+        }
+        if(throwIfNull)
+            throw(new AjaxClientException(JsonError.BadContent));
+        return null;
+    }
+
+    public String getContentAsString(String jsonPointer)
+    {
+        return getContentAsString(jsonPointer, false);
+    }
+
+    public String getContentAsString(String jsonPointer, boolean throwIfNull)
+    {
+        try {
+            JsonNode jsonNode = getContent(jsonPointer, throwIfNull);
+            return OBJECT_MAPPER.writeValueAsString(jsonNode);
+        } catch(JsonProcessingException jpe) {
+            throw(new AjaxClientException("Invalid json in content field: "+jsonPointer, JsonError.Codes.BadContent, 400));
+        }
     }
 
     public <T> T convertContent(Class<T> clazz)

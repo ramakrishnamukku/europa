@@ -32,6 +32,8 @@ public class AjaxHelperModule extends AbstractModule
         addBinding(ListRegistryCreds.class);
         addBinding(GetRegistryCreds.class);
         addBinding(DeleteRegistryCreds.class);
+        addBinding(SaveGcrServiceAccountCreds.class);
+
         //Container CRUD helpers
         addBinding(SaveContainerRepo.class);
         addBinding(GetContainerRepo.class);
