@@ -1,7 +1,7 @@
 /*
   $Id: $
-  @file ListRepoEvents.java
-  @brief Contains the ListRepoEvents.java class
+  @file ListRepoNotifications.java
+  @brief Contains the ListRepoNotifications.java class
 
   @author Rahul Singh [rsingh]
 */
@@ -18,12 +18,12 @@ import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
-public class ListRepoEvents extends AjaxHelper
+public class ListRepoNotifications extends AjaxHelper
 {
     @Inject
-    private RepoEventsDb _db;
+    private NotificationsDb _db;
 
-    public ListRepoEvents()
+    public ListRepoNotifications()
     {
         this.supportedHttpMethods.add(HTTPMethod.GET);
     }
@@ -40,6 +40,6 @@ public class ListRepoEvents extends AjaxHelper
         .marker(marker)
         .forward();
 
-        return _db.listEvents(domain, repoId, pageIterator);
+        return _db.listNotifications(domain, repoId, pageIterator);
     }
 }

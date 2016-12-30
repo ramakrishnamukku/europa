@@ -43,6 +43,7 @@ public class AjaxHelperModule extends AbstractModule
         addBinding(ListRepoEvents.class);
         addBinding(SaveRepoNotification.class);
         addBinding(DeleteRepoNotification.class);
+        addBinding(ListRepoNotifications.class);
     }
 
     private void addBinding(Class<? extends AjaxHelper> clazz)
