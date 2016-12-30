@@ -9,6 +9,8 @@
 package com.distelli.europa.ajax;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.UUID;
 import javax.inject.Inject;
 
@@ -71,7 +73,9 @@ public class SaveContainerRepo extends AjaxHelper
             _notificationDb.save(notification);
         }
         _monitorQueue.setReload(true);
-        return JsonSuccess.Success;
+        HashMap<String, String> retVal = new HashMap<String, String>();
+        retVal.put("id", repo.getId());
+        return retVal;
     }
 
     private void validateContainerRepo(ContainerRepo repo, RegistryCred cred)
