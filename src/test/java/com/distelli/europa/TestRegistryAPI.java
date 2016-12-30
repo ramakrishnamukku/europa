@@ -14,12 +14,20 @@ import com.distelli.ventura.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
-import org.eclipse.jetty.http.HttpMethod;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.distelli.europa.handlers.RegistryVersionCheck;
+import com.distelli.europa.handlers.RegistryBase;
+import com.distelli.ventura.RequestContext;
+import com.distelli.ventura.WebResponse;
+import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.List;
+import com.distelli.ventura.HTTPMethod;
 import static org.mockito.Mockito.*;
 
 public class TestRegistryAPI {
     
     private static Injector INJECTOR = createInjector();
+    private static ObjectMapper OM = new ObjectMapper();
 
     private static Injector createInjector() {
         String path = System.getenv("EUROPA_CONFIG");
@@ -54,7 +62,7 @@ public class TestRegistryAPI {
         when(request.getRequestURI()).thenReturn("/v2/");
         when(response.getOutputStream()).thenReturn(out);
 
-        servlet.handleRequest(HttpMethod.GET, request, response);
+        servlet.handleRequest(HTTPMethod.GET, request, response);
 
         verify(response).setStatus(200);
         verify(response).setHeader("Docker-Distribution-API-Version", "registry/2.0");
@@ -62,5 +70,43 @@ public class TestRegistryAPI {
         assertEquals(
             "",
             out.toString());
+    }
+
+    public static class ErrorMessage {
+        public int code;
+        public String message;
+        public Object detail;
+    }
+
+    @Test
+    public void testISE() throws Exception {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        RegistryVersionCheck rvc = INJECTOR.getInstance(RegistryVersionCheck.class);
+        rvc.overrideImplementation(
+            new RegistryBase() {
+                public WebResponse handleRegistryRequest(RequestContext requestContext) {
+                    throw new RuntimeException("system failure");
+                }
+            });
+        try {
+            ServletByteArrayOutputStream out = new ServletByteArrayOutputStream();
+            when(request.getRequestURI()).thenReturn("/v2/");
+            when(response.getOutputStream()).thenReturn(out);
+
+            servlet.handleRequest(HTTPMethod.GET, request, response);
+
+            verify(response).setStatus(500);
+
+            List<ErrorMessage> msgs =
+                OM.readValue(out.toString(), new TypeReference<List<ErrorMessage>>(){});
+            assertEquals(1, msgs.size());
+            assertEquals(500, msgs.get(0).code);
+            assertEquals("java.lang.RuntimeException: system failure", msgs.get(0).message);
+            assertEquals("class java.lang.RuntimeException", msgs.get(0).detail.toString());
+        } finally {
+            rvc.overrideImplementation(null);
+        }
     }
 }

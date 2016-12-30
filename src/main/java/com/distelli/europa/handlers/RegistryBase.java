@@ -37,19 +37,16 @@ public abstract class RegistryBase extends RequestHandler
         } catch ( RegistryError ex ) {
             return handleError(ex);
         } catch ( Throwable ex ) {
-            log.error(ex);
+            log.error(ex.getMessage(), ex);
             return handleError(new RegistryError(ex));
         }
     }
 
     private WebResponse handleError(RegistryError error) {
-        WebResponse response = new WebResponse(error.getStatusCode());
-        response.setContentType("application/json");
+        WebResponse response = toJson(error.getResponseBody(), error.getStatusCode());
         for ( Map.Entry<String, String> entry : error.getResponseHeaders().entrySet() ) {
             response.setResponseHeader(entry.getKey(), entry.getValue());
         }
-        response.setResponseWriter(
-            (out) -> OM.writeValue(out, error.getResponseBody()));
         return response;
     }
 }
