@@ -211,30 +211,36 @@ export default class AddRegistry extends Component {
 		);
 	}
 	renderInputPublicKey(readOnly, isEdit){
-		return (
-			<div className="Flex1">
-				<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
-					Public Key
-				</label>
-				<input className={this.inputClassName(key)}
-					   value={this.context.state.addRegistry.newRegistry[key]}
-					   placeholder="Enter Public Key.."
-					   onChange={(e) => this.context.actions.updateNewRegistryField(key, e)} />
-			</div>
-		);
+		let currentProvider = NPECheck(this.context.state, 'addRegistry/newRegistry/provider', '');
+		if(!currentProvider || currentProvider == 'ECR') {
+			return (
+				<div className="Flex1">
+					<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
+						Public Key
+					</label>
+					<input className={this.inputClassName(key)}
+						   value={this.context.state.addRegistry.newRegistry[key]}
+						   placeholder="Enter Public Key.."
+						   onChange={(e) => this.context.actions.updateNewRegistryField(key, e)} />
+				</div>
+			);
+		}
 	}
 	renderInputPrivateKey(readOnly, isEdit){
-		return (
-			<div className="Flex1">
-				<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
-					Private Key
-				</label>
-				<input className={this.inputClassName(secret)}
-					   value={(this.props.isEdit) ? '******************' : this.context.state.addRegistry.newRegistry[secret]}
-					   placeholder="Enter Private Key.."
-					   onChange={(e) => this.context.actions.updateNewRegistryField(secret, e)} />
-			</div>
-		);
+		let currentProvider = NPECheck(this.context.state, 'addRegistry/newRegistry/provider', '');
+		if(!currentProvider || currentProvider == 'ECR') {
+			return (
+				<div className="Flex1">
+					<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
+						Private Key
+					</label>
+					<input className={this.inputClassName(secret)}
+						   value={(this.props.isEdit) ? '******************' : this.context.state.addRegistry.newRegistry[secret]}
+						   placeholder="Enter Private Key.."
+						   onChange={(e) => this.context.actions.updateNewRegistryField(secret, e)} />
+				</div>
+			);
+		}
 	}
 	renderSelectRegion(readOnly, isEdit){
 		let regions = [];
@@ -267,6 +273,19 @@ export default class AddRegistry extends Component {
 			</div>
 		);
 	}
+	renderUploadGCEServiceAccount(){
+		if(this.context.state.addRegistry.newRegistry.provider == 'GCR') {
+
+			let isComplete = this.context.state.addRegistry.credentialType == 'SERVICE_CREDENTIAL' 
+							&& !!NPECheck(this.context.state, 'addRegistry/newRegistry/secret', false);
+
+			return (
+				<UploadGCEServiceAccount handleDrop={(json) => this.context.actions.updateServiceAccountCredential(json)}
+										 cancel={() => this.context.actions.cancelServiceAccountCredentialUpload()}
+										 isComplete={isComplete}/>
+			);
+		}
+	}
 	renderNewRegistryCredentials(){
 		if(this.context.state.addRepo.newRepoCredsType == 'NEW' || this.props.standaloneMode) {
 
@@ -279,20 +298,18 @@ export default class AddRegistry extends Component {
 			}
 
 			return (
-				<div className="AddEditRegistryCreds" style={this.props.standaloneMode ? {} : {margin: '0 -10px'}}>
-					{this.renderSelectProvider(readOnly, isEdit)}
-					{this.renderInputKeyName(readOnly, isEdit)}
-					{this.renderInputPublicKey(readOnly, isEdit)}
-					{this.renderInputPrivateKey(readOnly, isEdit)}
-					{this.renderSelectRegion(readOnly, isEdit)}
+				<div className="FlexColumn">
+					<div className="AddEditRegistryCreds" style={this.props.standaloneMode ? {} : {margin: '0 -6px'}}>
+						{this.renderSelectProvider(readOnly, isEdit)}
+						{this.renderInputKeyName(readOnly, isEdit)}
+						{this.renderInputPublicKey(readOnly, isEdit)}
+						{this.renderInputPrivateKey(readOnly, isEdit)}
+						{this.renderSelectRegion(readOnly, isEdit)}
+					</div>
+					{this.renderUploadGCEServiceAccount()}
 				</div>
 			);
 		}
-	}
-	renderUploadGCEServiceAccount(){
-		return (
-			<UploadGCEServiceAccount />
-		);
 	}
 	renderErrorMsg(){
 		if(this.context.state.addRegistry.errorMsg) {
@@ -342,12 +359,6 @@ export default class AddRegistry extends Component {
 			columns: [{
 				icon: (this.props.standaloneMode) ? null : 'icon icon-dis-credential',
                 renderBody: this.renderRegistryCredentials.bind(this)
-            }]
-		}, {
-			columns: [{
-				icon: 'icon icon-dis-blank',
-                renderBody: this.renderUploadGCEServiceAccount.bind(this),
-                condition: NPECheck(this.context.state, 'addRegistry/newRegistry/provider', null) == 'GCR'
             }]
 		}, {
 			columns: [{

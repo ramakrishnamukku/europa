@@ -58,7 +58,6 @@ export default class RepoSettings extends Component {
 		);
 	}
 	renderWebhookInfo(){
-		let repo = this.props.activeRepo;
 		return (
 			<div className="FlexColumn">
 				<div className="FlexRow SpaceBetween">
@@ -74,7 +73,7 @@ export default class RepoSettings extends Component {
 						<label className="small">URL</label>
 						<input className="BlueBorder FullWidth Dark"
 						       placeholder="Webhook URL"
-						       value={repo.name}
+						       value={''}
 							   onChange={(e) => console.log(e.target.value)} 
 							   />
 					</div>

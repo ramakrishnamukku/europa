@@ -102,7 +102,7 @@ export function updateNewRepoField(keyPath, e, eIsValue = false) {
     })
   }, () => {
     if (this.state.addRepo.validateOnInput) isAddRepoValid.call(this, true);
-    if(keyPath == 'repo/credId') listReposForRegistry.call(this);
+    if (keyPath == 'repo/credId') listReposForRegistry.call(this);
   })
 };
 
@@ -115,17 +115,23 @@ export function listReposForRegistry() {
   if (registry) {
     this.setState({
       addRepo: GA.modifyProperty(this.state.addRepo, {
-          reposInRegistryXHR: true
+        reposInRegistryXHR: true,
+        reposInRegistryQuery: '',
+        newRepo: {
+          repo: GA.modifyProperty(NPECheck(this, 'state/addRepo/newRepo/repo', {}), {
+            name: ''
+          })
+        }
       })
     }, () => {
-      RAjax.GET('ListReposInRegistry', credId ? {
+      RAjax.POST('ListReposInRegistry', {}, credId ? {
           credId
         } : registry)
         .then((res) => {
           this.setState({
             addRepo: GA.modifyProperty(this.state.addRepo, {
               reposInRegistry: res,
-              reposInRegistryXHR: false
+              reposInRegistryXHR: false,
             })
           });
         })
@@ -134,7 +140,7 @@ export function listReposForRegistry() {
             addRepo: GA.modifyProperty(this.state.addRepo, {
               reposInRegistry: [],
               errorMsg: 'Unable to list repositories for selected registry',
-              reposInRegistryXHR: false
+              reposInRegistryXHR: false,
             })
           });
         });
@@ -142,10 +148,8 @@ export function listReposForRegistry() {
   }
 }
 
-export function updateReposInRegisterQuery(e, eIsValue){
+export function updateReposInRegisterQuery(e, eIsValue) {
   let value = (eIsValue) ? e : e.target.value;
-
-  console.log(value)
 
   this.setState({
     addRepo: GA.modifyProperty(this.state.addRepo, {
@@ -165,12 +169,18 @@ export function toggleSelectRepoDropdown() {
 export function setNewRepoCredsType(type) {
   this.setState({
     addRepo: GA.modifyProperty(this.state.addRepo, {
+      ...addRepoState.call(this),
       newRepoCredsType: type,
-      reposInRegistryXHR: false,
-      reposInRegistry: [],
-      reposInRegistryQuery: ''
     })
   });
+// reposInRegistryXHR: false,
+  //     reposInRegistry: [],
+  //     reposInRegistryQuery: '',
+  //     newRepo: {
+  //       repo: GA.modifyProperty(NPECheck(this, 'state/addRepo/newRepo/repo', {}), {
+  //         credId: ''
+  //       })
+  //     }
 }
 
 export function selectCredsForNewRepo(e, value) {
@@ -367,7 +377,7 @@ export function deleteActiveRepo(afterDeleteCb) {
       deleteXHR: true
     })
   }, () => {
-    RAjax.GET('DeleteContainerRepo', {
+    RAjax.POST('DeleteContainerRepo', {}, {
         id: this.state.repoDetails.activeRepo.id
       })
       .then((res) => {

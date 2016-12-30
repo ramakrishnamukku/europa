@@ -21,6 +21,7 @@ export function addRegistryState() {
     selectProviderDropdown: false,
     selectRegionDropdown: false,
     providerRegions: [],
+    credentialType: 'KEY_CREDENTIAL',
     newRegistry: {
       name: '',
       provider: '',
@@ -49,16 +50,14 @@ export function updateNewRegistryField(prop, e, eIsValue = false) {
       }
     })
   }, () => {
+    if (prop == 'provider') getRegionsForProvider.call(this);    
     if(isAddRegistryValid.call(this, true, !this.state.addRegistry.validateOnInput)) {
       listReposForRegistry.call(this)
     }
-
-    if (prop == 'provider') getRegionsForProvider.call(this);    
   });
 };
 
 export function addRegistryRequest() {
-
   return new Promise((resolve, reject) => {
     if (!isAddRegistryValid.call(this, true)) {
       reject();
@@ -70,7 +69,10 @@ export function addRegistryRequest() {
         XHR: true
       })
     }, () => {
-      RAjax.POST('SaveRegistryCreds', this.state.addRegistry.newRegistry)
+
+      let url = this.state.addRegistry.credentialType == 'SERVICE_CREDENTIAL' ? 'SaveGcrServiceAccountCreds' : 'SaveRegistryCreds';
+
+      RAjax.POST(url, this.state.addRegistry.newRegistry)
         .then((res) => {
           this.setState({
             addRegistry: GA.modifyProperty(this.state.addRegistry, {
@@ -93,6 +95,34 @@ export function addRegistryRequest() {
 
   });
 };
+
+export function updateServiceAccountCredential(json){
+  changeCredentialType.call(this, 'SERVICE_CREDENTIAL')
+  .then(() => updateNewRegistryField.call(this, 'secret', json, true));
+}
+
+export function cancelServiceAccountCredentialUpload(){
+  changeCredentialType.call(this, 'KEY_CREDENTIAL')
+  .then(() => {
+    this.setState({
+      addRegistry: GA.modifyProperty(this.state.addRegistry, {
+        newRegistry: GA.modifyProperty(NPECheck(this, 'state/addRegistry/newRegistry'), {
+          secret: ''
+        })
+      })
+    });
+  });
+}
+
+export function changeCredentialType(credentialType) {
+  return new Promise((resolve, reject) => {
+    this.setState({
+      addRegistry: GA.modifyProperty(this.state.addRegistry, {
+        credentialType
+      })
+    }, () => resolve() );
+  });
+}
 
 export function toggleSelectRegionDropdown() {
   this.setState({
@@ -176,6 +206,7 @@ export function canAddRegistry() {
 }
 
 function isAddRegistryValid(validateOnInput, skipSetState) {
+
   let required = {
     provider: 'Registry Provider',
     region: 'Region',
@@ -183,6 +214,12 @@ function isAddRegistryValid(validateOnInput, skipSetState) {
     secret: 'Secret Key',
     name: 'Key Name'
   };
+
+  if(this.state.addRegistry.credentialType == 'SERVICE_CREDENTIAL') {
+    delete required.key;
+    delete required.secret;
+    delete required.name;
+  }
 
   let errorFields = Validate.call(this, this.state.addRegistry.newRegistry, required);
 

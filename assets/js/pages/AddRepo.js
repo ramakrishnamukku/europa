@@ -45,32 +45,23 @@ export default class AddRepository extends Component {
 		);
 	}
 	renderDockerRepository(){
-
-
-		// return (
-		// 	<div className="FlexColumn">
-		// 		<label>
-		// 			Docker Image Repository
-		// 		</label>
-		// 		<input className={this.inputClassName(dockerRepoNameKey)} 
-		// 		       placeholder="Enter Docker Repository.."
-		// 		       value={this.context.state.addRepo.newRepo[dockerRepoNameKey]}
-		// 			   onChange={(e) => this.context.actions.updateNewRepoField(dockerRepoNameKey, e)} />
-		// 	</div>
-		// );
-
 		return (
-			<Dropdown isOpen={this.context.state.addRepo.selectRepoDropdown}
-					  toggleOpen={() => this.context.actions.toggleSelectRepoDropdown()}
-					  listItems={this.context.state.addRepo.reposInRegistry} 
-					  renderItem={(repo, index) => this.renderRepoInRegistryListItem(repo, index)}
-					  filterFn={(item) => item.indexOf(this.context.state.addRepo.reposInRegistryQuery) > -1}
-					  inputOnChange={(e) => this.context.actions.updateReposInRegisterQuery(e, false)}
-					  inputPlaceholder="Select Repository"
-					  inputClassName={this.inputClassName(dockerRepoNameKey)}
-					  inputValue={NPECheck(this.context.state, 'addRepo/newRepo/repo/name', '')} 
-					  noItemsMessage="No Repositories Found"
-					  XHR={NPECheck(this.context.state, 'addRepo/reposInRegistryXHR', true)}/>
+			<div className="Row FlexColumn">
+				<label  style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
+					Select Repository
+				</label>
+				<Dropdown isOpen={this.context.state.addRepo.selectRepoDropdown}
+						  toggleOpen={() => this.context.actions.toggleSelectRepoDropdown()}
+						  listItems={this.context.state.addRepo.reposInRegistry} 
+						  renderItem={(repo, index) => this.renderRepoInRegistryListItem(repo, index)}
+						  filterFn={(item) => item.indexOf(this.context.state.addRepo.reposInRegistryQuery) > -1}
+						  inputOnChange={(e) => this.context.actions.updateReposInRegisterQuery(e, false)}
+						  inputPlaceholder="Search or enter repository name"
+						  inputClassName={this.inputClassName(dockerRepoNameKey)}
+						  inputValue={NPECheck(this.context.state, 'addRepo/newRepo/repo/name', '')} 
+						  noItemsMessage="No Repositories Found"
+						  XHR={NPECheck(this.context.state, 'addRepo/reposInRegistryXHR', true)}/>
+			</div>
 		);
 	}
 	renderRepoInRegistryListItem(repo, index){
@@ -241,7 +232,7 @@ export default class AddRepository extends Component {
 	renderAddRepository(){
 		let rows = [{
 			columns: [{
-                icon:'icon icon-dis-disk',
+                icon:'icon icon-dis-repo',
                 renderBody: this.renderDockerRepository.bind(this)
             }]
 		}, {

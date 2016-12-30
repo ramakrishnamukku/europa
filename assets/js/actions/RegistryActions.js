@@ -62,7 +62,7 @@ export function deleteRegistry() {
       deleteRegistryXHR: true
     })
   }, () => {
-    RAjax.GET('DeleteRegistryCreds', this.state.registry.registrySelectedForDelete)
+    RAjax.POST('DeleteRegistryCreds', {}, this.state.registry.registrySelectedForDelete)
       .then((res) => {
         this.setState({
           registry: GA.modifyProperty(this.state.registry, {

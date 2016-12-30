@@ -2,13 +2,14 @@
   @author Sam Heutmaker [samheutmaker@gmail.com]
 */
 
-export function POST(operation = '', content = {}, url = '/ajax') {
+export function POST(operation = '', content = {}, params = {}, url = '/ajax') {
   let request = new Request(url, {
     method: 'POST',
     mode: 'cors',
     body: JSON.stringify({
       op: operation,
-      content: content
+      content: content,
+      params: params
     }),
     headers: new Headers({
       'Content-Type': 'application/json',
