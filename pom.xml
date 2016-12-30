@@ -189,5 +189,17 @@
  	  <version>1.16.12</version>
  	</dependency>
 
+    <dependency>
+      <groupId>com.distelli.objectStore</groupId>
+      <artifactId>object-store-api</artifactId>
+      <version>1.0.0</version>
+ 	</dependency>
+
+    <dependency>
+      <groupId>com.distelli.objectStore</groupId>
+      <artifactId>object-store-impl</artifactId>
+      <version>1.0.0</version>
+ 	</dependency>
+
   </dependencies>
 </project>

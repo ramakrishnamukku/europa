@@ -41,10 +41,10 @@ public class SaveGcrServiceAccountCreds extends AjaxHelper
 
     public Object get(AjaxRequest ajaxRequest)
     {
-        RegistryCred cred = ajaxRequest.convertContent("/cred", RegistryCred.class,
+        RegistryCred cred = ajaxRequest.convertContent(RegistryCred.class,
                                                        true); //throw if null
         //Validate that the fields we want are non-null
-        FieldValidator.validateNonNull(cred, "provider", "region");
+        FieldValidator.validateNonNull(cred, "provider", "region", "secret");
         FieldValidator.validateMatch(cred, "name", Constants.REGISTRY_CRED_NAME_PATTERN);
         FieldValidator.validateEquals(cred, "provider", RegistryProvider.GCR);
         validateRegistryCreds(cred);
@@ -59,9 +59,6 @@ public class SaveGcrServiceAccountCreds extends AjaxHelper
             id = UUID.randomUUID().toString();
             cred.setId(id);
         }
-        //Lets get the secret
-        String secret = ajaxRequest.getContentAsString("/secret", true);
-        cred.setSecret(secret);
 
         //save in the db
         _db.save(cred);
