@@ -49,9 +49,11 @@ export function updateNewRegistryField(prop, e, eIsValue = false) {
       }
     })
   }, () => {
-    if (this.state.addRegistry.validateOnInput) isAddRegistryValid.call(this, true);
-    if (prop == 'provider') getRegionsForProvider.call(this);
-    if (prop == 'provider') listReposForRegistry.call(this);
+    if(isAddRegistryValid.call(this, true, !this.state.addRegistry.validateOnInput)) {
+      listReposForRegistry.call(this)
+    }
+
+    if (prop == 'provider') getRegionsForProvider.call(this);    
   });
 };
 
@@ -173,7 +175,7 @@ export function canAddRegistry() {
   return this.state.addRegistry.errorMsg == '' && this.state.addRegistry.errorFields.length == 0;
 }
 
-function isAddRegistryValid(validateOnInput) {
+function isAddRegistryValid(validateOnInput, skipSetState) {
   let required = {
     provider: 'Registry Provider',
     region: 'Region',
@@ -183,6 +185,10 @@ function isAddRegistryValid(validateOnInput) {
   };
 
   let errorFields = Validate.call(this, this.state.addRegistry.newRegistry, required);
+
+  if(skipSetState) {
+    return (errorFields.names.length) ? false : true
+  }
 
   if (errorFields.names.length) {
     let errorMsg = `Missing required fields: ${errorFields.names.join(', ')}`;

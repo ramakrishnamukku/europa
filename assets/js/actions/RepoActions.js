@@ -165,7 +165,10 @@ export function toggleSelectRepoDropdown() {
 export function setNewRepoCredsType(type) {
   this.setState({
     addRepo: GA.modifyProperty(this.state.addRepo, {
-      newRepoCredsType: type
+      newRepoCredsType: type,
+      reposInRegistryXHR: false,
+      reposInRegistry: [],
+      reposInRegistryQuery: ''
     })
   });
 }
