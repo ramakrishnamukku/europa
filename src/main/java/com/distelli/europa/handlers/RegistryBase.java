@@ -43,7 +43,7 @@ public abstract class RegistryBase extends RequestHandler
     }
 
     private WebResponse handleError(RegistryError error) {
-        WebResponse response = toJson(error.getResponseBody(), error.getStatusCode());
+        WebResponse response = toJson(error.getResponseBody(), error.getErrorCode().getStatusCode());
         for ( Map.Entry<String, String> entry : error.getResponseHeaders().entrySet() ) {
             response.setResponseHeader(entry.getKey(), entry.getValue());
         }

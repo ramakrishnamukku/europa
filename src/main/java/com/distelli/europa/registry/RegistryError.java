@@ -1,11 +1,12 @@
 package com.distelli.europa.registry;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Collections;
 
 public class RegistryError extends RuntimeException {
-    private static int DEFAULT_CODE = 500;
-    private int _code;
+    private static final RegistryErrorCode DEFAULT_CODE = RegistryErrorCode.SERVER_ERROR;
+    private RegistryErrorCode _code;
 
     public RegistryError(String message) {
         this(message, DEFAULT_CODE);
@@ -19,22 +20,22 @@ public class RegistryError extends RuntimeException {
         this(cause, DEFAULT_CODE);
     }
 
-    public RegistryError(String message, int code) {
+    public RegistryError(String message, RegistryErrorCode code) {
         super(message);
         _code = code;
     }
 
-    public RegistryError(String message, Throwable cause, int code) {
+    public RegistryError(String message, Throwable cause, RegistryErrorCode code) {
         super(message, cause);
         _code = code;
     }
 
-    public RegistryError(Throwable cause, int code) {
+    public RegistryError(Throwable cause, RegistryErrorCode code) {
         super(cause);
         _code = code;
     }
 
-    public int getStatusCode() {
+    public RegistryErrorCode getErrorCode() {
         return _code;
     }
 
@@ -51,7 +52,7 @@ public class RegistryError extends RuntimeException {
     }
 
     private class ErrorMessage {
-        public int getCode() {
+        public RegistryErrorCode getCode() {
             return _code;
         }
         public String getMessage() {
@@ -61,8 +62,17 @@ public class RegistryError extends RuntimeException {
             return RegistryError.this.getDetail();
         }
     }
+    private static class ErrorMessageResponse {
+        private ErrorMessage msg;
+        public ErrorMessageResponse(ErrorMessage msg) {
+            this.msg = msg;
+        }
+        public List<ErrorMessage> getErrors() {
+            return Collections.singletonList(msg);
+        }
+    }
 
     public Object getResponseBody() {
-        return Collections.singletonList(new ErrorMessage());
+        return new ErrorMessageResponse(new ErrorMessage());
     }
 }

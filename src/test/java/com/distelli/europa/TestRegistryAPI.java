@@ -23,6 +23,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.List;
 import com.distelli.ventura.HTTPMethod;
 import static org.mockito.Mockito.*;
+import java.util.Vector;
+import java.util.Arrays;
 
 public class TestRegistryAPI {
     
@@ -53,9 +55,24 @@ public class TestRegistryAPI {
             (route) -> INJECTOR.getInstance(route.getRequestHandler()));
     }
 
+    private HttpServletRequest headers(HttpServletRequest request, String... extraHeaders) {
+        if ( extraHeaders.length % 2 != 0 ) {
+            throw new IllegalArgumentException("extraHeaders must be key, value pairs");
+        }
+        Vector headerNames = new Vector(extraHeaders.length/2);
+        for ( int i=0; i < extraHeaders.length; i+=2 ) {
+            headerNames.add(extraHeaders[i]);
+            when(request.getHeader(extraHeaders[i])).thenReturn(extraHeaders[i+1]);
+        }
+        when(request.getHeaderNames()).thenReturn(headerNames.elements());
+        when(request.getHeader("Authorization")).thenReturn("Basic c2NvdHQ6dGlnZXI=");
+        return request;
+    }
+
     @Test
     public void testVersionCheck() throws Exception {
-        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletRequest request = headers(mock(HttpServletRequest.class),
+                                             "Authorization", "Basic c2NvdHQ6dGlnZXI=");
         HttpServletResponse response = mock(HttpServletResponse.class);
 
         ServletByteArrayOutputStream out = new ServletByteArrayOutputStream();
@@ -73,14 +90,18 @@ public class TestRegistryAPI {
     }
 
     public static class ErrorMessage {
-        public int code;
+        public String code;
         public String message;
         public Object detail;
+    }
+    public static class ErrorMessageResponse {
+        public List<ErrorMessage> errors;
     }
 
     @Test
     public void testISE() throws Exception {
-        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletRequest request = headers(mock(HttpServletRequest.class),
+                                             "Authorization", "Basic c2NvdHQ6dGlnZXI=");
         HttpServletResponse response = mock(HttpServletResponse.class);
 
         RegistryVersionCheck rvc = INJECTOR.getInstance(RegistryVersionCheck.class);
@@ -99,12 +120,13 @@ public class TestRegistryAPI {
 
             verify(response).setStatus(500);
 
-            List<ErrorMessage> msgs =
-                OM.readValue(out.toString(), new TypeReference<List<ErrorMessage>>(){});
-            assertEquals(1, msgs.size());
-            assertEquals(500, msgs.get(0).code);
-            assertEquals("java.lang.RuntimeException: system failure", msgs.get(0).message);
-            assertEquals("class java.lang.RuntimeException", msgs.get(0).detail.toString());
+            ErrorMessageResponse resp =
+                OM.readValue(out.toString(), ErrorMessageResponse.class);
+            assertEquals(1, resp.errors.size());
+            ErrorMessage err = resp.errors.get(0);
+            assertEquals("SERVER_ERROR", err.code);
+            assertEquals("java.lang.RuntimeException: system failure", err.message);
+            assertEquals("class java.lang.RuntimeException", err.detail.toString());
         } finally {
             rvc.overrideImplementation(null);
         }
