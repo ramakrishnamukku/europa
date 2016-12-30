@@ -3,12 +3,31 @@
 */
 
 .DropdownContainer {
-
     .Dropdown.Open {
         height: 200px;
         padding: 10px;
         border: 1px solid $light-blue;
         border-top: 3px solid $light-blue;
+        overflow: scroll;
+    }
+
+    .NoItems {
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        color: $grey;
+        font-size: 0.875rem;
+        margin-top: -20px;
+    }
+
+    .LoaderContainer {
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        color: $grey;
+        font-size: 0.875rem;
+        margin-top: -20px;   
+        flex: 1;
     }
 
     .Dropdown {
@@ -23,7 +42,7 @@
         overflow: hidden;
 
         .ListItem.Active {
-        	background-color: #D3EFFA;
+            background-color: #D3EFFA;
         }
 
         .ListItem {
@@ -36,7 +55,7 @@
             font-weight: 600;
 
             &:last-of-type {
-            	border: 0px;
+                border: 0px;
             }
 
             &:hover {
@@ -44,24 +63,23 @@
                 background-color: #D3EFFA;
             }
 
+            img {
+                height: 30px;
+                width: 30px;
+                margin-right: 7px;
+            }
 
-			img {
-				height: 30px;
-				width: 30px;
-				margin-right: 7px;
-			}
+            .Cell {
+                margin-right: 14px;
+            }
 
-			.Cell {
-				margin-right: 14px;
-			}
-	
             .Label {
-            	color: $black;
-            	margin-right: 3px;
+                color: $black;
+                margin-right: 3px;
             }
 
             .Value {
-            	color: $grey;
+                color: $grey;
             }
         }
     }

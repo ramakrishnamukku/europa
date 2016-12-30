@@ -65,6 +65,10 @@ export function addRepoState() {
     testNotificationStatus: null,
     showNotificationTestResults: false,
     selectExistingCredentialsDropdown: false,
+    selectRepoDropdown: false,
+    reposInRegistryXHR: false,
+    reposInRegistry: [],
+    reposInRegistryQuery: '',
     newRepo: {
       repo: {
         credId: '',
@@ -96,8 +100,67 @@ export function updateNewRepoField(keyPath, e, eIsValue = false) {
         value
       }
     })
-  }, () => (this.state.addRepo.validateOnInput) ? isAddRepoValid.call(this, true) : null);
+  }, () => {
+    if (this.state.addRepo.validateOnInput) isAddRepoValid.call(this, true);
+    if(keyPath == 'repo/credId') listReposForRegistry.call(this);
+  })
 };
+
+
+export function listReposForRegistry() {
+  let credId = NPECheck(this.state.addRepo, 'newRepo/repo/credId', null);
+  let registry = (this.state.addRepo.newRepoCredsType == 'EXISTING') ? this.state.registriesMap[credId] : this.state.addRegistry.newRegistry
+
+
+  if (registry) {
+    this.setState({
+      addRepo: GA.modifyProperty(this.state.addRepo, {
+          reposInRegistryXHR: true
+      })
+    }, () => {
+      RAjax.GET('ListReposInRegistry', credId ? {
+          credId
+        } : registry)
+        .then((res) => {
+          this.setState({
+            addRepo: GA.modifyProperty(this.state.addRepo, {
+              reposInRegistry: res,
+              reposInRegistryXHR: false
+            })
+          });
+        })
+        .catch((err) => {
+          this.setState({
+            addRepo: GA.modifyProperty(this.state.addRepo, {
+              reposInRegistry: [],
+              errorMsg: 'Unable to list repositories for selected registry',
+              reposInRegistryXHR: false
+            })
+          });
+        });
+    });
+  }
+}
+
+export function updateReposInRegisterQuery(e, eIsValue){
+  let value = (eIsValue) ? e : e.target.value;
+
+  console.log(value)
+
+  this.setState({
+    addRepo: GA.modifyProperty(this.state.addRepo, {
+      reposInRegistryQuery: value
+    })
+  });
+}
+
+export function toggleSelectRepoDropdown() {
+  this.setState({
+    addRepo: GA.modifyProperty(this.state.addRepo, {
+      selectRepoDropdown: !this.state.addRepo.selectRepoDropdown
+    })
+  });
+}
 
 export function setNewRepoCredsType(type) {
   this.setState({

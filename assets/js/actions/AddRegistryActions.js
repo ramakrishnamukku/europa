@@ -6,6 +6,8 @@ import Reducers from './../reducers/AddRegistryReducers'
 import * as GA from './../reducers/GeneralReducers'
 import * as RAjax from './../util/RAjax'
 import Validate from './../util/Validate'
+import NPECheck from './../util/NPECheck'
+import { listReposForRegistry } from './RepoActions'
 
 export function addRegistryState() {
   return {
@@ -16,7 +18,9 @@ export function addRegistryState() {
     validateOnInput: false,
     success: null,
     XHR: false,
+    selectProviderDropdown: false,
     selectRegionDropdown: false,
+    providerRegions: [],
     newRegistry: {
       name: '',
       provider: '',
@@ -27,7 +31,7 @@ export function addRegistryState() {
   }
 }
 
-export function resetAddRegistryState(){
+export function resetAddRegistryState() {
   this.setState({
     addRegistry: GA.modifyProperty(this.state.addRegistry, addRegistryState.call(this))
   });
@@ -44,7 +48,11 @@ export function updateNewRegistryField(prop, e, eIsValue = false) {
         value
       }
     })
-  }, () => (this.state.addRegistry.validateOnInput) ? isAddRegistryValid.call(this, true) : null);
+  }, () => {
+    if (this.state.addRegistry.validateOnInput) isAddRegistryValid.call(this, true);
+    if (prop == 'provider') getRegionsForProvider.call(this);
+    if (prop == 'provider') listReposForRegistry.call(this);
+  });
 };
 
 export function addRegistryRequest() {
@@ -70,7 +78,7 @@ export function addRegistryRequest() {
           }, () => resolve(res.id));
         })
         .catch((err) => {
-          let errorMsg = `There was an error adding your registry: ${err.error.message}`
+          let errorMsg = `There was an error adding your registry: ${NPECheck(err, 'error/message', 'Unknown')}`
           this.setState({
             addRegistry: GA.modifyProperty(this.state.addRegistry, {
               errorMsg,
@@ -84,10 +92,18 @@ export function addRegistryRequest() {
   });
 };
 
-export function toggleSelectRegionDropdown(){
+export function toggleSelectRegionDropdown() {
   this.setState({
     addRegistry: GA.modifyProperty(this.state.addRegistry, {
       selectRegionDropdown: !this.state.addRegistry.selectRegionDropdown
+    })
+  });
+}
+
+export function toggleSelectProviderDropdown() {
+  this.setState({
+    addRegistry: GA.modifyProperty(this.state.addRegistry, {
+      selectProviderDropdown: !this.state.addRegistry.selectProviderDropdown
     })
   });
 }
@@ -96,9 +112,37 @@ export function toggleShowAddEditRegistryModal() {
   return new Promise((resolve, reject) => {
     this.setState({
       addRegistry: GA.modifyProperty(this.state.addRegistry, {
-          showModal: !this.state.addRegistry.showModal
+        showModal: !this.state.addRegistry.showModal
       })
-    }, () => resolve() )
+    }, () => resolve())
+  });
+}
+
+
+export function getRegionsForProvider() {
+  return new Promise((resolve, reject) => {
+    let provider = NPECheck(this.state.addRegistry, 'newRegistry/provider', null);
+
+    if (provider) {
+      RAjax.GET('GetRegionsForProvider', {
+          provider
+        })
+        .then((res) => {
+          this.setState({
+            addRegistry: GA.modifyProperty(this.state.addRegistry, {
+              providerRegions: res
+            })
+          }, () => resolve());
+        })
+        .catch((err) => {
+          let errorMsg = `There was an error retreiving the available regions for the selected provider: ${NPECheck(err, 'error/message', 'Unknown')}`
+          this.setState({
+            addRegistry: GA.modifyProperty(this.state.addRegistry, {
+              errorMsg,
+            })
+          }, () => reject());
+        });
+    }
   });
 }
 
@@ -110,7 +154,10 @@ export function setRegistryForEdit(reg) {
         isEdit: true,
         newRegistry: reg
       })
-    }, () => resolve());
+    }, () =>{ 
+      getRegionsForProvider.call(this);
+      resolve();
+    });
   });
 }
 

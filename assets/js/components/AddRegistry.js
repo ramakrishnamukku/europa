@@ -8,10 +8,11 @@ import Loader from './../components/Loader'
 import Btn from './../components/Btn'
 import Msg from './../components/Msg'
 import RadioButton from './../components/RadioButton'
+import Dropdown from './../components/Dropdown'
+import UploadGCEServiceAccount from './../components/UploadGCEServiceAccount'
 import RegistryNames from './../util/RegistryNames'
 import RegistryProviderIcons from './../util/RegistryProviderIcons'
 import NPECheck from './../util/NPECheck'
-import Dropdown from './../components/Dropdown'
 
 let provider = 'provider';
 let keyName = 'name';
@@ -23,6 +24,9 @@ export default class AddRegistry extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
+	}
+	componentWillMount() {
+		
 	}
 	componentWillUnmount() {
 		this.context.actions.resetAddRegistryState();	
@@ -107,7 +111,9 @@ export default class AddRegistry extends Component {
 							  inputPlaceholder="Select Credentials"
 							  inputClassName="BlueBorder FullWidth"
 							  inputValue={selectedRegistryName}
-							  className="Flex1"/>
+							  className="Flex1"
+							  XHR={this.context.state.registriesXHR}/>
+
 				</div>
 			);
 		}
@@ -147,28 +153,46 @@ export default class AddRegistry extends Component {
 	renderSelectProvider(readOnly, isEdit){
 		if(isEdit) {
 			return (
-				<div className="Flex1 FlexRow">
-					<img src={RegistryProviderIcons(this.context.state.addRegistry.newRegistry[provider])} />
+				<div className="Flex0 FlexRow">
+					<img style={{height: '40px'}}src={RegistryProviderIcons(this.context.state.addRegistry.newRegistry[provider])} />
 				</div>
 			);
 		}
+
+		let providers = Object.keys(RegistryNames);
+		let selectedProvider = NPECheck(this.context.state, 'addRegistry/newRegistry/provider', '');
+		let selectedProviderName = (selectedProvider) ? RegistryNames[selectedProvider] : '';
 
 		return (
 			<div className="Flex1">
 				<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
 					Docker Registry Provider {(this.props.isEdit) ? '( Read Only )' : null}
 				</label>
-				<select className={this.inputClassName(provider)}
-						value={this.context.state.addRegistry.newRegistry[provider]}
-				        onChange={(e) => this.context.actions.updateNewRegistryField(provider, e)}
-		       			{...readOnly}>
-				   <option value="">Select Provider</option>
-				   {Object.keys(RegistryNames).map((key) => {
-				   		return (
-				   			<option key={key} value={key}>{RegistryNames[key]}</option>
-				   		);
-				   })}
-				</select>
+				<Dropdown isOpen={this.context.state.addRegistry.selectProviderDropdown}
+						  toggleOpen={() => this.context.actions.toggleSelectProviderDropdown()}
+						  listItems={providers} 
+						  renderItem={(registryProvider, index) => this.renderProviderListItem(registryProvider, index)}
+						  inputPlaceholder="Select Provider"
+						  inputClassName={this.inputClassName(provider)}
+						  inputValue={selectedProviderName}
+						  className="Flex1"/>
+			</div>
+		);
+	}
+	renderProviderListItem(registryProvider, index){
+		let reg = RegistryNames[registryProvider];
+
+		let className = "ListItem FlexRow";
+
+		if(registryProvider == NPECheck(this.context.state, 'addRegistry/newRegistry/provider', null)) {
+			className += " Active";
+		}		
+
+		return (
+			<div key={index} className={className}
+			     onClick={() => this.context.actions.updateNewRegistryField(provider, registryProvider, true)}>
+				<img src={RegistryProviderIcons(registryProvider)} />
+				{reg}
 			</div>
 		);
 	}
@@ -206,13 +230,20 @@ export default class AddRegistry extends Component {
 					Private Key
 				</label>
 				<input className={this.inputClassName(secret)}
-					   value={this.context.state.addRegistry.newRegistry[secret]}
+					   value={(this.props.isEdit) ? '******************' : this.context.state.addRegistry.newRegistry[secret]}
 					   placeholder="Enter Private Key.."
 					   onChange={(e) => this.context.actions.updateNewRegistryField(secret, e)} />
 			</div>
 		);
 	}
 	renderSelectRegion(readOnly, isEdit){
+		let regions = [];
+		let providerRegions = NPECheck(this.context.state, 'addRegistry/providerRegions', null);
+
+		if(providerRegions.length) {
+			regions = providerRegions;
+		}
+
 		return (
 			<div className="Flex1">
 				<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
@@ -220,18 +251,19 @@ export default class AddRegistry extends Component {
 				</label>
 				<Dropdown isOpen={this.context.state.addRegistry.selectRegionDropdown}
 						  toggleOpen={() => this.context.actions.toggleSelectRegionDropdown()}
-						  listItems={["us-west-1", "us-west-2", "us-east-1", "us-east-2"]} 
+						  listItems={regions} 
 						  renderItem={(region, index) => this.renderRegionItem(region, index)}
 						  inputPlaceholder="Select Region"
 						  inputClassName={this.inputClassName(region)}
-						  inputValue={this.context.state.addRegistry.newRegistry[region]} />
+						  inputValue={this.context.state.addRegistry.newRegistry[region]} 
+						  noItemsMessage="Select Provider First"/>
 			</div>
 		);
 	}
 	renderRegionItem(r, index){
 		return (
-			<div key={index} className="ListItem" onClick={() => this.context.actions.updateNewRegistryField(region, r, true)}>
-				{r}
+			<div key={index} className="ListItem" onClick={() => this.context.actions.updateNewRegistryField(region, r.regionCode, true)}>
+				{r.displayName}
 			</div>
 		);
 	}
@@ -256,6 +288,11 @@ export default class AddRegistry extends Component {
 				</div>
 			);
 		}
+	}
+	renderUploadGCEServiceAccount(){
+		return (
+			<UploadGCEServiceAccount />
+		);
 	}
 	renderErrorMsg(){
 		if(this.context.state.addRegistry.errorMsg) {
@@ -305,6 +342,12 @@ export default class AddRegistry extends Component {
 			columns: [{
 				icon: (this.props.standaloneMode) ? null : 'icon icon-dis-credential',
                 renderBody: this.renderRegistryCredentials.bind(this)
+            }]
+		}, {
+			columns: [{
+				icon: 'icon icon-dis-blank',
+                renderBody: this.renderUploadGCEServiceAccount.bind(this),
+                condition: NPECheck(this.context.state, 'addRegistry/newRegistry/provider', null) == 'GCR'
             }]
 		}, {
 			columns: [{

@@ -9,6 +9,7 @@ import Btn from './../components/Btn'
 import Msg from './../components/Msg'
 import Loader from './../components/Loader'
 import WebhookData from './../components/WebhookData'
+import Dropdown from './../components/Dropdown'
 import isEmpty from './../util/IsEmpty'
 import NPECheck from './../util/NPECheck'
 
@@ -21,6 +22,8 @@ export default class AddRepository extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
+	}
+	componentWillMount() {
 	}
 	componentWillUnmount() {
 		this.context.actions.resetAddRepoState();
@@ -42,15 +45,49 @@ export default class AddRepository extends Component {
 		);
 	}
 	renderDockerRepository(){
+
+
+		// return (
+		// 	<div className="FlexColumn">
+		// 		<label>
+		// 			Docker Image Repository
+		// 		</label>
+		// 		<input className={this.inputClassName(dockerRepoNameKey)} 
+		// 		       placeholder="Enter Docker Repository.."
+		// 		       value={this.context.state.addRepo.newRepo[dockerRepoNameKey]}
+		// 			   onChange={(e) => this.context.actions.updateNewRepoField(dockerRepoNameKey, e)} />
+		// 	</div>
+		// );
+
 		return (
-			<div className="FlexColumn">
-				<label>
-					Docker Image Repository
-				</label>
-				<input className={this.inputClassName(dockerRepoNameKey)} 
-				       placeholder="Enter Docker Repository.."
-				       value={this.context.state.addRepo.newRepo[dockerRepoNameKey]}
-					   onChange={(e) => this.context.actions.updateNewRepoField(dockerRepoNameKey, e)} />
+			<Dropdown isOpen={this.context.state.addRepo.selectRepoDropdown}
+					  toggleOpen={() => this.context.actions.toggleSelectRepoDropdown()}
+					  listItems={this.context.state.addRepo.reposInRegistry} 
+					  renderItem={(repo, index) => this.renderRepoInRegistryListItem(repo, index)}
+					  filterFn={(item) => item.indexOf(this.context.state.addRepo.reposInRegistryQuery) > -1}
+					  inputOnChange={(e) => this.context.actions.updateReposInRegisterQuery(e, false)}
+					  inputPlaceholder="Select Repository"
+					  inputClassName={this.inputClassName(dockerRepoNameKey)}
+					  inputValue={NPECheck(this.context.state, 'addRepo/newRepo/repo/name', '')} 
+					  noItemsMessage="No Repositories Found"
+					  XHR={NPECheck(this.context.state, 'addRepo/reposInRegistryXHR', true)}/>
+		);
+	}
+	renderRepoInRegistryListItem(repo, index){
+		let className = "ListItem";
+
+		if(repo == NPECheck(this.context.state, 'addRepo/newRepo/repo/name', null)) {
+			className += " Active";
+		}		
+
+		return (
+			<div key={index} className={className} 
+				 onClick={() => this.context.actions.updateNewRepoField(dockerRepoNameKey, repo, true)}>
+				<span className="FlexRow">
+					<span className="Cell">
+						<span className="Label">{repo}</span>
+					</span>
+				</span>
 			</div>
 		);
 	}

@@ -106,7 +106,7 @@ export default class Registries extends Component {
 	renderAddEditRegistryLegend(){
 		return (
 			<div className="AddEditRegistryLegend">
-				<span>Provider</span>
+				<span style={{width: '100px', flex: 'initial'}}>Provider</span>
 				<span>Key Name</span>
 				<span>Access Key</span>
 				<span>Private Key</span>
