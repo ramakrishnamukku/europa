@@ -25,7 +25,7 @@ public class TestWebhookDelivery extends AjaxHelper
 {
     public TestWebhookDelivery()
     {
-        this.supportedHttpMethods.add(HttpMethod.POST);
+        this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
     public Object get(AjaxRequest ajaxRequest)

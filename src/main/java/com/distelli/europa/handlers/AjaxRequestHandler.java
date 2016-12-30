@@ -8,7 +8,6 @@
 */
 package com.distelli.europa.handlers;
 
-import org.eclipse.jetty.http.HttpMethod;
 import com.distelli.ventura.*;
 import com.distelli.europa.ajax.*;
 import com.distelli.europa.util.*;
@@ -35,9 +34,9 @@ public class AjaxRequestHandler extends RequestHandler
     {
         try {
             String contentType = requestContext.getContentType();
-            HttpMethod httpMethod = requestContext.getHttpMethod();
+            HTTPMethod httpMethod = requestContext.getHttpMethod();
             //POST requests should be content type application/json
-            if(httpMethod != null && httpMethod == HttpMethod.POST)
+            if(httpMethod != null && httpMethod == HTTPMethod.POST)
             {
                 if(contentType == null || !contentType.equalsIgnoreCase(WebConstants.CONTENT_TYPE_JSON))
                     return jsonError(JsonError.BadContentType);

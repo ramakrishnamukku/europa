@@ -78,7 +78,7 @@
       <version>2.4.3</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlet</artifactId>
@@ -173,7 +173,7 @@
     <dependency>
       <groupId>com.distelli.ventura</groupId>
       <artifactId>Ventura</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
     </dependency>
 
     <dependency>
@@ -184,9 +184,10 @@
     </dependency>
 
     <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>1.16.12</version>
-    </dependency>
+ 	  <groupId>org.projectlombok</groupId>
+ 	  <artifactId>lombok</artifactId>
+ 	  <version>1.16.12</version>
+ 	</dependency>
+
   </dependencies>
 </project>

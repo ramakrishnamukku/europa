@@ -27,7 +27,7 @@ public class ListContainerRepos extends AjaxHelper
 
     public ListContainerRepos()
     {
-        this.supportedHttpMethods.add(HttpMethod.GET);
+        this.supportedHttpMethods.add(HTTPMethod.GET);
     }
 
     /**

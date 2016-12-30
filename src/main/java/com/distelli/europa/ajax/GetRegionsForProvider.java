@@ -18,7 +18,7 @@ import lombok.extern.log4j.Log4j;
 import com.google.inject.Singleton;
 import com.distelli.europa.models.*;
 import com.amazonaws.regions.*;
-import org.eclipse.jetty.http.HttpMethod;
+import com.distelli.ventura.HTTPMethod;
 
 @Log4j
 @Singleton
@@ -41,7 +41,7 @@ public class GetRegionsForProvider extends AjaxHelper
 
     public GetRegionsForProvider()
     {
-        this.supportedHttpMethods.add(HttpMethod.GET);
+        this.supportedHttpMethods.add(HTTPMethod.GET);
     }
 
     public Object get(AjaxRequest ajaxRequest)

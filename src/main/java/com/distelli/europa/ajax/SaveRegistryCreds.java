@@ -37,7 +37,7 @@ public class SaveRegistryCreds extends AjaxHelper
 
     public SaveRegistryCreds()
     {
-        this.supportedHttpMethods.add(HttpMethod.POST);
+        this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
     public Object get(AjaxRequest ajaxRequest)

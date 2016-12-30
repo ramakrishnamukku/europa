@@ -25,7 +25,7 @@ public class DeleteRegistryCreds extends AjaxHelper
 
     public DeleteRegistryCreds()
     {
-        this.supportedHttpMethods.add(HttpMethod.POST);
+        this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
     /**

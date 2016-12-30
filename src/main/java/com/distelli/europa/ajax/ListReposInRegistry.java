@@ -34,7 +34,7 @@ public class ListReposInRegistry extends AjaxHelper
 
     public ListReposInRegistry()
     {
-        this.supportedHttpMethods.add(HttpMethod.GET);
+        this.supportedHttpMethods.add(HTTPMethod.GET);
     }
 
     public Object get(AjaxRequest ajaxRequest)

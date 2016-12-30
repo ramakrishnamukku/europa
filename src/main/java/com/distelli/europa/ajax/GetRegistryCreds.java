@@ -13,7 +13,7 @@ import com.distelli.europa.db.*;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
-import org.eclipse.jetty.http.HttpMethod;
+import com.distelli.ventura.HTTPMethod;
 
 @Log4j
 @Singleton
@@ -24,7 +24,7 @@ public class GetRegistryCreds extends AjaxHelper
 
     public GetRegistryCreds()
     {
-        this.supportedHttpMethods.add(HttpMethod.GET);
+        this.supportedHttpMethods.add(HTTPMethod.GET);
     }
 
     /**

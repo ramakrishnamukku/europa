@@ -42,7 +42,7 @@ public class SaveRepoNotification extends AjaxHelper
 
     public SaveRepoNotification()
     {
-        this.supportedHttpMethods.add(HttpMethod.POST);
+        this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
     public Object get(AjaxRequest ajaxRequest)

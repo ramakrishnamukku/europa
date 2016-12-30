@@ -36,7 +36,7 @@ public class SaveGcrServiceAccountCreds extends AjaxHelper
 
     public SaveGcrServiceAccountCreds()
     {
-        this.supportedHttpMethods.add(HttpMethod.POST);
+        this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
     public Object get(AjaxRequest ajaxRequest)

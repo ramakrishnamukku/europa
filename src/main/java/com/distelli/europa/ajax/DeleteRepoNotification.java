@@ -38,7 +38,7 @@ public class DeleteRepoNotification extends AjaxHelper
 
     public DeleteRepoNotification()
     {
-        this.supportedHttpMethods.add(HttpMethod.POST);
+        this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
     public Object get(AjaxRequest ajaxRequest)

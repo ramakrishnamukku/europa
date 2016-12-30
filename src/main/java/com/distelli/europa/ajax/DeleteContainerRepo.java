@@ -28,7 +28,7 @@ public class DeleteContainerRepo extends AjaxHelper
 
     public DeleteContainerRepo()
     {
-        this.supportedHttpMethods.add(HttpMethod.POST);
+        this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
     /**

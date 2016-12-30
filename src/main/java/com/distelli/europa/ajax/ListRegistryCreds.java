@@ -28,7 +28,7 @@ public class ListRegistryCreds extends AjaxHelper
 
     public ListRegistryCreds()
     {
-        this.supportedHttpMethods.add(HttpMethod.GET);
+        this.supportedHttpMethods.add(HTTPMethod.GET);
     }
 
     /**

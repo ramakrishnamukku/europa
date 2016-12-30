@@ -27,7 +27,7 @@ public class ListRepoEvents extends AjaxHelper
 
     public ListRepoEvents()
     {
-        this.supportedHttpMethods.add(HttpMethod.GET);
+        this.supportedHttpMethods.add(HTTPMethod.GET);
     }
 
     public Object get(AjaxRequest ajaxRequest)

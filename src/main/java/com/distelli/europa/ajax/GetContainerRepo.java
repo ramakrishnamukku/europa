@@ -27,7 +27,7 @@ public class GetContainerRepo extends AjaxHelper
 
     public GetContainerRepo()
     {
-        this.supportedHttpMethods.add(HttpMethod.GET);
+        this.supportedHttpMethods.add(HTTPMethod.GET);
     }
 
     /**
