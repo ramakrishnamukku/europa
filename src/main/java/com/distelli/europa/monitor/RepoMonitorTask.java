@@ -69,7 +69,6 @@ public abstract class RepoMonitorTask extends MonitorTask
                                                               iter);
             eventList.addAll(events);
         } while(iter.getMarker() != null);
-
         return eventList;
     }
 

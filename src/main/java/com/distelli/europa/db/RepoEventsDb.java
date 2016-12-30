@@ -90,6 +90,7 @@ public class RepoEventsDb
         .withIndexName("events", "etime-index")
         .withNoEncrypt("hk", "id", "etime")
         .withHashKeyName("hk")
+        .withRangeKeyName("etime")
         .withConvertValue(_om::convertValue)
         .withConvertMarker(convertMarkerFactory.create("hk", "etime"))
         .build();
