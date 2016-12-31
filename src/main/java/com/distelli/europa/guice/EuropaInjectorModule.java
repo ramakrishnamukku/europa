@@ -8,20 +8,29 @@
 */
 package com.distelli.europa.guice;
 
-import java.net.URI;
-
 import com.distelli.cred.CredPair;
-import com.google.inject.AbstractModule;
-import com.distelli.persistence.Index;
 import com.distelli.europa.EuropaConfiguration;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
-import com.distelli.persistence.impl.mysql.MysqlDataSource;
 import com.distelli.europa.monitor.*;
+import com.distelli.persistence.Index;
+import com.distelli.persistence.TableDescription;
+import com.distelli.persistence.impl.mysql.MysqlDataSource;
+import com.google.inject.AbstractModule;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.google.inject.multibindings.Multibinder;
+import java.net.URI;
+import java.util.List;
+import java.util.Arrays;
+import javax.inject.Provider;
 import lombok.extern.log4j.Log4j;
+import com.distelli.europa.db.TokenAuthDb;
 
 @Log4j
 public class EuropaInjectorModule extends AbstractModule
 {
+    private static List<Provider<TableDescription>> TABLES = Arrays.asList(
+        TokenAuthDb::getTableDescription
+        );
+
     private EuropaConfiguration _europaConfiguration;
 
     public EuropaInjectorModule(EuropaConfiguration europaConfiguration)
@@ -52,5 +61,11 @@ public class EuropaInjectorModule extends AbstractModule
         install(new FactoryModuleBuilder()
                 .implement(MonitorTask.class, GcrMonitorTask.class)
                 .build(GcrMonitorTask.Factory.class));
+
+        Multibinder<TableDescription> tableBinder =
+            Multibinder.newSetBinder(binder(), TableDescription.class);
+        for ( Provider<TableDescription> tableProvider : TABLES ) {
+            tableBinder.addBinding().toProvider(tableProvider);
+        }
     }
 }

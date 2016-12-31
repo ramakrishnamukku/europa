@@ -8,15 +8,17 @@ import java.util.Base64;
 import java.net.URI;
 import java.util.StringTokenizer;
 import lombok.extern.log4j.Log4j;
+import com.distelli.europa.db.TokenAuthDb;
+import com.distelli.europa.models.TokenAuth;
+import javax.inject.Inject;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Log4j
 public class RegistryAuth {
     private static final String SERVICE_NAME = "distelli.docker-registry";
 
-    // TODO: Use proper token lookup to validate the token!
-    private Map<String, String> userPass =
-        Collections.singletonMap("scott", "tiger");
+    @Inject
+    private TokenAuthDb _tokenAuthDb;
 
     public void authenticate(RequestContext context) throws RegistryError {
         String authorization = context.getHeaderValue("Authorization");
@@ -59,9 +61,14 @@ public class RegistryAuth {
         }
         String user = new String(token, 0, colon, UTF_8);
         String passwd = new String(token, colon+1, token.length-colon-1, UTF_8);
-        if ( ! passwd.equals(userPass.get(user)) ) {
-            requireAuth("Invalid username or password", context);
+        if ( "TOKEN".equals(user) ) {
+            TokenAuth tokenAuth = _tokenAuthDb.getToken(passwd);
+            if ( null != tokenAuth ) {
+                context.setRemoteUser(tokenAuth.getDomain());
+                return;
+            }
         }
+        requireAuth("Invalid username or password", context);
     }
 
     private static class RequireAuthError extends RegistryError {

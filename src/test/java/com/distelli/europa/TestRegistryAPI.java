@@ -1,30 +1,36 @@
 package com.distelli.europa;
 
-import java.io.File;
-import java.io.ByteArrayOutputStream;
-import com.distelli.europa.guice.EuropaInjectorModule;
-import com.distelli.persistence.impl.PersistenceModule;
-import org.junit.Test;
-import org.junit.Before;
-import static org.junit.Assert.*;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.distelli.europa.EuropaConfiguration;
-import com.distelli.ventura.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.distelli.europa.handlers.RegistryVersionCheck;
+import com.distelli.europa.db.TokenAuthDb;
+import com.distelli.europa.guice.EuropaInjectorModule;
 import com.distelli.europa.handlers.RegistryBase;
+import com.distelli.europa.handlers.RegistryVersionCheck;
+import com.distelli.europa.models.TokenAuth;
+import com.distelli.europa.util.Log4JConfigurator;
+import com.distelli.persistence.impl.PersistenceModule;
+import com.distelli.ventura.HTTPMethod;
 import com.distelli.ventura.RequestContext;
 import com.distelli.ventura.WebResponse;
+import com.distelli.ventura.WebServlet;
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.util.List;
-import com.distelli.ventura.HTTPMethod;
-import static org.mockito.Mockito.*;
-import java.util.Vector;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Vector;
+import javax.inject.Inject;
+import javax.persistence.EntityExistsException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class TestRegistryAPI {
     
@@ -43,16 +49,37 @@ public class TestRegistryAPI {
                 config));
     }
 
+    @Inject
+    private TokenAuthDb tokenAuthDb;
     private WebServlet servlet;
-    
+
+    @BeforeClass
+    public static void beforeClass()
+    {
+        Log4JConfigurator.configure(true);
+        Log4JConfigurator.setLogLevel("com.zaxxer.hikari", "INFO");
+    }
+
+    private void addToken() {
+        try {
+            tokenAuthDb.save(
+                TokenAuth.builder()
+                .domain("TEST")
+                .token("tiger")
+                .build());
+        } catch ( EntityExistsException ex ) {}
+    }
+
     @Before
     public void before() throws Exception {
         if ( null == INJECTOR ) {
             throw new RuntimeException("EUROPA_CONFIG environment variable must point to valid file");
         }
+        INJECTOR.injectMembers(this);
         servlet = new WebServlet(
             Routes.getRouteMatcher(),
             (route) -> INJECTOR.getInstance(route.getRequestHandler()));
+        addToken();
     }
 
     private HttpServletRequest headers(HttpServletRequest request, String... extraHeaders) {
@@ -65,14 +92,13 @@ public class TestRegistryAPI {
             when(request.getHeader(extraHeaders[i])).thenReturn(extraHeaders[i+1]);
         }
         when(request.getHeaderNames()).thenReturn(headerNames.elements());
-        when(request.getHeader("Authorization")).thenReturn("Basic c2NvdHQ6dGlnZXI=");
         return request;
     }
 
     @Test
     public void testVersionCheck() throws Exception {
         HttpServletRequest request = headers(mock(HttpServletRequest.class),
-                                             "Authorization", "Basic c2NvdHQ6dGlnZXI=");
+                                             "Authorization", "Basic VE9LRU46dGlnZXI=");
         HttpServletResponse response = mock(HttpServletResponse.class);
 
         ServletByteArrayOutputStream out = new ServletByteArrayOutputStream();
@@ -101,7 +127,7 @@ public class TestRegistryAPI {
     @Test
     public void testISE() throws Exception {
         HttpServletRequest request = headers(mock(HttpServletRequest.class),
-                                             "Authorization", "Basic c2NvdHQ6dGlnZXI=");
+                                             "Authorization", "Basic VE9LRU46dGlnZXI=");
         HttpServletResponse response = mock(HttpServletResponse.class);
 
         RegistryVersionCheck rvc = INJECTOR.getInstance(RegistryVersionCheck.class);
