@@ -1,0 +1,84 @@
+.RepoNotifications {
+    display: flex;
+    flex-direction: column;
+
+    .AddNotification {
+        display: flex;
+        flex-direction: column;
+
+        .FlexRow {
+            margin-bottom: 7px;
+
+            .Flex1 {
+                margin-right: 10px;
+            }
+        }
+    }
+
+    .RepoNotificationsList {
+        display: flex;
+        flex-direction: column;
+        margin-top: 14px;
+
+        .RepoNotificationListItem {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .Info {
+            display: flex;
+            flex-direction: row;
+            background-color: #FFFFFF;
+            border-left: 2px solid $teal;
+            padding: 9px;
+            font-size: 0.875rem;
+            align-items: center;
+
+            .Cell {
+                margin-right: 14px;
+
+                .Label {
+                    color: $teal;
+                    font-size: 0.75rem;
+                    margin-right: 5px;
+                }
+
+                .Value {
+                    color: $grey;
+                    font-size: 0.75rem;
+                }
+            }
+        }
+
+        .NotifActions {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: center;
+
+            i {
+                color: $light-blue;
+                font-size: 1rem;
+                margin: 0 5px;
+                transition: color 0.3s;
+
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+
+            i.icon-dis-trash {
+                &:hover {
+                    color: $red;
+                }
+            }
+
+            i.icon-dis-output {
+                &:hover {
+                    color: $green;
+                }
+            }
+        }
+    }
+}

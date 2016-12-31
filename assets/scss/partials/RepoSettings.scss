@@ -1,8 +1,9 @@
 .RepoSettingsContainer {
 	position: relative;
-	background-color: #FFFFFF;
+	background-color: $curtain-color;
 	width: auto;
-	padding: 0 14px;
+	padding: 0 14px 14px;
+    border-radius: 3px 3px 0 0;
 
 	.Value {
 		color: $teal;

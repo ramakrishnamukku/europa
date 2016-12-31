@@ -7,6 +7,7 @@ import ContentRow from './../components/ContentRow'
 import Msg from './../components/Msg'
 import Loader from './../components/Loader'
 import WebhookData from './../components/WebhookData'
+import RepoNotifications from './../components/RepoNotifications'
 import isEmpty from './../util/IsEmpty'
 
 export default class RepoSettings extends Component {
@@ -18,6 +19,10 @@ export default class RepoSettings extends Component {
 		this.setState({
 			activeRepoCreds: this.context.state.registriesMap[this.props.activeRepo.credId]
 		});
+	}
+	componentDidMount() {
+		let repoId = this.context.state.repoDetails.activeRepo.id;
+		this.context.actions.listRepoNotifications(repoId);
 	}
 	renderCredentials() {
 		let creds = this.state.activeRepoCreds;
@@ -57,37 +62,10 @@ export default class RepoSettings extends Component {
 			</div>
 		);
 	}
-	renderWebhookInfo(){
+	renderRepoNotifications(){
+		let notifs = this.context.state.repoDetails.notifs;
 		return (
-			<div className="FlexColumn">
-				<div className="FlexRow SpaceBetween">
-					<div className="FlexRow">
-						<label>
-							Webhook URL 
-							<span className="TealColor">&nbsp;-&nbsp;a POST will fire against this URL every time a new image is pushed to the specified registry.</span>
-						</label>
-					</div>
-				</div>
-				<div className="FlexRow Row">
-					<div className="Flex1">
-						<label className="small">URL</label>
-						<input className="BlueBorder FullWidth Dark"
-						       placeholder="Webhook URL"
-						       value={''}
-							   onChange={(e) => console.log(e.target.value)} 
-							   />
-					</div>
-				</div>
-				<div className="FlexRow">
-					<div className="Flex1">
-						<label className="small">Public Key</label>
-						<input className="BlueBorder FullWidth Dark"
-						       placeholder="Secret (optional)"
-							   onChange={(e) => console.log(e.target.value)} 
-							   />
-					</div>
-				</div>
-			</div>
+			<RepoNotifications notifs={notifs}/>
 		);
 	}
 	renderSettings(){
@@ -98,8 +76,8 @@ export default class RepoSettings extends Component {
             }]
 		}, {
 			columns: [{
-                icon:'icon icon-dis-webhook',
-                renderBody: this.renderWebhookInfo.bind(this)
+                icon:'icon icon-dis-notification',
+                renderBody: this.renderRepoNotifications.bind(this)
             }]
 		}];
 
