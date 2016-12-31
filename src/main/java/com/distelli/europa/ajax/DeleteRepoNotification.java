@@ -44,10 +44,8 @@ public class DeleteRepoNotification extends AjaxHelper
     public Object get(AjaxRequest ajaxRequest)
     {
         String notificationId = ajaxRequest.getParam("notificationId", true);
-        String repoId = ajaxRequest.getParam("repoId", true);
         String domain = ajaxRequest.getParam("domain");
-        NotificationType notificationType = ajaxRequest.getParamAsEnum("type", NotificationType.class, true);
-        _notificationDb.deleteNotification(domain, repoId, notificationType, notificationId);
+        _notificationDb.deleteNotification(domain, notificationId);
         _monitorQueue.setReload(true);
         return JsonSuccess.Success;
     }

@@ -29,6 +29,7 @@ import lombok.extern.log4j.Log4j;
 public class NotificationsDb
 {
     private Index<Notification> _main;
+    private Index<Notification> _byRepo;
 
     private final ObjectMapper _om = new ObjectMapper();
     private EuropaConfiguration _europaConfiguration;
@@ -36,9 +37,7 @@ public class NotificationsDb
     private TransformModule createTransforms(TransformModule module) {
         module.createTransform(Notification.class)
         .put("hk", String.class,
-             (item) -> getHashKey(item.getDomain(), item.getRepoId()))
-        .put("rk", String.class,
-             (item) -> getRangeKey(item.getType(), item.getId()))
+             (item) -> getHashKey(item.getDomain()))
         .put("id", String.class,
              (item) -> item.getId().toLowerCase(),
              (item, id) -> item.setId(id.toLowerCase()))
@@ -53,7 +52,7 @@ public class NotificationsDb
         return module;
     }
 
-    private final String getHashKey(String domain, String repoId)
+    private final String getHashKey(String domain)
     {
         if(_europaConfiguration.isMultiTenant())
         {
@@ -62,16 +61,7 @@ public class NotificationsDb
         }
         else
             domain = Constants.DOMAIN_ZERO;
-        return String.format("%s:%s",
-                             domain.toLowerCase(),
-                             repoId.toLowerCase());
-    }
-
-    private final String getRangeKey(NotificationType type, String id)
-    {
-        return String.format("%s:%s",
-                             type.toString().toLowerCase(),
-                             id.toLowerCase());
+        return domain.toLowerCase();
     }
 
     @Inject
@@ -80,13 +70,23 @@ public class NotificationsDb
                            EuropaConfiguration europaConfiguration) {
         _europaConfiguration = europaConfiguration;
         _om.registerModule(createTransforms(new TransformModule()));
+
         _main = indexFactory.create(Notification.class)
         .withTableName("notifications")
-        .withNoEncrypt("hk", "rk")
+        .withNoEncrypt("hk", "id", "repoId")
         .withHashKeyName("hk")
-        .withRangeKeyName("rk")
+        .withRangeKeyName("id")
         .withConvertValue(_om::convertValue)
-        .withConvertMarker(convertMarkerFactory.create("hk", "rk"))
+        .withConvertMarker(convertMarkerFactory.create("hk", "id"))
+        .build();
+
+        _byRepo = indexFactory.create(Notification.class)
+        .withIndexName("notifications", "repo-index")
+        .withNoEncrypt("hk", "id", "repoId")
+        .withHashKeyName("hk")
+        .withRangeKeyName("repoId")
+        .withConvertValue(_om::convertValue)
+        .withConvertMarker(convertMarkerFactory.create("hk", "repoId"))
         .build();
     }
 
@@ -103,14 +103,16 @@ public class NotificationsDb
         _main.putItem(notification);
     }
 
-    public void deleteNotification(String domain, String repoId, NotificationType type, String id)
+    public void deleteNotification(String domain, String id)
     {
-        _main.deleteItem(getHashKey(domain, repoId),
-                         getRangeKey(type, id));
+        _main.deleteItem(getHashKey(domain),
+                         id.toLowerCase());
     }
 
     public List<Notification> listNotifications(String domain, String repoId, PageIterator pageIterator)
     {
-        return _main.queryItems(getHashKey(domain, repoId), pageIterator).list();
+        return _byRepo.queryItems(getHashKey(domain), pageIterator)
+        .eq(repoId.toLowerCase())
+        .list();
     }
 }
