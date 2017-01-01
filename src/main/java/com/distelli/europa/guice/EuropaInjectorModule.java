@@ -23,6 +23,7 @@ import java.util.Arrays;
 import javax.inject.Provider;
 import lombok.extern.log4j.Log4j;
 import com.distelli.europa.db.TokenAuthDb;
+import com.distelli.objectStore.*;
 
 @Log4j
 public class EuropaInjectorModule extends AbstractModule
@@ -47,6 +48,8 @@ public class EuropaInjectorModule extends AbstractModule
 
         bind(Index.Factory.class).toProvider(new IndexFactoryProvider(endpoint, creds));
         bind(EuropaConfiguration.class).toProvider(new EuropaConfigurationProvider(_europaConfiguration));
+        bind(ObjectStore.Factory.class).toProvider(new ObjectStoreFactoryProvider(_europaConfiguration));
+        bind(ObjectStore.class).toProvider(new ObjectStoreProvider());
         bind(MysqlDataSource.class).toInstance(new MysqlDataSource() {
                 public int getMaximumPoolSize()
                 {

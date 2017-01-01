@@ -35,6 +35,8 @@ public abstract class RepoMonitorTask extends MonitorTask
     protected NotificationsDb _notificationDb = null;
     @Inject
     protected Notifier _notifier = null;
+    @Inject
+    protected ContainerRepoDb _containerRepoDb;
 
     protected ContainerRepo _repo;
     public RepoMonitorTask(ContainerRepo repo, CountDownLatch latch)
@@ -55,6 +57,8 @@ public abstract class RepoMonitorTask extends MonitorTask
             if(event == null)
                 newImages.add(imageId);
         }
+        if(log.isDebugEnabled())
+            log.debug("Found "+newImages.size()+" new images in repo: "+_repo);
         return newImages;
     }
 
@@ -69,6 +73,8 @@ public abstract class RepoMonitorTask extends MonitorTask
                                                               iter);
             eventList.addAll(events);
         } while(iter.getMarker() != null);
+        if(log.isDebugEnabled())
+            log.debug("Found "+eventList.size()+" events in repo: "+_repo);
         return eventList;
     }
 
@@ -84,6 +90,7 @@ public abstract class RepoMonitorTask extends MonitorTask
         } while(pageIterator.getMarker() != null);
 
         Collections.sort(imagesToSave, new DockerImageComparator());
+        RepoEvent lastEventSaved = null;
         for(DockerImage image: imagesToSave)
         {
             RepoEvent repoEvent = RepoEvent
@@ -98,12 +105,18 @@ public abstract class RepoMonitorTask extends MonitorTask
             .build();
 
             try {
+                if(log.isDebugEnabled())
+                    log.debug("Saving RepoEvent: "+repoEvent+" for Repo: "+_repo);
                 _repoEventsDb.save(repoEvent);
+                lastEventSaved = repoEvent;
                 notify(image, repoEvent);
             } catch(Throwable t) {
                 log.error("Failed to save RepoEvent: "+repoEvent+": "+t.getMessage(), t);
             }
         }
+
+        if(lastEventSaved != null)
+            _containerRepoDb.setLastEvent(_repo.getDomain(), _repo.getId(), lastEventSaved);
     }
 
     protected void notify(DockerImage image, RepoEvent event)
@@ -116,11 +129,14 @@ public abstract class RepoMonitorTask extends MonitorTask
         List<String> nfIdList = new ArrayList<String>();
         for(Notification notification : notifications)
         {
+            if(log.isDebugEnabled())
+                log.debug("Triggering Notification: "+notification+" for Image: "+image+" and Event: "+event);
             NotificationId nfId = _notifier.notify(notification, image, _repo);
             if(nfId != null)
                 nfIdList.add(nfId.toCanonicalId());
         }
         _repoEventsDb.setNotifications(event.getDomain(), event.getRepoId(), event.getId(), nfIdList);
+        event.setNotifications(nfIdList);
     }
 
     protected abstract List<DockerImage> describeImages(List<DockerImageId> images, PageIterator pageIterator);

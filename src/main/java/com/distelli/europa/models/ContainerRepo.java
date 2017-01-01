@@ -21,4 +21,5 @@ public class ContainerRepo
     protected String registryId = null;
     //This is the repoUri that can be used for docker push / pull operations
     protected String repoUri = null;
+    protected RepoEvent lastEvent = null;
 }

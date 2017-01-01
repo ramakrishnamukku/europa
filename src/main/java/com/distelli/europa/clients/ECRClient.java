@@ -130,8 +130,6 @@ public class ECRClient
                 pushTime = pushedAt.getTime();
 
             String imageSha = imageDetail.getImageDigest().toLowerCase();
-            if(imageSha != null && imageSha.startsWith("sha256:"))
-                imageSha = imageSha.substring("sha256:".length());
             DockerImage image = DockerImage
             .builder()
             .imageSha(imageSha)

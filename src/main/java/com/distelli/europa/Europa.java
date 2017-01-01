@@ -18,9 +18,11 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Stage;
+import com.distelli.objectStore.impl.ObjectStoreModule;
 import com.distelli.persistence.impl.PersistenceModule;
 import javax.inject.Inject;
 import lombok.extern.log4j.Log4j;
+import com.distelli.objectStore.*;
 
 @Log4j
 public class Europa
@@ -28,6 +30,11 @@ public class Europa
     private RequestHandlerFactory _requestHandlerFactory = null;
     private RouteMatcher _routeMatcher = null;
     private int _port = 8080;
+
+    @Inject
+    private ObjectStore _objectStore;
+    @Inject
+    private ObjectKeyFactory _objectKeyFactory;
 
     @Inject
     private MonitorQueue _monitorQueue;
@@ -68,17 +75,30 @@ public class Europa
         }
 
         EuropaConfiguration europaConfiguration = EuropaConfiguration.fromFile(new File(configFilePath));
+        europaConfiguration.validate();
         final Injector injector = Guice.createInjector(Stage.PRODUCTION,
                                                        new PersistenceModule(),
                                                        new AjaxHelperModule(),
+                                                       new ObjectStoreModule(),
                                                        new EuropaInjectorModule(europaConfiguration));
         injector.injectMembers(this);
+        initialize();
         _requestHandlerFactory = new RequestHandlerFactory() {
                 public RequestHandler getRequestHandler(MatchedRoute route) {
                     return injector.getInstance(route.getRequestHandler());
                 }
             };
         _routeMatcher = Routes.getRouteMatcher();
+    }
+
+    private void initialize()
+    {
+        try {
+            _objectStore.createBucket(_objectKeyFactory.getDefaultBucket());
+        } catch(Throwable t) {
+            log.error("Failed to create default bucket: "+_objectKeyFactory.getDefaultBucket()+
+                      ": "+t.getMessage(), t);
+        }
     }
 
     public void start()

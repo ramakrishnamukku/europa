@@ -1,4 +1,4 @@
-package com.distelli.europa.ecr;
+package com.distelli.europa.clients;
 
 import java.util.*;
 

@@ -49,7 +49,8 @@ public class ContainerRepoDb
         .put("region", String.class, "region")
         .put("name", String.class, "name")
         .put("rid", String.class, "registryId")
-        .put("cid", String.class, "credId");
+        .put("cid", String.class, "credId")
+        .put("levent", RepoEvent.class, "lastEvent");
         return module;
     }
 
@@ -172,9 +173,31 @@ public class ContainerRepoDb
         .list();
     }
 
+    public boolean repoExists(String domain,
+                              RegistryProvider provider,
+                              String region,
+                              String name)
+    {
+        ContainerRepo repo = _secondaryIndex.getItem(getHashKey(domain),
+                                                     getSecondaryKey(provider,
+                                                                     region,
+                                                                     name));
+        if(repo == null)
+            return true;
+        return false;
+    }
+
     public ContainerRepo getRepo(String domain, String id)
     {
         return _main.getItem(getHashKey(domain),
                              id.toLowerCase());
+    }
+
+    public void setLastEvent(String domain, String id, RepoEvent lastEvent)
+    {
+        _main.updateItem(getHashKey(domain),
+                         id.toLowerCase())
+        .set("levent", lastEvent)
+        .when((expr) -> expr.eq("id", id.toLowerCase()));
     }
 }

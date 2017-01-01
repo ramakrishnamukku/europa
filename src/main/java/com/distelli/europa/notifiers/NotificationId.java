@@ -26,13 +26,13 @@ public class NotificationId
     public String toCanonicalId()
     {
         return String.format("%s:%s",
-                             this.id,
-                             this.type);
+                             this.type,
+                             this.id);
     }
 
-    public static NotificationId fromCanonical(String canonical)
+    public static NotificationId fromCanonicalId(String canonicalId)
     {
-        String[] parts = canonical.split(":", 2);
+        String[] parts = canonicalId.split(":", 2);
         NotificationType type = NotificationType.valueOf(parts[0].toUpperCase());
         NotificationId nfId = NotificationId
         .builder()

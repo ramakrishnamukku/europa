@@ -24,14 +24,18 @@ public abstract class MonitorTask implements Runnable
     public void run()
     {
         try {
+            if(log.isDebugEnabled())
+                log.debug("Starting MonitorTask: "+this.getClass().getName());
             monitor();
         } catch(Throwable t) {
             log.error(t.getMessage(), t);
         }
         if(_latch != null)
             _latch.countDown();
-    }
 
+        if(log.isDebugEnabled())
+            log.debug("Finished MonitorTask: "+this.getClass().getName());
+    }
 
     public abstract void monitor();
 }

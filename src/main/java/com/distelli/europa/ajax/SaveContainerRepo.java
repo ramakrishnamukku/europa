@@ -60,6 +60,13 @@ public class SaveContainerRepo extends AjaxHelper
         repo.setRegion(cred.getRegion());
         repo.setId(UUID.randomUUID().toString());
         validateContainerRepo(repo, cred);
+        //before we save the repo in the db lets check that the repo
+        //doesn't already exist
+        if(_reposDb.repoExists(repo.getDomain(), repo.getProvider(), repo.getRegion(), repo.getName()))
+            throw(new AjaxClientException("The specified container repo is already connected: "+
+                                          repo.getProvider()+", "+repo.getName(),
+                                          AjaxErrors.Codes.RepoAlreadyConnected,
+                                          400));
         //save the repo in the db
         _reposDb.save(repo);
         Notification notification = ajaxRequest.convertContent("/notification", Notification.class, false);

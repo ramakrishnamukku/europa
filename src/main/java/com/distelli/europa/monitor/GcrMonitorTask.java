@@ -97,7 +97,7 @@ public class GcrMonitorTask extends RepoMonitorTask
         } while(iter.getMarker() != null);
 
         if(log.isDebugEnabled())
-            log.debug("Found "+imageIdList.size()+" images in repo: "+_repo);
+            log.debug("Found "+imageIdList.size()+" images in GCR repo: "+_repo);
         return imageIdList;
     }
 
@@ -108,9 +108,6 @@ public class GcrMonitorTask extends RepoMonitorTask
         for(DockerImageId imageId : images)
         {
             String imageSha = imageId.getSha();
-            if(imageSha != null && imageSha.startsWith("sha256:"))
-                imageSha = imageSha.substring("sha256:".length());
-
             DockerImage image = null;
             image = imagesBySha.get(imageSha);
             if(image == null)

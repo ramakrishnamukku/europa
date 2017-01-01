@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.distelli.objectStore.*;
 
 public class EuropaConfiguration
 {
@@ -27,15 +28,64 @@ public class EuropaConfiguration
     private boolean multiTenant = false;
     @Getter @Setter
     private int dbMaxPoolSize = 2;
+    @Getter @Setter
+    private ObjectStoreConfig objectStore;
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     static {
         OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+    public static class ObjectStoreConfig {
+        @Getter @Setter
+        private String type;
+        @Getter @Setter
+        private String diskStorageRoot;
+        @Getter @Setter
+        private String endpoint;
+        @Getter @Setter
+        private String cred;
+        @Getter @Setter
+        private String bucket;
+        @Getter @Setter
+        private String pathPrefix;
+    }
+
     public EuropaConfiguration()
     {
 
+    }
+
+    public ObjectStoreConfig getObjectStoreConfig()
+    {
+        return this.objectStore;
+    }
+
+    public void validate()
+    {
+        if(this.objectStore == null)
+            throw(new RuntimeException("Invalid or Missing value for config: objectStore"));
+        if(this.objectStore.type == null)
+            throw(new RuntimeException("Invalid or Missing value for config: objectStore.type"));
+        if(this.objectStore.bucket == null)
+            throw(new RuntimeException("Invalid or Missing value for config: objectStore.bucket"));
+        ObjectStoreType objectStoreType = null;
+        try {
+            objectStoreType = ObjectStoreType.valueOf(this.objectStore.type.toUpperCase());
+        } catch(Throwable t) {
+            throw(new RuntimeException("Illegal value for config: objectStore.bucket. Expected S3 or DISK"));
+        }
+        switch(objectStoreType)
+        {
+        case S3:
+            if(this.objectStore.endpoint == null)
+                throw(new RuntimeException("Invalid or Missing value for config: objectStore.endpoint"));
+            if(this.objectStore.cred == null)
+                throw(new RuntimeException("Invalid or Missing value for config: objectStore.cred"));
+        case DISK:
+            if(this.objectStore.diskStorageRoot == null)
+                throw(new RuntimeException("Invalid or Missing value for config: objectStore.diskStorageRoot"));
+        }
     }
 
     public static final EuropaConfiguration fromFile(File configFile)
