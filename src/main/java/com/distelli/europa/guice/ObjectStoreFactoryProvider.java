@@ -65,11 +65,13 @@ public class ObjectStoreFactoryProvider implements Provider<ObjectStore.Factory>
                                 return credPair;
                             }
                         };
+                    break;
                 case DISK:
                     String storageRoot = osConfig.getDiskStorageRoot();
                     if(storageRoot == null)
                         throw(new RuntimeException("Invalid or Missing value for config: objectStore.diskStorageRoot"));
                     diskStorageRoot = new File(storageRoot);
+                    break;
                 }
 
                 return _baseObjectStoreFactory.create()

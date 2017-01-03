@@ -82,9 +82,11 @@ public class EuropaConfiguration
                 throw(new RuntimeException("Invalid or Missing value for config: objectStore.endpoint"));
             if(this.objectStore.cred == null)
                 throw(new RuntimeException("Invalid or Missing value for config: objectStore.cred"));
+            break;
         case DISK:
             if(this.objectStore.diskStorageRoot == null)
                 throw(new RuntimeException("Invalid or Missing value for config: objectStore.diskStorageRoot"));
+            break;
         }
     }
 
