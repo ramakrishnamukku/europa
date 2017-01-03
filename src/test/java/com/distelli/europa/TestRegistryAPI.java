@@ -8,6 +8,7 @@ import com.distelli.europa.handlers.RegistryVersionCheck;
 import com.distelli.europa.models.TokenAuth;
 import com.distelli.europa.util.Log4JConfigurator;
 import com.distelli.persistence.impl.PersistenceModule;
+import com.distelli.objectStore.impl.ObjectStoreModule;
 import com.distelli.ventura.HTTPMethod;
 import com.distelli.ventura.RequestContext;
 import com.distelli.ventura.WebResponse;
@@ -45,6 +46,7 @@ public class TestRegistryAPI {
         EuropaConfiguration config = EuropaConfiguration.fromFile(file);
         return Guice.createInjector(
             new PersistenceModule(),
+            new ObjectStoreModule(),
             new EuropaInjectorModule(
                 config));
     }
