@@ -183,8 +183,8 @@ public class ContainerRepoDb
                                                                      region,
                                                                      name));
         if(repo == null)
-            return true;
-        return false;
+            return false;
+        return true;
     }
 
     public ContainerRepo getRepo(String domain, String id)
