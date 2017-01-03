@@ -26,6 +26,7 @@ export default class AddRepository extends Component {
 	}
 	componentWillUnmount() {
 		this.context.actions.resetAddRepoState();
+		this.context.actions.resetNotifState();
 	}
 	inputClassName(selector){
 		let hasSelector = this.context.state.addRepo.errorFields.includes(selector)
@@ -91,6 +92,7 @@ export default class AddRepository extends Component {
 			return (
 				<Msg
 					text={this.context.state.addRepo.errorMsg}
+					close={() => this.context.actions.clearAddRepoError()}
 				/>
 			);
 		}

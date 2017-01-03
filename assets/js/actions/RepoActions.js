@@ -7,6 +7,9 @@ import * as GA from './../reducers/GeneralReducers'
 import * as RAjax from './../util/RAjax'
 import Validate from './../util/Validate'
 import NPECheck from './../util/NPECheck'
+import {
+  notifState
+} from './NotificationActions'
 
 // *************************************************
 // General Repo Actions
@@ -164,6 +167,10 @@ export function setNewRepoCredsType(type) {
     addRepo: GA.modifyProperty(this.state.addRepo, {
       ...addRepoState.call(this),
       newRepoCredsType: type,
+    }),
+    addRegistry: GA.modifyProperty(this.state.addRegistry, {
+      errorFields: [],
+      errorMsg: ''
     })
   });
 }
@@ -198,8 +205,8 @@ export function addRepoRequest(afterAddCb) {
   }, () => {
 
     let postData = {
-       repo: this.state.addRepo.newRepo.repo,
-       notification: this.state.notif.newNotification
+      repo: this.state.addRepo.newRepo.repo,
+      notification: this.state.notif.newNotification
     };
 
     RAjax.POST('SaveContainerRepo', postData)
@@ -207,8 +214,9 @@ export function addRepoRequest(afterAddCb) {
         this.setState({
           addRepo: GA.modifyProperty(this.state.addRepo, {
             XHR: false,
-            success: true
-          })
+            success: true,
+          }),
+          notif: notifState.call(this)
         }, () => {
           listRepos.call(this)
 
@@ -239,6 +247,17 @@ export function clearAddRepoSuccess() {
 
 export function canAddRepo() {
   return this.state.addRepo.errorMsg == '' && this.state.addRegistry.errorFields.length == 0;
+}
+
+
+export function clearAddRepoError() {
+  this.setState({
+    addRepo: GA.modifyProperty(this.state.addRepo, {
+      errorMsg: '',
+      errorFields: [],
+      validateOnInput: false
+    })
+  });
 }
 
 function isAddRepoValid(validateOnInput) {
@@ -403,4 +422,3 @@ export function toggleEventDetails(eventId = null) {
     })
   });
 }
-

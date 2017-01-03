@@ -36,6 +36,7 @@ export default class RepoDetailsPage extends Component {
 	}
 	componentWillUnmount() {
 		this.context.actions.resetRepoDetailsState();
+		this.context.actions.resetNotifState();
 	}
 	toRepoList(){
 		this.context.router.push('/repositories');

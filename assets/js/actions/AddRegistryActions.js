@@ -7,7 +7,9 @@ import * as GA from './../reducers/GeneralReducers'
 import * as RAjax from './../util/RAjax'
 import Validate from './../util/Validate'
 import NPECheck from './../util/NPECheck'
-import { listReposForRegistry } from './RepoActions'
+import {
+  listReposForRegistry
+} from './RepoActions'
 
 export function addRegistryState() {
   return {
@@ -22,13 +24,7 @@ export function addRegistryState() {
     selectRegionDropdown: false,
     providerRegions: [],
     credentialType: 'KEY_CREDENTIAL',
-    newRegistry: {
-      name: '',
-      provider: '',
-      region: '',
-      key: '',
-      secret: ''
-    },
+    newRegistry: newRegistryState.call(this)
   }
 }
 
@@ -36,6 +32,16 @@ export function resetAddRegistryState() {
   this.setState({
     addRegistry: GA.modifyProperty(this.state.addRegistry, addRegistryState.call(this))
   });
+}
+
+export function newRegistryState() {
+  return {
+    name: '',
+    provider: '',
+    region: '',
+    key: '',
+    secret: ''
+  };
 }
 
 export function updateNewRegistryField(prop, e, eIsValue = false) {
@@ -50,8 +56,8 @@ export function updateNewRegistryField(prop, e, eIsValue = false) {
       }
     })
   }, () => {
-    if (prop == 'provider') getRegionsForProvider.call(this);    
-    if(isAddRegistryValid.call(this, true, !this.state.addRegistry.validateOnInput)) {
+    if (prop == 'provider') getRegionsForProvider.call(this);
+    if (isAddRegistryValid.call(this, true, !this.state.addRegistry.validateOnInput)) {
       listReposForRegistry.call(this)
     }
   });
@@ -96,22 +102,22 @@ export function addRegistryRequest() {
   });
 };
 
-export function updateServiceAccountCredential(json){
+export function updateServiceAccountCredential(json) {
   changeCredentialType.call(this, 'SERVICE_CREDENTIAL')
-  .then(() => updateNewRegistryField.call(this, 'secret', json, true));
+    .then(() => updateNewRegistryField.call(this, 'secret', json, true));
 }
 
-export function cancelServiceAccountCredentialUpload(){
+export function cancelServiceAccountCredentialUpload() {
   changeCredentialType.call(this, 'KEY_CREDENTIAL')
-  .then(() => {
-    this.setState({
-      addRegistry: GA.modifyProperty(this.state.addRegistry, {
-        newRegistry: GA.modifyProperty(NPECheck(this, 'state/addRegistry/newRegistry'), {
-          secret: ''
+    .then(() => {
+      this.setState({
+        addRegistry: GA.modifyProperty(this.state.addRegistry, {
+          newRegistry: GA.modifyProperty(NPECheck(this, 'state/addRegistry/newRegistry'), {
+            secret: ''
+          })
         })
-      })
+      });
     });
-  });
 }
 
 export function changeCredentialType(credentialType) {
@@ -120,7 +126,7 @@ export function changeCredentialType(credentialType) {
       addRegistry: GA.modifyProperty(this.state.addRegistry, {
         credentialType
       })
-    }, () => resolve() );
+    }, () => resolve());
   });
 }
 
@@ -186,7 +192,7 @@ export function setRegistryForEdit(reg) {
         isEdit: true,
         newRegistry: reg
       })
-    }, () =>{ 
+    }, () => {
       getRegionsForProvider.call(this);
       resolve();
     });
@@ -215,7 +221,7 @@ function isAddRegistryValid(validateOnInput, skipSetState) {
     name: 'Key Name'
   };
 
-  if(this.state.addRegistry.credentialType == 'SERVICE_CREDENTIAL') {
+  if (this.state.addRegistry.credentialType == 'SERVICE_CREDENTIAL') {
     delete required.key;
     delete required.secret;
     delete required.name;
@@ -223,7 +229,7 @@ function isAddRegistryValid(validateOnInput, skipSetState) {
 
   let errorFields = Validate.call(this, this.state.addRegistry.newRegistry, required);
 
-  if(skipSetState) {
+  if (skipSetState) {
     return (errorFields.names.length) ? false : true
   }
 

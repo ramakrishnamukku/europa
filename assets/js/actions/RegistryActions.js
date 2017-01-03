@@ -6,7 +6,6 @@ import * as GA from './../reducers/GeneralReducers'
 import * as RAjax from './../util/RAjax'
 import Validate from './../util/Validate'
 
-
 export function registryState() {
   return {
     registrySelectedForDelete: null,

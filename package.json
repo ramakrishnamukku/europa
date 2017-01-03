@@ -11,8 +11,8 @@
   "scripts": {
     "watch": "./node_modules/.bin/webpack --config webpack.config.js --progress --colors --display-error-details --watch",
     "build": "./node_modules/.bin/webpack --config webpack.config.js --progress --colors --display-error-details",
-    "build-prod": "NODE_ENV=production npm run build",
-    "build-all": "npm run build && npm run build-prod"
+    "build-prod": "NODE_ENV=production yarn run build",
+    "build-all": "yarn run build && yarn run build-prod"
   },
   "dependencies": {
     "babel-core": "^6.13.2",
