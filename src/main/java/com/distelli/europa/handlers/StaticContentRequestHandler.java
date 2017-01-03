@@ -13,6 +13,9 @@ import java.util.Map;
 import java.util.HashMap;
 import com.distelli.ventura.*;
 import lombok.extern.log4j.Log4j;
+import com.distelli.europa.react.PageTemplate;
+import com.distelli.europa.react.JSXProperties;
+import javax.inject.Inject;
 
 @Log4j
 public class StaticContentRequestHandler extends RequestHandler
@@ -30,6 +33,9 @@ public class StaticContentRequestHandler extends RequestHandler
             put("svg", "image/svg+xml");
         }};
 
+    @Inject
+    private PageTemplate _pageTemplate;
+
     public StaticContentRequestHandler()
     {
 
@@ -39,7 +45,7 @@ public class StaticContentRequestHandler extends RequestHandler
     {
         String path = requestContext.getPath();
         if(!path.startsWith("/public/") && !path.startsWith("/assets/"))
-            return renderPage(requestContext, null);
+            return _pageTemplate.renderPage(requestContext);
 
         WebResponse webResponse = new WebResponse();
         File staticFile = new File("./"+path);

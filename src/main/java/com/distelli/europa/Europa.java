@@ -10,6 +10,7 @@ package com.distelli.europa;
 
 import java.io.File;
 
+import com.distelli.europa.EuropaConfiguration.EuropaStage;
 import com.distelli.europa.util.*;
 import com.distelli.ventura.*;
 import com.distelli.europa.guice.*;
@@ -63,6 +64,7 @@ public class Europa
             log.fatal("Missing value for arg --config");
             System.exit(1);
         }
+
         String portStr = cmdLineArgs.getOption("port");
         if(portStr != null)
         {
@@ -74,7 +76,18 @@ public class Europa
             }
         }
 
+        EuropaStage stage = EuropaStage.prod;
+        String stageArg = cmdLineArgs.getOption("stage");
+        if(stageArg != null) {
+            try {
+                stage = EuropaStage.valueOf(stageArg);
+            } catch(Throwable t) {
+                throw(new RuntimeException("Invalid value for stage: "+stageArg, t));
+            }
+        }
+
         EuropaConfiguration europaConfiguration = EuropaConfiguration.fromFile(new File(configFilePath));
+        europaConfiguration.setStage(stage);
         europaConfiguration.validate();
         final Injector injector = Guice.createInjector(Stage.PRODUCTION,
                                                        new PersistenceModule(),

@@ -30,6 +30,15 @@ public class EuropaConfiguration
     private int dbMaxPoolSize = 2;
     @Getter @Setter
     private ObjectStoreConfig objectStore;
+    @Getter @Setter
+    private EuropaStage stage;
+
+    public static enum EuropaStage {
+        alpha,
+        beta,
+        gamma,
+        prod
+    }
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     static {
@@ -98,5 +107,10 @@ public class EuropaConfiguration
         } catch(Throwable t) {
             throw(new RuntimeException(t));
         }
+    }
+
+    public boolean isProd()
+    {
+        return stage == EuropaStage.prod;
     }
 }

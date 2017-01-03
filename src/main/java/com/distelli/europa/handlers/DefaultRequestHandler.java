@@ -9,11 +9,17 @@
 package com.distelli.europa.handlers;
 
 import com.distelli.ventura.*;
+import com.distelli.europa.react.PageTemplate;
+import com.distelli.europa.react.JSXProperties;
 import lombok.extern.log4j.Log4j;
+import javax.inject.Inject;
 
 @Log4j
 public class DefaultRequestHandler extends RequestHandler
 {
+    @Inject
+    private PageTemplate _pageTemplate;
+
     public DefaultRequestHandler()
     {
 
@@ -21,6 +27,6 @@ public class DefaultRequestHandler extends RequestHandler
 
     public WebResponse handleRequest(RequestContext requestContext)
     {
-        return renderPage(requestContext, null);
+        return _pageTemplate.renderPage(requestContext);
     }
 }
