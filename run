@@ -1,7 +1,0 @@
-#!/bin/sh
-CLASSPATH=${CLASSPATH:-$(set -- $(dirname $0)/lib/*; IFS=":"; echo "$*")}
-JVM_ARGS=${JVM_ARGS:-"-Duser.timezone=UTC -Xmx512M -Xms512M"}
-PORT=${PORT:-5050}
-ARGS=${ARGS:-"com.distelli.europa.Europa --port=$PORT"}
-
-exec /usr/bin/java -cp $CLASSPATH $JVM_ARGS $ARGS "$@"

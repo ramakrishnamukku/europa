@@ -38,6 +38,7 @@ public class PageTemplate
     "    <script type=\"text/javascript\">"+
     "      self.fetch = null;"+
     "    </script>"+
+    "    <link rel=\"stylesheet\" href=\"/public/css/%s\">"+
     "    <script src=\"/public/js/%s\"></script>"+
     "    <script type=\"text/javascript\">"+
     "      var PAGE_PROPS = %s;"+
@@ -46,7 +47,6 @@ public class PageTemplate
     "        props: PAGE_PROPS"+
     "      });"+
     "    </script>"+
-    "    <link rel=\"stylesheet\" href=\"/public/css/%s\">"+
     "  </body>"+
     "</html>";
 
@@ -77,9 +77,10 @@ public class PageTemplate
             if(properties == null)
                 properties = new JSXProperties(requestContext);
             String responseContent = String.format(templateContent,
+                                                   cssName,
                                                    appName,
-                                                   OBJECT_MAPPER.writeValueAsString(properties),
-                                                   cssName);
+                                                   OBJECT_MAPPER.writeValueAsString(properties)
+                                                   );
             return new WebResponse(200, responseContent);
         } catch(JsonProcessingException jpe) {
             throw(new WebServerException(jpe));

@@ -10,9 +10,9 @@
   "author": "Distelli Inc.",
   "scripts": {
     "watch": "./node_modules/.bin/webpack --config webpack.config.js --progress --colors --display-error-details --watch",
-    "build-dev": "./node_modules/.bin/webpack --config webpack.config.js --progress --colors --display-error-details",
-    "build-prod": "NODE_ENV=production npm run build-dev",
-    "build-all": "npm run build-dev && npm run build-prod"
+    "build": "./node_modules/.bin/webpack --config webpack.config.js --progress --colors --display-error-details",
+    "build-prod": "NODE_ENV=production npm run build",
+    "build-all": "npm run build && npm run build-prod"
   },
   "dependencies": {
     "babel-core": "^6.13.2",
