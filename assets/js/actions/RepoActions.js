@@ -61,9 +61,6 @@ export function addRepoState() {
     newRepoCredsType: 'EXISTING',
     success: null,
     XHR: false,
-    testNotification: {},
-    testNotificationStatus: null,
-    showNotificationTestResults: false,
     selectExistingCredentialsDropdown: false,
     selectRepoDropdown: false,
     reposInRegistryXHR: false,
@@ -73,11 +70,6 @@ export function addRepoState() {
       repo: {
         credId: '',
         name: ''
-      },
-      notification: {
-        target: '',
-        type: 'WEBHOOK',
-        secret: ''
       }
     }
   };
@@ -196,39 +188,6 @@ export function toggleSelectExistingCredsDropdown() {
   });
 }
 
-export function testNotification() {
-  RAjax.POST('TestWebhookDelivery', {
-      notification: this.state.addRepo.newRepo.notification
-    })
-    .then((res) => {
-      let statusCode = NPECheck(res, 'response/httpStatusCode', null);
-      let testNotificationStatus;
-
-      if (200 <= statusCode && statusCode <= 299) testNotificationStatus = 'SUCCESS';
-      if ((0 <= statusCode && statusCode <= 199) || (300 <= statusCode && statusCode <= 399)) testNotificationStatus = 'WARNING';
-      if (400 <= statusCode) testNotificationStatus = 'ERROR';
-
-      this.setState({
-        addRepo: GA.modifyProperty(this.state.addRepo, {
-          testNotification: res,
-          testNotificationStatus
-        })
-      })
-    })
-    .catch((err) => {
-      console.error('Webhook Req failed');
-      console.error(err);
-    });
-}
-
-export function toggleShowNotificationTestResults() {
-  this.setState({
-    addRepo: GA.modifyProperty(this.state.addRepo, {
-      showNotificationTestResults: !this.state.addRepo.showNotificationTestResults
-    })
-  });
-}
-
 export function addRepoRequest(afterAddCb) {
   if (!isAddRepoValid.call(this, true)) return;
 
@@ -237,7 +196,13 @@ export function addRepoRequest(afterAddCb) {
       XHR: true
     })
   }, () => {
-    RAjax.POST('SaveContainerRepo', this.state.addRepo.newRepo)
+
+    let postData = {
+       repo: this.state.addRepo.newRepo.repo,
+       notification: this.state.notif.newNotification
+    };
+
+    RAjax.POST('SaveContainerRepo', postData)
       .then((res) => {
         this.setState({
           addRepo: GA.modifyProperty(this.state.addRepo, {
@@ -282,9 +247,6 @@ function isAddRepoValid(validateOnInput) {
     repo: {
       credId: 'Registry Provider',
       name: 'Docker Repository'
-    },
-    notification: {
-      target: 'Webhook Target',
     }
   };
 
@@ -323,16 +285,6 @@ export function repoDetailsState() {
     deleteXHR: false,
     isDeleting: false,
     showSettings: false,
-    newNotification: {
-        target: '',
-        type: 'WEBHOOK',
-        secret: ''
-    },
-    notifs: [],
-    notifsXHR: false,
-    notifsError: '',
-    deleteNotifId: '',
-    deleteNotificationXHR: false,
     events: [],
     eventsXHR: false,
     eventsError: '',
@@ -452,83 +404,3 @@ export function toggleEventDetails(eventId = null) {
   });
 }
 
-export function listRepoNotifications(repoId) {
-  return new Promise((resolve, reject) => {
-    this.setState({
-      repoDetails: GA.modifyProperty(this.state.repoDetails, {
-        notifsXHR: true
-      })
-    }, () => {
-      RAjax.GET('ListRepoNotifications', {
-          repoId
-        })
-        .then((res) => {
-          this.setState({
-            repoDetails: GA.modifyProperty(this.state.repoDetails, {
-              notifs: res,
-              notifsXHR: false
-            })
-          }, () => resolve());
-        })
-        .catch((err) => {
-          console.error(err);
-          let errorMsg = `There was an error retreiving your notifications. ${NPECheck(err, 'error/message', '')}`
-          this.setState({
-            repoDetails: GA.modifyProperty(this.state.repoDetails, {
-              notifsError: errorMsg,
-              notifsXHR: false
-            })
-          }, () => reject());
-        });
-    });
-  });
-}
-
-export function updateNewNotifcationField(prop, e, eIsValue) {
-  this.setState({
-    repoDetails: GA.modifyProperty(this.state.repoDetails, {
-      newNotification
-    })
-  });
-}
-
-export function addRepoNotification(){
-
-}
-
-export function toggleRepoNotificationForDelete(notifId = null) {
-  this.setState({
-    repoDetails: GA.modifyProperty(this.state.repoDetails, {
-      deleteNotifId: (notifId == this.state.repoDetails.deleteNotifId) ? '' : notifId
-    })
-  });
-}
-
-export function deleteNotification() {
-  this.setState({
-    deleteNotificationXHR: true
-  }, () => {
-    RAjax.POST('DeleteRepoNotification', {}, {
-        notificationId: this.state.repoDetails.deleteNotifId
-      }).then((res) => {
-
-        this.setState({
-          repoDetails: GA.modifyProperty(this.state.repoDetails, {
-            deleteNotifId: '',
-            deleteNotificationXHR: false
-          })
-        });
-
-      })
-      .catch((err) => {
-        console.error(err);
-        let errorMsg = `There was an error deleting your notification. ${NPECheck(err, 'error/message', '')}`
-        this.setState({
-          repoDetails: GA.modifyProperty(this.state.repoDetails, {
-            deleteNotificationXHR: false,
-            notifsError: errorMsg
-          })
-        });
-      })
-  });
-}

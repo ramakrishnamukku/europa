@@ -10,36 +10,34 @@ import isEmpty from './../util/IsEmpty'
 import NPECheck from './../util/NPECheck'
 import CopyToClipboard from './../util/CopyToClipboard'
 import CenteredConfirm from './../components/CenteredConfirm'
+import AddRepoNotification from './../components/AddRepoNotification'
+
+let notifTargetKey = 'target';
+let notifSecretKey= 'secret';
 
 export default class RepoNotifications extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
 	}
+	deleteNotification(){
+		this.context.actions.deleteNotification()
+			.then(() => {
+				let repoId = NPECheck(this.context.state, 'repoDetails/activeRepo/id', null);
+				this.context.actions.listRepoNotifications(repoId, true);			
+			});
+	}
 	renderAddNotification(){
 		return (
-			<div className="AddNotification">
-				<div className="FlexRow">
-					<div className="Flex1 FlexColumn">
-						<label className="small">Webhook URL</label>
-						<input className="BlueBorder White FullWidth" 
-							   placeholder="Enter Webhook URL"/>
-					</div>
-					<div className="Flex1 FlexColumn">
-						<label className="small">Webhook Secret</label>
-						<input className="BlueBorder White FullWidth" 
-						       placeholder="Enter Webhook Secret"/>
-					</div>
-				</div>
-				<Btn onClick={() => console.log('some shit to add')}
-					 text="Add Notification"
-				     canClick={true} />
-			</div>
+			<AddRepoNotification isExistingRepo={true}/>
 		);
 	}
 	renderRepoNotifications(){
+		let label = `Existing Notifications (${this.props.notifs.length})`;
+
 		return (
 			<div className="RepoNotificationsList">
+				<label className="small">{label}</label>
 				{this.props.notifs.map((notif, index) => this.renderRepoNotificationItem(notif, index))}
 			</div>
 		);
@@ -75,20 +73,27 @@ export default class RepoNotifications extends Component {
 		);
 	}
 	renderDeleteNotification(notifId){
-		let activeId = NPECheck(this.context.state, 'repoDetails/deleteNotifId', null);
+		let activeId = NPECheck(this.context.state, 'notif/deleteNotifId', null);
 
 		if( activeId == notifId) {
+
+			if(NPECheck(this.context.state, 'notif/deleteNotificationXHR', false)) {
+				return (
+					<Loader />
+				);
+			}
+
 			return (
 				<CenteredConfirm message="Are you sure you want to delete this notification?"
 							     confirmButtonText="Delete"
 							     confirmButtonStyle={{}}
-							     onConfirm={() => this.context.actions.deleteNotification()}
+							     onConfirm={() => this.deleteNotification() }
 							     onCancel={() => this.context.actions.toggleRepoNotificationForDelete()}/>
 			);
 		}
 	}
 	render() {	
-		if(NPECheck(this.context.state, 'repoDetails/notifsXHR', false)) {
+		if(NPECheck(this.context.state, 'notif/notifsXHR', false)) {
 			return (
 				<Loader />
 			);

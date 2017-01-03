@@ -4,10 +4,8 @@
 
 import CreateOrSetPropertyValue from './../util/CreateOrSetPropertyValue'
 
-export default function AddRepoReducers(state, action) {
+export default function NotificationReducers(state, action) {
     switch (action.type) {
-        case 'UPDATE_NEW_REPO':
-        	return updateNewRepo(state, action.data);
 
         case 'UPDATE_NEW_NOTIFICATION':
             return updateNewNotification(state, action.data);
@@ -15,16 +13,6 @@ export default function AddRepoReducers(state, action) {
         default:
             return state;
     }
-}
-
-function updateNewRepo(state, data){
-	let newRepo = state.newRepo;
-	CreateOrSetPropertyValue(newRepo, data.keyPath, data.value);
-
-	return {
-		...state,
-		newRepo
-	};
 }
 
 function updateNewNotification(state, data) {

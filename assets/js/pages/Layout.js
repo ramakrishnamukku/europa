@@ -11,6 +11,7 @@ import ActionBinder from './../util/ActionBinder'
 import * as GeneralActions from './../actions/GeneralActions'
 import * as AddRegistryActions from './../actions/AddRegistryActions'
 import * as RepoActions from './../actions/RepoActions'
+import * as NotificationActions from './../actions/NotificationActions'
 import * as RegistryActions from './../actions/RegistryActions'
 import * as SettingsActions from './../actions/SettingsActions'
 
@@ -28,13 +29,16 @@ export default class Layout extends Component {
 			registriesXHR: false,
 			repositories: [],
 			registry: {
-				...RegistryActions.registryState(),
+				...RegistryActions.registryState()
 			},
 			addRegistry: {
-				...AddRegistryActions.addRegistryState(),
+				...AddRegistryActions.addRegistryState()
 			},
 			addRepo: {
 				...RepoActions.addRepoState()
+			},
+			notif: {
+				...NotificationActions.notifState()
 			},
 			repoDetails: {
 				...RepoActions.repoDetailsState()
@@ -55,7 +59,8 @@ export default class Layout extends Component {
 	getChildContext() {
 
 		let actions = [ AddRegistryActions, 
-					    RepoActions, 
+					    RepoActions,
+					    NotificationActions, 
 					    RegistryActions, 
 					    SettingsActions 
 					  ];

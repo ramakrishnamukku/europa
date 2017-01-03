@@ -5,11 +5,12 @@
     .AddNotification {
         display: flex;
         flex-direction: column;
+        margin: 7px 0;
 
         .FlexRow {
             margin-bottom: 7px;
 
-            .Flex1 {
+            .Flex2 {
                 margin-right: 10px;
             }
         }
@@ -23,6 +24,7 @@
         .RepoNotificationListItem {
             display: flex;
             flex-direction: column;
+            margin: 0 0 14px;
         }
 
         .Info {

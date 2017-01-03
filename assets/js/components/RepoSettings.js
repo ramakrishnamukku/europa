@@ -63,7 +63,7 @@ export default class RepoSettings extends Component {
 		);
 	}
 	renderRepoNotifications(){
-		let notifs = this.context.state.repoDetails.notifs;
+		let notifs = this.context.state.notif.notifs;
 		return (
 			<RepoNotifications notifs={notifs}/>
 		);

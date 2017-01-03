@@ -8,10 +8,9 @@ import ContentRow from './../components/ContentRow'
 import Btn from './../components/Btn'
 import Msg from './../components/Msg'
 import Loader from './../components/Loader'
-import WebhookData from './../components/WebhookData'
 import Dropdown from './../components/Dropdown'
-import isEmpty from './../util/IsEmpty'
 import NPECheck from './../util/NPECheck'
+import AddRepoNotification from './../components/AddRepoNotification'
 
 let dockerRepoNameKey = 'repo/name';
 let targetKey = "notification/target";
@@ -81,102 +80,11 @@ export default class AddRepository extends Component {
 				</span>
 			</div>
 		);
-	}
-	renderWebhook(){
-		let webhookData = this.context.state.addRepo.testNotification;
-		let statusCode = NPECheck(webhookData, 'response/httpStatusCode', null);
-		let status = NPECheck(this.context.state, 'addRepo/testNotificationStatus', null);
-		let className = this.inputClassName(targetKey);
-
-		if(status == 'SUCCESS') className += ' SuccessBg';
-		if(status == 'ERROR') className += ' ErrorBg';
-
+	}	
+	renderAddRepoNotification(){
 		return (
-			<div className="">
-				<div className="Row FlexColumn">
-					<label>
-						Webhook URL
-					</label>
-					<div className="FlexRow">
-						
-							<input className={className} 
-							       value={this.context.state.addRepo.newRepo[targetKey]}
-								   placeholder="Enter Webhook URL.."
-							       onChange={(e) => this.context.actions.updateNewRepoField(targetKey, e)} />
-						<div>
-							{this.renderTestNotificationStatus(status, statusCode)}
-						</div>
-						{this.renderTestNotification()}
-						
-					</div>
-				</div>
-				<div className="Row FlexColumn">
-					<label>
-						Secret (optional)
-					</label>
-					<input className={this.inputClassName(secretKey)} 
-					       value={this.context.state.addRepo.newRepo[secretKey]}
-						   placeholder="Enter Secret"
-					       onChange={(e) => this.context.actions.updateNewRepoField(secretKey, e)} />
-				</div>
-			</div>
+			<AddRepoNotification />
 		);
-	}
-	renderTestNotification(){
-		return (
-			<Btn style={{marginLeft: '7px'}}
-				 onClick={() => this.context.actions.testNotification()}
-				 text="Test Webhook"
-				 canClick={true}/>
-		);
-	}
-	renderTestNotificationStatus(status, statusCode){
-		let icon = 'icon icon-dis-blank';
-		let statusText = "See Test Results Here";
-		let className = "InActive";
-
-		if (status == 'SUCCESS') {
-			icon = 'icon icon-dis-check'
-			statusText = 'Success';
-			className="Success";
-		}
-
-		if(status == 'WARNING') {
-			icon = 'icon icon-dis-warning';
-			statusText = "Warning";
-			className="Warning";
-		}
-
-		if(status == 'ERROR') {
-			icon = "icon icon-dis-alert";
-			statusText = "Error";
-			className = "Error";
-		}
-
-		className = "Status " + className;
-
-		return (
-			<div className="NotificationTestActions">
-				<div className={className}>
-					<span className="StatusText">{statusText}</span>&nbsp;
-					<span className="StatusCode">{ (statusCode) ? `(${statusCode})` : null}</span>&nbsp;
-					<span className="ViewTestResults" 
-						  onClick={() => this.context.actions.toggleShowNotificationTestResults()}>
-						{ (statusCode) ? ' - View Details' : null}
-					</span>
-				</div>
-			</div>
-		);
-	}
-	renderWebhookData(webhookData){
-		if(this.context.state.addRepo.showNotificationTestResults) {
-			return (
-				<WebhookData webhookData={webhookData} 
-							 modal={true}
-							 style={{width: '800px'}}
-							 close={ () => this.context.actions.toggleShowNotificationTestResults() }/>
-			)
-		};
 	}
 	renderErrorMsg(){
 		if(this.context.state.addRepo.errorMsg) {
@@ -237,8 +145,8 @@ export default class AddRepository extends Component {
             }]
 		}, {
 			columns: [{
-                icon:'icon icon-dis-webhook-circle-solid',
-                renderBody: this.renderWebhook.bind(this)
+                icon:'icon icon-dis-webhook-circle',
+                renderBody: this.renderAddRepoNotification.bind(this),
             }]
 		}, {
 			columns: [{
@@ -282,7 +190,6 @@ export default class AddRepository extends Component {
 					</h2>
 				</div>
 				<div>
-					{this.renderWebhookData(this.context.state.addRepo.testNotification)}
 				    {this.renderAddRegistry()}
 					{this.renderAddRepository()}
 				</div>
