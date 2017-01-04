@@ -8,7 +8,11 @@
 */
 package com.distelli.europa;
 
-import com.distelli.ventura.RouteMatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlet.DefaultServlet;
+import com.distelli.webserver.RouteMatcher;
 import com.distelli.europa.handlers.*;
 
 public class Routes
@@ -49,10 +53,6 @@ public class Routes
         ROUTES.add("GET", "/v2/:name/tags/list", RegistryTagList.class);
         ROUTES.add("GET", "/v2/_catalog", RegistryCatalog.class);
 
-        //set the default request handler TODO: Remove this and set
-        //the static content request handler as the default (or maybe
-        //the NotFoundRequestHandler)!
-        ROUTES.add("GET", "/", DefaultRequestHandler.class);
-        ROUTES.setDefaultRequestHandler(StaticContentRequestHandler.class);
+        ROUTES.setDefaultRequestHandler(DefaultRequestHandler.class);
     }
 }

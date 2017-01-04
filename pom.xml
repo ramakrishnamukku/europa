@@ -171,9 +171,9 @@
     </dependency>
 
     <dependency>
-      <groupId>com.distelli.ventura</groupId>
-      <artifactId>Ventura</artifactId>
-      <version>1.0.4</version>
+      <groupId>com.distelli.webserver</groupId>
+      <artifactId>distelli-webserver</artifactId>
+      <version>1.0.2-SNAPSHOT</version>
     </dependency>
 
     <dependency>

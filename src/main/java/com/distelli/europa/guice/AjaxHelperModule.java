@@ -11,7 +11,7 @@ package com.distelli.europa.guice;
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.MapBinder;
 import com.distelli.europa.ajax.*;
-import com.distelli.ventura.*;
+import com.distelli.webserver.*;
 import lombok.extern.log4j.Log4j;
 
 @Log4j

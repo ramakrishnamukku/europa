@@ -13,7 +13,7 @@ import com.distelli.europa.db.*;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
-import com.distelli.ventura.HTTPMethod;
+import com.distelli.webserver.HTTPMethod;
 
 @Log4j
 @Singleton

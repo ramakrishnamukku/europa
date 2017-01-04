@@ -18,7 +18,7 @@ import lombok.extern.log4j.Log4j;
 import com.google.inject.Singleton;
 import com.distelli.europa.models.*;
 import com.amazonaws.regions.*;
-import com.distelli.ventura.HTTPMethod;
+import com.distelli.webserver.HTTPMethod;
 
 @Log4j
 @Singleton
