@@ -75,10 +75,7 @@ public class SaveContainerRepo extends AjaxHelper
             FieldValidator.validateNonNull(notification, "type", "target");
 
             try {
-                String urlStr = notification.getTarget();
-                if(!urlStr.startsWith("http://") && !urlStr.startsWith("https://"))
-                    urlStr = "http://"+urlStr;
-                URL url = new URL(urlStr);
+                URL url = new URL(notification.getTarget());
             } catch(MalformedURLException mue) {
                 throw(new AjaxClientException("Invalid Target URL on Webhook Notification: "+notification.getTarget(),
                                               JsonError.Codes.BadContent, 400));
