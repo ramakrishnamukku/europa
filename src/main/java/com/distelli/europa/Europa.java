@@ -122,6 +122,13 @@ public class Europa
 
         WebServlet servlet = new WebServlet(_routeMatcher, _requestHandlerFactory);
         WebServer webServer = new WebServer(_port, servlet, "/");
+        webServer.setAssetsDirPath("./");
+        // This is a little bit of a hack... passing in null causes
+        // jetty to NPE. We only use this servlet from Routes.java
+        // which is why we are using an arbitrary UUID here.
+        webServer.setAssetsPath("/994194C9-5742-4284-A7A0-17DCC1D7E921");
+        webServer.setCacheControl("max-age=300");
+        webServer.setEtags(true);
         webServer.start();
     }
 
