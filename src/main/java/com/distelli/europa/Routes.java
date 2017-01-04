@@ -53,26 +53,33 @@ public class Routes
         ROUTES.add("GET", "/v2/:name/tags/list", RegistryTagList.class);
         ROUTES.add("GET", "/v2/_catalog", RegistryCatalog.class);
 
-        //set the default request handler TODO: Remove this and set
-        //the static content request handler as the default (or maybe
-        //the NotFoundRequestHandler)!
-        ROUTES.add("GET", "/", DefaultRequestHandler.class);
+        //DefaultServlet servlet = new DefaultServlet();
+        // ServletHolder staticHolder = new ServletHolder(servlet);
+        // staticHolder.setInitParameter("dirAllowed", "false");
+        // staticHolder.setInitParameter("etags", "true");
 
-        ServletHolder staticHolder = new ServletHolder("static-home", DefaultServlet.class);
-        staticHolder.setInitParameter("resourceBase", "./public");
-        staticHolder.setInitParameter("dirAllowed", "false");
-        staticHolder.setInitParameter("pathInfoOnly", "true");
-        staticHolder.setInitParameter("etags", "true");
-        staticHolder.setInitParameter("cacheControl", "no-cache");
-        try {
-            HttpServlet staticServlet = (HttpServlet)staticHolder.getServlet();
+        // staticHolder.setInitParameter("resourceBase", "./public");
+        // staticHolder.setInitParameter("dirAllowed", "false");
+        // staticHolder.setInitParameter("pathInfoOnly", "true");
+        // staticHolder.setInitParameter("etags", "true");
+        // staticHolder.setInitParameter("cacheControl", "no-cache");
+        // try {
+        //     staticHolder.doStart();
+        //     staticHolder.initialize();
+        // } catch(Throwable t) {
+        //     throw(new RuntimeException(t));
+        // }
 
-            //        ROUTES.add("GET", "/assets/*", staticServlet);
-            ROUTES.add("GET", "/public/*", staticServlet);
-        } catch(ServletException se) {
-            throw(new RuntimeException(se));
-        }
-        //        ROUTES.setDefaultRequestHandler(StaticContentRequestHandler.class);
-        ROUTES.setDefaultRequestHandler(NotFoundHandler.class);
+        // ROUTES.add("GET", "/public/images/*", servlet);
+        // ROUTES.add("GET", "/public/css/*", servlet);
+        // ROUTES.add("GET", "/public/js/*", servlet);
+        // ROUTES.add("GET", "/public/registry-icons/*", servlet);
+        // ROUTES.add("GET", "/public/timeline-icons/*", servlet);
+        ROUTES.add("GET", "/public/images/*", StaticContentRequestHandler.class);
+        ROUTES.add("GET", "/public/images/registry-icons/*", StaticContentRequestHandler.class);
+        ROUTES.add("GET", "/public/images/timeline-icons/*", StaticContentRequestHandler.class);
+        ROUTES.add("GET", "/public/js/*", StaticContentRequestHandler.class);
+        ROUTES.add("GET", "/public/css/*", StaticContentRequestHandler.class);
+        ROUTES.setDefaultRequestHandler(DefaultRequestHandler.class);
     }
 }
