@@ -220,7 +220,7 @@ export function addRepoRequest(afterAddCb) {
         }, () => {
           listRepos.call(this)
 
-          if (afterAddCb) afterAddCb();
+          if (afterAddCb) afterAddCb(res.id);
         })
       })
       .catch((err) => {
@@ -382,11 +382,11 @@ export function toggleActiveRepoSettings() {
   })
 }
 
-export function listRepoEvents(repoId) {
+export function listRepoEvents(repoId, skipXHR) {
 
   this.setState({
     repoDetails: GA.modifyProperty(this.state.repoDetails, {
-      eventsXHR: true
+      eventsXHR: (skipXHR) ? false : true
     })
   }, () => {
 

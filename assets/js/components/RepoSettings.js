@@ -49,6 +49,13 @@ export default class RepoSettings extends Component {
 						<div className="Value">{creds.region}</div>
 					</div>
 				</div>
+				{this.renderRepoDetails(creds)}
+			</div>
+		);
+	}
+	renderRepoDetails(creds){
+		if(creds.provider == 'ECR') {
+			return (
 				<div className="FlexRow">
 					<div className="Flex1">
 						<label className="small">Public Key</label>
@@ -56,11 +63,11 @@ export default class RepoSettings extends Component {
 					</div>
 					<div className="Flex1">
 						<label className="small">Private Key</label>
-						<div className="Value">Hidden</div>
+						<div className="Value">******************</div>
 					</div>
 				</div>
-			</div>
-		);
+			);
+		}
 	}
 	renderRepoNotifications(){
 		let notifs = this.context.state.notif.notifs;

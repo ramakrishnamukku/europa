@@ -19,17 +19,33 @@ export default class RepoEventTimeline extends Component {
 			</div>
 		);
 	}
-	renderAllEvents(){
+	renderTimeline(){
 		return (
 			<div className="Timeline">
 				{this.renderLegend()}
 				<div className="TimelineContainer">
-					{this.props.events
-						.sort((firstEvent, secondEvent) => (firstEvent.eventTime >= secondEvent.eventTime) ? -1 : 1 )
-						.map(this.renderRepoEventItem)}
+					{this.renderTimelineContent()}
 				</div>	
 			</div>
 		);
+	}
+	renderTimelineContent(){
+		if(!this.props.events || !this.props.events.length) {
+			return (
+				<div className="Timeline">
+					<div className="NoContent">
+						<h3>
+							No Events Found
+						</h3>
+						<p> If you just added this repoistory, it may take a second to populate historical events.</p>
+					</div>
+				</div>
+			);
+		}
+
+
+		return this.props.events.sort((firstEvent, secondEvent) => (firstEvent.eventTime >= secondEvent.eventTime) ? -1 : 1 )
+								.map(this.renderRepoEventItem)
 	}
 	renderRepoEventItem(event, index){
 		return (
@@ -40,7 +56,7 @@ export default class RepoEventTimeline extends Component {
 	render() {
 		return (
 			<div className="RepoEventTimeline">
-				{this.renderAllEvents()}
+				{this.renderTimeline()}
 			</div>
 		);
 	}	

@@ -9,6 +9,7 @@ import isEmpty from './../util/IsEmpty'
 import RegistryNames from './../util/RegistryNames'
 import RepoSettings from './../components/RepoSettings'
 import CenteredConfirm from './../components/CenteredConfirm'
+import NPECheck from './../util/NPECheck'
 import RepoEventTimeline from './../components/RepoEventTimeline'
 import BtnGroup from './../components/BtnGroup'
 
@@ -16,27 +17,29 @@ export default class RepoDetailsPage extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-
+			repoId: this.props.params.repoId,
+			pollEventsInterval: null
 		};
 	}
 	componentWillMount() {
-		let repoId = this.props.params.repoId
 
-		if(isEmpty(this.context.state.reposMap)) {
-			this.context.actions.toggleRepoDetailsPageXHR()
-			this.context.actions.listRepos().then(() => {
-				this.context.actions.setActiveRepoDetails(repoId);
-				this.context.actions.listRepoEvents(repoId);
-			});			
-		} else {
-			this.context.actions.setActiveRepoDetails(repoId).then(() => {
-				this.context.actions.listRepoEvents(repoId);	
-			});
-		}
+		this.context.actions.toggleRepoDetailsPageXHR()
+		this.context.actions.listRepos().then(() => {
+			this.context.actions.setActiveRepoDetails(this.state.repoId);
+			this.context.actions.listRepoEvents(this.state.repoId);
+		});			
+	}
+	componentDidMount() {
+		this.setState({
+			pollEventsInterval: setInterval(() => {
+				this.context.actions.listRepoEvents(this.state.repoId, true);
+			}, 10000)
+		})
 	}
 	componentWillUnmount() {
 		this.context.actions.resetRepoDetailsState();
 		this.context.actions.resetNotifState();
+		clearInterval(this.state.pollEventsInterval);
 	}
 	toRepoList(){
 		this.context.router.push('/');
@@ -122,7 +125,7 @@ export default class RepoDetailsPage extends Component {
 			return this.renderPageLoader()
 		}
 
-		let activeRepo = this.context.state.repoDetails.activeRepo;
+		let activeRepo = NPECheck(this.context.state, 'repoDetails/activeRepo', {});
 
 		return (
 			<div className="ContentContainer">
