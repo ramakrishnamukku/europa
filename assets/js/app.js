@@ -17,7 +17,7 @@ export default class App extends Component {
     return (
       <Router history={browserHistory}>
         <Route component={Layout}>
-          <Route component={Repositories} path="/repositories" />
+          <Route component={Repositories} path="/" />
           <Route component={RepoDetailsPage} path="/repository/:repoId" />
           <Route component={AddRepo} path="/new-repository" />
           <Route component={Settings} path="/settings" />

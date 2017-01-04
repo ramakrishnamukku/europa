@@ -39,7 +39,7 @@ export default class RepoDetailsPage extends Component {
 		this.context.actions.resetNotifState();
 	}
 	toRepoList(){
-		this.context.router.push('/repositories');
+		this.context.router.push('/');
 	}
 	renderRepoSettings(activeRepo){
 		if(this.context.state.repoDetails.showSettings) {

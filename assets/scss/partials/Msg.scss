@@ -15,7 +15,7 @@
     }
 
     i.icon-dis-close {
-        color: $red;
+        color: $red !important;
         font-size: 1rem;
 
         &:hover {
@@ -27,10 +27,11 @@
 
 .Msg.Success {
     p {
-        color: $green;
+        color: $green !important;
     }
+
     i.icon-dis-close {
-        color: $green;
+        color: $green !important;
     }
 }
 

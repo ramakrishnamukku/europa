@@ -15,7 +15,7 @@ export function notifState() {
     testNotificationStatus: null,
     showNotificationTestResults: false,
     notifsXHR: false,
-    notifsError: '',
+    notifError: '',
     addNotifXHR: false,
     addNotifSuccess: null,
     deleteNotifId: '',
@@ -38,6 +38,14 @@ export function resetNotifState() {
   this.setState({
     notif: GA.modifyProperty(this.state.notif, notifState.call(this))
   });
+}
+
+export function clearNotifError() {
+ this.setState({
+    notif: GA.modifyProperty(this.state.notif, {
+      notifError: ''
+    })
+  }); 
 }
 
 
@@ -97,7 +105,7 @@ export function listRepoNotifications(repoId, skipXHR) {
           let errorMsg = `There was an error retreiving your notifications. ${NPECheck(err, 'error/message', '')}`
           this.setState({
             notif: GA.modifyProperty(this.state.notif, {
-              notifsError: errorMsg,
+              notifError: errorMsg,
               notifsXHR: false
             })
           }, () => reject());
@@ -138,16 +146,19 @@ export function addRepoNotification(skipXHR) {
             notif: GA.modifyProperty(this.state.notif, {
               addNotifXHR: false,
               addNotifSuccess: true,
-              newNotification: newNotificationState.call(this)
+              newNotification: newNotificationState.call(this),
+              notifError: ''
             })
           }, () => resolve());
         })
         .catch((err) => {
           console.error(err);
+          let errorMsg = `There was an error adding your notification. ${NPECheck(err, 'error/message', '')}`
           this.setState({
             notif: GA.modifyProperty(this.state.notif, {
               addNotifXHR: false,
-              addNotifSuccess: false
+              addNotifSuccess: false,
+              notifError: errorMsg
             })
           }, () => {
             reject();
@@ -189,7 +200,7 @@ export function deleteNotification(skipXHR) {
           this.setState({
             notif: GA.modifyProperty(this.state.notif, {
               deleteNotificationXHR: false,
-              notifsError: errorMsg
+              notifError: errorMsg
             })
           }, () => reject());
         });

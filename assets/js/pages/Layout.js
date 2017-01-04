@@ -76,7 +76,7 @@ export default class Layout extends Component {
 				<nav className="TopNav">
 				 <div className="MaxWidthContainer">
 					<div className="Logo">
-						<Link to="/repositories">
+						<Link to="/">
 							<img src="http://localhost:5050/assets/images/distelli-europa-logo.svg"
 									 alt="Distelli Europa" />
 						</Link>

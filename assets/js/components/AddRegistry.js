@@ -134,7 +134,7 @@ export default class AddRegistry extends Component {
 				</div>
 				<div className="FlexColumn">
 					<span className="Label">
-						Google Container Registry
+						{RegistryNames[reg.provider]}
 					</span>
 					<span className="FlexRow">
 						<span className="Cell">

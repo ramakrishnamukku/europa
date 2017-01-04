@@ -10,6 +10,7 @@ import Btn from './../components/Btn'
 import Msg from './../components/Msg'
 import Loader from './../components/Loader'
 import BtnGroup from './../components/BtnGroup'
+import ConvertTimeFriendly from './../util/ConvertTimeFriendly'
 
 export default class Repositories extends Component {
 	constructor(props) {
@@ -35,7 +36,7 @@ export default class Repositories extends Component {
 
 		return (
 			<div className="RepoList FlexColumn">
-				{filteredRepos.map(this.renderRepoItem)}
+				{filteredRepos.map(this.renderRepoItem.bind(this))}
 			</div>
 		);
 	}
@@ -50,21 +51,40 @@ export default class Repositories extends Component {
 						<span className="RepoName">{repo.name}</span>
 						<span className="RepoProvider">{RegistryNames[repo.provider]}</span>
 					</div>
-					<div className="Flex2 FlexColumn">
-						<div className="FlexRow AlignCenter">
-							<span className="LastPushed">Pushed image <span className="LightBlueColor">hyper-local</span></span>
-							<span className="Label">&nbsp;&ndash;&nbsp;7 Days Agos</span>
-						</div>
-						<div className="FlexRow">
-							<span className="Tag">Latest</span>	
-						</div>
-					</div>
+					{this.renderRepoItemDetails(repo)}
 					<div className="FlexColumn" style={{flex: '0.45', alignItems: 'flex-end', paddingRight: '7px', justifyContent: 'center'}}>
 						<span className="LastWebhookStatus">Success</span>
 					</div>
 				</div>
 			</div>
 			</Link>
+		);
+	}
+	renderRepoItemDetails(repo){
+		let lastEvent = repo.lastEvent
+		if(!lastEvent) {
+			return (
+				<div className="Flex2 FlexColumn UnknownDetails">
+					Retrieving repository details..
+				</div>
+			);
+		}
+
+		let friendlyTime = (lastEvent.eventTime) ? ConvertTimeFriendly(lastEvent.eventTime) : 'Unknown';
+		return (
+			<div className="Flex2 FlexColumn">
+				<div className="FlexRow AlignCenter">
+					<span className="LastPushed">Pushed image <span className="LightBlueColor">{repo.name}</span></span>
+					<span className="Label">&nbsp;&ndash;&nbsp;{friendlyTime}</span>
+				</div>
+				<div className="FlexRow">
+					{lastEvent.imageTags.map((tag, index) => {
+						return (
+							<span className="Tag" key={index}>{tag}</span>	
+						);
+					})}
+				</div>
+			</div>
 		);
 	}
 	renderSearchRepos(){

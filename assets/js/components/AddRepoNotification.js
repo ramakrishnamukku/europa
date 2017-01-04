@@ -50,7 +50,6 @@ export default class AddRepoNotification extends Component {
 		if(status == 'SUCCESS') classNameTarget += ' SuccessBg';
 		if(status == 'ERROR') classNameTarget += ' ErrorBg';
 
-
 		return (
 			<div className="AddNotification">
 				<div className="FlexColumn">
@@ -97,53 +96,16 @@ export default class AddRepoNotification extends Component {
 			}
 
 			return (
-				<Btn onClick={() => this.addNotification() }
-					 className="Btn"
-					 style={{margin: '0 auto', width: '300px', marginTop: '1rem'}}
-					 text="Add Notification"
-				     canClick={true} />
+				<div className="FlexColumn">
+					{this.renderError()}
+					<Btn onClick={() => this.addNotification() }
+						 className="Btn"
+						 style={{margin: '0 auto', width: '300px', marginTop: '1rem'}}
+						 text="Add Notification"
+					     canClick={true} />
+				</div>
 			);
 		}
-	}
-	renderWebhook(){
-		let webhookData = this.context.state.notif.testNotification;
-		let statusCode = NPECheck(webhookData, 'response/httpStatusCode', null);
-		let status = NPECheck(this.context.state, 'notif/testNotificationStatus', null);
-		let className = this.inputClassName(targetKey);
-
-		if(status == 'SUCCESS') className += ' SuccessBg';
-		if(status == 'ERROR') className += ' ErrorBg';
-
-		return (
-			<div className="">
-				<div className="Row FlexColumn">
-					<label>
-						Webhook URL
-					</label>
-					<div className="FlexRow">
-						
-							<input className={className} 
-							       value={this.context.state.addRepo.newRepo[targetKey]}
-								   placeholder="Enter Webhook URL.."
-							       onChange={(e) => this.context.actions.updateNewRepoField(targetKey, e)} />
-						<div>
-							{this.renderTestNotificationStatus(status, statusCode)}
-						</div>
-						{this.renderTestNotification()}
-						
-					</div>
-				</div>
-				<div className="Row FlexColumn">
-					<label>
-						Secret (optional)
-					</label>
-					<input className={this.inputClassName(secretKey)} 
-					       value={this.context.state.addRepo.newRepo[secretKey]}
-						   placeholder="Enter Secret"
-					       onChange={(e) => this.context.actions.updateNewRepoField(secretKey, e)} />
-				</div>
-			</div>
-		);
 	}
 	renderTestNotificationStatus(status, statusCode){
 		let icon = 'icon icon-dis-blank';
@@ -192,6 +154,18 @@ export default class AddRepoNotification extends Component {
 							 close={ () => this.context.actions.toggleShowNotificationTestResults() }/>
 			)
 		};
+	}
+	renderError(){
+		let errorMsg = NPECheck(this.context.state, 'notif/notifError', '');
+
+		if(errorMsg) {
+			return (
+				<Msg
+					text={errorMsg}
+					close={() => this.context.actions.clearNotifError()}
+				/>
+			);
+		} 
 	}
 	render() {	
 		let webhookData = NPECheck(this.context.state, 'notif/testNotification', {});

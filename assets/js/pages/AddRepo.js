@@ -137,7 +137,7 @@ export default class AddRepository extends Component {
 		}
 	}
 	toRepoDetails(repoId){
-		this.context.router.push('/repositories');
+		this.context.router.push('/');
 	}
 	renderAddRepository(){
 		let rows = [{

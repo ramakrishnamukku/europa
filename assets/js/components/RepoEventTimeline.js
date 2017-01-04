@@ -24,8 +24,10 @@ export default class RepoEventTimeline extends Component {
 			<div className="Timeline">
 				{this.renderLegend()}
 				<div className="TimelineContainer">
-					{this.props.events.map(this.renderRepoEventItem)}
-				</div>
+					{this.props.events
+						.sort((firstEvent, secondEvent) => (firstEvent.eventTime >= secondEvent.eventTime) ? -1 : 1 )
+						.map(this.renderRepoEventItem)}
+				</div>	
 			</div>
 		);
 	}

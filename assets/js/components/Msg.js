@@ -11,8 +11,9 @@ export default class Msg extends Component {
 	}
 	renderClose(){
 		if(this.props.close && typeof this.props.close == 'function') {
+
 			return (
-				<i className="icon icon-dis-close Red" onClick={() => this.props.close()}/>
+				<i className="icon icon-dis-close" onClick={() => this.props.close()}/>
 			)
 		}
 	}

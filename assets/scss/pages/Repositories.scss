@@ -98,11 +98,12 @@
 
     a {
         transition: all 0.3s;
+
         &:nth-of-type(2n - 1) {
             background-color: $light-grey;
 
             &:hover {
-                background-color: lighten($light-grey, 2%);                
+                background-color: lighten($light-grey, 2%);
             }
         }
 
@@ -110,7 +111,7 @@
             background-color: $dark-grey;
 
             &:hover {
-                background-color: lighten($dark-grey, 2%);                
+                background-color: lighten($dark-grey, 2%);
             }
         }
     }
@@ -118,6 +119,12 @@
     .RepoItem {
         padding: 14px;
         transition: all 0.3s;
+
+        .UnknownDetails {
+            color: $grey;
+            font-size: 0.75rem;
+            justify-content: center;
+        }
 
         .Inside {
             .ProviderIcon {
