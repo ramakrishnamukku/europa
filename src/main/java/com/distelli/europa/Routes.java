@@ -12,7 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlet.DefaultServlet;
-import com.distelli.ventura.RouteMatcher;
+import com.distelli.webserver.RouteMatcher;
 import com.distelli.europa.handlers.*;
 
 public class Routes
@@ -53,33 +53,6 @@ public class Routes
         ROUTES.add("GET", "/v2/:name/tags/list", RegistryTagList.class);
         ROUTES.add("GET", "/v2/_catalog", RegistryCatalog.class);
 
-        //DefaultServlet servlet = new DefaultServlet();
-        // ServletHolder staticHolder = new ServletHolder(servlet);
-        // staticHolder.setInitParameter("dirAllowed", "false");
-        // staticHolder.setInitParameter("etags", "true");
-
-        // staticHolder.setInitParameter("resourceBase", "./public");
-        // staticHolder.setInitParameter("dirAllowed", "false");
-        // staticHolder.setInitParameter("pathInfoOnly", "true");
-        // staticHolder.setInitParameter("etags", "true");
-        // staticHolder.setInitParameter("cacheControl", "no-cache");
-        // try {
-        //     staticHolder.doStart();
-        //     staticHolder.initialize();
-        // } catch(Throwable t) {
-        //     throw(new RuntimeException(t));
-        // }
-
-        // ROUTES.add("GET", "/public/images/*", servlet);
-        // ROUTES.add("GET", "/public/css/*", servlet);
-        // ROUTES.add("GET", "/public/js/*", servlet);
-        // ROUTES.add("GET", "/public/registry-icons/*", servlet);
-        // ROUTES.add("GET", "/public/timeline-icons/*", servlet);
-        ROUTES.add("GET", "/public/images/*", StaticContentRequestHandler.class);
-        ROUTES.add("GET", "/public/images/registry-icons/*", StaticContentRequestHandler.class);
-        ROUTES.add("GET", "/public/images/timeline-icons/*", StaticContentRequestHandler.class);
-        ROUTES.add("GET", "/public/js/*", StaticContentRequestHandler.class);
-        ROUTES.add("GET", "/public/css/*", StaticContentRequestHandler.class);
         ROUTES.setDefaultRequestHandler(DefaultRequestHandler.class);
     }
 }

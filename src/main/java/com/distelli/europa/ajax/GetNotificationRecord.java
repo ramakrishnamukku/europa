@@ -15,7 +15,7 @@ import com.distelli.europa.models.*;
 import com.distelli.europa.notifiers.*;
 import com.distelli.europa.util.*;
 import com.distelli.objectStore.*;
-import com.distelli.ventura.HTTPMethod;
+import com.distelli.webserver.HTTPMethod;
 import com.google.inject.Singleton;
 
 import lombok.extern.log4j.Log4j;

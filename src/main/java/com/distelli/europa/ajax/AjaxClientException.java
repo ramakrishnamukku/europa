@@ -7,7 +7,7 @@
   Copyright (c) 2013, Distelli Inc., All Rights Reserved.
 */
 package com.distelli.europa.ajax;
-import com.distelli.ventura.*;
+import com.distelli.webserver.*;
 
 public class AjaxClientException extends RuntimeException
 {

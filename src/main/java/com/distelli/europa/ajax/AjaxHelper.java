@@ -8,7 +8,7 @@
 */
 package com.distelli.europa.ajax;
 
-import com.distelli.ventura.HTTPMethod;
+import com.distelli.webserver.HTTPMethod;
 import java.util.Set;
 import java.util.HashSet;
 

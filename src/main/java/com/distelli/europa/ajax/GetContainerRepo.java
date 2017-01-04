@@ -10,7 +10,7 @@ package com.distelli.europa.ajax;
 
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
-import com.distelli.ventura.*;
+import com.distelli.webserver.*;
 import com.distelli.europa.util.*;
 
 import javax.inject.Inject;

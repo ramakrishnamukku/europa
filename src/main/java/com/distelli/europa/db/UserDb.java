@@ -17,7 +17,6 @@ import com.distelli.jackson.transform.TransformModule;
 
 import com.distelli.europa.ajax.*;
 import com.distelli.europa.models.*;
-import com.distelli.ventura.*;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;

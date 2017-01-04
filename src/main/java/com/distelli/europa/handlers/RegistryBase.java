@@ -1,9 +1,9 @@
 package com.distelli.europa.handlers;
 
 import org.eclipse.jetty.http.HttpMethod;
-import com.distelli.ventura.RequestHandler;
-import com.distelli.ventura.WebResponse;
-import com.distelli.ventura.RequestContext;
+import com.distelli.webserver.RequestHandler;
+import com.distelli.webserver.WebResponse;
+import com.distelli.webserver.RequestContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.distelli.europa.registry.RegistryAuth;
 import com.distelli.europa.registry.RegistryError;

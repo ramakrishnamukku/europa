@@ -10,9 +10,10 @@ package com.distelli.europa;
 
 import java.io.File;
 
+import org.eclipse.jetty.servlet.ServletHolder;
 import com.distelli.europa.EuropaConfiguration.EuropaStage;
 import com.distelli.europa.util.*;
-import com.distelli.ventura.*;
+import com.distelli.webserver.*;
 import com.distelli.europa.guice.*;
 import com.distelli.europa.monitor.*;
 import com.google.inject.Guice;
@@ -24,6 +25,7 @@ import com.distelli.persistence.impl.PersistenceModule;
 import javax.inject.Inject;
 import lombok.extern.log4j.Log4j;
 import com.distelli.objectStore.*;
+import org.eclipse.jetty.servlet.DefaultServlet;
 
 @Log4j
 public class Europa
@@ -118,10 +120,16 @@ public class Europa
     {
         RepoMonitor monitor = new RepoMonitor(_monitorQueue);
         _monitorThread = new Thread(monitor);
-        _monitorThread.start();
+        //_monitorThread.start();
 
         WebServlet servlet = new WebServlet(_routeMatcher, _requestHandlerFactory);
         WebServer webServer = new WebServer(_port, servlet, "/");
+
+        ServletHolder staticHolder = new ServletHolder(DefaultServlet.class);
+        staticHolder.setInitParameter("resourceBase", "./public");
+        staticHolder.setInitParameter("dirAllowed","true");
+        staticHolder.setInitParameter("pathInfoOnly","true");
+        webServer.addStandardServlet("/public/*", staticHolder);
         webServer.start();
     }
 
