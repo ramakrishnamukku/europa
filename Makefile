@@ -2,7 +2,7 @@ SHELL := /bin/bash
 .SILENT:
 .PHONY: git-has-pushed git-is-clean
 all:
-	mvn -q -U dependency:build-classpath compile -DincludeScope=runtime -Dmdep.outputFile=target/.classpath -Dmaven.compiler.debug=false && npm run build-all
+	mvn -q -U dependency:build-classpath compile -DincludeScope=runtime -Dmdep.outputFile=target/.classpath -Dmaven.compiler.debug=false && yarn run build-all
 
 install:
 	mvn -q install

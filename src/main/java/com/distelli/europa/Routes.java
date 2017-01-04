@@ -8,6 +8,10 @@
 */
 package com.distelli.europa;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlet.DefaultServlet;
 import com.distelli.ventura.RouteMatcher;
 import com.distelli.europa.handlers.*;
 
@@ -53,6 +57,22 @@ public class Routes
         //the static content request handler as the default (or maybe
         //the NotFoundRequestHandler)!
         ROUTES.add("GET", "/", DefaultRequestHandler.class);
-        ROUTES.setDefaultRequestHandler(StaticContentRequestHandler.class);
+
+        ServletHolder staticHolder = new ServletHolder("static-home", DefaultServlet.class);
+        staticHolder.setInitParameter("resourceBase", "./public");
+        staticHolder.setInitParameter("dirAllowed", "false");
+        staticHolder.setInitParameter("pathInfoOnly", "true");
+        staticHolder.setInitParameter("etags", "true");
+        staticHolder.setInitParameter("cacheControl", "no-cache");
+        try {
+            HttpServlet staticServlet = (HttpServlet)staticHolder.getServlet();
+
+            //        ROUTES.add("GET", "/assets/*", staticServlet);
+            ROUTES.add("GET", "/public/*", staticServlet);
+        } catch(ServletException se) {
+            throw(new RuntimeException(se));
+        }
+        //        ROUTES.setDefaultRequestHandler(StaticContentRequestHandler.class);
+        ROUTES.setDefaultRequestHandler(NotFoundHandler.class);
     }
 }
