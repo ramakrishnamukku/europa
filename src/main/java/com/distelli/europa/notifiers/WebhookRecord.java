@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.net.URL;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -29,6 +30,7 @@ import lombok.extern.log4j.Log4j;
 @Data
 public class WebhookRecord
 {
+    protected URL url;
     protected WebhookRequest request;
     protected WebhookResponse response;
 

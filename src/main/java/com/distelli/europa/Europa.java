@@ -120,7 +120,7 @@ public class Europa
     {
         RepoMonitor monitor = new RepoMonitor(_monitorQueue);
         _monitorThread = new Thread(monitor);
-        //_monitorThread.start();
+        _monitorThread.start();
 
         WebServlet servlet = new WebServlet(_routeMatcher, _requestHandlerFactory);
         WebServer webServer = new WebServer(_port, servlet, "/");

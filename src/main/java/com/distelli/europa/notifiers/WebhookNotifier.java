@@ -66,9 +66,10 @@ public class WebhookNotifier
                       ". Malformed content: "+content);
             return null;
         }
-
+        URL url = null;
         try {
-            webhook.setUrl(new URL(notification.getTarget()));
+            url = new URL(notification.getTarget());
+            webhook.setUrl(url);
         } catch(MalformedURLException mue) {
             if(log.isDebugEnabled())
                 log.debug("Skipping Webhook notification for Image: "+image+
@@ -91,6 +92,7 @@ public class WebhookNotifier
         .build();
 
         WebhookRecord record = new WebhookRecord(request, response);
+        record.setUrl(url);
         saveNotificationRecord(nfId, record);
         return nfId;
     }

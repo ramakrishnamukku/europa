@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.UUID;
 import javax.inject.Inject;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import com.distelli.europa.clients.*;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
@@ -67,18 +70,32 @@ public class SaveContainerRepo extends AjaxHelper
                                           repo.getProvider()+", "+repo.getName(),
                                           AjaxErrors.Codes.RepoAlreadyConnected,
                                           400));
-        //save the repo in the db
-        _reposDb.save(repo);
         Notification notification = ajaxRequest.convertContent("/notification", Notification.class, false);
         if(notification != null) {
             FieldValidator.validateNonNull(notification, "type", "target");
+
+            try {
+                String urlStr = notification.getTarget();
+                if(!urlStr.startsWith("http://") && !urlStr.startsWith("https://"))
+                    urlStr = "http://"+urlStr;
+                URL url = new URL(urlStr);
+            } catch(MalformedURLException mue) {
+                throw(new AjaxClientException("Invalid Target URL on Webhook Notification: "+notification.getTarget(),
+                                              JsonError.Codes.BadContent, 400));
+            }
+
             notification.setRepoId(repo.getId());
             notification.setDomain(repo.getDomain());
             notification.setRepoProvider(repo.getProvider());
             notification.setRegion(repo.getRegion());
             notification.setRepoName(repo.getName());
-            _notificationDb.save(notification);
         }
+        //save the repo in the db
+        _reposDb.save(repo);
+
+        if(notification != null)
+            _notificationDb.save(notification);
+
         _monitorQueue.setReload(true);
         HashMap<String, String> retVal = new HashMap<String, String>();
         retVal.put("id", repo.getId());

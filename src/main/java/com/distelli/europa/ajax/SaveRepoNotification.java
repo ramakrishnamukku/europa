@@ -28,6 +28,8 @@ import com.google.inject.Singleton;
 import org.eclipse.jetty.http.HttpMethod;
 import lombok.extern.log4j.Log4j;
 import javax.inject.Inject;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 @Log4j
 @Singleton
@@ -54,6 +56,17 @@ public class SaveRepoNotification extends AjaxHelper
             throw(new AjaxClientException("Invalid RepoId: "+repoId, JsonError.Codes.BadParam, 400));
         Notification notification = ajaxRequest.convertContent("/notification", Notification.class,
                                                                true);
+        FieldValidator.validateNonNull(notification, "type", "target");
+        //now check that the target is a valid URL
+        try {
+            String urlStr = notification.getTarget();
+            if(!urlStr.startsWith("http://") && !urlStr.startsWith("https://"))
+                urlStr = "http://"+urlStr;
+            URL url = new URL(urlStr);
+        } catch(MalformedURLException mue) {
+            throw(new AjaxClientException("Invalid Target URL on Webhook Notification: "+notification.getTarget(),
+                                          JsonError.Codes.BadContent, 400));
+        }
         notification.setRepoId(repo.getId());
         notification.setDomain(repo.getDomain());
         notification.setRepoProvider(repo.getProvider());
