@@ -3,10 +3,7 @@
 */
 
 import React, {Component} from 'react'
-import AddRegistry from './../components/AddRegistry'
 import Btn from './../components/Btn'
-import Msg from './../components/Msg'
-import Loader from './../components/Loader'
 import RadioButton from './../components/RadioButton'
 
 export default class WebhookData extends Component {
@@ -118,14 +115,24 @@ export default class WebhookData extends Component {
 		}
 
 		let className = 'WebhookData';
-		if(this.props.modal) className += ' Modal';
+
+		if(this.props.modal) {
+			className += ' Modal';
+
+			return (
+				<div className="ScreenCover JustifyCenter AlignCenter">
+					<div className={className}>
+						{this.renderControls()}
+						{this.renderData()}
+					</div>
+				</div>	
+			);
+		}
 
 		return (
-			<div className="ScreenCover JustifyCenter AlignCenter">
-				<div className={className}>
-					{this.renderControls()}
-					{this.renderData()}
-				</div>
+			<div className={className}>
+				{this.renderControls()}
+				{this.renderData()}
 			</div>
 		);
 

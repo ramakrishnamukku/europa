@@ -416,9 +416,11 @@ export function listRepoEvents(repoId, skipXHR) {
 }
 
 export function toggleEventDetails(eventId = null) {
-  this.setState({
-    repoDetails: GA.modifyProperty(this.state.repoDetails, {
-      activeEventId: (this.state.repoDetails.activeEventId == eventId) ? null : eventId
-    })
+  return new Promise((resolve, reject) => {
+    this.setState({
+      repoDetails: GA.modifyProperty(this.state.repoDetails, {
+        activeEventId: (this.state.repoDetails.activeEventId == eventId) ? null : eventId
+      })
+    }, () => resolve(!!this.state.repoDetails.activeEventId));
   });
 }

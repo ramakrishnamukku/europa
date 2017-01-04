@@ -104,13 +104,14 @@ export default class Registries extends Component {
 		}
 	}
 	renderAddEditRegistryLegend(){
+		let isEdit = this.context.state.addRegistry.isEdit;
 		return (
 			<div className="AddEditRegistryLegend">
-				<span style={{width: '100px', flex: 'initial'}}>Provider</span>
+				<span style={(isEdit) ? {width: '100px', flex: 'initial'} : {paddingLeft: '0'}}>Provider</span>
 				<span>Key Name</span>
 				<span>Access Key</span>
 				<span>Private Key</span>
-				<span>Region</span>
+				<span style={{paddingRight: '5px'}}>Region</span>
 				<span  className="Close"
 					   onClick={ () => this.context.actions.toggleShowAddEditRegistryModal() }>
 					<i className="icon icon-dis-close" />

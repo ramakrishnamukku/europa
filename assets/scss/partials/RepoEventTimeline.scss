@@ -131,7 +131,8 @@
                     display: flex;
                     flex-direction: column;
                     justify-content: space-around;
-                    margin-left: 245px;
+                    margin-left: 200px;
+
 
                     .Item {
                         @extend .Clickable;
@@ -147,6 +148,7 @@
         .NotificationContainer {
             width: 100%;
             position: relative;
+            padding-bottom: 21px;
         }
     }
 }

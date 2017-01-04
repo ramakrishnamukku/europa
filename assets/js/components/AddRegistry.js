@@ -392,12 +392,13 @@ export default class AddRegistry extends Component {
 			rows = rows.concat(standAloneRows);
 		}
 
-		return rows.map(this.renderContentRow);
+		return rows.map(this.renderContentRow.bind(this));
 	}
 	renderContentRow(row, index){
 		return (
 			<ContentRow key={index}
-						row={row} />
+						row={row}
+						bodyStyle={(this.props.standaloneMode) ? {margin: '0'} : {}} />
 		);
 	}
 	render() {

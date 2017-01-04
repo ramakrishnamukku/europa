@@ -7,8 +7,8 @@
     flex-direction: row;
     align-items: center;
     border-radius: 3px 3px 0px 0px;
-    flex: 1;
     padding: 0 10px;
+    flex: 1;
 
     span {
         flex: 1;
@@ -28,17 +28,19 @@
 
 .AddEditRegistryLegend {
     @extend .RegistryListLegend;
-
     background-color: $salmon;
 
     span {
         color: white;
         font-weight: 600;
-        margin: 0 10px;
+        padding: 0 10px;
     }
 
     span.Close {
-        flex: 0;
+        position: absolute;
+        right: 0px;
+        margin-top: 1px;
+
 
         i.icon-dis-close {
             color: white;

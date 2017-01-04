@@ -4,26 +4,53 @@
 
 import React, {Component, PropTypes} from 'react'
 import WebhookData from './../components/WebhookData'
+import Loader from './../components/Loader'
 import TimelineIcons from './../util/TimelineIcons'
 import ConvertTimeUTC from './../util/ConvertTimeUTC'
 import ConvertTimeFriendly from './../util/ConvertTimeFriendly'
+
 
 export default class RepoEventItem extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
 	}
+	viewNotificationInfo(event){
+		this.context.actions.toggleEventDetails(event.id).then((getNotifRecords) => {
+			if(getNotifRecords) this.context.actions.getEventNotificationRecords(event.notifications);
+		});
+	}
 	renderEventData(event){
 		if(this.context.state.repoDetails.activeEventId == event.id) {
+
+			if(this.context.state.notif.notifRecordXHR) {
+				return (
+					<Loader />
+				);
+			}
 
 			let style = {
 				width: 'calc(100% - 48px)',
 				margin: '10px auto'
 			}; 
 
+			let currentRecords = this.context.state.notif.currentNotifRecords;
+
+			if(!currentRecords.length) {
+				return (
+					<div className="NotificationContainer">
+						<WebhookData  webhookData={{}} style={style} modal={false}/>
+					</div>
+				);
+			}
+
 			return (
-				<div className="NotificationContainer">
-					<WebhookData webhookData={{}} style={style} />
+				<div className="NotificationContainer FlexColumn">
+					{currentRecords.map((record, index) => {
+						return (
+							<WebhookData key={index} webhookData={record} style={style} modal={false}/>
+						);
+					})}
 				</div>
 			);
 		} 
@@ -34,6 +61,7 @@ export default class RepoEventItem extends Component {
 		let friendlyTime = ConvertTimeFriendly(time);
 		let timeUTC = ConvertTimeUTC(new Date(time), true);
 		let SHA = event.imageSha;
+		let notifLength = event.notifications.length;
 
 		return (
 			<div className="RepoEventContainer">
@@ -74,7 +102,7 @@ export default class RepoEventItem extends Component {
 							</span>
 						</div>
 						<div className="Notifications">
-							<span className="Item" onClick={ () => this.context.actions.toggleEventDetails(event.id) }>Webhook</span>
+							<span className="Item" onClick={ () => this.viewNotificationInfo(event) }>{(notifLength > 1) ? `View Webhooks (${notifLength})` : `View Webhook (${notifLength})`}</span>
 						</div>
 					</div>
 				</div>

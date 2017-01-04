@@ -20,6 +20,8 @@ export function notifState() {
     addNotifSuccess: null,
     deleteNotifId: '',
     deleteNotificationXHR: false,
+    notifRecordXHR: false,
+    currentNotifRecords: [],
     newNotification: {
       ...newNotificationState.call(this)
     }
@@ -41,11 +43,11 @@ export function resetNotifState() {
 }
 
 export function clearNotifError() {
- this.setState({
+  this.setState({
     notif: GA.modifyProperty(this.state.notif, {
       notifError: ''
     })
-  }); 
+  });
 }
 
 
@@ -205,5 +207,44 @@ export function deleteNotification(skipXHR) {
           }, () => reject());
         });
     });
+  });
+}
+
+
+export function getEventNotificationRecords(recordIdsArray) {
+  return new Promise((resolve, reject) => {
+
+    this.setState({
+      notif: GA.modifyProperty(this.state.notif, {
+        notifRecordXHR: true
+      })
+    }, () => {
+      let records = recordIdsArray.map(getNotificationRecord.bind(this))
+
+      Promise.all(records)
+        .then((res) => {
+          this.setState({
+            notif: GA.modifyProperty(this.state.notif, {
+              currentNotifRecords: res,
+              notifRecordXHR: false
+            })
+          }, () => resolve());
+        });
+
+    });
+  });
+}
+
+export function getNotificationRecord(recordId) {
+  return new Promise((resolve, reject) => {
+    RAjax.GET('GetNotificationRecord', {
+        notificationId: recordId
+      })
+      .then((res) => {
+        resolve(res)
+      })
+      .catch((err) => {
+        resolve(res);
+      });
   });
 }

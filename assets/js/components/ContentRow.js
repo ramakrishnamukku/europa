@@ -2,7 +2,7 @@
   @author Sam Heutmaker [samheutmaker@gmail.com]
 */
 
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 
 export default class ContentRow extends Component {
   constructor(props) {
@@ -46,7 +46,7 @@ export default class ContentRow extends Component {
           return (
             <div className="ContentColumn" key={index}>
               {this.renderIcon(column)}
-              <div className="ContentBody">
+              <div className="ContentBody" style={(this.props.bodyStyle) ? this.props.bodyStyle : {}}>
                 {this.renderBody(column)}
               </div>
             </div>
@@ -58,7 +58,9 @@ export default class ContentRow extends Component {
 }
 
 ContentRow.propTypes = {
-  row: React.PropTypes.object.isRequired
+  row: PropTypes.object.isRequired,
+  style: PropTypes.object,
+  bodyStyle: PropTypes.object
 };
 
 
