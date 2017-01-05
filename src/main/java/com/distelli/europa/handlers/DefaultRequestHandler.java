@@ -9,6 +9,9 @@
 package com.distelli.europa.handlers;
 
 import com.distelli.webserver.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.server.Request;
 import com.distelli.europa.react.PageTemplate;
 import com.distelli.europa.react.JSXProperties;
 import lombok.extern.log4j.Log4j;

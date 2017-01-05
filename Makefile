@@ -4,7 +4,7 @@ SHELL := /bin/bash
 all:
 	mvn -q -U dependency:build-classpath compile -DincludeScope=runtime -Dmdep.outputFile=target/.classpath -Dmaven.compiler.debug=false
 
-assets:
+yarn:
 	yarn run build-all
 
 install:
@@ -18,6 +18,7 @@ clean:
 
 package:
 	mvn -q -DincludeScope=runtime dependency:copy-dependencies package
+	yarn run build-all
 
 show-deps:
 	mvn dependency:tree

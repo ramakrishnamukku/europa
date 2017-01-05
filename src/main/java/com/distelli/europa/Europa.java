@@ -23,6 +23,7 @@ import com.distelli.europa.EuropaConfiguration.EuropaStage;
 import com.distelli.europa.guice.*;
 import com.distelli.europa.monitor.*;
 import com.distelli.europa.util.*;
+import com.distelli.europa.handlers.StaticContentErrorHandler;
 import com.distelli.europa.filters.RegistryAuthFilter;
 import com.distelli.objectStore.*;
 import com.distelli.objectStore.impl.ObjectStoreModule;
@@ -40,6 +41,7 @@ public class Europa
 {
     private RequestHandlerFactory _requestHandlerFactory = null;
     private RequestFilter[] _registryApiFilters;
+    private StaticContentErrorHandler _staticContentErrorHandler = null;
     private int _port = 8080;
 
     @Inject
@@ -116,6 +118,7 @@ public class Europa
                     return injector.getInstance(route.getRequestHandler());
                 }
             };
+        _staticContentErrorHandler = injector.getInstance(StaticContentErrorHandler.class);
     }
 
     private void initialize()
@@ -147,19 +150,7 @@ public class Europa
         registryApiServlet.setRequestFilters(_registryApiFilters);
         webServer.addWebServlet("/v2/*", registryApiServlet);
 
-        //TODO: Move this error handler into its own class and return a nice error page
-        ErrorHandler errorHandler = new ErrorHandler() {
-                public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-                    throws IOException {
-                    System.out.println("Handling Error: "+target);
-                    String msg = "</h1>NOT FOUND</h1>";
-                    response.setContentType("text/html");
-                    OutputStream out = response.getOutputStream();
-                    out.write(msg.getBytes());
-                    out.close();
-                }
-            };
-        webServer.setErrorHandler(errorHandler);
+        webServer.setErrorHandler(_staticContentErrorHandler);
         webServer.start();
     }
 
