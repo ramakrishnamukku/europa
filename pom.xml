@@ -171,12 +171,6 @@
     </dependency>
 
     <dependency>
-      <groupId>com.distelli.webserver</groupId>
-      <artifactId>distelli-webserver</artifactId>
-      <version>1.0.2</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>4.5.2</version>
@@ -192,13 +186,19 @@
     <dependency>
       <groupId>com.distelli.objectStore</groupId>
       <artifactId>object-store-api</artifactId>
-      <version>1.0.2</version>
+      <version>1.0.3</version>
     </dependency>
 
     <dependency>
       <groupId>com.distelli.objectStore</groupId>
       <artifactId>object-store-impl</artifactId>
-      <version>1.0.2</version>
+      <version>1.0.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.distelli.webserver</groupId>
+      <artifactId>distelli-webserver</artifactId>
+      <version>1.0.3</version>
     </dependency>
 
   </dependencies>

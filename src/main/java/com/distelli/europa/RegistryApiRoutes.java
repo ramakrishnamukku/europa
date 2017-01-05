@@ -1,7 +1,7 @@
 /*
   $Id: $
-  @file Routes.java
-  @brief Contains the Routes.java class
+  @file RegistryApiRoutes.java
+  @brief Contains the RegistryApiRoutes.java class
 
   @author Rahul Singh [rsingh]
   Copyright (c) 2013, Distelli Inc., All Rights Reserved.
@@ -14,8 +14,10 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import com.distelli.webserver.RouteMatcher;
 import com.distelli.europa.handlers.*;
+import lombok.extern.log4j.Log4j;
 
-public class Routes
+@Log4j
+public class RegistryApiRoutes
 {
     private static final RouteMatcher ROUTES = new RouteMatcher();
     public static RouteMatcher getRouteMatcher() {
@@ -24,12 +26,6 @@ public class Routes
 
     static {
         //Add the routes below this line
-        //    ROUTES.add("GET", "/:username/path/foo", FooRequestHandler.class);
-
-        //Ajax Routes
-        ROUTES.add("GET", "/ajax", AjaxRequestHandler.class);
-        ROUTES.add("POST", "/ajax", AjaxRequestHandler.class);
-
         ROUTES.add("GET", "/v2", RegistryVersionCheck.class);
 
         ROUTES.add("PUT", "/v2/:name/manifests/:reference", RegistryManifestPush.class);
@@ -53,6 +49,7 @@ public class Routes
         ROUTES.add("GET", "/v2/:name/tags/list", RegistryTagList.class);
         ROUTES.add("GET", "/v2/_catalog", RegistryCatalog.class);
 
+        //TODO: set a default route matcher that returns an error json for the registry API
         ROUTES.setDefaultRequestHandler(DefaultRequestHandler.class);
     }
 }
