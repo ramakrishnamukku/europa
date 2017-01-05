@@ -8,6 +8,7 @@ import Btn from './../components/Btn'
 import Loader from './../components/Loader'
 import WebhookData from './../components/WebhookData'
 import NPECheck from './../util/NPECheck'
+import Dropdown from './../components/Dropdown'
 
 let notifTargetKey = 'target';
 let notifSecretKey= 'secret';
@@ -50,9 +51,12 @@ export default class AddRepoNotification extends Component {
 		if(status == 'SUCCESS') classNameTarget += ' SuccessBg';
 		if(status == 'ERROR') classNameTarget += ' ErrorBg';
 
+		// inputClassName={this.inputClassName(dockerRepoNameKey)}
+
 		return (
 			<div className="AddNotification">
 				<div className="FlexColumn">
+
 					<div className="Flex1 FlexColumn Row">
 						<label className="small">Webhook URL</label>
 						<div className="FlexRow">
@@ -66,6 +70,7 @@ export default class AddRepoNotification extends Component {
 							{this.renderTestNotificationButton()}
 						</div>
 					</div>
+
 					<div className="Flex1 FlexColumn Row">
 						<label className="small">Webhook Secret</label>
 						<input className={classNameSecret}

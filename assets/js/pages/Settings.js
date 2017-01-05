@@ -51,9 +51,6 @@ export default class Settings extends Component {
 					</h2>
 				</div>
 				<div className="FlexRow RowPadding">
-					<div className="Flex1 Column">
-						{this.renderSideBar()}
-					</div>
 					<div className="Flex3">
 						{this.renderRegistries()}
 					</div>
@@ -74,3 +71,7 @@ Settings.contextTypes = {
     state: React.PropTypes.object,
     router: React.PropTypes.object
 };
+
+// <div className="Flex1 Column">
+// 						{this.renderSideBar()}
+// 					</div>

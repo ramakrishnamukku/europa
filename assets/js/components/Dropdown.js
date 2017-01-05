@@ -22,12 +22,22 @@ export default class Dropdown extends Component {
 	}
 	renderInput(){
 		if(this.props.inputPlaceholder || this.props.inputClassName || this.props.filterFn || this.props.inputOnChange || this.props.inputValue) {
+
+			let readOnly;
+
+			if(this.props.inputReadOnly) {
+				readOnly = {
+					readOnly: 'readOnly'
+				};
+			}
+
 			return (
 				<input className={this.props.inputClassName}
 					   onClick={ () => this.props.toggleOpen() }
 					   placeholder={this.props.inputPlaceholder}
 					   onChange={this.props.inputOnChange}
-					   value={(this.props.isOpen) ? undefined : this.props.inputValue} />
+					   value={(this.props.isOpen) ? undefined : this.props.inputValue} 
+					   {...readOnly} />
 			);
 		}
 	}
@@ -45,6 +55,13 @@ export default class Dropdown extends Component {
 			</div>
 		);
 	}
+	renderItem(item, index){
+		return (
+			<div key={index} className="ListItem" onClick={() => this.props.onClick(item)}>
+				{item}
+			</div>
+		);
+	}
 	renderDropdown(){
 		let innerClassName = "Dropdown";
 
@@ -56,7 +73,7 @@ export default class Dropdown extends Component {
 		let listItems = this.props.listItems.filter(filterFn);
 		let innerContent = this.renderNoItemsMessage();
 
-		if(listItems.length) innerContent = listItems.map(this.props.renderItem);
+		if(listItems.length) innerContent = listItems.map(((this.props.renderItem) ? this.props.renderItem : this.renderItem).bind(this));
 		if(this.props.XHR) innerContent = this.renderLoader();
         
 		return (
@@ -82,12 +99,14 @@ Dropdown.propTypes = {
 	isOpen: PropTypes.bool.isRequired,
 	toggleOpen: PropTypes.func.isRequired,
 	listItems: PropTypes.array.isRequired,
-	renderItem: PropTypes.func.isRequired,
+	renderItem: PropTypes.func,
+	onClick: PropTypes.func,
 	inputValue: PropTypes.string,
 	filterFn: PropTypes.func,
 	inputOnChange: PropTypes.func,
 	inputPlaceholder: PropTypes.string,
 	inputClassName: PropTypes.string,
+	inputReadOnly: PropTypes.bool,
 	noItemsMessage: PropTypes.string,
 	XHR: PropTypes.bool
 };

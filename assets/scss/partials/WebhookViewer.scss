@@ -1,3 +1,59 @@
 .WebhookViewer {
-	
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin: 10px 13px 21px;
+
+    .RecordList {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+
+        .RecordListItem {
+            background-color: #FFFFFF;
+            border-bottom: 2px solid $curtain-color;
+
+            .RecordListItemInfo {
+                padding: 10px;
+                display: flex;
+                flex-direction: row;
+                align-content: center;
+
+
+                i {
+                    font-size: 1rem;
+                    position: relative;
+                }
+
+                i.icon-dis-check {
+                    color: $green;
+                    margin-right: 10px;
+                }
+
+                i.icon-dis-alert {
+                    color: $red;
+                    margin-right: 10px;
+                }
+
+                i.icon-dis-warning{
+                    color: $yellow;
+                    margin-right: 10px;
+                }
+
+                i.icon-dis-expand, i.icon-dis-collapse {
+                    color: $light-blue;
+                    margin-left: auto;
+                }
+
+                .Url {
+                    color: $light-blue;
+                    font-size: 0.75rem;
+                }
+
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+        }
+    }
 }

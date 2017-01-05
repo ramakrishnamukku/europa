@@ -77,7 +77,7 @@ export default class Layout extends Component {
 				 <div className="MaxWidthContainer">
 					<div className="Logo">
 						<Link to="/">
-							<img src="http://localhost:5050/assets/images/distelli-europa-logo.svg"
+							<img src="/public/images/distelli-europa-logo.svg"
 									 alt="Distelli Europa" />
 						</Link>
 					</div>

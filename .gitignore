@@ -15,5 +15,6 @@ public/*.svg
 
 .DS_Store
 */.DS_Store
+tmp/*
 EuropaConfig.json
 EuropaTestConfig.json

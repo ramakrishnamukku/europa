@@ -3,7 +3,7 @@
 */
 
 import React, {Component, PropTypes} from 'react'
-import WebhookData from './../components/WebhookData'
+import WebhookViewer from './../components/WebhookViewer'
 import Loader from './../components/Loader'
 import TimelineIcons from './../util/TimelineIcons'
 import ConvertTimeUTC from './../util/ConvertTimeUTC'
@@ -29,31 +29,15 @@ export default class RepoEventItem extends Component {
 				);
 			}
 
-			let style = {
-				width: 'calc(100% - 48px)',
-				margin: '10px auto'
-			}; 
-
-			let currentRecords = this.context.state.notif.currentNotifRecords;
-
-			if(!currentRecords.length) {
-				return (
-					<div className="NotificationContainer">
-						<WebhookData  webhookData={{}} style={style} modal={false}/>
-					</div>
-				);
-			}
-
 			return (
-				<div className="NotificationContainer FlexColumn">
-					{currentRecords.map((record, index) => {
-						return (
-							<WebhookData key={index} webhookData={record} style={style} modal={false}/>
-						);
-					})}
-				</div>
+				<WebhookViewer allWebhookData={this.context.state.notif.currentNotifRecords} />
 			);
 		} 
+	}
+	renderWebhookText(event){
+		let notifLength = event.notifications.length;
+		let verb = (this.context.state.repoDetails.activeEventId == event.id) ? 'Hide' : 'View';
+		return (notifLength > 1) ? `${verb} Webhooks (${notifLength})` : `${verb} Webhook (${notifLength})`;
 	}
 	render() {
 		let event = this.props.event;
@@ -61,7 +45,6 @@ export default class RepoEventItem extends Component {
 		let friendlyTime = ConvertTimeFriendly(time);
 		let timeUTC = ConvertTimeUTC(new Date(time), true);
 		let SHA = event.imageSha;
-		let notifLength = event.notifications.length;
 
 		return (
 			<div className="RepoEventContainer">
@@ -102,7 +85,7 @@ export default class RepoEventItem extends Component {
 							</span>
 						</div>
 						<div className="Notifications">
-							<span className="Item" onClick={ () => this.viewNotificationInfo(event) }>{(notifLength > 1) ? `View Webhooks (${notifLength})` : `View Webhook (${notifLength})`}</span>
+							<span className="Item" onClick={ () => this.viewNotificationInfo(event) }>{this.renderWebhookText(event)}</span>
 						</div>
 					</div>
 				</div>

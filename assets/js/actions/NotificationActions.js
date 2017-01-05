@@ -50,7 +50,6 @@ export function clearNotifError() {
   });
 }
 
-
 export function testNotification() {
   RAjax.POST('TestWebhookDelivery', {
       notification: this.state.notif.newNotification
@@ -244,7 +243,7 @@ export function getNotificationRecord(recordId) {
         resolve(res)
       })
       .catch((err) => {
-        resolve(res);
+        resolve(err);
       });
   });
 }

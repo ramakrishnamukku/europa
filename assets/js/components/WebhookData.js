@@ -11,8 +11,7 @@ export default class WebhookData extends Component {
 		super(props);
 		this.state = {
 			viewingType: 'Request',
-			activeData: this.props.webhookData.request
-
+			activeData: props.webhookData.request
 		};
 	}
 	changeType(newType){
@@ -94,13 +93,21 @@ export default class WebhookData extends Component {
 	}
 	renderDataBody(){
 		let body = this.state.activeData.body;
+		let content = body;
+
+		try {
+			content = JSON.stringify(JSON.parse(body), null, 2)
+		} catch(e){
+
+		}
+
 		return (
 			<div className="DataBody">
 				<div className="Title">
 					{this.state.viewingType}&nbsp;Body
 				</div>
 				<pre>
-					{JSON.stringify(JSON.parse(body), null, 2)}
+					{content}
 				</pre>
 			</div>
 		);
@@ -109,7 +116,7 @@ export default class WebhookData extends Component {
 		if(!this.props.webhookData || !Object.keys(this.props.webhookData).length) {
 			return (
 				<div className="WebhookData" style={this.props.style || {}}>
-					No Webhook Data
+					<span className="RedColor">Failed to load webhook data</span>
 				</div>
 			);		
 		}

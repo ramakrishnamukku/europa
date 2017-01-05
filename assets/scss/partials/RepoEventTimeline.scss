@@ -27,6 +27,14 @@
         display: flex;
         flex-direction: column;
 
+        &:last-of-type {
+            .RepoEventItem {
+                .EventLine {
+                    border: 0;
+                }
+            }
+        }
+
         .RepoEventItem {
             margin: 0px;
             display: flex;
@@ -131,8 +139,7 @@
                     display: flex;
                     flex-direction: column;
                     justify-content: space-around;
-                    margin-left: 200px;
-
+                    margin-left: 190px;
 
                     .Item {
                         @extend .Clickable;
