@@ -9,6 +9,7 @@
     display: flex;
     flex-direction: column;
     background-color: #FFFFFF;
+
     // margin: 10px 13px 0;
     padding: 10px;
     border: 1px solid $light-blue;
@@ -51,6 +52,7 @@
 
             i.icon-dis-close {
                 @extend .Clickable;
+
                 font-size: 1.4rem;
             }
         }
@@ -69,7 +71,25 @@
             font-weight: 400;
         }
 
-        .DataHeaders {}
+        .DataHeaders {
+            margin-bottom: 14px;
+            .Headers {
+                display: flex;
+                flex-direction: column;
+                margin: 7px 0;
+
+                .FlexRow {
+                    .Key {
+                        font-size: 0.75rem;
+                    }
+
+                    .Value {
+                        font-size: 0.75rem;
+                        color: $grey;
+                    }
+                }
+            }
+        }
 
         .DataBody {}
     }

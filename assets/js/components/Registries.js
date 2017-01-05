@@ -13,6 +13,7 @@ import Msg from './../components/Msg'
 import Loader from './../components/Loader'
 import ControlRoom from './../components/ControlRoom'
 import AddRegistry from './../components/AddRegistry'
+import NPECheck from './../util/NPECheck'
 
 export default class Registries extends Component {
 	constructor(props) {
@@ -105,18 +106,43 @@ export default class Registries extends Component {
 	}
 	renderAddEditRegistryLegend(){
 		let isEdit = this.context.state.addRegistry.isEdit;
+		let provider = NPECheck(this.context.state, 'addRegistry/newRegistry/provider', '');
+
+		switch(provider) {
+			case 'ECR':
+				return (
+					<div className="AddEditRegistryLegend">
+						<span style={{paddingLeft: '0'}}>Provider</span>
+						<span>Key Name</span>
+						<span >Access Key</span>
+						<span>Private Key</span>
+						<span style={{paddingRight: '5px'}}>Region</span>
+						{this.renderAddEditRegistryLegendClose()}
+					</div>
+				);
+
+			break;
+
+			case 'GCR':
+				return (
+					<div className="AddEditRegistryLegend">
+						<span style={{paddingLeft: '0'}}>Provider</span>
+						<span>Key Name</span>
+						<span style={{paddingRight: '5px'}}>Region</span>
+						{this.renderAddEditRegistryLegendClose()}
+					</div>
+				);
+			break;
+		}
+
+
+	}
+	renderAddEditRegistryLegendClose(){
 		return (
-			<div className="AddEditRegistryLegend">
-				<span style={(isEdit) ? {width: '100px', flex: 'initial'} : {paddingLeft: '0'}}>Provider</span>
-				<span>Key Name</span>
-				<span>Access Key</span>
-				<span>Private Key</span>
-				<span style={{paddingRight: '5px'}}>Region</span>
-				<span  className="Close"
-					   onClick={ () => this.context.actions.toggleShowAddEditRegistryModal() }>
-					<i className="icon icon-dis-close" />
-				</span>
-			</div>
+			<span  className="Close"
+				   onClick={ () => this.context.actions.toggleShowAddEditRegistryModal() }>
+				<i className="icon icon-dis-close" />
+			</span>
 		);
 	}
 	renderAddEditRegistry(){
@@ -168,3 +194,4 @@ Registries.contextTypes = {
     state: React.PropTypes.object,
     router: React.PropTypes.object
 };
+

@@ -8,7 +8,8 @@ import * as RAjax from './../util/RAjax'
 import Validate from './../util/Validate'
 import NPECheck from './../util/NPECheck'
 import {
-  notifState
+  notifState,
+  isAddNotificationValid
 } from './NotificationActions'
 
 // *************************************************
@@ -198,16 +199,29 @@ export function toggleSelectExistingCredsDropdown() {
 export function addRepoRequest(afterAddCb) {
   if (!isAddRepoValid.call(this, true)) return;
 
+  let postData = {
+    repo: this.state.addRepo.newRepo.repo,
+  };
+
+  let notif = NPECheck(this.state, 'notif/newNotification', {});
+
+  let shouldIncludeNotif = Object.keys(notif)
+    .reduce((cur, next) => {
+      cur = (!!notif[next]) ? cur + 1 : cur
+      return cur;
+    }, 0) > 1;
+
+  if (shouldIncludeNotif) {
+    if (!isAddNotificationValid.call(this)) return;
+
+    postData.notification = notif;
+  }
+
   this.setState({
     addRepo: GA.modifyProperty(this.state.addRepo, {
       XHR: true
     })
   }, () => {
-
-    let postData = {
-      repo: this.state.addRepo.newRepo.repo,
-      notification: this.state.notif.newNotification
-    };
 
     RAjax.POST('SaveContainerRepo', postData)
       .then((res) => {

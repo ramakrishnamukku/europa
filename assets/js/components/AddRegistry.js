@@ -151,22 +151,23 @@ export default class AddRegistry extends Component {
 		);
 	}
 	renderSelectProvider(readOnly, isEdit){
-		if(isEdit) {
-			return (
-				<div className="Flex0 FlexRow">
-					<img style={{height: '40px'}}src={RegistryProviderIcons(this.context.state.addRegistry.newRegistry[provider])} />
-				</div>
-			);
-		}
-
 		let providers = Object.keys(RegistryNames);
 		let selectedProvider = NPECheck(this.context.state, 'addRegistry/newRegistry/provider', '');
 		let selectedProviderName = (selectedProvider) ? RegistryNames[selectedProvider] : '';
 
+		if(isEdit) {
+			return (
+				<div className="Flex1 FlexRow AlignCenter">
+					<img style={{height: '40px'}}src={RegistryProviderIcons(this.context.state.addRegistry.newRegistry[provider])} />
+					{selectedProviderName}
+				</div>
+			);
+		}
+
 		return (
 			<div className="Flex1">
 				<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
-					Docker Registry Provider {(this.props.isEdit) ? '( Read Only )' : null}
+					Docker Registry Provider
 				</label>
 				<Dropdown isOpen={this.context.state.addRegistry.selectProviderDropdown}
 						  toggleOpen={() => this.context.actions.toggleSelectProviderDropdown()}
@@ -181,7 +182,6 @@ export default class AddRegistry extends Component {
 	}
 	renderProviderListItem(registryProvider, index){
 		let reg = RegistryNames[registryProvider];
-
 		let className = "ListItem FlexRow";
 
 		if(registryProvider == NPECheck(this.context.state, 'addRegistry/newRegistry/provider', null)) {
@@ -197,13 +197,24 @@ export default class AddRegistry extends Component {
 		);
 	}
 	renderInputKeyName(readOnly, isEdit){
+
+		let keyNameValue = this.context.state.addRegistry.newRegistry[keyName];
+
+		if(isEdit) {
+			return (
+				<div className="Flex1">
+					{keyNameValue}
+				</div>
+			);
+		}
+
 		return (
 			<div className="Flex1">
 				<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
-					Key Name {(this.props.isEdit) ? '( Read Only )' : null}
+					Key Name
 				</label>
 				<input className={this.inputClassName(keyName)}
-					   value={this.context.state.addRegistry.newRegistry[keyName]}
+					   value={keyNameValue}
 				       placeholder="Enter Key Name.."
 					   onChange={(e) => this.context.actions.updateNewRegistryField(keyName, e)} 
 					   {...readOnly}/>
@@ -242,7 +253,17 @@ export default class AddRegistry extends Component {
 			);
 		}
 	}
-	renderSelectRegion(readOnly, isEdit){
+	renderSelectRegion(readOnly, isEdit){		
+		let regionValue = this.context.state.addRegistry.newRegistry[region]
+
+		if(isEdit) {
+			return (
+				<div className="Flex1">
+					{regionValue}
+				</div>
+			);
+		}
+
 		let regions = [];
 		let providerRegions = NPECheck(this.context.state, 'addRegistry/providerRegions', null);
 
@@ -253,7 +274,7 @@ export default class AddRegistry extends Component {
 		return (
 			<div className="Flex1">
 				<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
-					Key Region {(this.props.isEdit) ? '( Read Only )' : null}
+					Key Region
 				</label>
 				<Dropdown isOpen={this.context.state.addRegistry.selectRegionDropdown}
 						  toggleOpen={() => this.context.actions.toggleSelectRegionDropdown()}
@@ -261,7 +282,7 @@ export default class AddRegistry extends Component {
 						  renderItem={(region, index) => this.renderRegionItem(region, index)}
 						  inputPlaceholder="Select Region"
 						  inputClassName={this.inputClassName(region)}
-						  inputValue={this.context.state.addRegistry.newRegistry[region]} 
+						  inputValue={regionValue} 
 						  noItemsMessage="Select Provider First"/>
 			</div>
 		);
@@ -342,7 +363,7 @@ export default class AddRegistry extends Component {
 			<div className="FlexRow JustifyCenter" style={{margin: '0 auto', width: '300px'}}>
 				<div className="Flex1" style={{margin: '0px 10px'}}>
 					<Btn onClick={() => this.context.actions.addRegistryRequest()}
-						 text={(this.props.isEdit) ? 'Save Registry' : 'Add Registry'}
+						 text={(this.props.isEdit) ? 'Save Credential' : 'Add Credential'}
 						 canClick={this.context.actions.canAddRegistry()} />
 					</div>
 				<div className="Flex1" style={{margin: '0px 10px'}}>

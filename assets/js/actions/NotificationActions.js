@@ -3,6 +3,7 @@ import * as GA from './../reducers/GeneralReducers'
 import * as RAjax from './../util/RAjax'
 import Validate from './../util/Validate'
 import NPECheck from './../util/NPECheck'
+import isValidScheme from './../util/isValidScheme'
 
 // *************************************************
 // Notification Actions
@@ -16,6 +17,7 @@ export function notifState() {
     showNotificationTestResults: false,
     notifsXHR: false,
     notifError: '',
+    errorFields: [],
     addNotifXHR: false,
     addNotifSuccess: null,
     deleteNotifId: '',
@@ -45,7 +47,8 @@ export function resetNotifState() {
 export function clearNotifError() {
   this.setState({
     notif: GA.modifyProperty(this.state.notif, {
-      notifError: ''
+      notifError: '',
+      errorFields: []
     })
   });
 }
@@ -130,12 +133,17 @@ export function updateNewNotificationField(prop, e, eIsValue) {
 
 export function addRepoNotification(skipXHR) {
   return new Promise((resolve, reject) => {
+
+    if(!isAddNotificationValid.call(this)) return;
+
     let params = {
       repoId: NPECheck(this.state, 'repoDetails/activeRepo/id', null),
     };
+
     let postData = {
       notification: NPECheck(this.state, 'notif/newNotification', {})
     };
+
     this.setState({
       notif: GA.modifyProperty(this.state.notif, {
         addNotifXHR: (skipXHR) ? false : true
@@ -168,6 +176,22 @@ export function addRepoNotification(skipXHR) {
     })
   });
 }
+
+export function isAddNotificationValid(){
+    let notif = this.state.notif.newNotification; 
+    let isValid = isValidScheme(notif.target);  
+    if(isValid) return true;
+
+    this.setState({
+      notif: GA.modifyProperty(this.state.notif, {
+          notifError: 'Target URL must start with http:// or https://',
+          errorFields: ['target']
+      })
+    });
+
+    return false;
+}
+
 
 export function toggleRepoNotificationForDelete(notifId = null) {
   this.setState({

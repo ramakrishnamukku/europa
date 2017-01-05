@@ -76,7 +76,11 @@ export function addRegistryRequest() {
       })
     }, () => {
 
-      let url = this.state.addRegistry.credentialType == 'SERVICE_CREDENTIAL' ? 'SaveGcrServiceAccountCreds' : 'SaveRegistryCreds';
+      let url = 'SaveRegistryCreds';
+
+      if(this.state.addRegistry.credentialType == 'SERVICE_CREDENTIAL') {
+        url = 'SaveGcrServiceAccountCreds'
+      }
 
       RAjax.POST(url, this.state.addRegistry.newRegistry)
         .then((res) => {
@@ -190,7 +194,8 @@ export function setRegistryForEdit(reg) {
       addRegistry: GA.modifyProperty(this.state.addRegistry, {
         showModal: true,
         isEdit: true,
-        newRegistry: reg
+        newRegistry: reg,
+        credentialType: reg.provider == 'GCR' ? 'SERVICE_CREDENTIAL' : 'KEY_CREDENTIAL'
       })
     }, () => {
       getRegionsForProvider.call(this);
@@ -212,19 +217,34 @@ export function canAddRegistry() {
 }
 
 function isAddRegistryValid(validateOnInput, skipSetState) {
+  let provider = 'Registry Provider';
+  let region = 'Region';
+  let key = 'Public Key';
+  let secret = 'Secret Key';
+  let name = 'Key Name';
 
   let required = {
-    provider: 'Registry Provider',
-    region: 'Region',
-    key: 'Public Key',
-    secret: 'Secret Key',
-    name: 'Key Name'
+    provider,
+    region,
+    key,
+    secret,
+    name,
   };
 
   if (this.state.addRegistry.credentialType == 'SERVICE_CREDENTIAL') {
-    delete required.key;
-    delete required.secret;
-    delete required.name;
+    required = {
+      provider,
+      region,
+      name,
+    };
+  }
+
+  if(this.state.addRegistry.isEdit) {
+    required = {
+      provider,
+      region,
+      name,
+    };
   }
 
   let errorFields = Validate.call(this, this.state.addRegistry.newRegistry, required);

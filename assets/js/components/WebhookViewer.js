@@ -50,7 +50,7 @@ export default class WebhookViewer extends Component {
 				className = 'icon icon-dis-alert';
 			break;
 			case 'WARNING': 
-				className = 'icon icon-dis-warning';
+				className = 'icon icon-dis-alert Warning';
 			break;
 		}
 

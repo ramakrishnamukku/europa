@@ -16,11 +16,11 @@ export default function NotificationReducers(state, action) {
 }
 
 function updateNewNotification(state, data) {
-    let newNotif = state.newNotification;
-    CreateOrSetPropertyValue(newNotif, data.key, data.value);
+    let newNotification = state.newNotification;
+    CreateOrSetPropertyValue(newNotification, data.key, data.value);
 
     return {
         ...state,
-        newNotif
+        newNotification
     };
 }

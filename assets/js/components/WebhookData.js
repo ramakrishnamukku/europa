@@ -85,9 +85,16 @@ export default class WebhookData extends Component {
 			     <div className="Title">
 					{this.state.viewingType}&nbsp;Headers
 				</div>
-				<pre>
-					{JSON.stringify(headers, null, 4)}
-				</pre>
+				<div className="Headers">
+					{Object.keys(headers).map((key, index) => {
+						return (
+							<div className="FlexRow" key={index}>
+								<span className="Key">{key}:&nbsp;</span>
+								<span className="Value">{headers[key]}</span>
+							</div>
+						);
+					})}
+				</div>
 			</div>
 		);
 	}

@@ -26,8 +26,8 @@ export default class AddRepoNotification extends Component {
 			});
 	}
 	inputClassName(selector){
-		// let hasSelector = this.context.state.addRepo.errorFields.includes(selector)
-		let hasSelector = false;
+		let hasSelector = this.context.state.notif.errorFields.includes(selector)
+
 		let className;
 		if(hasSelector) {
 			className = "BlueBorder FullWidth Error";
@@ -50,8 +50,6 @@ export default class AddRepoNotification extends Component {
 
 		if(status == 'SUCCESS') classNameTarget += ' SuccessBg';
 		if(status == 'ERROR') classNameTarget += ' ErrorBg';
-
-		// inputClassName={this.inputClassName(dockerRepoNameKey)}
 
 		return (
 			<div className="AddNotification">
@@ -178,6 +176,7 @@ export default class AddRepoNotification extends Component {
 			<div>
 				{this.renderWebhookData(webhookData)}
 				{this.renderAddNotification()}
+				{(this.props.isExistingRepo) ? null : this.renderError()}
 			</div>
 		);
 	}

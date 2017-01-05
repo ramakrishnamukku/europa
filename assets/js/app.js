@@ -7,6 +7,7 @@ import Repositories from './pages/Repositories'
 import RepoDetailsPage from './pages/RepoDetailsPage'
 import AddRepo from './pages/AddRepo'
 import Settings from './pages/Settings'
+import NotFound from './pages/NotFound'
 
 export default class App extends Component {
   constructor(props) {
@@ -21,6 +22,7 @@ export default class App extends Component {
           <Route component={RepoDetailsPage} path="/repository/:repoId" />
           <Route component={AddRepo} path="/new-repository" />
           <Route component={Settings} path="/settings" />
+          <Route component={NotFound} path="*" />
         </Route>
       </Router>
     );
