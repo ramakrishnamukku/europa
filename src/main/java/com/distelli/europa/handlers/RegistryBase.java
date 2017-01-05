@@ -12,19 +12,11 @@ import java.util.Map;
 import java.util.HashMap;
 import javax.inject.Inject;
 import lombok.extern.log4j.Log4j;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 
 @Log4j
 @Singleton
 public abstract class RegistryBase extends RequestHandler
 {
-    private static ObjectMapper OM = new ObjectMapper();
-    static {
-        OM.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        OM.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
-    }
-
     abstract public WebResponse handleRegistryRequest(RequestContext requestContext);
 
     public WebResponse handleRequest(RequestContext requestContext) {

@@ -186,19 +186,19 @@
     <dependency>
       <groupId>com.distelli.objectStore</groupId>
       <artifactId>object-store-api</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.4</version>
     </dependency>
 
     <dependency>
       <groupId>com.distelli.objectStore</groupId>
       <artifactId>object-store-impl</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.4</version>
     </dependency>
 
     <dependency>
       <groupId>com.distelli.webserver</groupId>
       <artifactId>distelli-webserver</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.4</version>
     </dependency>
 
   </dependencies>
