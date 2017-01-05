@@ -18,7 +18,7 @@ export default class Repositories extends Component {
 		this.state = {};
 	}
 	componentDidMount() {
-		this.context.actions.listRepos();
+		this.context.actions.listRepos();	
 	}
 	toAddRepo(){
 		this.context.router.push('/new-repository');
@@ -31,7 +31,7 @@ export default class Repositories extends Component {
 		});
 
 		if(!filteredRepos.length) {
-			return this.renderNoRepositories();
+			return this.renderNoResults();
 		}
 
 		return (
@@ -128,9 +128,6 @@ export default class Repositories extends Component {
 		);
 	}
 	renderNoRepositories(){
-		let buttons = [
-			
-		];
 		return (
 			<div className="ContentContainer">
 				<div className="NoContent">
@@ -145,6 +142,19 @@ export default class Repositories extends Component {
 			</div>
 		);
 
+	}
+	renderNoResults(){
+		return (
+			<div className="ContentContainer">
+				<div className="NoContent">
+					<h3>
+					</h3>		
+					<p>
+						No Results
+					</p>
+				</div>
+			</div>
+		);		
 	}
 	render() {
 		if(this.context.state.reposXHR) {

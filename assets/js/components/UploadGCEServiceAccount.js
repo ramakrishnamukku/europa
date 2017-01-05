@@ -37,13 +37,17 @@ export default class UploadGCEServciceAccount extends Component {
 			);
 		}
 
+		let message = (this.props.isEdit) ? 'Update service account credential' : 'Upload service account credential'
+
 		return (
-			<span className="UploadText">Upload service account credential</span>
+			<span className="UploadText">{message}</span>
 		);
 	}
 	render() {
+		let className = (this.props.standaloneMode) ? 'UploadGCEServiceAccount StandAlone' : 'UploadGCEServiceAccount'
+
 		return (
-			<div className="UploadGCEServiceAccount">
+			<div className={className}>
 				<Dropzone className="UploadDropZone" 
 						  multiple={false} 
 						  onDrop={(files) => this.handleDrop(files)}
@@ -60,6 +64,8 @@ UploadGCEServciceAccount.propTypes = {
 	handleDrop: PropTypes.func.isRequired,
 	cancel: PropTypes.func.isRequired,
 	isComplete: PropTypes.bool.isRequired,
+	standaloneMode: PropTypes.bool,
+	isEdit: PropTypes.bool,
 }
 
 UploadGCEServciceAccount.childContextTypes = {

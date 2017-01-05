@@ -35,9 +35,21 @@ export default class RepoEventItem extends Component {
 		} 
 	}
 	renderWebhookText(event){
+		let action = this.viewNotificationInfo.bind(this, event);
 		let notifLength = event.notifications.length;
 		let verb = (this.context.state.repoDetails.activeEventId == event.id) ? 'Hide' : 'View';
-		return (notifLength > 1) ? `${verb} Webhooks (${notifLength})` : `${verb} Webhook (${notifLength})`;
+		let inside = (notifLength == 1) ? `${verb} Webhooks (${notifLength})` : `${verb} Webhook (${notifLength})`;
+		let className = "Item";
+
+		if(notifLength == 0) {
+			action = () => {};
+			inside = 'No Webhooks'
+			className = "Item NoClick"
+		}
+
+		return (
+			<span className={className} onClick={ () =>  action()}>{inside}</span>
+		);
 	}
 	render() {
 		let event = this.props.event;
@@ -85,7 +97,7 @@ export default class RepoEventItem extends Component {
 							</span>
 						</div>
 						<div className="Notifications">
-							<span className="Item" onClick={ () => this.viewNotificationInfo(event) }>{this.renderWebhookText(event)}</span>
+							{this.renderWebhookText(event)}
 						</div>
 					</div>
 				</div>

@@ -25,11 +25,13 @@ export default class AddRegistry extends Component {
 		super(props);
 		this.state = {};
 	}
-	componentWillMount() {
-		
-	}
 	componentWillUnmount() {
 		this.context.actions.resetAddRegistryState();	
+	}
+	addRegistry(){
+		this.context.actions.addRegistryRequest().then(() => {
+			this.context.actions.toggleShowAddEditRegistryModal();
+		});
 	}
 	inputClassName(selector){
 		let hasSelector = this.context.state.addRegistry.errorFields.includes(selector)
@@ -158,8 +160,8 @@ export default class AddRegistry extends Component {
 		if(isEdit) {
 			return (
 				<div className="Flex1 FlexRow AlignCenter">
-					<img style={{height: '40px'}}src={RegistryProviderIcons(this.context.state.addRegistry.newRegistry[provider])} />
-					{selectedProviderName}
+					<img style={{height: '40px', marginRight: '7px'}} src={RegistryProviderIcons(this.context.state.addRegistry.newRegistry[provider])} />
+					{selectedProvider}
 				</div>
 			);
 		}
@@ -246,8 +248,9 @@ export default class AddRegistry extends Component {
 						Private Key
 					</label>
 					<input className={this.inputClassName(secret)}
-						   value={(this.props.isEdit) ? '******************' : this.context.state.addRegistry.newRegistry[secret]}
+						   value={this.context.state.addRegistry.newRegistry[secret]}
 						   placeholder="Enter Private Key.."
+						   defaultValue={(this.props.isEdit) ? '******************' : '' }
 						   onChange={(e) => this.context.actions.updateNewRegistryField(secret, e)} />
 				</div>
 			);
@@ -303,7 +306,9 @@ export default class AddRegistry extends Component {
 			return (
 				<UploadGCEServiceAccount handleDrop={(json) => this.context.actions.updateServiceAccountCredential(json)}
 										 cancel={() => this.context.actions.cancelServiceAccountCredentialUpload()}
-										 isComplete={isComplete}/>
+										 isComplete={isComplete}
+										 standaloneMode={this.props.standaloneMode}
+										 isEdit={this.props.isEdit}/>
 			);
 		}
 	}
@@ -311,6 +316,7 @@ export default class AddRegistry extends Component {
 		if(this.context.state.addRepo.newRepoCredsType == 'NEW' || this.props.standaloneMode) {
 
 			let isEdit = this.props.isEdit;
+			let className = (isEdit) ? 'AddEditRegistryCreds Edit' : 'AddEditRegistryCreds';
 			let readOnly = {};
 
 			if(isEdit) {
@@ -320,7 +326,7 @@ export default class AddRegistry extends Component {
 
 			return (
 				<div className="FlexColumn">
-					<div className="AddEditRegistryCreds" style={this.props.standaloneMode ? {} : {margin: '0 -6px'}}>
+					<div className={className} style={this.props.standaloneMode ? {} : {margin: '0 -6px'}}>
 						{this.renderSelectProvider(readOnly, isEdit)}
 						{this.renderInputKeyName(readOnly, isEdit)}
 						{this.renderInputPublicKey(readOnly, isEdit)}
@@ -335,9 +341,8 @@ export default class AddRegistry extends Component {
 	renderErrorMsg(){
 		if(this.context.state.addRegistry.errorMsg) {
 			return (
-				<Msg
-					text={this.context.state.addRegistry.errorMsg}
-				/>
+				<Msg text={this.context.state.addRegistry.errorMsg} 
+					 close={() => this.context.actions.clearAddRegistryError()}/>
 			);
 		}
 	}
@@ -362,7 +367,7 @@ export default class AddRegistry extends Component {
 		return (
 			<div className="FlexRow JustifyCenter" style={{margin: '0 auto', width: '300px'}}>
 				<div className="Flex1" style={{margin: '0px 10px'}}>
-					<Btn onClick={() => this.context.actions.addRegistryRequest()}
+					<Btn onClick={() => this.addRegistry()}
 						 text={(this.props.isEdit) ? 'Save Credential' : 'Add Credential'}
 						 canClick={this.context.actions.canAddRegistry()} />
 					</div>

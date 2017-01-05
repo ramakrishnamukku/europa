@@ -109,19 +109,6 @@ export default class Registries extends Component {
 		let provider = NPECheck(this.context.state, 'addRegistry/newRegistry/provider', '');
 
 		switch(provider) {
-			case 'ECR':
-				return (
-					<div className="AddEditRegistryLegend">
-						<span style={{paddingLeft: '0'}}>Provider</span>
-						<span>Key Name</span>
-						<span >Access Key</span>
-						<span>Private Key</span>
-						<span style={{paddingRight: '5px'}}>Region</span>
-						{this.renderAddEditRegistryLegendClose()}
-					</div>
-				);
-
-			break;
 
 			case 'GCR':
 				return (
@@ -133,6 +120,18 @@ export default class Registries extends Component {
 					</div>
 				);
 			break;
+
+			default:
+				return (
+					<div className="AddEditRegistryLegend">
+						<span style={{paddingLeft: '0'}}>Provider</span>
+						<span>Key Name</span>
+						<span >Access Key</span>
+						<span>Private Key</span>
+						<span style={{paddingRight: '5px'}}>Region</span>
+						{this.renderAddEditRegistryLegendClose()}
+					</div>
+				);
 		}
 
 

@@ -12,6 +12,10 @@ import {
   isAddNotificationValid
 } from './NotificationActions'
 
+import {
+  newRegistryState
+} from './RegistryActions'
+
 // *************************************************
 // General Repo Actions
 // *************************************************
@@ -113,12 +117,6 @@ export function listReposForRegistry() {
       addRepo: GA.modifyProperty(this.state.addRepo, {
         reposInRegistryXHR: true,
         reposInRegistryQuery: '',
-        newRepo: {
-          ...this.state.addRepo.newRepo,
-          repo: GA.modifyProperty(NPECheck(this, 'state/addRepo/newRepo/repo', {}), {
-            name: ''
-          })
-        }
       })
     }, () => {
       RAjax.POST('ListReposInRegistry', {}, credId ? {
@@ -171,7 +169,8 @@ export function setNewRepoCredsType(type) {
     }),
     addRegistry: GA.modifyProperty(this.state.addRegistry, {
       errorFields: [],
-      errorMsg: ''
+      errorMsg: '',
+      newRegistry: newRegistryState.call(this)
     })
   });
 }

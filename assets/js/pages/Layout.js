@@ -9,7 +9,6 @@ import ActionBinder from './../util/ActionBinder'
 
 // Actions
 import * as GeneralActions from './../actions/GeneralActions'
-import * as AddRegistryActions from './../actions/AddRegistryActions'
 import * as RepoActions from './../actions/RepoActions'
 import * as NotificationActions from './../actions/NotificationActions'
 import * as RegistryActions from './../actions/RegistryActions'
@@ -32,36 +31,54 @@ export default class Layout extends Component {
 				...RegistryActions.registryState()
 			},
 			addRegistry: {
-				...AddRegistryActions.addRegistryState()
+				...RegistryActions.addRegistryState()
 			},
 			addRepo: {
 				...RepoActions.addRepoState()
 			},
-			notif: {
-				...NotificationActions.notifState()
-			},
 			repoDetails: {
 				...RepoActions.repoDetailsState()
 			},
+			notif: {
+				...NotificationActions.notifState()
+			},
 			settings: {
 				...SettingsActions.settingsState()
+			},
+			intervals: {
+				registriesInterval: null,
+				reposInterval: null
 			}
 		};
 	}
 	componentDidMount() {
-		RegistryActions.listRegistries.call(this)
-		RepoActions.listRepos.call(this)
+		RegistryActions.listRegistries.call(this);
+		RepoActions.listRepos.call(this);
+
+		this.setState({
+			intervals: {
+				registriesInterval: setInterval(() => {
+					RegistryActions.listRegistries.call(this)
+				}, 30000),
+				reposInterval: setInterval(() => {
+					RepoActions.listRepos.call(this)
+				}, 30000)
+			}
+		});
 	}
 	componentDidUpdate(prevProps, prevState) {
 		ReactTooltip.hide();
 		ReactTooltip.rebuild();
 	}
+	componentWillUnmount() {
+		clearInterval(this.state.intervals.registriesInterval);
+		clearInterval(this.state.intervals.reposInterval);
+	}
 	getChildContext() {
 
-		let actions = [ AddRegistryActions, 
+		let actions = [ RegistryActions, 
 					    RepoActions,
 					    NotificationActions, 
-					    RegistryActions, 
 					    SettingsActions 
 					  ];
 		return {
