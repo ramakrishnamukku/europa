@@ -7,11 +7,12 @@ import com.distelli.europa.handlers.RegistryBase;
 import com.distelli.europa.handlers.RegistryVersionCheck;
 import com.distelli.europa.models.TokenAuth;
 import com.distelli.europa.filters.RegistryAuthFilter;
-import com.distelli.europa.util.Log4JConfigurator;
+import com.distelli.utils.Log4JConfigurator;
 import com.distelli.persistence.impl.PersistenceModule;
 import com.distelli.objectStore.impl.ObjectStoreModule;
 import com.distelli.webserver.HTTPMethod;
 import com.distelli.webserver.RequestContext;
+import com.distelli.webserver.RequestContextFactory;
 import com.distelli.webserver.RequestHandlerFactory;
 import com.distelli.webserver.WebResponse;
 import com.distelli.webserver.RequestHandler;
@@ -86,6 +87,12 @@ public class TestRegistryAPI {
         servlet = new WebServlet(
             RegistryApiRoutes.getRouteMatcher(),
             (route) -> INJECTOR.getInstance(route.getRequestHandler()));
+
+        servlet.setRequestContextFactory(new RequestContextFactory() {
+                public RequestContext getRequestContext(HTTPMethod method, HttpServletRequest request) {
+                    return new RequestContext(method, request, false);
+                }
+            });
         servlet.setRequestFilters(INJECTOR.getInstance(RegistryAuthFilter.class));
         addToken();
     }

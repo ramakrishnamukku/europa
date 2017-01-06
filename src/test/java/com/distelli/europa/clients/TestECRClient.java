@@ -5,7 +5,7 @@ import java.util.*;
 import com.distelli.europa.*;
 import com.distelli.europa.models.*;
 import com.google.inject.Stage;
-import com.distelli.europa.util.Log4JConfigurator;
+import com.distelli.utils.Log4JConfigurator;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;

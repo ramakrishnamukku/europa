@@ -36,11 +36,8 @@ public class RegistryApiRoutes
         ROUTES.add("HEAD", "/v2/:name/blobs/:digest", RegistryLayerExists.class);
         ROUTES.add("DELETE", "/v2/:name/blobs/:digest", RegistryLayerDelete.class);
 
-        // Must support multipart uploads:
-        // http://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html
-
         // ?digest=<digest> ?mount=<digest>&from=<repository name>
-        ROUTES.add("POST", "/v2/:name/blobs/uploads/", RegistryLayerUploadBegin.class);
+        ROUTES.add("POST", "/v2/:name/blobs/uploads", RegistryLayerUploadBegin.class);
         ROUTES.add("PUT", "/v2/:name/blobs/uploads/:uuid", RegistryLayerUploadFinish.class);
 //        ROUTES.add("PATCH", "/v2/:name/blobs/uploads/:uuid", RegistryLayerUploadChunk.class);
         ROUTES.add("GET", "/v2/:name/blobs/uploads/:uuid", RegistryLayerUploadProgress.class);
@@ -50,6 +47,6 @@ public class RegistryApiRoutes
         ROUTES.add("GET", "/v2/_catalog", RegistryCatalog.class);
 
         //TODO: set a default route matcher that returns an error json for the registry API
-        ROUTES.setDefaultRequestHandler(DefaultRequestHandler.class);
+        ROUTES.setDefaultRequestHandler(RegistryDefault.class);
     }
 }

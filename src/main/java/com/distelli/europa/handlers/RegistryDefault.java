@@ -13,15 +13,9 @@ import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
-public class RegistryManifestPush extends RegistryBase {
+public class RegistryDefault extends RegistryBase {
     public WebResponse handleRegistryRequest(RequestContext requestContext) {
-        String contentDigest = "TODO";
-        String location = "TODO";
-
-        WebResponse response = new WebResponse();
-        response.setHttpStatusCode(201);
-        response.setResponseHeader("Location", location);
-        response.setResponseHeader("Docker-Content-Digest", contentDigest);
+        WebResponse response = new WebResponse(404);
         return response;
     }
 }

@@ -18,6 +18,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <distelli-common.version>1.2.0</distelli-common.version>
   </properties>
 
   <build>
@@ -186,25 +187,25 @@
     <dependency>
       <groupId>com.distelli.objectStore</groupId>
       <artifactId>object-store-api</artifactId>
-      <version>1.2.0</version>
+      <version>${distelli-common.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.distelli.objectStore</groupId>
       <artifactId>object-store-impl</artifactId>
-      <version>1.2.0</version>
+      <version>${distelli-common.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.distelli.webserver</groupId>
       <artifactId>distelli-webserver</artifactId>
-      <version>1.2.0</version>
+      <version>${distelli-common.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.distelli.utils</groupId>
       <artifactId>Utilities</artifactId>
-      <version>1.2.0</version>
+      <version>${distelli-common.version}</version>
     </dependency>
 
   </dependencies>

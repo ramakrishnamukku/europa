@@ -9,7 +9,7 @@ package com.distelli.europa.notifiers;
 
 import java.util.Arrays;
 
-import com.distelli.europa.util.Log4JConfigurator;
+import com.distelli.utils.Log4JConfigurator;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
