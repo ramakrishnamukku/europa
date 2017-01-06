@@ -23,6 +23,7 @@ import com.distelli.europa.EuropaConfiguration.EuropaStage;
 import com.distelli.europa.guice.*;
 import com.distelli.europa.monitor.*;
 import com.distelli.europa.util.*;
+import com.distelli.utils.Log4JConfigurator;
 import com.distelli.europa.handlers.StaticContentErrorHandler;
 import com.distelli.europa.filters.RegistryAuthFilter;
 import com.distelli.objectStore.*;

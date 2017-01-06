@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 
 import com.distelli.europa.models.*;
 import com.distelli.europa.util.*;
+import com.distelli.utils.HmacSha;
 
 import lombok.Getter;
 import lombok.Setter;

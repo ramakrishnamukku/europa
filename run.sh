@@ -1,8 +1,7 @@
 #!/bin/bash -e
 
 if [ -z "$EUROPA_CONFIG" ]; then
-    echo "You must set the EUROPA_CONFIG environment variable to point to the configuration file." 1>&2
-    exit 1
+    EUROPA_CONFIG=EuropaConfig.json
 fi
 
 DEPS_CLASSPATH=`cat target/.classpath`

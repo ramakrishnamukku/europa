@@ -35,3 +35,6 @@ git-is-master:
 publish: git-is-clean git-is-master
 	if [ -z "$(NEW_VERSION)" ]; then echo 'Please run `make publish NEW_VERSION=1.1`' 1>&2; false; fi
 	. ~/.distelli.config && mvn -DdevelopmentVersion=$(NEW_VERSION) --batch-mode -DautoVersionSubmodules=true -Dsurefire.useFile=false -DgenerateBackupPoms=false -DuseReleaseProfile=false -DscmCommentPrefix='[skip ci][release:prepare]' release:prepare release:perform $(MVN_OPTS)
+
+up-deps:
+	mvn versions:use-latest-releases -Dincludes='com.distelli*' -DgenerateBackupPoms=false
