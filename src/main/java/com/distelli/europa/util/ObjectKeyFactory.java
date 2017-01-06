@@ -25,6 +25,7 @@ public class ObjectKeyFactory
     private String _pathPrefix;
 
     public static final String WEBHOOKS_STORAGE_PREFIX = "webhooks";
+    public static final String BLOBS_PREFIX = "blobs";
 
     @Inject
     public ObjectKeyFactory(EuropaConfiguration europaConfiguration)
@@ -60,5 +61,23 @@ public class ObjectKeyFactory
         .bucket(_defaultBucket)
         .key(key)
         .build();
+    }
+
+    public ObjectKey forRegistryBlobId(String blobId)
+    {
+        String key = null;
+        if(_pathPrefix != null)
+            key = String.format("%s/%s/%s",
+                                _pathPrefix,
+                                BLOBS_PREFIX,
+                                blobId);
+        else
+            key = String.format("%s/%s",
+                                BLOBS_PREFIX,
+                                blobId);
+        return ObjectKey.builder()
+            .bucket(_defaultBucket)
+            .key(key)
+            .build();
     }
 }

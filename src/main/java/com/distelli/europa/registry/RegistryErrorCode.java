@@ -1,18 +1,23 @@
 package com.distelli.europa.registry;
 
 public enum RegistryErrorCode {
-    SERVER_ERROR(500),
-    NAME_UNKNOWN(404),
-
-    NAME_INVALID(400),
-    TAG_INVALID(400),
-    MANIFEST_INVALID(400),
-    MANIFEST_UNVERIFIED(400),
     BLOB_UNKNOWN(400),
-
-    UNSUPPORTED(405),
+    BLOB_UPLOAD_INVALID(400),
+    BLOB_UPLOAD_UNKNOWN(404),
+    DIGEST_INVALID(400),
+    MANIFEST_BLOB_UNKNOWN(404),
+    MANIFEST_INVALID(400),
+    MANIFEST_UNKNOWN(404),
+    MANIFEST_UNVERIFIED(400),
+    NAME_INVALID(400),
+    NAME_UNKNOWN(404),
+    SIZE_INVALID(400),
+    TAG_INVALID(400),
+    UNAUTHORIZED(401),
     DENIED(403),
-    UNAUTHORIZED(401);
+    UNSUPPORTED(405),
+    SERVER_ERROR(500);
+
     private int statusCode;
     private RegistryErrorCode(int statusCode) {
         this.statusCode = statusCode;

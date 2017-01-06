@@ -23,13 +23,19 @@ import java.util.Arrays;
 import javax.inject.Provider;
 import lombok.extern.log4j.Log4j;
 import com.distelli.europa.db.TokenAuthDb;
+import com.distelli.europa.db.RegistryBlobDb;
+import com.distelli.europa.db.UserDb;
+import com.distelli.europa.db.SequenceDb;
 import com.distelli.objectStore.*;
 
 @Log4j
 public class EuropaInjectorModule extends AbstractModule
 {
     private static List<Provider<TableDescription>> TABLES = Arrays.asList(
-        TokenAuthDb::getTableDescription
+        TokenAuthDb::getTableDescription,
+        RegistryBlobDb::getTableDescription,
+        UserDb::getTableDescription,
+        SequenceDb::getTableDescription
         );
 
     private EuropaConfiguration _europaConfiguration;

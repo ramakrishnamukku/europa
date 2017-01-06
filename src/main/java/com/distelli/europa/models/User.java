@@ -20,23 +20,23 @@ public class User
 {
     public static final String DOMAIN_PREFIX = "d";
 
-    protected String id;
+    protected Long id;
     protected String email;
     protected String username;
 
     public String getDomain()
     {
-        return String.format("%s%s",
+        return String.format("%s%d",
                              DOMAIN_PREFIX,
                              this.id);
     }
 
-    public static final String domainToId(String domain)
+    public static final Long domainToId(String domain)
     {
         if(domain == null)
             return null;
         if(domain.startsWith(DOMAIN_PREFIX))
-            return domain.substring(DOMAIN_PREFIX.length());
-        return domain;
+            return Long.parseLong(domain.substring(DOMAIN_PREFIX.length()));
+        return null;
     }
 }
