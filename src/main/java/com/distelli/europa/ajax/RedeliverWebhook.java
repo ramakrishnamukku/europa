@@ -57,6 +57,6 @@ public class RedeliverWebhook extends AjaxHelper
             throw(new RuntimeException(ioe));
         }
         NotificationId nfId = _webhookNotifier.notify(record);
-        return nfId;
+        return nfId.toCanonicalId();
     }
 }
