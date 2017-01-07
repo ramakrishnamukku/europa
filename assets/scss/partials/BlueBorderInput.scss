@@ -56,3 +56,7 @@ select.BlueBorder.SuccessBg, input.BlueBorder.SuccessBg {
 select.BlueBorder.ErrorBg, input.BlueBorder.ErrorBg {
     background-color: $light-red;
 }
+
+select.BlueBorder.ErrorBg, input.BlueBorder.WarningBg {
+    background-color: $light-yellow;
+}

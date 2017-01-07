@@ -50,6 +50,7 @@ export default class AddRepoNotification extends Component {
 
 		if(status == 'SUCCESS') classNameTarget += ' SuccessBg';
 		if(status == 'ERROR') classNameTarget += ' ErrorBg';
+		if(status == 'WARNING') classNameTarget += ' WarningBg';
 
 		return (
 			<div className="AddNotification">
