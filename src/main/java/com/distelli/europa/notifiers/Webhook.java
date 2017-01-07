@@ -62,39 +62,4 @@ public class Webhook
     {
         return _url.toURI();
     }
-
-    // public void send()
-    // {
-    //     try {
-
-    //         String signature = null;
-
-    //         if(_secret != null && !_secret.trim().isEmpty())
-    //             signature = HmacSha.hmacSha256(_secret, webhookBody);
-
-    //         if(signature != null)
-    //             _headers.put("x-europa-signature", signature);
-
-    //         String contentType = "application/json";
-    //         _headers.put("Content-Type", contentType);
-    //         for(Map.Entry<String, String> entry : _headers.entrySet())
-    //             httpRequest.addHeader(entry.getKey(), entry.getValue());
-    //         httpRequest.setURI(_url.toURI());
-
-    //         StringEntity entity = new StringEntity(webhookBody, StandardCharsets.UTF_8);
-    //         entity.setContentType(contentType);
-    //         ((HttpEntityEnclosingRequest)httpRequest).setEntity(entity);
-
-    //         _webhookRequest = WebhookRequest
-    //         .builder()
-    //         .headers(_headers)
-    //         .body(webhookBody)
-    //         .build();
-    //         HttpResponse httpResponse = _httpClient.execute(httpRequest);
-
-    //         _webhookResponse = new WebhookResponse(httpResponse);
-    //     } catch(Throwable t) {
-    //         throw(new RuntimeException(t));
-    //     }
-    // }
 }

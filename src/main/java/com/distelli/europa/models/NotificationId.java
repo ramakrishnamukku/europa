@@ -5,7 +5,7 @@
 
   @author Rahul Singh [rsingh]
 */
-package com.distelli.europa.notifiers;
+package com.distelli.europa.models;
 
 import lombok.Data;
 import lombok.Builder;

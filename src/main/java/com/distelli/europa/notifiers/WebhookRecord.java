@@ -31,6 +31,7 @@ import lombok.extern.log4j.Log4j;
 public class WebhookRecord
 {
     protected URL url;
+    protected String secret;
     protected WebhookRequest request;
     protected WebhookResponse response;
 

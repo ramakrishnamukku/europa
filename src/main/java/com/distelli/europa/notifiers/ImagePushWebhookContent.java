@@ -25,7 +25,9 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ImagePushWebhookContent
 {
-    protected String event = "DockerImagePush";
+    public static final String EVENT_NAME = "DockerImagePush";
+
+    protected String event = EVENT_NAME;
     protected Image image = null;
     protected Repository repository = null;
 

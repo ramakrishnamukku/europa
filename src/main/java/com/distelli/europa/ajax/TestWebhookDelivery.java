@@ -8,21 +8,31 @@
 */
 package com.distelli.europa.ajax;
 
-import java.util.Map;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
-import com.distelli.europa.models.*;
-import com.distelli.webserver.*;
-import com.distelli.europa.util.*;
+import java.util.UUID;
 import javax.inject.Inject;
-import com.google.inject.Singleton;
-import lombok.extern.log4j.Log4j;
+
 import org.eclipse.jetty.http.HttpMethod;
+import com.distelli.europa.models.*;
+import com.distelli.europa.notifiers.*;
+import com.distelli.europa.util.*;
+import com.distelli.webserver.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.inject.Singleton;
+
+import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
 public class TestWebhookDelivery extends AjaxHelper
 {
+    @Inject
+    protected WebhookClient _webhookClient;
+
     public TestWebhookDelivery()
     {
         this.supportedHttpMethods.add(HTTPMethod.POST);
@@ -34,28 +44,56 @@ public class TestWebhookDelivery extends AjaxHelper
                                                                true);
         FieldValidator.validateNonNull(notification, "type", "target");
         FieldValidator.validateEquals(notification, "type", NotificationType.WEBHOOK);
-        Random rand = new Random(System.currentTimeMillis());
-        int random = rand.nextInt(10);
-        int httpStatusCode = 400;
-        if(random % 2 == 0)
-            httpStatusCode = 200;
 
-        WebhookRequest whRequest = WebhookRequest.builder()
-        .body("{ \"some\":\"webhook\", \"body\":\"yo!\"}")
-        .header("Content-Type", "application/json")
-        .header("Server", "DistelliCallisto")
+        Webhook webhook = null;
+        ImagePushWebhookContent content = new ImagePushWebhookContent();
+        DockerImage image = DockerImage
+        .builder()
+        .imageSha("d573f3ab519f9e83046bbc66d9f68fb11c3a7037")
+        .imageSize(100000L)
+        .pushTime(System.currentTimeMillis())
+        .imageTag("12345")
         .build();
 
-        WebhookResponse whResponse = WebhookResponse.builder()
-        .body("{ \"some\":\"webhook\", \"response\":\"yo!\"}")
-        .header("Content-Type", "application/json")
-        .header("Server", "SomeServer")
-        .httpStatusCode(httpStatusCode)
+        content.setImage(image);
+        content.setRepository(ContainerRepo
+                              .builder()
+                              .id(UUID.randomUUID().toString())
+                              .name("test-repo")
+                              .credId(UUID.randomUUID().toString())
+                              .region("us-east-1")
+                              .provider(RegistryProvider.ECR)
+                              .build());
+        try {
+            webhook = new Webhook(WebhookNotifier.contentToString(content));
+        } catch(JsonProcessingException jpe) {
+            throw(new RuntimeException(jpe));
+        }
+
+        URL url = null;
+        try {
+            url = new URL(notification.getTarget());
+            webhook.setUrl(url);
+        } catch(MalformedURLException mue) {
+            throw(new AjaxClientException("Invalid Target URL on Webhook Notification: "+notification.getTarget(),
+                                          JsonError.Codes.BadContent, 400));
+        }
+        webhook.setSecret(notification.getSecret());
+        webhook.setName(content.getEvent());
+        if(log.isDebugEnabled())
+            log.debug("Sending Webhook: "+webhook.getEventId()+" for Image: "+image);
+        _webhookClient.send(webhook);
+        WebhookRequest request = webhook.getRequest();
+        WebhookResponse response = webhook.getResponse();
+
+        NotificationId nfId = NotificationId
+        .builder()
+        .id(webhook.getEventId())
+        .type(NotificationType.WEBHOOK)
         .build();
 
-        Map<String, Object> webhookData = new HashMap<String, Object>();
-        webhookData.put("request", whRequest);
-        webhookData.put("response", whResponse);
-        return webhookData;
+        WebhookRecord record = new WebhookRecord(request, response);
+        record.setUrl(url);
+        return record;
     }
 }

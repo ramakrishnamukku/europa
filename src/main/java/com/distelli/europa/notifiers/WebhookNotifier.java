@@ -51,6 +51,41 @@ public class WebhookNotifier
 
     }
 
+    public static String contentToString(ImagePushWebhookContent content)
+        throws JsonProcessingException
+    {
+        return OBJECT_MAPPER.writeValueAsString(content);
+    }
+
+    public NotificationId notify(WebhookRecord record)
+    {
+        WebhookRequest request = record.getRequest();
+        Webhook webhook = new Webhook(request.getBody());
+        webhook.setUrl(record.getUrl());
+
+        webhook.setSecret(record.getSecret());
+        webhook.setName(ImagePushWebhookContent.EVENT_NAME);
+        if(log.isDebugEnabled())
+            log.debug("Sending Webhook: "+webhook.getEventId()+" for Record: "+record);
+        _webhookClient.send(webhook);
+        request = webhook.getRequest();
+        WebhookResponse response = webhook.getResponse();
+
+        NotificationId nfId = NotificationId
+        .builder()
+        .id(webhook.getEventId())
+        .type(NotificationType.WEBHOOK)
+        .build();
+
+        record.setRequest(request);
+        record.setResponse(response);
+        WebhookRecord newRecord = new WebhookRecord(request, response);
+        record.setUrl(record.getUrl());
+        record.setSecret(record.getSecret());
+        saveNotificationRecord(nfId, newRecord);
+        return nfId;
+    }
+
     public NotificationId notify(Notification notification, DockerImage image, ContainerRepo repo)
     {
         ImagePushWebhookContent content = new ImagePushWebhookContent();
@@ -59,7 +94,7 @@ public class WebhookNotifier
 
         Webhook webhook = null;
         try {
-            webhook = new Webhook(OBJECT_MAPPER.writeValueAsString(content));
+            webhook = new Webhook(contentToString(content));
         } catch(JsonProcessingException jpe) {
             log.error("Skipping Webhook notification for Image: "+image+
                       " and repo: "+repo+
@@ -93,6 +128,7 @@ public class WebhookNotifier
 
         WebhookRecord record = new WebhookRecord(request, response);
         record.setUrl(url);
+        record.setSecret(notification.getSecret());
         saveNotificationRecord(nfId, record);
         return nfId;
     }

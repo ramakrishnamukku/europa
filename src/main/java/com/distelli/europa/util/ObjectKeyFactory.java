@@ -10,6 +10,7 @@ package com.distelli.europa.util;
 import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.EuropaConfiguration.ObjectStoreConfig;
 import com.distelli.europa.notifiers.*;
+import com.distelli.europa.models.*;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

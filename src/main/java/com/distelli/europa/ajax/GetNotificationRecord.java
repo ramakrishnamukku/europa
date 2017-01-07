@@ -46,7 +46,9 @@ public class GetNotificationRecord extends AjaxHelper
             ObjectKey objectKey = _objectKeyFactory.forWebhookRecord(notificationId);
             try {
                 byte[] recordBytes = _objectStore.get(objectKey);
-                return WebhookRecord.fromJsonBytes(recordBytes);
+                WebhookRecord webhookRecord = WebhookRecord.fromJsonBytes(recordBytes);
+                webhookRecord.setSecret(null);
+                return webhookRecord;
             } catch(EntityNotFoundException enfe) {
                 return null;
             } catch(IOException ioe) {

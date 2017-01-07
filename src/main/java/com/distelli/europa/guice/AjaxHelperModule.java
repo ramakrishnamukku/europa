@@ -45,6 +45,7 @@ public class AjaxHelperModule extends AbstractModule
         addBinding(DeleteRepoNotification.class);
         addBinding(ListRepoNotifications.class);
         addBinding(GetNotificationRecord.class);
+        addBinding(RedeliverWebhook.class);
     }
 
     private void addBinding(Class<? extends AjaxHelper> clazz)
