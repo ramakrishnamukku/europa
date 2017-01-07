@@ -3,12 +3,6 @@
 */
 
 import React, {Component, PropTypes} from 'react'
-import Btn from './../components/Btn'
-import Msg from './../components/Msg'
-import Loader from './../components/Loader'
-import Dropdown from './../components/Dropdown'
-import isEmpty from './../util/IsEmpty'
-import NPECheck from './../util/NPECheck'
 import Dropzone from 'react-dropzone'
 
 export default class UploadGCEServciceAccount extends Component {

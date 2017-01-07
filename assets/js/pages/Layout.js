@@ -2,7 +2,7 @@
   @author Sam Heutmaker [samheutmaker@gmail.com]
 */
 
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import {Link} from 'react-router'
 import ReactTooltip from 'react-tooltip'
 import ActionBinder from './../util/ActionBinder'
@@ -120,13 +120,13 @@ export default class Layout extends Component {
 }
 
 Layout.contextTypes = {
-	router: React.PropTypes.object
+	router: PropTypes.object
 };
 
 Layout.childContextTypes = {
-	actions: React.PropTypes.object,
-	state: React.PropTypes.object,
-	router: React.PropTypes.object
+	actions: PropTypes.object,
+	state: PropTypes.object,
+	router: PropTypes.object
 };
 
 

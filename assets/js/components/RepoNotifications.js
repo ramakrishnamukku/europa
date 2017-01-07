@@ -3,10 +3,7 @@
 */
 
 import React, {Component, PropTypes} from 'react'
-import Msg from './../components/Msg'
-import Btn from './../components/Btn'
 import Loader from './../components/Loader'
-import isEmpty from './../util/IsEmpty'
 import NPECheck from './../util/NPECheck'
 import CopyToClipboard from './../util/CopyToClipboard'
 import CenteredConfirm from './../components/CenteredConfirm'

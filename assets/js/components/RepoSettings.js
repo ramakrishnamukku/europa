@@ -4,9 +4,6 @@
 
 import React, {Component, PropTypes} from 'react'
 import ContentRow from './../components/ContentRow'
-import Msg from './../components/Msg'
-import Loader from './../components/Loader'
-import WebhookData from './../components/WebhookData'
 import RepoNotifications from './../components/RepoNotifications'
 import isEmpty from './../util/IsEmpty'
 

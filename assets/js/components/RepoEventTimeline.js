@@ -3,9 +3,7 @@
 */
 
 import React, {Component, PropTypes} from 'react'
-import WebhookData from './../components/WebhookData'
 import RepoEventItem from './../components/RepoEventItem'
-import ContentRow from './../components/ContentRow'
 
 export default class RepoEventTimeline extends Component {
 	constructor(props) {

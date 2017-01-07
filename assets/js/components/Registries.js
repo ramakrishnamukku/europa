@@ -2,11 +2,7 @@
   @author Sam Heutmaker [samheutmaker@gmail.com]
 */
 
-import React, {Component} from 'react'
-import { Link } from 'react-router'
-import ReactTooltip from 'react-tooltip'
-import Btn from './../components/Btn'
-import ContentRow from './../components/ContentRow'
+import React, {Component, PropTypes} from 'react'
 import RegistryProviderIcons from './../util/RegistryProviderIcons'
 import CenteredConfirm from './../components/CenteredConfirm'
 import Msg from './../components/Msg'
@@ -54,7 +50,7 @@ export default class Registries extends Component {
 						{reg.provider}
 					</span>
 					<span className="ListValue">{reg.name}</span>
-					<span className="ListValue">{reg.name}</span>
+					<span className="ListValue">{reg.key}</span>
 					<span className="ListValue">{reg.region}</span>
 					<span className="Actions">
 						<i className="icon icon-dis-settings" data-tip="Settings" data-for="ToolTipTop"
@@ -183,14 +179,14 @@ export default class Registries extends Component {
 }
 
 Registries.childContextTypes = {
-    actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
+    actions: PropTypes.object,
+    state: PropTypes.object,
+    router: PropTypes.object
 };
 
 Registries.contextTypes = {
-    actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
+    actions: PropTypes.object,
+    state: PropTypes.object,
+    router: PropTypes.object
 };
 

@@ -2,7 +2,7 @@
   @author Sam Heutmaker [samheutmaker@gmail.com]
 */
 
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import Btn from './../components/Btn'
 import RadioButton from './../components/RadioButton'
 
@@ -155,20 +155,20 @@ export default class WebhookData extends Component {
 }
 
 WebhookData.propTypes = {
-	webhookData: React.PropTypes.object.isRequired,
-	close: React.PropTypes.func,
-	modal: React.PropTypes.bool,
-	style: React.PropTypes.object
+	webhookData: PropTypes.object.isRequired,
+	close: PropTypes.func,
+	modal: PropTypes.bool,
+	style: PropTypes.object
 };
 
 WebhookData.childContextTypes = {
-    actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
+    actions: PropTypes.object,
+    state: PropTypes.object,
+    router: PropTypes.object
 };
 
 WebhookData.contextTypes = {
-    actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
+    actions: PropTypes.object,
+    state: PropTypes.object,
+    router: PropTypes.object
 };

@@ -2,7 +2,7 @@
   @author Sam Heutmaker [samheutmaker@gmail.com]
 */
 
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import Btn from './../components/Btn'
 
 export default class NotFound extends Component {
@@ -34,13 +34,13 @@ export default class NotFound extends Component {
 }
 
 NotFound.childContextTypes = {
-    actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
+    actions: PropTypes.object,
+    state: PropTypes.object,
+    router: PropTypes.object
 };
 
 NotFound.contextTypes = {
-    actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
+    actions: PropTypes.object,
+    state: PropTypes.object,
+    router: PropTypes.object
 };

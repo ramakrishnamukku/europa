@@ -9,7 +9,6 @@ import TimelineIcons from './../util/TimelineIcons'
 import ConvertTimeUTC from './../util/ConvertTimeUTC'
 import ConvertTimeFriendly from './../util/ConvertTimeFriendly'
 
-
 export default class RepoEventItem extends Component {
 	constructor(props) {
 		super(props);

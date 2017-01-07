@@ -4,10 +4,6 @@
 
 import React, {Component, PropTypes} from 'react'
 import WebhookData from './../components/WebhookData'
-import Msg from './../components/Msg'
-import Loader from './../components/Loader'
-import RadioButton from './../components/RadioButton'
-import NPECheck from './../util/NPECheck'
 import StatusCode from './../util/StatusCode'
 
 export default class WebhookViewer extends Component {

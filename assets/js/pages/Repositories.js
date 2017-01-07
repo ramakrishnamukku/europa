@@ -2,12 +2,11 @@
   @author Sam Heutmaker [samheutmaker@gmail.com]
 */
 
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import { Link } from 'react-router'
 import RegistryNames from './../util/RegistryNames'
 import RegistryProviderIcons from './../util/RegistryProviderIcons'
 import Btn from './../components/Btn'
-import Msg from './../components/Msg'
 import Loader from './../components/Loader'
 import BtnGroup from './../components/BtnGroup'
 import ConvertTimeFriendly from './../util/ConvertTimeFriendly'
@@ -90,7 +89,7 @@ export default class Repositories extends Component {
 	renderSearchRepos(){
 		return (
 			<input className="BlueBorder Search" 
-			       placeholder="Search"
+			       placeholder="Filter repositories.."
 				   onChange={(e) => this.context.actions.filterRepos(e, false)}
 			/>
 		);
@@ -105,11 +104,13 @@ export default class Repositories extends Component {
 		);
 	}
 	renderRepositories(){
+		let reposLength = this.context.state.repos.length;
+		let noun = (reposLength == 1) ? 'Repository' : 'Repositories';
 		return (
 			<div className="ContentContainer">
 				<div className="PageHeader">
 					<h2>
-						{`${this.context.state.repos.length} Repositories`} 
+						{`${reposLength} ${noun}`} 
 					</h2>
 					<div className="FlexRow">
 						<div className="Flex1">
@@ -172,13 +173,13 @@ export default class Repositories extends Component {
 }
 
 Repositories.childContextTypes = {
-    actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
+    actions: PropTypes.object,
+    state: PropTypes.object,
+    router: PropTypes.object
 };
 
 Repositories.contextTypes = {
-    actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
+    actions: PropTypes.object,
+    state: PropTypes.object,
+    router: PropTypes.object
 };

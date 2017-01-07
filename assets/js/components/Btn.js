@@ -2,7 +2,7 @@
   @author Sam Heutmaker [samheutmaker@gmail.com]
 */
 
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 
 export default class Btn extends Component {
 	constructor(props) {
@@ -52,21 +52,21 @@ export default class Btn extends Component {
 }
 
 Btn.propTypes = {
-	text: React.PropTypes.string.isRequired,
-	onClick: React.PropTypes.func.isRequired,
-	color: React.PropTypes.string,
-	canClick: React.PropTypes.bool,
-	help: React.PropTypes.string,
-	style: React.PropTypes.object,
-	className: React.PropTypes.string
+	text: PropTypes.string.isRequired,
+	onClick: PropTypes.func.isRequired,
+	color: PropTypes.string,
+	canClick: PropTypes.bool,
+	help: PropTypes.string,
+	style: PropTypes.object,
+	className: PropTypes.string
 };
 
 Btn.childContextTypes = {
-    actions: React.PropTypes.object,
-    state: React.PropTypes.object
+    actions: PropTypes.object,
+    state: PropTypes.object
 };
 
 Btn.contextTypes = {
-    actions: React.PropTypes.object,
-    state: React.PropTypes.object
+    actions: PropTypes.object,
+    state: PropTypes.object
 };

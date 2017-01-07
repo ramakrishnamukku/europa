@@ -3,11 +3,6 @@
 */
 
 import React, {Component, PropTypes} from 'react'
-import ContentRow from './../components/ContentRow'
-import Loader from './../components/Loader'
-import Btn from './../components/Btn'
-import Msg from './../components/Msg'
-
 
 export default class RadioButton extends Component {
 	constructor(props) {

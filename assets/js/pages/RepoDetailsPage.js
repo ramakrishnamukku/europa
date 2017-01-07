@@ -2,10 +2,8 @@
   @author Sam Heutmaker [samheutmaker@gmail.com]
 */
 
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import Loader from './../components/Loader'
-import WebhookData from './../components/WebhookData'
-import isEmpty from './../util/IsEmpty'
 import RegistryNames from './../util/RegistryNames'
 import RepoSettings from './../components/RepoSettings'
 import CenteredConfirm from './../components/CenteredConfirm'
@@ -140,13 +138,13 @@ export default class RepoDetailsPage extends Component {
 }
 
 RepoDetailsPage.childContextTypes = {
-	actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
+	actions: PropTypes.object,
+    state: PropTypes.object,
+    router: PropTypes.object
 };
 
 RepoDetailsPage.contextTypes = {
-	actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
+	actions: PropTypes.object,
+    state: PropTypes.object,
+    router: PropTypes.object
 };

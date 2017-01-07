@@ -2,19 +2,14 @@
   @author Sam Heutmaker [samheutmaker@gmail.com]
 */
 
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import Registries from './../components/Registries'
-import Btn from './../components/Btn'
+import APITokens from './../components/APITokens'
 
 export default class Settings extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
-	}
-	renderRegistries(){
-		return (
-			<Registries />
-		);
 	}
 	getSideBarItemClassName(key){
 		let section = this.context.state.settings.section;
@@ -22,7 +17,7 @@ export default class Settings extends Component {
 	}	
 	renderSideBar(){
 		let credKey = 'CREDENTIALS';
-		let dbKey = "DB";
+		let apiTokensKey = "API_TOKENS";
 		let settingsKey = "SETTINGS"
 
 		return (
@@ -31,9 +26,9 @@ export default class Settings extends Component {
 					 onClick={() => this.context.actions.setSettingsSection(credKey)}>
 					Credentials
 				</div>
-				<div className={this.getSideBarItemClassName(dbKey)} 
-					 onClick={() => this.context.actions.setSettingsSection(dbKey)}>
-					DB
+				<div className={this.getSideBarItemClassName(apiTokensKey)} 
+					 onClick={() => this.context.actions.setSettingsSection(apiTokensKey)}>
+					API Tokens
 				</div>
 				<div className={this.getSideBarItemClassName(settingsKey)} 
 					 onClick={() => this.context.actions.setSettingsSection(settingsKey)}>
@@ -41,6 +36,30 @@ export default class Settings extends Component {
 				</div>
 			</div>
 		);
+	}
+	renderRegistries(){
+		return (
+			<Registries />
+		);
+	}
+	renderAPITokens(){
+		return (
+			<APITokens />
+		);
+	}
+	renderContent(){
+		let section = this.context.state.settings.section;
+		switch(section) {
+			case 'CREDENTIALS':
+				return this.renderRegistries();
+			break;
+			case 'API_TOKENS':
+				return this.renderAPITokens();
+			break;
+
+			default:
+				return this.renderRegistries();
+		}
 	}
 	render() {
 		return (
@@ -51,8 +70,11 @@ export default class Settings extends Component {
 					</h2>
 				</div>
 				<div className="FlexRow RowPadding">
+					<div className="Flex1 Column">
+	 						{this.renderSideBar()}
+	 				</div>
 					<div className="Flex3">
-						{this.renderRegistries()}
+						{this.renderContent()}
 					</div>
 				</div>
 			</div>
@@ -61,17 +83,13 @@ export default class Settings extends Component {
 }
 
 Settings.childContextTypes = {
-    actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
+    actions: PropTypes.object,
+    state: PropTypes.object,
+    router: PropTypes.object
 };
 
 Settings.contextTypes = {
-    actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
+    actions: PropTypes.object,
+    state: PropTypes.object,
+    router: PropTypes.object
 };
-
-// <div className="Flex1 Column">
-// 						{this.renderSideBar()}
-// 					</div>

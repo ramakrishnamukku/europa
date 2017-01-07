@@ -2,7 +2,7 @@
   @author Sam Heutmaker [samheutmaker@gmail.com]
 */
 
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import AddRegistry from './../components/AddRegistry'
 import ContentRow from './../components/ContentRow'
 import Btn from './../components/Btn'
@@ -201,13 +201,13 @@ export default class AddRepository extends Component {
 }
 
 AddRepository.childContextTypes = {
-	actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
+	actions: PropTypes.object,
+    state: PropTypes.object,
+    router: PropTypes.object
 };
 
 AddRepository.contextTypes = {
-	actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
+	actions: PropTypes.object,
+    state: PropTypes.object,
+    router: PropTypes.object
 };
