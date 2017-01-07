@@ -118,6 +118,25 @@ export function listRepoNotifications(repoId, skipXHR) {
   });
 }
 
+export function redeliverNotification(recordId) {
+  return new Promise((resolve, reject) => {
+    let repoId = NPECheck(this.state, 'repoDetails/activeRepo/id', '');
+    let eventId = NPECheck(this.state, 'repoDetails/activeEventId', '');
+
+    RAjax.POST('RedeliverWebhook', {}, {
+      notificationId: recordId,
+      repoId,
+      eventId
+    })
+    .then((res) => {
+      resolve(res);
+    })
+    .catch((err) => {
+      reject(err);
+    });
+  });
+}
+
 export function updateNewNotificationField(prop, e, eIsValue) {
   let value = (eIsValue) ? e : e.target.value;
   this.setState({
@@ -134,7 +153,7 @@ export function updateNewNotificationField(prop, e, eIsValue) {
 export function addRepoNotification(skipXHR) {
   return new Promise((resolve, reject) => {
 
-    if(!isAddNotificationValid.call(this)) return;
+    if (!isAddNotificationValid.call(this)) return;
 
     let params = {
       repoId: NPECheck(this.state, 'repoDetails/activeRepo/id', null),
@@ -177,19 +196,19 @@ export function addRepoNotification(skipXHR) {
   });
 }
 
-export function isAddNotificationValid(){
-    let notif = this.state.notif.newNotification; 
-    let isValid = isValidScheme(notif.target);  
-    if(isValid) return true;
+export function isAddNotificationValid() {
+  let notif = this.state.notif.newNotification;
+  let isValid = isValidScheme(notif.target);
+  if (isValid) return true;
 
-    this.setState({
-      notif: GA.modifyProperty(this.state.notif, {
-          notifError: 'Target URL must start with http:// or https://',
-          errorFields: ['target']
-      })
-    });
+  this.setState({
+    notif: GA.modifyProperty(this.state.notif, {
+      notifError: 'Target URL must start with http:// or https://',
+      errorFields: ['target']
+    })
+  });
 
-    return false;
+  return false;
 }
 
 
@@ -236,7 +255,6 @@ export function deleteNotification(skipXHR) {
 
 export function getEventNotificationRecords(recordIdsArray) {
   return new Promise((resolve, reject) => {
-
     this.setState({
       notif: GA.modifyProperty(this.state.notif, {
         notifRecordXHR: true
@@ -246,6 +264,7 @@ export function getEventNotificationRecords(recordIdsArray) {
 
       Promise.all(records)
         .then((res) => {
+
           this.setState({
             notif: GA.modifyProperty(this.state.notif, {
               currentNotifRecords: res,
@@ -258,13 +277,25 @@ export function getEventNotificationRecords(recordIdsArray) {
   });
 }
 
+export function appendNotificationRecord(newRecord){
+  let currentRecords = NPECheck(this.state, 'notif/currentNotifRecords', []);
+
+  let newRecords = [...currentRecords, newRecord];
+
+  this.setState({
+    notif: GA.modifyProperty(this.state.notif, {
+      currentNotifRecords: newRecords
+    })
+  });
+}
+
 export function getNotificationRecord(recordId) {
   return new Promise((resolve, reject) => {
     RAjax.GET('GetNotificationRecord', {
         notificationId: recordId
       })
       .then((res) => {
-        resolve(res)
+        resolve(res);
       })
       .catch((err) => {
         resolve(err);

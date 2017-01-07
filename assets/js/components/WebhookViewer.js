@@ -31,7 +31,7 @@ export default class WebhookViewer extends Component {
 		return this.state.activeRecordUrls.includes(url);
 	}
 	renderExpandIcon(record){
-		return (this.isRecordActive(record.url)) ? ( <i className="icon icon-dis-collapse" /> ) 
+		return (this.isRecordActive(record.notififcationId)) ? ( <i className="icon icon-dis-collapse" /> ) 
 												 : ( <i className="icon icon-dis-expand" /> )
 	}
 	renderStatusIcon(record){
@@ -60,7 +60,7 @@ export default class WebhookViewer extends Component {
 				{this.props.allWebhookData.map((record, index) => {
 					return (
 						<div key={index} className="RecordListItem">
-							<div className="RecordListItemInfo" onClick={() => this.toggleActiveRecord(record.url)}>
+							<div className="RecordListItemInfo" onClick={() => this.toggleActiveRecord(record.notificationId)}>
 								{this.renderStatusIcon(record)}
 								<div className="Url">{record.url}</div>
 								{this.renderExpandIcon(record)}
@@ -73,9 +73,9 @@ export default class WebhookViewer extends Component {
 		);
 	}
 	renderWebhookData(record){
-		if(this.isRecordActive(record.url)) {
+		if(this.isRecordActive(record.notificationId)) {
 			return (
-				<WebhookData webhookData={record} close={() => this.toggleActiveRecord(record.url)}/>
+				<WebhookData webhookData={record} close={() => this.toggleActiveRecord(record.notificationId)}/>
 			);		
 		}
 

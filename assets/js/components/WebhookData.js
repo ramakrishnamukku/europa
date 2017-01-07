@@ -19,6 +19,16 @@ export default class WebhookData extends Component {
 			viewingType: newType,
 			activeData: (newType == 'Request') ? this.props.webhookData.request : this.props.webhookData.response
 		});
+	}	
+	redeliverWebhook(){
+		let recordId = this.props.webhookData.notificationId;
+
+		this.context.actions.redeliverNotification(recordId)
+			.then((res) => {
+				let newRecordId = res;
+				return this.context.actions.getNotificationRecord(newRecordId)
+			})
+			.then(this.context.actions.appendNotificationRecord);
 	}
 	renderControls(){
 		return (
@@ -28,9 +38,7 @@ export default class WebhookData extends Component {
 				</div>
 					{this.renderChooseType()}
 				<div className="Flex1 Redeliver">
-					<Btn onClick={ () => console.log('todo') }
-						 style={{height: '22px', width: '105px', fontSize: '0.75rem'}}
-						 text="Redeliver" />
+					{this.renderRedeliverButton()}
 				</div>
 				<div className="Close">
 					<i className="icon icon-dis-close" 
@@ -39,6 +47,15 @@ export default class WebhookData extends Component {
 				</div>
 			</div>
 		);
+	}
+	renderRedeliverButton(){
+		if(this.props.webhookData.notificationId) {
+			return (
+				<Btn onClick={ () => this.redeliverWebhook() }
+					 style={{height: '22px', width: '105px', fontSize: '0.75rem'}}
+					 text="Redeliver" />
+			);
+		}
 	}
 	renderChooseType(){
 		let isRequest = this.state.viewingType == 'Request';
@@ -156,6 +173,7 @@ export default class WebhookData extends Component {
 
 WebhookData.propTypes = {
 	webhookData: PropTypes.object.isRequired,
+	recordId: PropTypes.string,
 	close: PropTypes.func,
 	modal: PropTypes.bool,
 	style: PropTypes.object
