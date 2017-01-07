@@ -11,5 +11,6 @@ public class AjaxErrors
 {
     public static final class Codes {
         public static final String RepoAlreadyConnected = "RepoAlreadyConnected";
+        public static final String TokenIsActive = "TokenIsActive";
     }
 }

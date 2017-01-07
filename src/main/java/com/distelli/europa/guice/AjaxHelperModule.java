@@ -46,6 +46,12 @@ public class AjaxHelperModule extends AbstractModule
         addBinding(ListRepoNotifications.class);
         addBinding(GetNotificationRecord.class);
         addBinding(RedeliverWebhook.class);
+
+        //Token CRUD helpers
+        addBinding(ListAuthTokens.class);
+        addBinding(CreateAuthToken.class);
+        addBinding(SetAuthTokenStatus.class);
+        addBinding(DeleteAuthToken.class);
     }
 
     private void addBinding(Class<? extends AjaxHelper> clazz)

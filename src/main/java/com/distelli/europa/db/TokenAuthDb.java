@@ -1,6 +1,7 @@
 package com.distelli.europa.db;
 
 import com.distelli.europa.models.TokenAuth;
+import com.distelli.europa.models.TokenAuthStatus;
 import com.distelli.jackson.transform.TransformModule;
 import com.distelli.persistence.AttrDescription;
 import com.distelli.persistence.AttrType;
@@ -11,6 +12,7 @@ import com.distelli.persistence.IndexType;
 import com.distelli.persistence.PageIterator;
 import com.distelli.persistence.TableDescription;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.persistence.RollbackException;
 import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
@@ -56,7 +58,8 @@ public class TokenAuthDb {
     private TransformModule createTransforms(TransformModule module) {
         module.createTransform(TokenAuth.class)
             .put("tok", String.class, "token")
-            .put("dom", String.class, "domain");
+            .put("dom", String.class, "domain")
+            .put("stat", TokenAuthStatus.class, "status");
         return module;
     }
 
@@ -96,5 +99,18 @@ public class TokenAuthDb {
             throw new IllegalArgumentException("TokenAuth.domain must be non-empty!");
         }
         _main.putItemOrThrow(tokenAuth);
+    }
+
+    public void setStatus(String token, TokenAuthStatus status)
+    {
+        _main.updateItem(token, null)
+        .set("stat", status)
+        .when((expr) -> expr.exists("tok"));
+    }
+
+    public void deleteToken(String token)
+        throws RollbackException
+    {
+        _main.deleteItem(token, null, (expr) -> expr.eq("stat", "INACTIVE"));
     }
 }
