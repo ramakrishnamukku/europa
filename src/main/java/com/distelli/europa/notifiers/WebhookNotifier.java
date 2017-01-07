@@ -79,10 +79,9 @@ public class WebhookNotifier
 
         record.setRequest(request);
         record.setResponse(response);
-        WebhookRecord newRecord = new WebhookRecord(request, response);
         record.setUrl(record.getUrl());
         record.setSecret(record.getSecret());
-        saveNotificationRecord(nfId, newRecord);
+        saveNotificationRecord(nfId, record);
         return nfId;
     }
 
