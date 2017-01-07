@@ -77,6 +77,7 @@ public class WebhookNotifier
         .type(NotificationType.WEBHOOK)
         .build();
 
+        record.setNotificationId(nfId.toCanonicalId());
         record.setRequest(request);
         record.setResponse(response);
         record.setUrl(record.getUrl());
@@ -128,6 +129,7 @@ public class WebhookNotifier
         WebhookRecord record = new WebhookRecord(request, response);
         record.setUrl(url);
         record.setSecret(notification.getSecret());
+        record.setNotificationId(nfId.toCanonicalId());
         saveNotificationRecord(nfId, record);
         return nfId;
     }
