@@ -14,7 +14,10 @@ export default class Settings extends Component {
 	getSideBarItemClassName(key){
 		let section = this.context.state.settings.section;
 		return (key == section) ? 'SideBarItem Active' : 'SideBarItem';
-	}	
+	}
+	componentWillUnmount() {
+		this.context.actions.resetSettingsState();
+	}
 	renderSideBar(){
 		let credKey = 'CREDENTIALS';
 		let apiTokensKey = "API_TOKENS";
@@ -24,7 +27,7 @@ export default class Settings extends Component {
 			<div className="SideBarContainer">
 				<div className={this.getSideBarItemClassName(credKey)} 
 					 onClick={() => this.context.actions.setSettingsSection(credKey)}>
-					Credentials
+					Registry Credentials
 				</div>
 				<div className={this.getSideBarItemClassName(apiTokensKey)} 
 					 onClick={() => this.context.actions.setSettingsSection(apiTokensKey)}>

@@ -23,6 +23,7 @@ export default class AddRepository extends Component {
 		this.state = {};
 	}
 	componentWillMount() {
+		this.context.actions.listRegistries();
 	}
 	componentWillUnmount() {
 		this.context.actions.resetAddRepoState();

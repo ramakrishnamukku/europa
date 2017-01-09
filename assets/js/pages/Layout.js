@@ -52,8 +52,8 @@ export default class Layout extends Component {
 		};
 	}
 	componentDidMount() {
-		RegistryActions.listRegistries.call(this);
-		RepoActions.listRepos.call(this);
+		// RegistryActions.listRegistries.call(this);
+		// RepoActions.listRepos.call(this);
 
 		this.setState({
 			intervals: {

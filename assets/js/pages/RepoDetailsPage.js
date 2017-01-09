@@ -20,7 +20,8 @@ export default class RepoDetailsPage extends Component {
 		};
 	}
 	componentWillMount() {
-		this.context.actions.toggleRepoDetailsPageXHR()
+		this.context.actions.toggleRepoDetailsPageXHR();
+		this.context.actions.listRegistries();
 		this.context.actions.listRepos().then(() => {
 			this.context.actions.setActiveRepoDetails(this.state.repoId);
 			this.context.actions.listRepoEvents(this.state.repoId);
