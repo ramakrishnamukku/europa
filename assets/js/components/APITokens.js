@@ -6,12 +6,29 @@ import React, {PropTypes, Component} from 'react'
 import ControlRoom from './../components/ControlRoom'
 import CenteredConfirm from './../components/CenteredConfirm'
 import Btn from './../components/Btn'
+import Loader from './../components/Loader'
+import Msg from './../components/Msg'
 import NPECheck from './../util/NPECheck'
 
 export default class APITokens extends Component{
 	constructor(props) {
 		super(props);
 		this.state = {};
+	}
+	componentDidMount() {
+		this.context.actions.listAuthTokens();
+	}
+	createAuthToken(){
+		this.context.actions.createAuthToken()
+		.then(this.context.actions.listAuthTokens);
+	}
+	setAuthTokenStatus(tokenString, status){
+		this.context.actions.setAuthTokenStatus(tokenString, status)
+		.then(this.context.actions.listAuthTokens);
+	}
+	deleteAuthToken(){
+		this.context.actions.deleteAuthToken()
+		.then(this.context.actions.listAuthTokens);	
 	}
 	renderHeader(){
 		return (
@@ -20,60 +37,80 @@ export default class APITokens extends Component{
 			 		API Tokens
 			 	</span>
 			 	<span className="Flex2">
-			 		Description
-			 	</span>
-			 	<span className="Flex1">
-			 		Created
-			 	</span>
-			 	<span className="Flex2">
 			 		Status
 			 	</span>
-			 	
+			 	<span className="ThickBlueText Actions" onClick={() => this.createAuthToken()}>
+			 		+ Create Token
+			 	</span>
 			</div>
 		);
 	}
 	renderContent(){
-		let tokens = [{
-			token: 'token',
-			desc: 'description',
-			status: 'status',
-			created: 'created'
-		}, {
-			token: 'token1',
-			desc: 'description',
-			status: 'status',
-			created: 'created'
-		}, {
-			token: 'token2',
-			desc: 'description',
-			status: 'status',
-			created: 'created'
-		}, {
-			token: 'token3',
-			desc: 'description',
-			status: 'status',
-			created: 'created'
-		}];
+		let errorMsg = NPECheck(this.context.state, 'settings/tokens/tokenPageError', false);
+		if(errorMsg) return this.renderError(errorMsg);
 
+		let isLoading = NPECheck(this.context.state, 'settings/tokens/tokensXHR', false);
+		if(isLoading) {
+			return (
+				<div className="PageLoader">
+					<Loader />
+				</div>
+			);
+		}				
+
+		let tokens = NPECheck(this.context.state, 'settings/tokens/allTokens', []);
 		return (
 			<div className="APIBody">
 				{tokens.map((token, i) => {
+					let statusClassName = (token.status == 'ACTIVE') ? 'Flex2 Active' : 'Flex2 Inactive';
 					return (
 						<div className="TokenItem" key={i}>
 							<div className="TokenDetails">
 								{this.renderTokenString(token.token)}
-								<span className="Flex2">{token.desc}</span>
-								<span className="Flex1">{token.status}</span>
-								<span className="Flex1">{token.created}</span>
-								<span className="Flex1 Delete">
-									<i className='icon icon-dis-trash' onClick={() => this.context.actions.toggleTokenForDelete(token.token)}/>
-								</span>
+								<span className={statusClassName}>{token.status}</span>
+								{this.renderIcons(token)}
 							</div>
 							{this.renderDeleteToken(token)}
 						</div>
 					);
 				})}				
 			</div>
+		);
+	}
+	renderIcons(token){
+		let statusToolTip = 'Deactivate Token';
+		let newStatus = 'INACTIVE';
+		let statusIcon = 'icon icon-dis-disconnect';
+		let contents = [];
+		
+		if(token.status == 'INACTIVE') {
+			statusToolTip = 'Activate Token';
+			newStatus = 'ACTIVE';			
+			statusIcon = 'icon icon-dis-repo';
+		}
+
+		let infoIconDOM = (
+			 <i className='icon icon-dis-questionmark' key={1}
+				onClick={() => {}} data-tip="A token must be INACTIVE to be deleted" data-for="ToolTipTop"/>
+		);
+
+		let deleteIconDOM = (
+			<i className='icon icon-dis-trash' key={1}
+				onClick={() => this.context.actions.toggleTokenForDelete(token.token)} data-tip="Delete Token" data-for="ToolTipTop"/>
+		);
+
+		let statusIconDOM = (	
+			<i className={statusIcon} key={2}
+				onClick={() => this.setAuthTokenStatus(token.token, newStatus)} data-tip={statusToolTip} data-for="ToolTipTop"/>
+		);			
+
+		contents.push(statusIconDOM);
+		contents.push((token.status == 'INACTIVE') ? deleteIconDOM : infoIconDOM );
+
+		return (
+			<span className="Flex1 Actions">
+				{contents}
+			</span>
 		);
 	}
 	renderTokenString(tokenString){
@@ -98,15 +135,34 @@ export default class APITokens extends Component{
 
 	}
 	renderDeleteToken(token){
-		if(NPECheck(this.context.state, 'settings/tokens/selectedTokenForDelete') ==  token.token) {
+		if( NPECheck(this.context.state, 'settings/tokens/selectedTokenForStatusUpdate', null) == token.token 
+			|| NPECheck(this.context.state, 'settings/tokens/selectedTokenForDelete', null) ==  token.token) {
+
+			let errorMsg = NPECheck(this.context.state, 'settings/tokens/tokenItemError', null);
+			if(errorMsg) return this.renderError(errorMsg);
+
+			if( NPECheck(this.context.state, 'settings/tokens/statusXHR', false)
+			    || NPECheck(this.context.state, 'settings/tokens/deleteTokenXHR', false)) {
+				return (
+					<Loader />
+				);
+			}
+
 			return (
 				<CenteredConfirm message="Are you sure you want to delete this token? This is permanent"
 							     confirmButtonText="Delete"
 							     confirmButtonStyle={{}}
-							     onConfirm={() => console.log('Delete')}
+							     onConfirm={() => this.deleteAuthToken()}
 							     onCancel={() => this.context.actions.toggleTokenForDelete() }/>
-				);
+			);
 		}
+	}
+	renderError(errorMsg){
+		return (
+			<Msg text={errorMsg} 
+				 close={() => this.context.actions.clearTokenItemError()}
+				 style={{padding: '1rem 0'}}/>
+		);
 	}
 	renderControlRoom(){
 		return (

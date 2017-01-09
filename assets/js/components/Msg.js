@@ -2,7 +2,7 @@
   @author Sam Heutmaker [samheutmaker@gmail.com]
 */
 
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 
 export default class Msg extends Component {
 	constructor(props) {
@@ -36,8 +36,9 @@ export default class Msg extends Component {
 
 
 Msg.PropTypes = {
-	isSuccess: React.PropTypes.bool,
-	text: React.PropTypes.string,
-	close: React.PropTypes.func
+	isSuccess: PropTypes.bool,
+	text: PropTypes.string,
+	close: PropTypes.func,
+	style: PropTypes.object
 };
 
