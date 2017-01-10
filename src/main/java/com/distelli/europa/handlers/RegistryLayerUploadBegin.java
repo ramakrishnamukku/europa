@@ -33,6 +33,7 @@ public class RegistryLayerUploadBegin extends RegistryBase {
     }
 
     private WebResponse handleMonolithicUpload(RequestContext requestContext) {
+        // TODO: support this API too...
         throw new UnsupportedOperationException();
     }
 

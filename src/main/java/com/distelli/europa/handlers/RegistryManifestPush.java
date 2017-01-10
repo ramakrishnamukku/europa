@@ -15,8 +15,11 @@ import lombok.extern.log4j.Log4j;
 @Singleton
 public class RegistryManifestPush extends RegistryBase {
     public WebResponse handleRegistryRequest(RequestContext requestContext) {
-        String contentDigest = "TODO";
-        String location = "TODO";
+        String name = requestContext.getMatchedRoute().getParam("name");
+        String reference = requestContext.getMatchedRoute().getParam("reference");
+
+        String location="TODO";
+        String contentDigest="TODO";
 
         WebResponse response = new WebResponse();
         response.setHttpStatusCode(201);
