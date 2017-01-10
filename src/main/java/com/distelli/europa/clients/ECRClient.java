@@ -130,13 +130,16 @@ public class ECRClient
                 pushTime = pushedAt.getTime();
 
             String imageSha = imageDetail.getImageDigest().toLowerCase();
-            DockerImage image = DockerImage
+            List<String> imageTags = imageDetail.getImageTags();
+            DockerImage.DockerImageBuilder builder = DockerImage
             .builder()
             .imageSha(imageSha)
             .pushTime(pushTime)
-            .imageSize(imageDetail.getImageSizeInBytes())
-            .imageTags(imageDetail.getImageTags())
-            .build();
+            .imageSize(imageDetail.getImageSizeInBytes());
+
+            if(imageTags != null)
+                builder.imageTags(imageTags);
+            DockerImage image = builder.build();
             images.add(image);
         }
         return images;

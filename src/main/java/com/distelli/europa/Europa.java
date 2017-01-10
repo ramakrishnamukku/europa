@@ -72,6 +72,7 @@ public class Europa
         Log4JConfigurator.setLogLevel("com.distelli.webserver", "DEBUG");
         Log4JConfigurator.setLogLevel("com.distelli.gcr", "DEBUG");
         Log4JConfigurator.setLogLevel("com.distelli.europa.monitor", "ERROR");
+        Log4JConfigurator.setLogLevel("com.distelli.webserver", "ERROR");
         String configFilePath = cmdLineArgs.getOption("config");
         if(configFilePath == null)
         {
@@ -146,6 +147,7 @@ public class Europa
         staticHolder.setInitParameter("dirAllowed","true");
         staticHolder.setInitParameter("pathInfoOnly","true");
         staticHolder.setInitParameter("etags", "true");
+        staticHolder.setInitParameter("cacheControl", "max-age=3600");
         webServer.addStandardServlet("/public/*", staticHolder);
 
         WebServlet registryApiServlet = new WebServlet(RegistryApiRoutes.getRouteMatcher(), _requestHandlerFactory);
