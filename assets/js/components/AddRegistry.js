@@ -103,7 +103,7 @@ export default class AddRegistry extends Component {
 
 			return (
 				<div className="Flex1">
-					<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
+					<label className="small FlexColumn" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
 						Select Credentials
 					</label>
 					<Dropdown isOpen={this.context.state.addRepo.selectExistingCredentialsDropdown}
@@ -160,7 +160,7 @@ export default class AddRegistry extends Component {
 		if(isEdit) {
 			return (
 				<div className="Flex1 FlexRow AlignCenter">
-					<img style={{height: '40px', marginRight: '7px'}} src={RegistryProviderIcons(this.context.state.addRegistry.newRegistry[provider])} />
+					<img style={{height: '32px', marginRight: '7px'}} src={RegistryProviderIcons(this.context.state.addRegistry.newRegistry[provider])} />
 					{selectedProvider}
 				</div>
 			);
@@ -168,7 +168,7 @@ export default class AddRegistry extends Component {
 
 		return (
 			<div className="Flex1">
-				<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
+				<label className="small FlexColumn" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
 					Docker Registry Provider
 				</label>
 				<Dropdown isOpen={this.context.state.addRegistry.selectProviderDropdown}
@@ -185,6 +185,10 @@ export default class AddRegistry extends Component {
 	renderProviderListItem(registryProvider, index){
 		let reg = RegistryNames[registryProvider];
 		let className = "ListItem FlexRow";
+
+		if(this.props.standaloneMode) {
+			className += ' Small'
+		}
 
 		if(registryProvider == NPECheck(this.context.state, 'addRegistry/newRegistry/provider', null)) {
 			className += " Active";
@@ -212,7 +216,7 @@ export default class AddRegistry extends Component {
 
 		return (
 			<div className="Flex1">
-				<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
+				<label className="small FlexColumn" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
 					Key Name
 				</label>
 				<input className={this.inputClassName(keyName)}
@@ -228,7 +232,7 @@ export default class AddRegistry extends Component {
 		if(!currentProvider || currentProvider == 'ECR') {
 			return (
 				<div className="Flex1">
-					<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
+					<label className="small FlexColumn" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
 						Public Key
 					</label>
 					<input className={this.inputClassName(key)}
@@ -244,7 +248,7 @@ export default class AddRegistry extends Component {
 		if(!currentProvider || currentProvider == 'ECR') {
 			return (
 				<div className="Flex1">
-					<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
+					<label className="small FlexColumn" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
 						Private Key
 					</label>
 					<input className={this.inputClassName(secret)}
@@ -276,7 +280,7 @@ export default class AddRegistry extends Component {
 
 		return (
 			<div className="Flex1">
-				<label className="small" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
+				<label className="small FlexColumn" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
 					Key Region
 				</label>
 				<Dropdown isOpen={this.context.state.addRegistry.selectRegionDropdown}
@@ -293,7 +297,8 @@ export default class AddRegistry extends Component {
 	renderRegionItem(r, index){
 		return (
 			<div key={index} className="ListItem" onClick={() => this.context.actions.updateNewRegistryField(region, r.regionCode, true)}>
-				{r.displayName}
+				<div className="Flex1">{r.displayName}</div>
+				<div className="Flex1">{r.regionCode}</div>
 			</div>
 		);
 	}

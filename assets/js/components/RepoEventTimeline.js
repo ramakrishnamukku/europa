@@ -3,6 +3,7 @@
 */
 
 import React, {Component, PropTypes} from 'react'
+import NPECheck from './../util/NPECheck'
 import RepoEventItem from './../components/RepoEventItem'
 
 export default class RepoEventTimeline extends Component {
@@ -14,8 +15,16 @@ export default class RepoEventTimeline extends Component {
 		return (
 			<div className="TimelineLegend">
 				Event Timeline
+				{this.renderLoadingIcon()}
 			</div>
 		);
+	}
+	renderLoadingIcon(){
+		if(!NPECheck(this.props, 'events/length', true)) {
+			return (
+				<i className="icon icon-dis-waiting rotating"/>
+			);
+		}
 	}
 	renderTimeline(){
 		return (
@@ -28,7 +37,7 @@ export default class RepoEventTimeline extends Component {
 		);
 	}
 	renderTimelineContent(){
-		if(!this.props.events || !this.props.events.length) {
+		if(!NPECheck(this.props, 'events/length', true)) {
 			return (
 				<div className="Timeline">
 					<div className="NoContent">
@@ -40,7 +49,6 @@ export default class RepoEventTimeline extends Component {
 				</div>
 			);
 		}
-
 
 		return this.props.events.sort((firstEvent, secondEvent) => (firstEvent.eventTime >= secondEvent.eventTime) ? -1 : 1 )
 								.map(this.renderRepoEventItem)

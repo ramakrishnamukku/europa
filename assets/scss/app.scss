@@ -1,7 +1,3 @@
-$light_gray: rgb(247, 247, 247);
-$pink: #F7739C;
-$backgroundColor: #F5F5F7;
-
 // Icons
 @import "vendor/css/distelli-icons.css";
 
@@ -16,7 +12,6 @@ $backgroundColor: #F5F5F7;
 @import "pages/Repositories";
 @import "pages/Settings";
 
-
 // Partials
 @import "partials/APITokens";
 @import "partials/BlueBorderInput";
@@ -28,6 +23,7 @@ $backgroundColor: #F5F5F7;
 @import "partials/Dropdown";
 @import "partials/Msg";
 @import "partials/Loader";
+@import "partials/RadioButton";
 @import "partials/Registries";
 @import "partials/RepoEventTimeline";
 @import "partials/RepoSettings";
@@ -35,8 +31,6 @@ $backgroundColor: #F5F5F7;
 @import "partials/UploadGCEServiceAccount";
 @import "partials/WebhookData";
 @import "partials/WebhookViewer";
-
-
 
 html, body {
     height: 100vh;

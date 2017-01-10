@@ -52,7 +52,6 @@ export default class RepoDetailsPage extends Component {
 		}
 	}
 	renderDeleteRepo(){
-
 		if(this.context.state.repoDetails.deleteXHR) {
 			return (
 				<Loader />
@@ -103,13 +102,13 @@ export default class RepoDetailsPage extends Component {
 			{
 				icon: 'icon icon-dis-terminate',
 			    onClick: () => this.context.actions.toggleActiveRepoDelete(),
-				isActive: false,
+				isActive: this.context.state.repoDetails.isDeleting,
 				toolTip: 'Disconnect'
 			},
 			{
 				icon: 'icon icon-dis-settings',
 			    onClick: () => this.context.actions.toggleActiveRepoSettings(),
-				isActive: false,
+				isActive: this.context.state.repoDetails.showSettings,
 				toolTip: 'Settings'
 			}
 		];

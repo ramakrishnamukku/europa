@@ -40,10 +40,19 @@ export default class APITokens extends Component{
 			 		Status
 			 	</span>
 			 	<span className="ThickBlueText Actions" onClick={() => this.createAuthToken()}>
-			 		+ Create Token
+			 		{this.renderCreatTokenText()}
 			 	</span>
 			</div>
 		);
+	}
+	renderCreatTokenText(){
+		if(NPECheck(this.context.state, 'settings/tokens/createTokenXHR', false)) {
+			return (
+				<i className="icon icon-dis-waiting rotating" />
+			);
+		}
+
+		return '+ Create Token';
 	}
 	renderContent(){
 		let errorMsg = NPECheck(this.context.state, 'settings/tokens/tokenPageError', false);
@@ -59,6 +68,7 @@ export default class APITokens extends Component{
 		}				
 
 		let tokens = NPECheck(this.context.state, 'settings/tokens/allTokens', []);
+
 		return (
 			<div className="APIBody">
 				{tokens.map((token, i) => {
@@ -80,13 +90,13 @@ export default class APITokens extends Component{
 	renderIcons(token){
 		let statusToolTip = 'Deactivate Token';
 		let newStatus = 'INACTIVE';
-		let statusIcon = 'icon icon-dis-disconnect';
+		let statusIcon = 'icon icon-dis-inactive';
 		let contents = [];
 		
 		if(token.status == 'INACTIVE') {
 			statusToolTip = 'Activate Token';
 			newStatus = 'ACTIVE';			
-			statusIcon = 'icon icon-dis-repo';
+			statusIcon = 'icon icon-dis-active';
 		}
 
 		let infoIconDOM = (
@@ -114,7 +124,7 @@ export default class APITokens extends Component{
 		);
 	}
 	renderTokenString(tokenString){
-		let displayToken = '*******************';
+		let displayToken = '************************';
 		let verb = 'Show';
 		let isActive = NPECheck(this.context.state, 'settings/tokens/showingTokens').includes(tokenString);
 
@@ -128,8 +138,11 @@ export default class APITokens extends Component{
 				<span className="Flex1">
 					{displayToken}
 				</span>
-				<Btn onClick={() => this.context.actions.toggleShowingToken(tokenString)}
-					 text={verb} />
+				<div className="ItalicText"
+					 onClick={() => this.context.actions.toggleShowingToken(tokenString)}>
+					 <span className="Pipe">|</span>
+					 {verb}
+				</div>
 			</span>
 		);
 
@@ -164,7 +177,19 @@ export default class APITokens extends Component{
 				 style={{padding: '1rem 0'}}/>
 		);
 	}
-	renderControlRoom(){
+	renderPageContent(){
+		let tokens = NPECheck(this.context.state, 'settings/tokens/allTokens', []);
+		if(!tokens.length) {
+			return (
+				<div className="NoContent">
+					<h3>No API Tokens found.</h3>
+					<Btn className="LargeBlueButton"
+						 text="Create Token"
+						 onClick={() => this.createAuthToken()}/>
+				</div>
+			);
+		}
+
 		return (
 			<ControlRoom renderHeaderContent={() => this.renderHeader()}
 						 renderBodyContent={() => this.renderContent()} />
@@ -173,7 +198,7 @@ export default class APITokens extends Component{
 	render(){
 		return (
 			<div className="APITokens">
-				{this.renderControlRoom()}
+				{this.renderPageContent()}
 			</div>	
 		);
 	}

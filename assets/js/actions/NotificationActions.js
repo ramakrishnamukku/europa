@@ -54,6 +54,8 @@ export function clearNotifError() {
 }
 
 export function testNotification() {
+  if (!isAddNotificationValid.call(this)) return;
+
   RAjax.POST('TestWebhookDelivery', {
       notification: this.state.notif.newNotification
     })
@@ -73,9 +75,24 @@ export function testNotification() {
       })
     })
     .catch((err) => {
-      console.error('Webhook Req failed');
-      console.error(err);
+        console.error(err);
+        let errorMsg = `There was an error testing your notification. ${NPECheck(err, 'error/message', '')}`
+        this.setState({
+          notif: GA.modifyProperty(this.state.notif, {
+            notifError: errorMsg,
+            notifsXHR: false
+          })
+        });
     });
+}
+
+export function resetTestNotification(){
+  this.setState({
+    notif: GA.modifyProperty(this.state.notif, {
+      testNotification: {},
+      testNotificationStatus: null,
+    })
+  });
 }
 
 export function toggleShowNotificationTestResults() {
@@ -147,6 +164,10 @@ export function updateNewNotificationField(prop, e, eIsValue) {
         value: value
       }
     })
+  }, () => {
+    if(prop == 'target' && NPECheck(this.state, 'notif/testNotificationStatus', false)) {
+      resetTestNotification.call(this);
+    }
   });
 }
 

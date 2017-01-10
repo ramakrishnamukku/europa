@@ -24,6 +24,15 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-dis-active:before {
+  content: "\e98a";
+}
+.icon-dis-inactive:before {
+  content: "\e98b";
+}
+.icon-dis-provision:before {
+  content: "\e989";
+}
 .icon-dis-details:before {
   content: "\e988";
 }

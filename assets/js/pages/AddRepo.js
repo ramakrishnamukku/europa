@@ -148,7 +148,8 @@ export default class AddRepository extends Component {
             }]
 		}, {
 			columns: [{
-                icon:'icon icon-dis-webhook-circle',
+                icon:'icon icon-dis-webhook-circle-solid',
+                iconStyle: {position: 'relative', top: '-2px'},
                 renderBody: this.renderAddRepoNotification.bind(this),
             }]
 		}, {

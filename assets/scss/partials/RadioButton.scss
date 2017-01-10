@@ -1,0 +1,28 @@
+.RadioButton {
+    justify-content: center;
+    align-items: center;
+
+    label {
+        color: $black;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    label.Inactive {
+        color: $grey;
+    }
+
+    i {
+        margin-right: 5px;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    i.Inactive {
+        color: $grey;
+    }
+}

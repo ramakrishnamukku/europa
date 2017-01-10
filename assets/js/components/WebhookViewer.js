@@ -31,8 +31,11 @@ export default class WebhookViewer extends Component {
 		return this.state.activeRecordUrls.includes(url);
 	}
 	renderExpandIcon(record){
+		console.log(record);
+		console.log(this.state.activeRecordUrls);
+		console.log(this.isRecordActive(record.notififcationId));
 		return (this.isRecordActive(record.notififcationId)) ? ( <i className="icon icon-dis-collapse" /> ) 
-												 : ( <i className="icon icon-dis-expand" /> )
+												 			 : ( <i className="icon icon-dis-expand" /> )
 	}
 	renderStatusIcon(record){
 		let status = StatusCode(record.response.httpStatusCode);
@@ -83,6 +86,7 @@ export default class WebhookViewer extends Component {
 	render() {	
 		return (
 			<div className="WebhookViewer">
+				<div className="Delivered">Delivered Webhooks</div>
 				{this.renderRecordList()}
 			</div>
 		);		

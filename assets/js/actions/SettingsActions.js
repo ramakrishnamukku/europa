@@ -41,6 +41,7 @@ export function tokensState() {
   return {
     allTokens: [],
     tokensXHR: false,
+    createTokenXHR: false,
     deleteTokenXHR: false,
     statusXHR: false,
     showingTokens: [],
@@ -98,22 +99,40 @@ export function listAuthTokens() {
 
 export function createAuthToken() {
   return new Promise((resolve, reject) => {
-    RAjax.POST('CreateAuthToken')
-      .then((res) => {
-        resolve(res);
+
+    this.setState({
+      settings: Reducers(this.state.settings, {
+        type: 'UPDATE_TOKENS_STATE',
+        data: {
+          createTokenXHR: true
+        }
       })
-      .catch((err) => {
-        console.error(err);
-        let errorMsg = `There was an error creating your API token: ${err.error.message}`;
-        this.setState({
-          settings: Reducers(this.state.settings, {
-            type: 'UPDATE_TOKENS_STATE',
-            data: {
-              tokenItemError: errorMsg
-            }
-          })
-        }, () => reject(err));
-      });
+    }, () => {
+      RAjax.POST('CreateAuthToken')
+        .then((res) => {
+          this.setState({
+            settings: Reducers(this.state.settings, {
+              type: 'UPDATE_TOKENS_STATE',
+              data: {
+                createTokenXHR: false
+              }
+            })
+          }, () => resolve(res));
+        })
+        .catch((err) => {
+          console.error(err);
+          let errorMsg = `There was an error creating your API token: ${err.error.message}`;
+          this.setState({
+            settings: Reducers(this.state.settings, {
+              type: 'UPDATE_TOKENS_STATE',
+              data: {
+                tokenItemError: errorMsg,
+                createTokenXHR: false
+              }
+            })
+          }, () => reject(err));
+        });
+    });
   });
 }
 

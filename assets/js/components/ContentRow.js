@@ -19,7 +19,7 @@ export default class ContentRow extends Component {
 
     return (
       <div className="IconContainer">
-          <i className={column.icon}></i>
+          <i className={column.icon} style={(column.iconStyle) ? column.iconStyle : {}}></i>
       </div>
     );
   }

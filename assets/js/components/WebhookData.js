@@ -151,7 +151,7 @@ export default class WebhookData extends Component {
 			className += ' Modal';
 
 			return (
-				<div className="ScreenCover JustifyCenter AlignCenter">
+				<div className="ScreenCover JustifyCenter">
 					<div className={className}>
 						{this.renderControls()}
 						{this.renderData()}

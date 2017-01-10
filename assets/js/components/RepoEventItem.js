@@ -37,7 +37,7 @@ export default class RepoEventItem extends Component {
 		let action = this.viewNotificationInfo.bind(this, event);
 		let notifLength = event.notifications.length;
 		let verb = (this.context.state.repoDetails.activeEventId == event.id) ? 'Hide' : 'View';
-		let inside = (notifLength == 1) ? `${verb} Webhooks (${notifLength})` : `${verb} Webhook (${notifLength})`;
+		let inside = (notifLength == 1) ? `${verb} Webhook (${notifLength})` : `${verb} Webhooks (${notifLength})`;
 		let className = "Item";
 
 		if(notifLength == 0) {

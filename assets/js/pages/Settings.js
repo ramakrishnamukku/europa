@@ -33,10 +33,6 @@ export default class Settings extends Component {
 					 onClick={() => this.context.actions.setSettingsSection(apiTokensKey)}>
 					API Tokens
 				</div>
-				<div className={this.getSideBarItemClassName(settingsKey)} 
-					 onClick={() => this.context.actions.setSettingsSection(settingsKey)}>
-					Settings
-				</div>
 			</div>
 		);
 	}

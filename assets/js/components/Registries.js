@@ -9,6 +9,7 @@ import Msg from './../components/Msg'
 import Loader from './../components/Loader'
 import ControlRoom from './../components/ControlRoom'
 import AddRegistry from './../components/AddRegistry'
+import Btn from './../components/Btn'
 import NPECheck from './../util/NPECheck'
 
 export default class Registries extends Component {
@@ -30,7 +31,7 @@ export default class Registries extends Component {
 			<div className="RegistryListLegend">
 				<span>Provider</span>
 				<span>Key Name</span>
-				<span>Access Key</span>
+				<span className="Flex2">Access Key</span>
 				<span>Region</span>
 				<span className="AddCred" 
 					  onClick={ () => this.context.actions.toggleShowAddEditRegistryModal() }>
@@ -50,7 +51,7 @@ export default class Registries extends Component {
 						{reg.provider}
 					</span>
 					<span className="ListValue">{reg.name}</span>
-					<span className="ListValue">{reg.key}</span>
+					<span className="ListValue Flex2">{reg.key}</span>
 					<span className="ListValue">{reg.region}</span>
 					<span className="Actions">
 						<i className="icon icon-dis-settings" data-tip="Settings" data-for="ToolTipTop"
@@ -67,9 +68,10 @@ export default class Registries extends Component {
 	renderNoRegistries(){
 		return (
 			<div className="NoContent">
-				<h3>
-					No Registry Credentials Saved
-				</h3>		
+				<h3>No Registries Credentials found.</h3>
+				<Btn className="LargeBlueButton"
+					 text="Add Credential"
+					 onClick={() => this.context.actions.toggleShowAddEditRegistryModal()}/>
 			</div>
 		);
 	}
@@ -148,20 +150,17 @@ export default class Registries extends Component {
 			
 		);
 	}
-	renderContent(){
+	renderPageContent(){
+		let registries = this.context.state.registries;
+
 		if(this.context.state.addRegistry.showModal) {
 			return this.renderAddEditRegistry();
 		}
 
-		let registries = this.context.state.registries;
+		if(!registries.length) {
+			return this.renderNoRegistries();
+		}
 
-		return (
-			<ControlRoom renderHeaderContent={() => this.renderLegend()}
-					     renderBodyContent={() => registries.map(this.renderRegistryItem.bind(this))}/>
-				
-		);
-	}
-	render() {
 		if(this.context.state.registriesXHR) {
 			return (
 				<div className="PageLoader">
@@ -171,8 +170,14 @@ export default class Registries extends Component {
 		}
 
 		return (
+			<ControlRoom renderHeaderContent={() => this.renderLegend()}
+					     renderBodyContent={() => registries.map(this.renderRegistryItem.bind(this))}/>				
+		);
+	}
+	render() {
+		return (
 			<div className="RegistryList FlexColumn">
-				{this.renderContent()}
+				{this.renderPageContent()}
 			</div>
 		);
 	}

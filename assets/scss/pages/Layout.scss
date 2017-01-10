@@ -54,10 +54,10 @@ nav {
 }
 
 .ScreenCover {
-    top: 43px;
-    left: 0px;
+    left: 0;
     position: fixed;
-    height: calc(100% - 43px);
+    height: 100%;
+    top: 0;
     width: 100%;
     background-color: rgba(0, 0, 0, 0.3);
     z-index: 10000;
@@ -195,7 +195,8 @@ nav {
         color: $teal;
         font-weight: 300;
         font-size: 2.125rem;
-        margin: 1rem 0;
+        padding: 1rem 0;
+        margin: 0;
     }
 
     p {
@@ -238,23 +239,23 @@ nav {
 }
 
 .Flex0 {
-    flex: 0;
+    flex: 0 !important;
 }
 
 .Flex1 {
-    flex: 1;
+    flex: 1 !important;
 }
 
 .Flex2 {
-    flex: 2;
+    flex: 2 !important;
 }
 
 .Flex3 {
-    flex: 3;
+    flex: 3 !important;
 }
 
 .Flex3 {
-    flex: 4;
+    flex: 4 !important;
 }
 
 .Row {
@@ -289,34 +290,6 @@ nav {
     justify-content: space-between;
 }
 
-.RadioButton {
-    justify-content: center;
-    align-items: center;
-
-    label {
-        color: $black;
-
-        &:hover {
-            cursor: pointer;
-        }
-    }
-
-    label.Inactive {
-        color: $grey;
-    }
-
-    i {
-        margin-right: 5px;
-
-        &:hover {
-            cursor: pointer;
-        }
-    }
-
-    i.Inactive {
-        color: $grey;
-    }
-}
 
 .LightBlueColor {
     color: $light-blue;
@@ -330,12 +303,19 @@ nav {
     color: $red;
 }
 
-.NoClick{
+.NoClick {
     cursor: initial !important;
 
     &:hover {
-        cursor: initial !important;        
+        cursor: initial !important;
     }
+}
+
+.ItalicText {
+    @extend .Clickable;
+    font-size: 0.875rem;
+    font-style: italic;
+    padding-right: 28px;
 }
 
 .ThickBlueText {
@@ -347,6 +327,11 @@ nav {
         cursor: pointer;
         color: darken($light-blue, 5%);
     }
+}
+
+.Pipe {
+    color: $dark-border-color;
+    margin-right: 7px;
 }
 
 i {
@@ -362,4 +347,48 @@ label {
 
 label.small {
     font-size: 0.625rem;
+}
+
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+    from {
+        -ms-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+
+    to {
+        -ms-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes rotating {
+    from {
+        -ms-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+
+    to {
+        -ms-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+.rotating {
+    -webkit-animation: rotating 2s linear infinite;
+    -moz-animation: rotating 2s linear infinite;
+    -ms-animation: rotating 2s linear infinite;
+    -o-animation: rotating 2s linear infinite;
+    animation: rotating 2s linear infinite;
 }
