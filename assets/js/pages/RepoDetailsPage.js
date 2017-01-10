@@ -44,22 +44,23 @@ export default class RepoDetailsPage extends Component {
 		this.context.router.push('/');
 	}
 	renderRepoSettings(activeRepo){
-		if(this.context.state.repoDetails.showSettings) {
+		if(this.props.repoDetails.showSettings) {
 			return (
 				<RepoSettings 
+					{...this.props}
 					activeRepo={activeRepo}
 				/>
 			);
 		}
 	}
 	renderDeleteRepo(){
-		if(this.context.state.repoDetails.deleteXHR) {
+		if(this.props.repoDetails.deleteXHR) {
 			return (
 				<Loader />
 			);
 		}
 
-		if(this.context.state.repoDetails.isDeleting) {
+		if(this.props.repoDetails.isDeleting) {
 			return (
 				<CenteredConfirm message="Are you sure you want to delete this repository? All data will be lost."
 							     confirmButtonText="Delete"
@@ -70,10 +71,11 @@ export default class RepoDetailsPage extends Component {
 		}
 	}
 	renderEventTimeline(){
-		let events = this.context.state.repoDetails.events;
+		let events = this.props.repoDetails.events;
 
 		return (
 			<RepoEventTimeline 
+				{...this.props}
 				events={events}
 			/>
 		);
@@ -108,13 +110,13 @@ export default class RepoDetailsPage extends Component {
 			{
 				icon: 'icon icon-dis-terminate',
 			    onClick: () => this.context.actions.toggleActiveRepoDelete(),
-				isActive: this.context.state.repoDetails.isDeleting,
+				isActive: this.props.repoDetails.isDeleting,
 				toolTip: 'Disconnect'
 			},
 			{
 				icon: 'icon icon-dis-settings',
 			    onClick: () => this.context.actions.toggleActiveRepoSettings(),
-				isActive: this.context.state.repoDetails.showSettings,
+				isActive: this.props.repoDetails.showSettings,
 				toolTip: 'Settings'
 			}
 		];
@@ -124,17 +126,17 @@ export default class RepoDetailsPage extends Component {
 		);
 	}
 	render() {	
-		let errorMsg = NPECheck(this.context.state, 'repoDetails/eventsError', false);
+		let errorMsg = NPECheck(this.props, 'repoDetails/eventsError', false);
 
 		if(errorMsg) {
 			return this.renderError(errorMsg);
 		}
 
-		if(this.context.state.repoDetails.pageXHR || this.context.state.repoDetails.eventsXHR) {
+		if(this.props.repoDetails.pageXHR || this.props.repoDetails.eventsXHR) {
 			return this.renderPageLoader()
 		}
 
-		let activeRepo = NPECheck(this.context.state, 'repoDetails/activeRepo', {});
+		let activeRepo = NPECheck(this.props, 'repoDetails/activeRepo', {});
 
 		return (
 			<div className="ContentContainer">
@@ -151,12 +153,10 @@ export default class RepoDetailsPage extends Component {
 
 RepoDetailsPage.childContextTypes = {
 	actions: PropTypes.object,
-    state: PropTypes.object,
     router: PropTypes.object
 };
 
 RepoDetailsPage.contextTypes = {
 	actions: PropTypes.object,
-    state: PropTypes.object,
     router: PropTypes.object
 };

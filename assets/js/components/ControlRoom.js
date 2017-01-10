@@ -44,13 +44,3 @@ ControlRoom.propTypes = {
 	headerStyle: PropTypes.object,
 	headerClassName: PropTypes.string,
 };
-
-ControlRoom.childContextTypes = {
-    actions: PropTypes.object,
-    state: PropTypes.object
-};
-
-ControlRoom.contextTypes = {
-    actions: PropTypes.object,
-    state: PropTypes.object
-};

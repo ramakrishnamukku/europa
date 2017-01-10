@@ -61,15 +61,3 @@ UploadGCEServciceAccount.propTypes = {
 	standaloneMode: PropTypes.bool,
 	isEdit: PropTypes.bool,
 }
-
-UploadGCEServciceAccount.childContextTypes = {
-	actions: PropTypes.object,
-    state: PropTypes.object,
-    router: PropTypes.object
-};
-
-UploadGCEServciceAccount.contextTypes = {
-	actions: PropTypes.object,
-    state: PropTypes.object,
-    router: PropTypes.object
-};

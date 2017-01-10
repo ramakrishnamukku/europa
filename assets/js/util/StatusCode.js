@@ -1,3 +1,7 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
 export default function statusCode(statusCode){
   let returnValue = 'UNKNOWN';
 

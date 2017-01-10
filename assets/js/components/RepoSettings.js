@@ -12,20 +12,15 @@ export default class RepoSettings extends Component {
 		super(props);
 		this.state = {};
 	}
-	componentWillMount() {
-		this.setState({
-			activeRepoCreds: this.context.state.registriesMap[this.props.activeRepo.credId]
-		});
-	}
 	componentDidMount() {
-		let repoId = this.context.state.repoDetails.activeRepo.id;
+		let repoId = this.props.repoDetails.activeRepo.id;
 		this.context.actions.listRepoNotifications(repoId);
 	}
 	componentWillUnmount() {
 		this.context.actions.resetNotifState();
 	}
 	renderCredentials() {
-		let creds = this.state.activeRepoCreds;
+		let creds = this.props.registriesMap[this.props.activeRepo.credId]
 		return (
 			<div className="FlexColumn">
 				<div className="FlexRow SpaceBetween">
@@ -70,9 +65,9 @@ export default class RepoSettings extends Component {
 		}
 	}
 	renderRepoNotifications(){
-		let notifs = this.context.state.notif.notifs;
+		let notifs = this.props.notif.notifs;
 		return (
-			<RepoNotifications notifs={notifs}/>
+			<RepoNotifications {...this.props} notifs={notifs}/>
 		);
 	}
 	renderSettings(){
@@ -110,13 +105,9 @@ RepoSettings.propTypes =  {
 };
 
 RepoSettings.childContextTypes = {
-	actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
+	actions: PropTypes.object
 };
 
 RepoSettings.contextTypes = {
-	actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
+	actions: PropTypes.object
 };

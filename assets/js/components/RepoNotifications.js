@@ -20,13 +20,13 @@ export default class RepoNotifications extends Component {
 	deleteNotification(){
 		this.context.actions.deleteNotification()
 			.then(() => {
-				let repoId = NPECheck(this.context.state, 'repoDetails/activeRepo/id', null);
+				let repoId = NPECheck(this.props, 'repoDetails/activeRepo/id', null);
 				this.context.actions.listRepoNotifications(repoId, true);			
 			});
 	}
 	renderAddNotification(){
 		return (
-			<AddRepoNotification isExistingRepo={true}/>
+			<AddRepoNotification {...this.props} isExistingRepo={true}/>
 		);
 	}
 	renderRepoNotifications(){
@@ -71,11 +71,11 @@ export default class RepoNotifications extends Component {
 		);
 	}
 	renderDeleteNotification(notifId){
-		let activeId = NPECheck(this.context.state, 'notif/deleteNotifId', null);
+		let activeId = NPECheck(this.props, 'notif/deleteNotifId', null);
 
 		if( activeId == notifId) {
 
-			if(NPECheck(this.context.state, 'notif/deleteNotificationXHR', false)) {
+			if(NPECheck(this.props, 'notif/deleteNotificationXHR', false)) {
 				return (
 					<Loader />
 				);
@@ -91,7 +91,7 @@ export default class RepoNotifications extends Component {
 		}
 	}
 	render() {	
-		if(NPECheck(this.context.state, 'notif/notifsXHR', false)) {
+		if(NPECheck(this.props, 'notif/notifsXHR', false)) {
 			return (
 				<Loader />
 			);
@@ -114,13 +114,9 @@ RepoNotifications.propTypes =  {
 };
 
 RepoNotifications.childContextTypes = {
-	actions: PropTypes.object,
-    state: PropTypes.object,
-    router: PropTypes.object
+	actions: PropTypes.object
 };
 
 RepoNotifications.contextTypes = {
-	actions: PropTypes.object,
-    state: PropTypes.object,
-    router: PropTypes.object
+	actions: PropTypes.object
 };

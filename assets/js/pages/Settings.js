@@ -12,7 +12,7 @@ export default class Settings extends Component {
 		this.state = {};
 	}
 	getSideBarItemClassName(key){
-		let section = this.context.state.settings.section;
+		let section = this.props.settings.section;
 		return (key == section) ? 'SideBarItem Active' : 'SideBarItem';
 	}
 	componentWillUnmount() {
@@ -38,16 +38,16 @@ export default class Settings extends Component {
 	}
 	renderRegistries(){
 		return (
-			<Registries />
+			<Registries {...this.props}/>
 		);
 	}
 	renderAPITokens(){
 		return (
-			<APITokens />
+			<APITokens {...this.props}/>
 		);
 	}
 	renderContent(){
-		let section = this.context.state.settings.section;
+		let section = this.props.settings.section;
 		switch(section) {
 			case 'CREDENTIALS':
 				return this.renderRegistries();
@@ -83,12 +83,10 @@ export default class Settings extends Component {
 
 Settings.childContextTypes = {
     actions: PropTypes.object,
-    state: PropTypes.object,
     router: PropTypes.object
 };
 
 Settings.contextTypes = {
     actions: PropTypes.object,
-    state: PropTypes.object,
     router: PropTypes.object
 };

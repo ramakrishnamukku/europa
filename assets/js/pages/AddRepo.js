@@ -30,7 +30,7 @@ export default class AddRepository extends Component {
 		this.context.actions.resetNotifState();
 	}
 	inputClassName(selector){
-		let hasSelector = this.context.state.addRepo.errorFields.includes(selector)
+		let hasSelector = this.props.addRepo.errorFields.includes(selector)
 		if(hasSelector) {
 			return "BlueBorder FullWidth Error";
 		} else {
@@ -40,6 +40,7 @@ export default class AddRepository extends Component {
 	renderAddRegistry(){
 		return (
 			<AddRegistry 
+			    {...this.props}
 				standaloneMode={false}
 				isEdit={false}
 			/>
@@ -51,24 +52,24 @@ export default class AddRepository extends Component {
 				<label  style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
 					Select Repository
 				</label>
-				<Dropdown isOpen={this.context.state.addRepo.selectRepoDropdown}
+				<Dropdown isOpen={this.props.addRepo.selectRepoDropdown}
 						  toggleOpen={() => this.context.actions.toggleSelectRepoDropdown()}
-						  listItems={this.context.state.addRepo.reposInRegistry} 
+						  listItems={this.props.addRepo.reposInRegistry} 
 						  renderItem={(repo, index) => this.renderRepoInRegistryListItem(repo, index)}
-						  filterFn={(item) => item.indexOf(this.context.state.addRepo.reposInRegistryQuery) > -1}
+						  filterFn={(item) => item.indexOf(this.props.addRepo.reposInRegistryQuery) > -1}
 						  inputOnChange={(e) => this.context.actions.updateReposInRegisterQuery(e, false)}
 						  inputPlaceholder="Search or enter repository name"
 						  inputClassName={this.inputClassName(dockerRepoNameKey)}
-						  inputValue={NPECheck(this.context.state, 'addRepo/newRepo/repo/name', '')} 
+						  inputValue={NPECheck(this.props, 'addRepo/newRepo/repo/name', '')} 
 						  noItemsMessage="No Repositories Found"
-						  XHR={NPECheck(this.context.state, 'addRepo/reposInRegistryXHR', true)}/>
+						  XHR={NPECheck(this.props, 'addRepo/reposInRegistryXHR', true)}/>
 			</div>
 		);
 	}
 	renderRepoInRegistryListItem(repo, index){
 		let className = "ListItem";
 
-		if(repo == NPECheck(this.context.state, 'addRepo/newRepo/repo/name', null)) {
+		if(repo == NPECheck(this.props, 'addRepo/newRepo/repo/name', null)) {
 			className += " Active";
 		}		
 
@@ -85,21 +86,21 @@ export default class AddRepository extends Component {
 	}	
 	renderAddRepoNotification(){
 		return (
-			<AddRepoNotification />
+			<AddRepoNotification {...this.props}/>
 		);
 	}
 	renderErrorMsg(){
-		if(this.context.state.addRepo.errorMsg) {
+		if(this.props.addRepo.errorMsg) {
 			return (
 				<Msg
-					text={this.context.state.addRepo.errorMsg}
+					text={this.props.addRepo.errorMsg}
 					close={() => this.context.actions.clearAddRepoError()}
 				/>
 			);
 		}
 	}
 	renderSuccessMsg(){
-		if(this.context.state.addRepo.success) {
+		if(this.props.addRepo.success) {
 
 			let message = 'Successfullt added repository to monitor';
 
@@ -128,7 +129,7 @@ export default class AddRepository extends Component {
 		);
 	}
 	addRepo(){
-		if(this.context.state.addRepo.newRepoCredsType == 'NEW') {
+		if(this.props.addRepo.newRepoCredsType == 'NEW') {
 			this.context.actions.addRegistryRequest()
 			.then((credId) => this.context.actions.selectCredsForNewRepo(null, credId))
 			.then(() => this.context.actions.addRepoRequest(this.toRepoDetails.bind(this)))
@@ -156,19 +157,19 @@ export default class AddRepository extends Component {
 			columns: [{
                 icon:'icon icon-dis-blank',
                 renderBody: this.renderErrorMsg.bind(this),
-                condition: this.context.state.addRepo.errorMsg
+                condition: this.props.addRepo.errorMsg
             }]
 		}, {
 			columns: [{
                 icon:'icon icon-dis-blank',
                 renderBody: this.renderLoader.bind(this),
-                condition: this.context.state.addRepo.XHR
+                condition: this.props.addRepo.XHR
             }]
 		}, {
 			columns: [{
                 icon:'icon icon-dis-blank',
                 renderBody: this.renderSuccessMsg.bind(this),
-                condition: this.context.state.addRepo.success
+                condition: this.props.addRepo.success
             }]
 		}, {
 			columns: [{
@@ -204,12 +205,10 @@ export default class AddRepository extends Component {
 
 AddRepository.childContextTypes = {
 	actions: PropTypes.object,
-    state: PropTypes.object,
     router: PropTypes.object
 };
 
 AddRepository.contextTypes = {
 	actions: PropTypes.object,
-    state: PropTypes.object,
     router: PropTypes.object
 };

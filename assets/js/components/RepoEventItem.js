@@ -22,9 +22,9 @@ export default class RepoEventItem extends Component {
 		});
 	}
 	renderEventData(event){
-		if(this.context.state.repoDetails.activeEventId == event.id) {
+		if(this.props.repoDetails.activeEventId == event.id) {
 
-			let errorMsg = NPECheck(this.context.state, 'notif/retrieveNotifRecordsError', false);
+			let errorMsg = NPECheck(this.props, 'notif/retrieveNotifRecordsError', false);
 
 			if(errorMsg) {
 				return (
@@ -34,21 +34,22 @@ export default class RepoEventItem extends Component {
 				);
 			}
 
-			if(NPECheck(this.context.state, 'notif/notifRecordXHR', false)) {
+			if(NPECheck(this.props, 'notif/notifRecordXHR', false)) {
 				return (
 					<Loader />
 				);
 			}
 
 			return (
-				<WebhookViewer allWebhookData={this.context.state.notif.currentNotifRecords} />
+				<WebhookViewer {...this.props} 
+							   allWebhookData={this.props.notif.currentNotifRecords} />
 			);
 		} 
 	}
 	renderWebhookText(event){
 		let action = this.viewNotificationInfo.bind(this, event);
 		let notifLength = event.notifications.length;
-		let verb = (this.context.state.repoDetails.activeEventId == event.id) ? 'Hide' : 'View';
+		let verb = (this.props.repoDetails.activeEventId == event.id) ? 'Hide' : 'View';
 		let inside = (notifLength == 1) ? `${verb} Webhook (${notifLength})` : `${verb} Webhooks (${notifLength})`;
 		let className = "Item";
 
@@ -123,13 +124,9 @@ RepoEventItem.propTypes = {
 };
 
 RepoEventItem.childContextTypes = {
-    actions: PropTypes.object,
-    state: PropTypes.object,
-    router: PropTypes.object
+    actions: PropTypes.object
 };
 
 RepoEventItem.contextTypes = {
-    actions: PropTypes.object,
-    state: PropTypes.object,
-    router: PropTypes.object
+    actions: PropTypes.object
 };

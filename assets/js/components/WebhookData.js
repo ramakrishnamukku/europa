@@ -54,8 +54,8 @@ export default class WebhookData extends Component {
 		let id = this.props.webhookData.notificationId;
 
 		if(id) {
-			if(NPECheck(this.context.state, 'notif/redeliverXHRID', false) == id) {
-				let errorMsg = NPECheck(this.context.state, 'notif/redeliverError', false);
+			if(NPECheck(this.props, 'notif/redeliverXHRID', false) == id) {
+				let errorMsg = NPECheck(this.props, 'notif/redeliverError', false);
 
 				if(errorMsg) {
 					return (
@@ -199,12 +199,8 @@ WebhookData.propTypes = {
 
 WebhookData.childContextTypes = {
     actions: PropTypes.object,
-    state: PropTypes.object,
-    router: PropTypes.object
 };
 
 WebhookData.contextTypes = {
     actions: PropTypes.object,
-    state: PropTypes.object,
-    router: PropTypes.object
 };

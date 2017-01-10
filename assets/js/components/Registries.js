@@ -76,18 +76,18 @@ export default class Registries extends Component {
 		);
 	}
 	renderConfirmDeleteRegistry(reg){
-		if(reg == this.context.state.registry.registrySelectedForDelete) {
+		if(reg == this.props.registry.registrySelectedForDelete) {
 
-			if(this.context.state.registry.deleteRegistryErrorMsg) {
+			if(this.props.registry.deleteRegistryErrorMsg) {
 				return (
 					<div className="RowPadding">
-						<Msg text={this.context.state.registry.deleteRegistryErrorMsg} 
+						<Msg text={this.props.registry.deleteRegistryErrorMsg} 
 								  close={() => this.context.actions.setRegistryForDelete()}/>
 					</div>
 				)
 			}
 
-			if(this.context.state.registry.deleteRegistryXHR) {
+			if(this.props.registry.deleteRegistryXHR) {
 				return (
 					<Loader />
 				);
@@ -103,8 +103,8 @@ export default class Registries extends Component {
 		}
 	}
 	renderAddEditRegistryLegend(){
-		let isEdit = this.context.state.addRegistry.isEdit;
-		let provider = NPECheck(this.context.state, 'addRegistry/newRegistry/provider', '');
+		let isEdit = this.props.addRegistry.isEdit;
+		let provider = NPECheck(this.props, 'addRegistry/newRegistry/provider', '');
 
 		switch(provider) {
 
@@ -143,17 +143,17 @@ export default class Registries extends Component {
 		);
 	}
 	renderAddEditRegistry(){
-		let isEdit = this.context.state.addRegistry.isEdit;
+		let isEdit = this.props.addRegistry.isEdit;
 		return (
 			<ControlRoom renderHeaderContent={() => this.renderAddEditRegistryLegend()}
-						 renderBodyContent={() => <AddRegistry standaloneMode={true} isEdit={isEdit} /> } />
+						 renderBodyContent={() => <AddRegistry {...this.props} standaloneMode={true} isEdit={isEdit} /> } />
 			
 		);
 	}
 	renderPageContent(){
-		let registries = this.context.state.registries;
+		let registries = this.props.registries;
 
-		if(this.context.state.addRegistry.showModal) {
+		if(this.props.addRegistry.showModal) {
 			return this.renderAddEditRegistry();
 		}
 
@@ -161,7 +161,7 @@ export default class Registries extends Component {
 			return this.renderNoRegistries();
 		}
 
-		if(this.context.state.registriesXHR) {
+		if(this.props.registriesXHR) {
 			return (
 				<div className="PageLoader">
 					<Loader />
@@ -184,14 +184,10 @@ export default class Registries extends Component {
 }
 
 Registries.childContextTypes = {
-    actions: PropTypes.object,
-    state: PropTypes.object,
-    router: PropTypes.object
+    actions: PropTypes.object
 };
 
 Registries.contextTypes = {
-    actions: PropTypes.object,
-    state: PropTypes.object,
-    router: PropTypes.object
+    actions: PropTypes.object
 };
 

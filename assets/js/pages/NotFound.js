@@ -35,12 +35,10 @@ export default class NotFound extends Component {
 
 NotFound.childContextTypes = {
     actions: PropTypes.object,
-    state: PropTypes.object,
     router: PropTypes.object
 };
 
 NotFound.contextTypes = {
     actions: PropTypes.object,
-    state: PropTypes.object,
     router: PropTypes.object
 };

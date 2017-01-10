@@ -52,9 +52,6 @@ export default class Layout extends Component {
 		};
 	}
 	componentDidMount() {
-		// RegistryActions.listRegistries.call(this);
-		// RepoActions.listRepos.call(this);
-
 		this.setState({
 			intervals: {
 				registriesInterval: setInterval(() => {
@@ -83,7 +80,6 @@ export default class Layout extends Component {
 					  ];
 		return {
 			actions: ActionBinder(actions, this),
-			state: this.state,
 			router: this.context.router
 		};
 	}
@@ -109,7 +105,7 @@ export default class Layout extends Component {
 				</nav>
 				<div className="PageContent">
 					<div className="MaxWidthContainer">
-						{this.props.children}
+						{React.cloneElement(this.props.children, {...this.state}, null)}
 						<ReactTooltip id="ToolTipBottom" place="top" type="dark" effect="float"/>
 						<ReactTooltip id="ToolTipTop" place="top" type="dark" effect="float"/>
 					</div>
@@ -125,7 +121,6 @@ Layout.contextTypes = {
 
 Layout.childContextTypes = {
 	actions: PropTypes.object,
-	state: PropTypes.object,
 	router: PropTypes.object
 };
 

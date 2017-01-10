@@ -51,11 +51,12 @@ export default class RepoEventTimeline extends Component {
 		}
 
 		return this.props.events.sort((firstEvent, secondEvent) => (firstEvent.eventTime >= secondEvent.eventTime) ? -1 : 1 )
-								.map(this.renderRepoEventItem)
+								.map((event, index) => this.renderRepoEventItem(event, index))
 	}
 	renderRepoEventItem(event, index){
 		return (
-			<RepoEventItem key={index}
+			<RepoEventItem {...this.props}
+						   key={index}
 						   event={event} />
 		);
 	}
@@ -68,20 +69,15 @@ export default class RepoEventTimeline extends Component {
 	}	
 }
 
-
 RepoEventTimeline.propTypes = {
-	events: React.PropTypes.array.isRequired
+	events: PropTypes.array.isRequired
 };
 
 RepoEventTimeline.childContextTypes = {
-    actions: PropTypes.object,
-    state: PropTypes.object,
-    router: PropTypes.object
+    actions: PropTypes.object
 };
 
 RepoEventTimeline.contextTypes = {
-    actions: PropTypes.object,
-    state: PropTypes.object,
-    router: PropTypes.object
+    actions: PropTypes.object
 };
 

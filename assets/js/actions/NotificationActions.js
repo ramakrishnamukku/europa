@@ -1,6 +1,7 @@
-import Reducers from './../reducers/NotificationReducers'
 import * as GA from './../reducers/GeneralReducers'
 import * as RAjax from './../util/RAjax'
+import Reducers from './../reducers/NotificationReducers'
+import StatusCode from './../util/StatusCode'
 import Validate from './../util/Validate'
 import NPECheck from './../util/NPECheck'
 import isValidScheme from './../util/isValidScheme'
@@ -59,19 +60,12 @@ export function clearNotifError() {
 export function testNotification() {
   if (!isAddNotificationValid.call(this)) return;
 
-  // let notification = 
-
   RAjax.POST('TestWebhookDelivery', {
       notification: this.state.notif.newNotification
     })
     .then((res) => {
-      let statusCode = NPECheck(res, 'response/httpStatusCode', null);
-      let testNotificationStatus;
-
-      if (200 <= statusCode && statusCode <= 299) testNotificationStatus = 'SUCCESS';
-      if ((0 <= statusCode && statusCode <= 199) || (300 <= statusCode && statusCode <= 399)) testNotificationStatus = 'WARNING';
-      if (400 <= statusCode) testNotificationStatus = 'ERROR';
-
+      let responseCode = NPECheck(res, 'response/httpStatusCode', null);
+      let testNotificationStatus = StatusCode(responseCode);
       this.setState({
         notif: GA.modifyProperty(this.state.notif, {
           testNotification: res,
@@ -259,7 +253,7 @@ export function isAddNotificationValid() {
     });
 
     return true;
-    
+
   } else {
     this.setState({
       notif: GA.modifyProperty(this.state.notif, {
@@ -367,15 +361,7 @@ export function appendNotificationRecord(newRecord) {
 }
 
 export function getNotificationRecord(recordId) {
-  return new Promise((resolve, reject) => {
-    RAjax.GET('GetNotificationRecord', {
-        notificationId: recordId
-      })
-      .then((res) => {
-        resolve(res);
-      })
-      .catch((err) => {
-        reject(err);
-      });
+  return RAjax.GET('GetNotificationRecord', {
+    notificationId: recordId
   });
 }

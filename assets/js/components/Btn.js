@@ -60,13 +60,3 @@ Btn.propTypes = {
 	style: PropTypes.object,
 	className: PropTypes.string
 };
-
-Btn.childContextTypes = {
-    actions: PropTypes.object,
-    state: PropTypes.object
-};
-
-Btn.contextTypes = {
-    actions: PropTypes.object,
-    state: PropTypes.object
-};

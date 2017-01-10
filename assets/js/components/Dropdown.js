@@ -110,9 +110,3 @@ Dropdown.propTypes = {
 	noItemsMessage: PropTypes.string,
 	XHR: PropTypes.bool
 };
-
-Dropdown.contextTypes = {
-    actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
-};

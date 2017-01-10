@@ -38,10 +38,6 @@ export default  class CenteredConfirm extends Component {
   }
 }
 
-CenteredConfirm.contextTypes = {
-  actions: React.PropTypes.object,
-};
-
 CenteredConfirm.propTypes = {
   message: React.PropTypes.string,
   confirmButtonText:  React.PropTypes.string,

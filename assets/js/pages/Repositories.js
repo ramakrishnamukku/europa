@@ -23,10 +23,10 @@ export default class Repositories extends Component {
 		this.context.router.push('/new-repository');
 	}
 	renderRepos(){
-		let filteredRepos = this.context.state.repos.filter((repo) => {
-			if(!this.context.state.reposFilterQuery) return true;
+		let filteredRepos = this.props.repos.filter((repo) => {
+			if(!this.props.reposFilterQuery) return true;
 
-			return JSON.stringify(repo).indexOf(this.context.state.reposFilterQuery) > -1
+			return JSON.stringify(repo).indexOf(this.props.reposFilterQuery) > -1
 		});
 
 		if(!filteredRepos.length) {
@@ -104,7 +104,7 @@ export default class Repositories extends Component {
 		);
 	}
 	renderRepositories(){
-		let reposLength = this.context.state.repos.length;
+		let reposLength = this.props.repos.length;
 		let noun = (reposLength == 1) ? 'Repository' : 'Repositories';
 		return (
 			<div className="ContentContainer">
@@ -158,13 +158,13 @@ export default class Repositories extends Component {
 		);		
 	}
 	render() {
-		if(this.context.state.reposXHR) {
+		if(this.props.reposXHR) {
 			return (
 				<div className="PageLoader">
 					<Loader />
 				</div>
 			);
-		} else if(this.context.state.repos.length) {
+		} else if(this.props.repos.length) {
 			return this.renderRepositories()
 		} else {
 			return this.renderNoRepositories();
@@ -174,12 +174,10 @@ export default class Repositories extends Component {
 
 Repositories.childContextTypes = {
     actions: PropTypes.object,
-    state: PropTypes.object,
     router: PropTypes.object
 };
 
 Repositories.contextTypes = {
     actions: PropTypes.object,
-    state: PropTypes.object,
     router: PropTypes.object
 };

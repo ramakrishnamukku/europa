@@ -76,7 +76,7 @@ export default class WebhookViewer extends Component {
 	renderWebhookData(record){
 		if(this.isRecordActive(record.notificationId)) {
 			return (
-				<WebhookData webhookData={record} close={() => this.toggleActiveRecord(record.notificationId)}/>
+				<WebhookData {...this.props} webhookData={record} close={() => this.toggleActiveRecord(record.notificationId)}/>
 			);		
 		}
 
@@ -97,12 +97,8 @@ WebhookViewer.propTypes = {
 
 WebhookViewer.childContextTypes = {
     actions: PropTypes.object,
-    state: PropTypes.object,
-    router: PropTypes.object
 };
 
 WebhookViewer.contextTypes = {
     actions: PropTypes.object,
-    state: PropTypes.object,
-    router: PropTypes.object
 };

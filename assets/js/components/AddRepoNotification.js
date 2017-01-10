@@ -21,12 +21,12 @@ export default class AddRepoNotification extends Component {
 	addNotification(){
 		this.context.actions.addRepoNotification()
 			.then(() => {
-				let repoId = NPECheck(this.context.state, 'repoDetails/activeRepo/id', null);
+				let repoId = NPECheck(this.props, 'repoDetails/activeRepo/id', null);
 				this.context.actions.listRepoNotifications(repoId, true);
 			});
 	}
 	inputClassName(selector){
-		let hasSelector = this.context.state.notif.errorFields.includes(selector)
+		let hasSelector = this.props.notif.errorFields.includes(selector)
 
 		let className;
 		if(hasSelector) {
@@ -42,9 +42,9 @@ export default class AddRepoNotification extends Component {
 		return className
 	}
 	renderAddNotification(){
-		let webhookData = this.context.state.notif.testNotification;
+		let webhookData = this.props.notif.testNotification;
 		let statusCode = NPECheck(webhookData, 'response/httpStatusCode', null);
-		let status = NPECheck(this.context.state, 'notif/testNotificationStatus', null);
+		let status = NPECheck(this.props, 'notif/testNotificationStatus', null);
 		let classNameTarget = this.inputClassName(notifTargetKey);
 		let classNameSecret = this.inputClassName(notifSecretKey);
 
@@ -61,7 +61,7 @@ export default class AddRepoNotification extends Component {
 						<div className="FlexRow">
 							<input className={classNameTarget}
 								   onChange={(e) => this.context.actions.updateNewNotificationField(notifTargetKey, e, false)}
-								   value={NPECheck(this.context.state, `notif/newNotification/${notifTargetKey}`, '')}
+								   value={NPECheck(this.props, `notif/newNotification/${notifTargetKey}`, '')}
 								   placeholder="Enter Webhook URL"/>
 							<div>
 								{this.renderTestNotificationStatus(status, statusCode)}
@@ -74,7 +74,7 @@ export default class AddRepoNotification extends Component {
 						<label className="small">Webhook Secret</label>
 						<input className={classNameSecret}
 							   onChange={(e) => this.context.actions.updateNewNotificationField(notifSecretKey, e, false)}
-							   value={NPECheck(this.context.state, `notif/newNotification/${notifSecretKey}`, '')}
+							   value={NPECheck(this.props, `notif/newNotification/${notifSecretKey}`, '')}
 						       placeholder="Enter Webhook Secret"/>
 					</div>
 					
@@ -93,7 +93,7 @@ export default class AddRepoNotification extends Component {
 	}
 	renderAddNotificationButton(){
 		if(this.props.isExistingRepo) {
-			if(this.context.state.notif.addNotifXHR) {
+			if(this.props.notif.addNotifXHR) {
 				return (
 					<Loader />
 				);
@@ -150,7 +150,7 @@ export default class AddRepoNotification extends Component {
 		);
 	}
 	renderWebhookData(webhookData){
-		if(this.context.state.notif.showNotificationTestResults) {
+		if(this.props.notif.showNotificationTestResults) {
 			return (
 				<WebhookData webhookData={webhookData} 
 							 modal={true}
@@ -160,7 +160,7 @@ export default class AddRepoNotification extends Component {
 		};
 	}
 	renderError(){
-		let errorMsg = NPECheck(this.context.state, 'notif/notifError', '');
+		let errorMsg = NPECheck(this.props, 'notif/notifError', '');
 
 		if(errorMsg) {
 			return (
@@ -172,7 +172,7 @@ export default class AddRepoNotification extends Component {
 		} 
 	}
 	render() {	
-		let webhookData = NPECheck(this.context.state, 'notif/testNotification', {});
+		let webhookData = NPECheck(this.props, 'notif/testNotification', {});
 		return (
 			<div>
 				{this.renderWebhookData(webhookData)}
@@ -186,13 +186,9 @@ export default class AddRepoNotification extends Component {
 AddRepoNotification.propTypes =  {};
 
 AddRepoNotification.childContextTypes = {
-	actions: PropTypes.object,
-    state: PropTypes.object,
-    router: PropTypes.object
+	actions: PropTypes.object
 };
 
 AddRepoNotification.contextTypes = {
-	actions: PropTypes.object,
-    state: PropTypes.object,
-    router: PropTypes.object
+	actions: PropTypes.object
 };

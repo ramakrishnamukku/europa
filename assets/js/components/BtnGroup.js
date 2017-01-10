@@ -1,3 +1,7 @@
+/*
+  @author Sam Heutmaker [samheutmaker@gmail.com]
+*/
+
 import React, { Component, PropTypes } from 'react'
 
 export default class BtnGroup extends Component {

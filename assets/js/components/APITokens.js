@@ -46,7 +46,7 @@ export default class APITokens extends Component{
 		);
 	}
 	renderCreateTokenText(){
-		if(NPECheck(this.context.state, 'settings/tokens/createTokenXHR', false)) {
+		if(NPECheck(this.props, 'settings/tokens/createTokenXHR', false)) {
 			return (
 				<i className="icon icon-dis-waiting rotating" />
 			);
@@ -55,20 +55,12 @@ export default class APITokens extends Component{
 		return '+ Create Token';
 	}
 	renderContent(){
-		let errorMsg = NPECheck(this.context.state, 'settings/tokens/tokenPageError', false);
-		if(errorMsg) return this.renderError(errorMsg);
+		let errorMsg = NPECheck(this.props, 'settings/tokens/tokenPageError', false);
+		if(errorMsg) {
+			return this.renderError(errorMsg);
+		}
 
-		let isLoading = NPECheck(this.context.state, 'settings/tokens/tokensXHR', false);
-		if(isLoading) {
-			return (
-				<div className="PageLoader">
-					<Loader />
-				</div>
-			);
-		}				
-
-		let tokens = NPECheck(this.context.state, 'settings/tokens/allTokens', []);
-
+		let tokens = NPECheck(this.props, 'settings/tokens/allTokens', []);
 		return (
 			<div className="APIBody">
 				{tokens.map((token, i) => {
@@ -126,7 +118,7 @@ export default class APITokens extends Component{
 	renderTokenString(tokenString){
 		let displayToken = '************************';
 		let verb = 'Show';
-		let isActive = NPECheck(this.context.state, 'settings/tokens/showingTokens').includes(tokenString);
+		let isActive = NPECheck(this.props, 'settings/tokens/showingTokens').includes(tokenString);
 
 		if(isActive) {
 			verb = 'Hide';
@@ -148,14 +140,14 @@ export default class APITokens extends Component{
 
 	}
 	renderDeleteToken(token){
-		if( NPECheck(this.context.state, 'settings/tokens/selectedTokenForStatusUpdate', null) == token.token 
-			|| NPECheck(this.context.state, 'settings/tokens/selectedTokenForDelete', null) ==  token.token) {
+		if( NPECheck(this.props, 'settings/tokens/selectedTokenForStatusUpdate', null) == token.token 
+			|| NPECheck(this.props, 'settings/tokens/selectedTokenForDelete', null) ==  token.token) {
 
-			let errorMsg = NPECheck(this.context.state, 'settings/tokens/tokenItemError', null);
+			let errorMsg = NPECheck(this.props, 'settings/tokens/tokenItemError', null);
 			if(errorMsg) return this.renderError(errorMsg);
 
-			if( NPECheck(this.context.state, 'settings/tokens/statusXHR', false)
-			    || NPECheck(this.context.state, 'settings/tokens/deleteTokenXHR', false)) {
+			if( NPECheck(this.props, 'settings/tokens/statusXHR', false)
+			    || NPECheck(this.props, 'settings/tokens/deleteTokenXHR', false)) {
 				return (
 					<Loader />
 				);
@@ -178,7 +170,16 @@ export default class APITokens extends Component{
 		);
 	}
 	renderPageContent(){
-		let tokens = NPECheck(this.context.state, 'settings/tokens/allTokens', []);
+		let isLoading = NPECheck(this.props, 'settings/tokens/tokensXHR', false);
+		if(isLoading) {
+			return (
+				<div className="PageLoader">
+					<Loader />
+				</div>
+			);
+		}				
+
+		let tokens = NPECheck(this.props, 'settings/tokens/allTokens', []);
 		if(!tokens.length) {
 			return (
 				<div className="NoContent">
@@ -204,17 +205,12 @@ export default class APITokens extends Component{
 	}
 }
 
-
 APITokens.childContextTypes = {
-    actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
+    actions: React.PropTypes.object
 };
 
 APITokens.contextTypes = {
-    actions: React.PropTypes.object,
-    state: React.PropTypes.object,
-    router: React.PropTypes.object
+    actions: React.PropTypes.object
 };
 
 
