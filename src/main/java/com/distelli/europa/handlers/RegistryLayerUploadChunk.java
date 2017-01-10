@@ -68,11 +68,8 @@ public class RegistryLayerUploadChunk extends RegistryBase {
             throw new RegistryError("The :uuid parameter specifies an upload that already succeeded.", RegistryErrorCode.BLOB_UPLOAD_INVALID);
         }
         ObjectKey objKey = _objectKeyFactory.forRegistryBlobId(blobId);
-        ObjectPartKey partKey = ObjectPartKey.builder()
-            .bucket(objKey.getBucket())
-            .key(objKey.getKey())
-            .uploadId(blob.getUploadId())
-            .build();
+        ObjectPartKey partKey = getObjectPartKey(blobId, blob.getUploadId());
+
         long totalSize = getTotalSize(blob.getPartIds());
         int partNum = getLength(blob.getPartIds()) + 1;
         ObjectPartId partId = null;
@@ -91,21 +88,31 @@ public class RegistryLayerUploadChunk extends RegistryBase {
             contentLength = counter.getCount();
             is.reset();
         }
+        if ( contentLength > 0 ) {
+            int size = blob.getPartIds().size();
+            if ( size > 0 ) {
+                long lastSize = blob.getPartIds().get(size-1).getChunkSize();
+                if ( lastSize < MIN_SIZE ) {
+                    // Last chunk needs to be uploaded too:
+                    throw rangeNotSatisfiable("Minimum chunk size="+MIN_SIZE, requestContext, totalSize-lastSize);
+                }
+            }
 
-        is = new DigestInputStream(is, new JDKMessageDigest(digest));
-        try {
-            partId = _objectStore.multipartPut(partKey, partNum, contentLength, is);
-        } catch ( EntityNotFoundException ex ) {
-            // Forget about this upload in our DB then...
-            _blobDb.forgetBlob(blobId);
-            throw new RegistryError("Invalid :uuid parameter", RegistryErrorCode.BLOB_UPLOAD_UNKNOWN);
+            is = new DigestInputStream(is, new JDKMessageDigest(digest));
+            try {
+                partId = _objectStore.multipartPut(partKey, partNum, contentLength, is);
+            } catch ( EntityNotFoundException ex ) {
+                // Forget about this upload in our DB then...
+                _blobDb.forgetBlob(blobId);
+                throw new RegistryError("Invalid :uuid parameter", RegistryErrorCode.BLOB_UPLOAD_UNKNOWN);
+            }
+            RegistryBlobPart blobPart = RegistryBlobPart.builder()
+                .chunkSize(contentLength)
+                .partNum(partId.getPartNum())
+                .partId(partId.getPartId())
+                .build();
+            _blobDb.addPart(blobId, partNum, blobPart, blob.getMdEncodedState(), digest.getEncodedState());
         }
-        RegistryBlobPart blobPart = RegistryBlobPart.builder()
-            .chunkSize(contentLength)
-            .partNum(partId.getPartNum())
-            .partId(partId.getPartId())
-            .build();
-        _blobDb.addPart(blobId, partNum, blobPart, blob.getMdEncodedState(), digest.getEncodedState());
         WebResponse response = new WebResponse(201);
         response.setContentType("text/plain");
         response.setResponseHeader("Range", "0-"+(totalSize+contentLength));
@@ -139,6 +146,15 @@ public class RegistryLayerUploadChunk extends RegistryBase {
                 RegistryErrorCode.RANGE_INVALID);
         }
 */
+
+    protected ObjectPartKey getObjectPartKey(String blobId, String uploadId) {
+        ObjectKey objKey = _objectKeyFactory.forRegistryBlobId(blobId);
+        return ObjectPartKey.builder()
+            .bucket(objKey.getBucket())
+            .key(objKey.getKey())
+            .uploadId(uploadId)
+            .build();
+    }
 
     private Long[] parseRange(String rangeStr) {
         Long[] range = new Long[2];

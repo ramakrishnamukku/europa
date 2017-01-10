@@ -1,7 +1,7 @@
 package com.distelli.europa.registry;
 
 public enum RegistryErrorCode {
-    BLOB_UNKNOWN(400),
+    BLOB_UNKNOWN(404),
     BLOB_UPLOAD_INVALID(400),
     BLOB_UPLOAD_UNKNOWN(404),
     DIGEST_INVALID(400),

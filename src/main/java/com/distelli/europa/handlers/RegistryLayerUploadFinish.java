@@ -16,10 +16,18 @@ import com.distelli.europa.registry.RegistryError;
 import com.distelli.europa.registry.RegistryErrorCode;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
+import java.util.List;
+import java.util.ArrayList;
+import com.distelli.objectStore.ObjectPartId;
+import com.distelli.objectStore.ObjectStore;
+import com.distelli.europa.models.RegistryBlobPart;
+import com.distelli.objectStore.ObjectPartKey;
 
 @Log4j
 @Singleton
 public class RegistryLayerUploadFinish extends RegistryLayerUploadChunk {
+    @Inject
+    private ObjectStore _objectStore;
     @Inject
     private RegistryBlobDb _blobDb;
     public WebResponse handleRegistryRequest(RequestContext requestContext) {
@@ -44,11 +52,25 @@ public class RegistryLayerUploadFinish extends RegistryLayerUploadChunk {
                                     RegistryErrorCode.BLOB_UPLOAD_INVALID);
         }
         validateDigest(digest, blob.getMdEncodedState());
+        ObjectPartKey partKey = getObjectPartKey(blobId, blob.getUploadId());
+
+        _objectStore.completePut(partKey, toObjectPartIds(blob.getPartIds()));
         _blobDb.finishUpload(blobId, blob.getMdEncodedState(), digest);
         WebResponse response = new WebResponse(201);
         response.setResponseHeader("Location", "/v2/"+name+"/blobs/"+digest);
         response.setResponseHeader("Docker-Content-Digest", digest);
         return response;
+    }
+
+    private List<ObjectPartId> toObjectPartIds(List<RegistryBlobPart> parts) {
+        List<ObjectPartId> partIds = new ArrayList<>(parts.size());
+        for ( RegistryBlobPart part : parts ) {
+            partIds.add(ObjectPartId.builder()
+                        .partNum(part.getPartNum())
+                        .partId(part.getPartId())
+                        .build());
+        }
+        return partIds;
     }
 
     private void validateDigest(String digest, byte[] encodedState) {
