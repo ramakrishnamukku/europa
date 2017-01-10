@@ -18,7 +18,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <distelli-common.version>1.3.0</distelli-common.version>
+    <distelli-common.version>1.4.0</distelli-common.version>
+    <distelli-persistence.version>1.3.3</distelli-persistence.version>
   </properties>
 
   <build>
@@ -93,6 +94,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk15on</artifactId>
+      <version>1.56</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
       <version>2.5.1</version>
@@ -138,19 +145,19 @@
     <dependency>
       <groupId>com.distelli.persistence</groupId>
       <artifactId>persistence-api</artifactId>
-      <version>1.3.2</version>
+      <version>${distelli-persistence.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.distelli.persistence</groupId>
       <artifactId>persistence-impl</artifactId>
-      <version>1.3.2</version>
+      <version>${distelli-persistence.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.distelli.persistence</groupId>
       <artifactId>jackson-transform</artifactId>
-      <version>1.3.2</version>
+      <version>${distelli-persistence.version}</version>
     </dependency>
 
     <dependency>

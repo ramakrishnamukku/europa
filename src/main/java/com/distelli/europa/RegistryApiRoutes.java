@@ -39,7 +39,7 @@ public class RegistryApiRoutes
         // ?digest=<digest> ?mount=<digest>&from=<repository name>
         ROUTES.add("POST", "/v2/:name/blobs/uploads", RegistryLayerUploadBegin.class);
         ROUTES.add("PUT", "/v2/:name/blobs/uploads/:uuid", RegistryLayerUploadFinish.class);
-//        ROUTES.add("PATCH", "/v2/:name/blobs/uploads/:uuid", RegistryLayerUploadChunk.class);
+        ROUTES.add("PATCH", "/v2/:name/blobs/uploads/:uuid", RegistryLayerUploadChunk.class);
         ROUTES.add("GET", "/v2/:name/blobs/uploads/:uuid", RegistryLayerUploadProgress.class);
         ROUTES.add("DELETE", "/v2/:name/blobs/uploads/:uuid", RegistryLayerUploadCancel.class);
 

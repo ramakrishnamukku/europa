@@ -15,6 +15,7 @@ import lombok.extern.log4j.Log4j;
 @Singleton
 public class RegistryDefault extends RegistryBase {
     public WebResponse handleRegistryRequest(RequestContext requestContext) {
+        log.info("404: "+requestContext);
         WebResponse response = new WebResponse(404);
         return response;
     }

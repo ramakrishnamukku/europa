@@ -22,6 +22,7 @@ import javax.inject.Singleton;
 import java.util.Map;
 import java.util.HashMap;
 import javax.inject.Inject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Log4j
 public class RegistryAuthFilter implements RequestFilter<RequestContext>
@@ -44,7 +45,9 @@ public class RegistryAuthFilter implements RequestFilter<RequestContext>
     {
         try {
             _auth.authenticate(requestContext);
-            return next.filter(requestContext);
+            WebResponse response = next.filter(requestContext);
+            response.setResponseHeader("Docker-Distribution-Api-Version", "registry/2.0");
+            return response;
         } catch ( RegistryError ex ) {
             return handleError(ex);
         } catch ( Throwable ex ) {
@@ -54,6 +57,13 @@ public class RegistryAuthFilter implements RequestFilter<RequestContext>
     }
 
     private WebResponse handleError(RegistryError error) {
+        if ( log.isInfoEnabled() ) {
+            try {
+                log.info("RegistryError: "+error.getErrorCode()+" "+OM.writeValueAsString(error.getResponseBody()));
+            } catch ( Exception ex ){
+                log.error(ex.getMessage(), ex);
+            }
+        }
         WebResponse response = WebResponse.toJson(error.getResponseBody(), error.getErrorCode().getStatusCode());
         for ( Map.Entry<String, String> entry : error.getResponseHeaders().entrySet() ) {
             response.setResponseHeader(entry.getKey(), entry.getValue());

@@ -4,7 +4,6 @@ import com.distelli.europa.Constants;
 import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.models.*;
 import com.distelli.jackson.transform.TransformModule;
-import com.distelli.objectStore.ObjectPartId;
 import com.distelli.persistence.AttrDescription;
 import com.distelli.persistence.AttrType;
 import com.distelli.persistence.ConvertMarker;
@@ -25,7 +24,8 @@ import javax.inject.Singleton;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.RollbackException;
 import lombok.extern.log4j.Log4j;
-
+import java.util.ConcurrentModificationException;
+import static javax.xml.bind.DatatypeConverter.printHexBinary;
 @Log4j
 @Singleton
 public class RegistryBlobDb {
@@ -35,6 +35,7 @@ public class RegistryBlobDb {
     private static final String ATTR_PART_IDS = "parts";
     private static final String ATTR_UPLOADED_BY = "by";
     private static final String ATTR_UPLOAD_ID = "up";
+    private static final String ATTR_MD_ENCODED_STATE = "mdx";
 
     private Index<RegistryBlob> _main;
     private Index<RegistryBlob> _byDigest;
@@ -77,12 +78,14 @@ public class RegistryBlobDb {
         module.createTransform(RegistryBlob.class)
             .put(ATTR_BLOB_ID, String.class, "blobId")
             .put(ATTR_DIGEST, String.class, "digest")
-            .put(ATTR_PART_IDS, new TypeReference<List<ObjectPartId>>(){}, "partIds")
+            .put(ATTR_PART_IDS, new TypeReference<List<RegistryBlobPart>>(){}, "partIds")
             .put(ATTR_UPLOADED_BY, String.class, "uploadedBy")
-            .put(ATTR_UPLOAD_ID, String.class, "uploadId");
-        module.createTransform(ObjectPartId.class)
+            .put(ATTR_UPLOAD_ID, String.class, "uploadId")
+            .put(ATTR_MD_ENCODED_STATE, byte[].class, "mdEncodedState");
+        module.createTransform(RegistryBlobPart.class)
             .put("n", Integer.class, "partNum")
-            .put("i", String.class, "partId");
+            .put("i", String.class, "partId")
+            .put("s", Long.class, "chunkSize");
         return module;
     }
 
@@ -95,14 +98,14 @@ public class RegistryBlobDb {
 
         _main = indexFactory.create(RegistryBlob.class)
             .withTableName(TABLE_NAME)
-            .withNoEncrypt(ATTR_DIGEST)
+            .withNoEncrypt(ATTR_BLOB_ID, ATTR_MD_ENCODED_STATE, ATTR_DIGEST)
             .withHashKeyName(ATTR_BLOB_ID)
             .withConvertValue(_om::convertValue)
             .withConvertMarker(convertMarkerFactory.create(ATTR_BLOB_ID))
             .build();
         _byDigest = indexFactory.create(RegistryBlob.class)
             .withTableName(TABLE_NAME)
-            .withNoEncrypt(ATTR_BLOB_ID)
+            .withNoEncrypt(ATTR_BLOB_ID, ATTR_MD_ENCODED_STATE, ATTR_DIGEST)
             .withHashKeyName(ATTR_DIGEST)
             .withConvertValue(_om::convertValue)
             .withConvertMarker(convertMarkerFactory.create(ATTR_DIGEST, ATTR_BLOB_ID))
@@ -151,13 +154,38 @@ public class RegistryBlobDb {
         }
     }
 
-    public void addPart(String blobId, ObjectPartId partId) {
+    public void addPart(String blobId, int partIndex, RegistryBlobPart partId, byte[] oldMDState, byte[] newMDState)
+        throws EntityNotFoundException, ConcurrentModificationException
+    {
         try {
             _main.updateItem(blobId, null)
-                .listAdd(ATTR_PART_IDS, AttrType.MAP, partId)
-                .when((expr) -> expr.exists(ATTR_BLOB_ID));
+                .listSet(ATTR_PART_IDS, partIndex, AttrType.MAP, partId)
+                .set(ATTR_MD_ENCODED_STATE, AttrType.BIN, newMDState)
+                .when((expr) -> expr.and(
+                          expr.exists(ATTR_BLOB_ID),
+                          ( null == oldMDState )
+                          ? expr.not(expr.exists(ATTR_MD_ENCODED_STATE))
+                          : expr.eq(ATTR_MD_ENCODED_STATE, oldMDState)));
         } catch ( RollbackException ex ) {
-            throw new EntityNotFoundException("blobId="+blobId+" does not exist");
+            // Doesn't exist, then throw EntityNotFoundException?
+            RegistryBlob blob = _main.getItemOrThrow(blobId, null);
+            throw new ConcurrentModificationException(
+                "Expected mdState="+(null==oldMDState?"null":printHexBinary(oldMDState))+", but got="+
+                (null == blob.getMdEncodedState()?"null":printHexBinary(blob.getMdEncodedState())));
+        }
+    }
+
+    public void finishUpload(String blobId, byte[] currentMDState, String digest) {
+        try {
+            _main.updateItem(blobId, null)
+                .remove(ATTR_PART_IDS)
+                .remove(ATTR_MD_ENCODED_STATE)
+                .remove(ATTR_UPLOAD_ID)
+                .set(ATTR_DIGEST, digest)
+                .when((expr) -> expr.eq(ATTR_MD_ENCODED_STATE, currentMDState));
+        } catch ( RollbackException ex ) {
+            throw new ConcurrentModificationException(
+                "attempt to finish upload, but the digest state did not match");
         }
     }
 }

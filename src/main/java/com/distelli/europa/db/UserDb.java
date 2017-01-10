@@ -145,6 +145,7 @@ public class UserDb
     public User getUserByDomain(String domain)
     {
         Long id = User.domainToId(domain);
+        if ( null == id ) return null;
         return getUserById(id);
     }
 

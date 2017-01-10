@@ -30,7 +30,7 @@ public class RegistryLayerUploadCancel extends RegistryBase {
     @Inject
     private RegistryBlobDb _blobDb;
     public WebResponse handleRegistryRequest(RequestContext requestContext) {
-        String blobId = requestContext.getParameter("uuid");
+        String blobId = requestContext.getMatchedRoute().getParam("uuid");
         if ( null == blobId || blobId.isEmpty() ) {
             throw new RegistryError("Invalid :uuid parameter (must not be empty)",
                                     RegistryErrorCode.BLOB_UPLOAD_UNKNOWN);
@@ -38,6 +38,9 @@ public class RegistryLayerUploadCancel extends RegistryBase {
         RegistryBlob blob = _blobDb.getRegistryBlobById(blobId);
         if ( null == blob ) {
             throw new RegistryError("Invalid :uuid parameter", RegistryErrorCode.BLOB_UPLOAD_UNKNOWN);
+        }
+        if ( null == blob.getUploadId() ) {
+            throw new RegistryError("The :uuid parameter specifies an upload that already succeeded.", RegistryErrorCode.BLOB_UPLOAD_INVALID);
         }
         ObjectKey objKey = _objectKeyFactory.forRegistryBlobId(blobId);
         ObjectPartKey partKey = ObjectPartKey.builder()

@@ -1,10 +1,10 @@
 SHELL := /bin/bash
 .SILENT:
-.PHONY: git-has-pushed git-is-clean
+.PHONY: git-has-pushed git-is-clean assets
 all:
 	mvn -q -U dependency:build-classpath compile -DincludeScope=runtime -Dmdep.outputFile=target/.classpath -Dmaven.compiler.debug=false
 
-yarn:
+assets:
 	yarn run build-all
 
 install:

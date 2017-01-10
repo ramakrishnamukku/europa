@@ -27,7 +27,7 @@ public class RegistryLayerUploadBegin extends RegistryBase {
     private RegistryBlobDb _blobDb;
 
     public WebResponse handleRegistryRequest(RequestContext requestContext) {
-        String digest = requestContext.getParameter("digest");
+        String digest = requestContext.getMatchedRoute().getParam("digest");
         if ( null == digest ) return handleMultipartInit(requestContext);
         return handleMonolithicUpload(requestContext);
     }
@@ -37,6 +37,7 @@ public class RegistryLayerUploadBegin extends RegistryBase {
     }
 
     private WebResponse handleMultipartInit(RequestContext requestContext) {
+        String name = requestContext.getMatchedRoute().getParam("name");
         RegistryBlob blob = null;
         ObjectPartKey partKey = null;
         
@@ -54,8 +55,9 @@ public class RegistryLayerUploadBegin extends RegistryBase {
             }
         }
         // TODO: What to do with the name parameter?
-        String location = "/v2/"+requestContext.getParameter("name")+"/blobs/uploads/"+blob.getBlobId();
+        String location = "/v2/"+name+"/blobs/uploads/"+blob.getBlobId();
         WebResponse response = new WebResponse(202);
+        response.setContentType("text/plain");
         response.setResponseHeader("Location", location);
         response.setResponseHeader("Docker-Upload-UUID", blob.getBlobId());
         return response;

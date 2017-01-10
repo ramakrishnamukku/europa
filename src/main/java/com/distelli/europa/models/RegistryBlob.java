@@ -1,6 +1,5 @@
 package com.distelli.europa.models;
 
-import com.distelli.objectStore.ObjectPartId;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,8 +26,11 @@ public class RegistryBlob
      * that have been uploaded.
      */
     @Singular
-    protected List<ObjectPartId> partIds;
+    protected List<RegistryBlobPart> partIds;
     /* If upload is in progress, this is the uploadId.
      */
     protected String uploadId;
+    /* Message digest encoded state.
+     */
+    protected byte[] mdEncodedState;
 }
