@@ -8,7 +8,8 @@ import Validate from './../util/Validate'
 import Reducers from './../reducers/AddRegistryReducers'
 import NPECheck from './../util/NPECheck'
 import {
-  listReposForRegistry
+  listReposForRegistry,
+  resetCurrentRepoSearch
 } from './RepoActions'
 
 
@@ -132,6 +133,16 @@ export function newRegistryState() {
   };
 }
 
+export function resetNewRegistryState() {
+  return new Promise((resolve) => {
+    this.setState({
+      addRegistry: GA.modifyProperty(this.state.addRegistry, {
+        newRegistry: newRegistryState.call(this)
+      })
+    }, () => resolve());
+  });
+}
+
 export function clearAddRegistryError() {
   this.setState({
     addRegistry: GA.modifyProperty(this.state.addRegistry, {
@@ -144,21 +155,29 @@ export function clearAddRegistryError() {
 
 export function updateNewRegistryField(prop, e, eIsValue = false) {
   let value = (eIsValue) ? e : e.target.value;
-
-  this.setState({
-    addRegistry: Reducers(this.state.addRegistry, {
-      type: 'UPDATE_NEW_REGISTRY',
-      data: {
-        prop,
-        value
-      }
+  Promise.resolve()
+    .then((resolve, reject) => {
+      return (prop == 'provider') ? resetNewRegistryState.call(this) : null
     })
-  }, () => {
-    if (prop == 'provider') getRegionsForProvider.call(this);
-    if (isAddRegistryValid.call(this, true, !this.state.addRegistry.validateOnInput)) {
-      listReposForRegistry.call(this)
-    }
-  });
+    .then(() => {
+      return (prop == 'provider') ? resetCurrentRepoSearch.call(this) : null
+    })
+    .then(() => {
+      this.setState({
+        addRegistry: Reducers(this.state.addRegistry, {
+          type: 'UPDATE_NEW_REGISTRY',
+          data: {
+            prop,
+            value
+          }
+        })
+      }, () => {
+        if (prop == 'provider') getRegionsForProvider.call(this);
+        if (isAddRegistryValid.call(this, true, !this.state.addRegistry.validateOnInput)) {
+          listReposForRegistry.call(this)
+        }
+      });
+    })
 };
 
 export function addRegistryRequest() {

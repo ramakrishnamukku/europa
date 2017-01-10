@@ -23,6 +23,9 @@ export function notifState() {
     deleteNotifId: '',
     deleteNotificationXHR: false,
     notifRecordXHR: false,
+    redeliverXHRID: false,
+    redeliverError: '',
+    retrieveNotifRecordsError: '',
     currentNotifRecords: [],
     newNotification: {
       ...newNotificationState.call(this)
@@ -75,18 +78,18 @@ export function testNotification() {
       })
     })
     .catch((err) => {
-        console.error(err);
-        let errorMsg = `There was an error testing your notification. ${NPECheck(err, 'error/message', '')}`
-        this.setState({
-          notif: GA.modifyProperty(this.state.notif, {
-            notifError: errorMsg,
-            notifsXHR: false
-          })
-        });
+      console.error(err);
+      let errorMsg = `There was an error testing your notification. ${NPECheck(err, 'error/message', '')}`
+      this.setState({
+        notif: GA.modifyProperty(this.state.notif, {
+          notifError: errorMsg,
+          notifsXHR: false
+        })
+      });
     });
 }
 
-export function resetTestNotification(){
+export function resetTestNotification() {
   this.setState({
     notif: GA.modifyProperty(this.state.notif, {
       testNotification: {},
@@ -123,7 +126,7 @@ export function listRepoNotifications(repoId, skipXHR) {
         })
         .catch((err) => {
           console.error(err);
-          let errorMsg = `There was an error retreiving your notifications. ${NPECheck(err, 'error/message', '')}`
+          let errorMsg = `There was an error retrieving your notifications. ${NPECheck(err, 'error/message', '')}`
           this.setState({
             notif: GA.modifyProperty(this.state.notif, {
               notifError: errorMsg,
@@ -140,17 +143,42 @@ export function redeliverNotification(recordId) {
     let repoId = NPECheck(this.state, 'repoDetails/activeRepo/id', '');
     let eventId = NPECheck(this.state, 'repoDetails/activeEventId', '');
 
-    RAjax.POST('RedeliverWebhook', {}, {
-      notificationId: recordId,
-      repoId,
-      eventId
-    })
-    .then((res) => {
-      resolve(res);
-    })
-    .catch((err) => {
-      reject(err);
+    this.setState({
+      notif: GA.modifyProperty(this.state.notif, {
+        redeliverXHRID: recordId
+      })
+    }, () => {
+      RAjax.POST('RedeliverWebhook', {}, {
+          notificationId: recordId,
+          repoId,
+          eventId
+        })
+        .then((res) => {
+          this.setState({
+            notif: GA.modifyProperty(this.state.notif, {
+              redeliverXHRID: false
+            })
+          }, () => resolve(res));
+        })
+        .catch((err) => {
+          console.error(err);
+          let errorMsg = `There was an error redelivering your webhook. ${NPECheck(err, 'error/message', '')}`
+          this.setState({
+            notif: GA.modifyProperty(this.state.notif, {
+              redeliverError: errorMsg
+            })
+          }, () => reject(res));
+        });
     });
+  });
+}
+
+export function clearRedeliverError() {
+  this.setState({
+    notif: GA.modifyProperty(this.state.notif, {
+      redeliverError: '',
+      redeliverXHRID: false
+    })
   });
 }
 
@@ -165,7 +193,7 @@ export function updateNewNotificationField(prop, e, eIsValue) {
       }
     })
   }, () => {
-    if(prop == 'target' && NPECheck(this.state, 'notif/testNotificationStatus', false)) {
+    if (prop == 'target' && NPECheck(this.state, 'notif/testNotificationStatus', false)) {
       resetTestNotification.call(this);
     }
   });
@@ -273,7 +301,6 @@ export function deleteNotification(skipXHR) {
   });
 }
 
-
 export function getEventNotificationRecords(recordIdsArray) {
   return new Promise((resolve, reject) => {
     this.setState({
@@ -285,24 +312,42 @@ export function getEventNotificationRecords(recordIdsArray) {
 
       Promise.all(records)
         .then((res) => {
-
           this.setState({
             notif: GA.modifyProperty(this.state.notif, {
               currentNotifRecords: res,
               notifRecordXHR: false
             })
           }, () => resolve());
+        })
+        .catch((err) => {
+          console.error(err);
+          let errorMsg = `There was an error retrieving your notification records for this event. ${NPECheck(err, 'error/message', '')}`
+          this.setState({
+            notif: GA.modifyProperty(this.state.notif, {
+              retrieveNotifRecordsError: errorMsg,
+              notifRecordXHR: false
+            })
+          });
         });
-
     });
   });
 }
 
-export function appendNotificationRecord(newRecord){
+export function clearNotifRecordsError(){
+  this.setState({
+    notif: GA.modifyProperty(this.state.notif, {
+        retrieveNotifRecordsError: '',
+
+    }),
+    repoDetails: GA.modifyProperty(this.state.repoDetails, {
+      activeEventId: null
+    })
+  });
+}
+
+export function appendNotificationRecord(newRecord) {
   let currentRecords = NPECheck(this.state, 'notif/currentNotifRecords', []);
-
   let newRecords = [...currentRecords, newRecord];
-
   this.setState({
     notif: GA.modifyProperty(this.state.notif, {
       currentNotifRecords: newRecords
@@ -319,7 +364,7 @@ export function getNotificationRecord(recordId) {
         resolve(res);
       })
       .catch((err) => {
-        resolve(err);
+        reject(err);
       });
   });
 }

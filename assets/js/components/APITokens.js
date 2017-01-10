@@ -40,12 +40,12 @@ export default class APITokens extends Component{
 			 		Status
 			 	</span>
 			 	<span className="ThickBlueText Actions" onClick={() => this.createAuthToken()}>
-			 		{this.renderCreatTokenText()}
+			 		{this.renderCreateTokenText()}
 			 	</span>
 			</div>
 		);
 	}
-	renderCreatTokenText(){
+	renderCreateTokenText(){
 		if(NPECheck(this.context.state, 'settings/tokens/createTokenXHR', false)) {
 			return (
 				<i className="icon icon-dis-waiting rotating" />

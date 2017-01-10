@@ -5,6 +5,8 @@
 import React, {Component, PropTypes} from 'react'
 import Btn from './../components/Btn'
 import RadioButton from './../components/RadioButton'
+import NPECheck from './../util/NPECheck'
+import Msg from '../components/Msg'
 
 export default class WebhookData extends Component {
 	constructor(props) {
@@ -49,7 +51,23 @@ export default class WebhookData extends Component {
 		);
 	}
 	renderRedeliverButton(){
-		if(this.props.webhookData.notificationId) {
+		let id = this.props.webhookData.notificationId;
+
+		if(id) {
+			if(NPECheck(this.context.state, 'notif/redeliverXHRID', false) == id) {
+				let errorMsg = NPECheck(this.context.state, 'notif/redeliverError', false);
+
+				if(errorMsg) {
+					return (
+						<Msg text={errorMsg} close={() => this.context.actions.clearRedeliverError()}/>
+					);
+				}
+
+				return (
+					<i className="icon icon-dis-waiting rotating"/>
+				);
+			}
+
 			return (
 				<Btn onClick={ () => this.redeliverWebhook() }
 					 style={{height: '22px', width: '105px', fontSize: '0.75rem'}}

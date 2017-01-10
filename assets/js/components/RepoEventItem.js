@@ -8,6 +8,8 @@ import Loader from './../components/Loader'
 import TimelineIcons from './../util/TimelineIcons'
 import ConvertTimeUTC from './../util/ConvertTimeUTC'
 import ConvertTimeFriendly from './../util/ConvertTimeFriendly'
+import NPECheck from './../util/NPECheck'
+import Msg from './../components/Msg'
 
 export default class RepoEventItem extends Component {
 	constructor(props) {
@@ -22,7 +24,17 @@ export default class RepoEventItem extends Component {
 	renderEventData(event){
 		if(this.context.state.repoDetails.activeEventId == event.id) {
 
-			if(this.context.state.notif.notifRecordXHR) {
+			let errorMsg = NPECheck(this.context.state, 'notif/retrieveNotifRecordsError', false);
+
+			if(errorMsg) {
+				return (
+					<Msg text={errorMsg} 
+						 close={() => this.context.actions.clearNotifRecordsError()}
+						 style={{marginBottom: '14px'}}/>
+				);
+			}
+
+			if(NPECheck(this.context.state, 'notif/notifRecordXHR', false)) {
 				return (
 					<Loader />
 				);
@@ -106,7 +118,6 @@ export default class RepoEventItem extends Component {
 	}	
 }
 
-
 RepoEventItem.propTypes = {
 	event: PropTypes.object.isRequired
 };
@@ -122,4 +133,3 @@ RepoEventItem.contextTypes = {
     state: PropTypes.object,
     router: PropTypes.object
 };
-

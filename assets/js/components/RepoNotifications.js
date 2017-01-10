@@ -56,7 +56,8 @@ export default class RepoNotifications extends Component {
 						   onClick={() => CopyToClipboard(document.getElementById(notif.id))}
 						   data-tip="Copy URL" 
 						   data-for="ToolTipTop"/>
-						<i className="icon icon-dis-output" 
+						<i className="icon icon-dis-output"
+						    
 						   data-tip="Test Notification" 
 						   data-for="ToolTipTop"/>
 						<i className="icon icon-dis-trash" 

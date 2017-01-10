@@ -106,6 +106,22 @@ export function updateNewRepoField(keyPath, e, eIsValue = false) {
   })
 };
 
+export function resetCurrentRepoSearch() {
+  return new Promise((resolve, reject) => {
+    this.setState({
+      addRepo: GA.modifyProperty(this.state.addRepo, {
+        reposInRegistry: [],
+        reposInRegistryQuery: '',
+        newRepo: {
+          repo: {
+            ...this.state.addRepo.newRepo.repo,
+            name: ''
+          }
+        }
+      })
+    }, () => resolve());
+  });
+}
 
 export function listReposForRegistry() {
   let credId = NPECheck(this.state.addRepo, 'newRepo/repo/credId', null);

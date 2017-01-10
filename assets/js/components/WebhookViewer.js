@@ -10,32 +10,29 @@ export default class WebhookViewer extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			activeRecordUrls: []
+			activeRecordIds: []
 		};
 	}
-	toggleActiveRecord(url){
-		if(this.state.activeRecordUrls.includes(url)) {
+	toggleActiveRecord(notificationId){
+		if(this.isRecordActive(notificationId)) {
 			this.setState({
-				activeRecordUrls: this.state.activeRecordUrls
+				activeRecordIds: this.state.activeRecordIds
 					.filter((i) => {
-						return !(i == url)
+						return !(i == notificationId)
 					})
 			});
 		} else {
 			this.setState({
-				activeRecordUrls: [...this.state.activeRecordUrls, url]
+				activeRecordIds: [...this.state.activeRecordIds, notificationId]
 			});			
 		}
 	}
-	isRecordActive(url){
-		return this.state.activeRecordUrls.includes(url);
+	isRecordActive(notificationId){
+		return this.state.activeRecordIds.includes(notificationId);
 	}
 	renderExpandIcon(record){
-		console.log(record);
-		console.log(this.state.activeRecordUrls);
-		console.log(this.isRecordActive(record.notififcationId));
-		return (this.isRecordActive(record.notififcationId)) ? ( <i className="icon icon-dis-collapse" /> ) 
-												 			 : ( <i className="icon icon-dis-expand" /> )
+		return (this.isRecordActive(record.notificationId)) ? ( <i className="icon icon-dis-collapse" /> ) 
+												 			: ( <i className="icon icon-dis-expand" /> );
 	}
 	renderStatusIcon(record){
 		let status = StatusCode(record.response.httpStatusCode);
@@ -65,7 +62,8 @@ export default class WebhookViewer extends Component {
 						<div key={index} className="RecordListItem">
 							<div className="RecordListItemInfo" onClick={() => this.toggleActiveRecord(record.notificationId)}>
 								{this.renderStatusIcon(record)}
-								<div className="Url">{record.url}</div>
+								<div className="Url" data-tip={record.url} data-for="ToolTipTop">{record.url}</div>
+								<div className="Id">{record.notificationId}</div>
 								{this.renderExpandIcon(record)}
 							</div>
 							{this.renderWebhookData(record)}

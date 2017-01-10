@@ -52,8 +52,17 @@
                 }
 
                 .Url {
+                    flex: 0.4;
+                    margin-right: 14px;
                     color: $light-blue;
                     font-size: 0.75rem;
+                }
+
+                .Id {
+                    flex: 1;
+                    color: $light-blue;
+                    font-size: 0.75rem;
+
                 }
 
                 &:hover {
