@@ -412,34 +412,31 @@ export function toggleActiveRepoSettings() {
 }
 
 export function listRepoEvents(repoId, skipXHR) {
-
   this.setState({
     repoDetails: GA.modifyProperty(this.state.repoDetails, {
       eventsXHR: (skipXHR) ? false : true
     })
   }, () => {
-
     RAjax.GET('ListRepoEvents', {
         repoId
       })
       .then((res) => {
-
         this.setState({
           repoDetails: GA.modifyProperty(this.state.repoDetails, {
             events: res,
             eventsXHR: false
           })
         });
-
       })
       .catch((err) => {
-
+        console.error(err);
+        let errorMsg = `There was an error retrieving your events for this repository. ${NPECheck(err, 'error/message', '')}`
         this.setState({
           repoDetails: GA.modifyProperty(this.state.repoDetails, {
-            eventsXHR: false
+            eventsXHR: false,
+            eventsError: errorMsg
           })
         });
-
       })
   })
 }

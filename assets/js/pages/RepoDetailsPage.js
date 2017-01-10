@@ -10,6 +10,7 @@ import CenteredConfirm from './../components/CenteredConfirm'
 import NPECheck from './../util/NPECheck'
 import RepoEventTimeline from './../components/RepoEventTimeline'
 import BtnGroup from './../components/BtnGroup'
+import Msg from './../components/Msg'
 
 export default class RepoDetailsPage extends Component {
 	constructor(props) {
@@ -84,6 +85,11 @@ export default class RepoDetailsPage extends Component {
 			</div>
 		);
 	}
+	renderError(errorMsg){	
+		return (
+			<Msg text={errorMsg} style={{padding: '2rem 0'}}/>
+		);
+	}
 	renderHeader(activeRepo){
 		return (
 			<div className="SmallHeader FlexRow SpaceBetween">
@@ -118,6 +124,12 @@ export default class RepoDetailsPage extends Component {
 		);
 	}
 	render() {	
+		let errorMsg = NPECheck(this.context.state, 'repoDetails/eventsError', false);
+
+		if(errorMsg) {
+			return this.renderError(errorMsg);
+		}
+
 		if(this.context.state.repoDetails.pageXHR || this.context.state.repoDetails.eventsXHR) {
 			return this.renderPageLoader()
 		}

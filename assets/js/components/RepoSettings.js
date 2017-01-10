@@ -21,6 +21,9 @@ export default class RepoSettings extends Component {
 		let repoId = this.context.state.repoDetails.activeRepo.id;
 		this.context.actions.listRepoNotifications(repoId);
 	}
+	componentWillUnmount() {
+		this.context.actions.resetNotifState();
+	}
 	renderCredentials() {
 		let creds = this.state.activeRepoCreds;
 		return (

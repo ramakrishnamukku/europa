@@ -59,6 +59,8 @@ export function clearNotifError() {
 export function testNotification() {
   if (!isAddNotificationValid.call(this)) return;
 
+  // let notification = 
+
   RAjax.POST('TestWebhookDelivery', {
       notification: this.state.notif.newNotification
     })
@@ -248,16 +250,26 @@ export function addRepoNotification(skipXHR) {
 export function isAddNotificationValid() {
   let notif = this.state.notif.newNotification;
   let isValid = isValidScheme(notif.target);
-  if (isValid) return true;
+  if (isValid) {
+    this.setState({
+      notif: GA.modifyProperty(this.state.notif, {
+        notifError: '',
+        errorFields: []
+      })
+    });
 
-  this.setState({
-    notif: GA.modifyProperty(this.state.notif, {
-      notifError: 'Target URL must start with http:// or https://',
-      errorFields: ['target']
-    })
-  });
+    return true;
+    
+  } else {
+    this.setState({
+      notif: GA.modifyProperty(this.state.notif, {
+        notifError: 'Target URL must start with http:// or https://',
+        errorFields: ['target']
+      })
+    });
 
-  return false;
+    return false;
+  }
 }
 
 
@@ -308,8 +320,7 @@ export function getEventNotificationRecords(recordIdsArray) {
         notifRecordXHR: true
       })
     }, () => {
-      let records = recordIdsArray.map(getNotificationRecord.bind(this))
-
+      let records = recordIdsArray.map(getNotificationRecord.bind(this));
       Promise.all(records)
         .then((res) => {
           this.setState({
@@ -333,10 +344,10 @@ export function getEventNotificationRecords(recordIdsArray) {
   });
 }
 
-export function clearNotifRecordsError(){
+export function clearNotifRecordsError() {
   this.setState({
     notif: GA.modifyProperty(this.state.notif, {
-        retrieveNotifRecordsError: '',
+      retrieveNotifRecordsError: '',
 
     }),
     repoDetails: GA.modifyProperty(this.state.repoDetails, {
