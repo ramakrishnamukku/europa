@@ -13,6 +13,9 @@ import java.util.HashMap;
 import javax.inject.Inject;
 import lombok.extern.log4j.Log4j;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.IOException;
 
 @Log4j
 @Singleton
@@ -46,5 +49,14 @@ public abstract class RegistryBase extends RequestHandler
             response.setResponseHeader(entry.getKey(), entry.getValue());
         }
         return response;
+    }
+
+    protected static void pump(InputStream in, OutputStream out) throws IOException {
+        byte[] buff = new byte[1024*1024];
+        while ( true ) {
+            int len=in.read(buff);
+            if ( len <= 0 ) break;
+            out.write(buff, 0, len);
+        }
     }
 }

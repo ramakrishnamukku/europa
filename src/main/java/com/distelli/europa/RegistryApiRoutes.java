@@ -30,6 +30,7 @@ public class RegistryApiRoutes
 
         ROUTES.add("PUT", "/v2/:name/manifests/:reference", RegistryManifestPush.class);
         ROUTES.add("GET", "/v2/:name/manifests/:reference", RegistryManifestPull.class);
+        ROUTES.add("HEAD", "/v2/:name/manifests/:reference", RegistryManifestExists.class);
         ROUTES.add("DELETE", "/v2/:name/manifests/:reference", RegistryManifestDelete.class);
 
         ROUTES.add("GET", "/v2/:name/blobs/:digest", RegistryLayerPull.class);

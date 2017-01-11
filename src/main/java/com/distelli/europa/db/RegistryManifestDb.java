@@ -142,4 +142,8 @@ public class RegistryManifestDb extends BaseDb {
             }
         }
     }
+
+    public RegistryManifest getManifestByRepoTag(String repo, String tag) {
+        return _main.getItem(repo, tag);
+    }
 }

@@ -36,6 +36,8 @@ import java.util.HashSet;
 import java.util.TreeSet;
 import com.distelli.europa.registry.RegistryError;
 import com.distelli.europa.registry.RegistryErrorCode;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
 
 @Log4j
@@ -49,6 +51,8 @@ public class RegistryManifestPush extends RegistryBase {
         OM.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         OM.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         OM.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        OM.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+        OM.disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
     }
 
     @Inject
@@ -60,123 +64,6 @@ public class RegistryManifestPush extends RegistryBase {
     @Inject
     private RegistryBlobDb _blobDb;
 
-    public static interface ManifestLayer {
-        public String getBlobSum();
-    }
-
-    public static interface ManifestHistory {
-        public String getV1Compatibility();
-    }
-
-    public static interface JWK {
-        public String getKty();
-        public String getUse();
-        public List<String> getKey_ops();
-        public String getAlg();
-        public String getKid();
-        public String getX5u();
-        public List<String> getX5c();
-        public String getX5t();
-        @JsonProperty("x5t#S256")
-        public String getX5t_S256();
-        // RSA key fields:
-        public String getN();
-        public String getE();
-        public String getD();
-        public String getP();
-        public String getQ();
-        public String getDp();
-        public String getDq();
-        public String getQi();
-        public String get();
-        // EC key fields:
-        public String getCrv();
-        public String getX();
-        public String getY();
-        // "oct"?
-        public String getK();
-    }
-
-    public static interface JOSEHeader {
-        public String getAlg();
-        public String getJku();
-        public JWK getJwk();
-        public String getKid();
-        public String getX5u();
-        public List<String> getX5c();
-        public String getX5t();
-        @JsonProperty("x5t#S256")
-        public String getX5t_S256();
-        public String getTyp();
-        public String getCty();
-        public List<String> getCrit();
-    }
-    public static interface ManifestSignature {
-        public JOSEHeader getHeader();
-        public String getSignature();
-        public String getProtected();
-    }
-
-    // application/vnd.docker.distribution.manifest.v1+json
-    public static interface Manifest {
-        public String getName();
-        public String getTag();
-        public String getArchitecture();
-        public List<ManifestLayer> getFsLayers();
-        public List<ManifestHistory> getHistory();
-        public Integer getSchemaVersion();
-        public List<ManifestSignature> getSignatures();
-    }
-
-    public static interface Platform {
-        public String getArchitecture();
-        public String getOs();
-        @JsonProperty("os.version")
-        public String getOsVersion();
-        @JsonProperty("os.features")
-        public List<String> getOsFeatures();
-        public String getVariant();
-        public List<String> getFeatures();
-    }
-
-    // application/vnd.docker.image.manifest.v2+json
-    public static interface ManifestPlatform {
-        public String getMediaType();
-        public Integer getSize();
-        public String getDigest();
-        public Platform getPlatform();
-    }
-
-    // application/vnd.docker.distribution.manifest.list.v2+json
-    public static interface ManifestList {
-        public Integer getSchemaVersion();
-        public String getMediaType();
-        public List<ManifestPlatform> getManifests();
-    }
-
-    // application/vnd.docker.distribution.manifest.v2+json
-    public static interface ImageManifest {
-        public Integer getSchemaVersion();
-        public String getMediaType();
-        public Object getConfig();
-        // TODO: finish this out...
-    }
-/*
-    private JsonNode validateLayers(InputStream is, String contentType) {
-        JsonNode content = OM.readTree(is);
-        // application/vnd.docker.distribution.manifest.v2+json
-        switch ( contentType ) {
-        case "application/json":
-        case "application/vnd.docker.distribution.manifest.v1+prettyjws":
-        case "application/vnd.docker.distribution.manifest.v1+json":
-            OM.readValue(requestContext.getRequestStream(), Manifest.class);
-        case "application/vnd.docker.distribution.manifest.v2+json":
-        case "application/vnd.docker.distribution.manifest.list.v2+json":
-        case "application/vnd.docker.image.rootfs.diff.tar.gzip":
-        case "application/vnd.docker.container.image.v1+json":
-        }
-    }
-*/
     public WebResponse handleRegistryRequest(RequestContext requestContext) {
         try {
             return handleRegistryRequestThrows(requestContext);
@@ -198,7 +85,7 @@ public class RegistryManifestPush extends RegistryBase {
         MessageDigest digestCalc = MessageDigest.getInstance("SHA-256");
         DigestInputStream digestStream = new DigestInputStream(counter, digestCalc);
 
-        JsonNode manifest = OM.readTree(requestContext.getRequestStream());
+        JsonNode manifest = OM.readTree(digestStream);
         Set<String> digests = getDigests(manifest);
 
         long contentLength = counter.getCount();

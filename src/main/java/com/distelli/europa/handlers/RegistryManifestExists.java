@@ -24,7 +24,7 @@ import com.distelli.europa.registry.RegistryErrorCode;
 
 @Log4j
 @Singleton
-public class RegistryManifestPull extends RegistryBase {
+public class RegistryManifestExists extends RegistryBase {
     @Inject
     private ObjectKeyFactory _objectKeyFactory;
     @Inject
@@ -53,15 +53,10 @@ public class RegistryManifestPull extends RegistryBase {
         }
 
         WebResponse response = new WebResponse(200);
-        response.setResponseWriter(
-            (out) -> _objectStore.get(objKey, (meta, in) -> {
-                    pump(in, out);
-                    return null;
-                }));
-
+                        
         // TODO: Capture this and return it properly...
         response.setContentType("application/vnd.docker.distribution.manifest.v1+json");
-        //response.setResponseHeader("Content-Length", ""+objMeta.getContentLength());
+        response.setResponseHeader("Content-Length", ""+objMeta.getContentLength());
         return response;
     }
 }
