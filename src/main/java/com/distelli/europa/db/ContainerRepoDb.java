@@ -66,7 +66,7 @@ public class ContainerRepoDb extends BaseDb
                     IndexDescription.builder()
                     .indexName("hk-cid-index")
                     .hashKey(attr("hk", AttrType.STR))
-                    .rangeKey(attr("cid", AttrType.NUM))
+                    .rangeKey(attr("cid", AttrType.STR))
                     .indexType(IndexType.GLOBAL_SECONDARY_INDEX)
                     .readCapacity(1L)
                     .writeCapacity(1L)
