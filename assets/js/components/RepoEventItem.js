@@ -74,11 +74,9 @@ export default class RepoEventItem extends Component {
 
 		try {
 			if(name.indexOf('/') > -1) {
-				console.log('true')
 				name = name.substr(name.indexOf('/') + 1);
 			}
 		} catch(e){
-			console.log('hit');
 			name = activeRepo.name;
 		}
 
