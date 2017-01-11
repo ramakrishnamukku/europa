@@ -69,6 +69,18 @@ export default class RepoEventItem extends Component {
 		let friendlyTime = ConvertTimeFriendly(time);
 		let timeUTC = ConvertTimeUTC(new Date(time), true);
 		let SHA = event.imageSha;
+		let activeRepo = NPECheck(this.props, 'repoDetails/activeRepo', {});
+		let name = activeRepo.name
+
+		try {
+			if(name.indexOf('/') > -1) {
+				console.log('true')
+				name = name.substr(name.indexOf('/') + 1);
+			}
+		} catch(e){
+			console.log('hit');
+			name = activeRepo.name;
+		}
 
 		return (
 			<div className="RepoEventContainer">
@@ -93,7 +105,7 @@ export default class RepoEventItem extends Component {
 							<span className="Image">
 								<i className="icon icon-dis-push" />
 								<span className="Label">Push Image:&nbsp;</span>
-								<span className="Value">Image</span>
+								<span className="Value">{name}</span>
 							</span>
 							<span className="Sha">
 								<i className="icon icon-dis-blank" />
