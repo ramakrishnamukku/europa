@@ -23,16 +23,9 @@ import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
-public class TokenAuthDb {
+public class TokenAuthDb extends BaseDb {
     private Index<TokenAuth> _main;
     private Index<TokenAuth> _byDomain;
-
-    private static AttrDescription attr(String name, AttrType type) {
-        return AttrDescription.builder()
-            .attrName(name)
-            .attrType(type)
-            .build();
-    }
 
     public static TableDescription getTableDescription() {
         return TableDescription.builder()
@@ -59,6 +52,7 @@ public class TokenAuthDb {
         module.createTransform(TokenAuth.class)
             .put("tok", String.class, "token")
             .put("dom", String.class, "domain")
+            .put("ctime", Long.class, "created")
             .put("stat", TokenAuthStatus.class, "status");
         return module;
     }

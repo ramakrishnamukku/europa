@@ -29,6 +29,7 @@ public class CreateAuthToken extends AjaxHelper
         .domain(Constants.DOMAIN_ZERO)
         .token(CompactUUID.randomUUID().toString())
         .status(TokenAuthStatus.ACTIVE)
+        .created(System.currentTimeMillis())
         .build();
 
         _tokenAuthDb.save(tokenAuth);

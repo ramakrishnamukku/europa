@@ -28,7 +28,7 @@ import java.util.ConcurrentModificationException;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
 @Log4j
 @Singleton
-public class RegistryBlobDb {
+public class RegistryBlobDb extends BaseDb {
     private static final String TABLE_NAME = "rblob";
     private static final String ATTR_BLOB_ID = "id";
     private static final String ATTR_DIGEST = "md";
@@ -45,13 +45,6 @@ public class RegistryBlobDb {
 
     @Inject
     private UserDb _userDb;
-
-    private static AttrDescription attr(String name, AttrType type) {
-        return AttrDescription.builder()
-            .attrName(name)
-            .attrType(type)
-            .build();
-    }
 
     public static TableDescription getTableDescription() {
         return TableDescription.builder()

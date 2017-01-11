@@ -8,26 +8,31 @@
 */
 package com.distelli.europa.db;
 
+import java.util.Arrays;
 import java.util.List;
-import com.distelli.europa.Constants;
-import com.distelli.europa.EuropaConfiguration;
-import com.distelli.persistence.ConvertMarker;
-import com.distelli.persistence.Index;
-import com.distelli.persistence.Index;
-import com.distelli.persistence.PageIterator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.distelli.jackson.transform.TransformModule;
+import javax.inject.Inject;
 
+import com.distelli.europa.Constants;
+import com.distelli.persistence.IndexDescription;
+import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.ajax.*;
 import com.distelli.europa.models.*;
+import com.distelli.jackson.transform.TransformModule;
+import com.distelli.persistence.ConvertMarker;
+import com.distelli.persistence.Index;
+import com.distelli.persistence.IndexType;
+import com.distelli.persistence.PageIterator;
 import com.distelli.webserver.*;
-import javax.inject.Inject;
+import com.distelli.persistence.TableDescription;
+import com.distelli.persistence.AttrType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Singleton;
+
 import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
-public class RegistryCredsDb
+public class RegistryCredsDb extends BaseDb
 {
     private Index<RegistryCred> _main;
     private Index<RegistryCred> _secondaryIndex;
@@ -35,6 +40,29 @@ public class RegistryCredsDb
     private EuropaConfiguration _europaConfiguration;
 
     private final ObjectMapper _om = new ObjectMapper();
+    public static TableDescription getTableDescription() {
+        return TableDescription.builder()
+            .tableName("creds")
+            .indexes(
+                Arrays.asList(
+                    IndexDescription.builder()
+                    .hashKey(attr("hk", AttrType.STR))
+                    .rangeKey(attr("id", AttrType.STR))
+                    .indexType(IndexType.MAIN_INDEX)
+                    .readCapacity(1L)
+                    .writeCapacity(1L)
+                    .build(),
+                    IndexDescription.builder()
+                    .indexName("hk-sidx-index")
+                    .hashKey(attr("hk", AttrType.STR))
+                    .rangeKey(attr("sidx", AttrType.STR))
+                    .indexType(IndexType.GLOBAL_SECONDARY_INDEX)
+                    .readCapacity(1L)
+                    .writeCapacity(1L)
+                    .build()))
+            .build();
+    }
+
     private TransformModule createTransforms(TransformModule module) {
         module.createTransform(RegistryCred.class)
         .put("hk", String.class,
@@ -74,12 +102,12 @@ public class RegistryCredsDb
         .build();
 
         _secondaryIndex = indexFactory.create(RegistryCred.class)
-        .withIndexName("creds", "provider-name")
+        .withIndexName("creds", "hk-sidx-index")
         .withNoEncrypt("hk", "id", "sidx")
         .withHashKeyName("hk")
         .withRangeKeyName("sidx")
         .withConvertValue(_om::convertValue)
-        .withConvertMarker(convertMarkerFactory.create("hk", "sidx"))
+        .withConvertMarker(convertMarkerFactory.create("hk", "id", "sidx"))
         .build();
     }
 

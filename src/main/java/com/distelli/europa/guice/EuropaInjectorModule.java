@@ -26,6 +26,10 @@ import com.distelli.europa.db.TokenAuthDb;
 import com.distelli.europa.db.RegistryBlobDb;
 import com.distelli.europa.db.UserDb;
 import com.distelli.europa.db.SequenceDb;
+import com.distelli.europa.db.ContainerRepoDb;
+import com.distelli.europa.db.RegistryCredsDb;
+import com.distelli.europa.db.NotificationsDb;
+import com.distelli.europa.db.RepoEventsDb;
 import com.distelli.objectStore.*;
 
 @Log4j
@@ -35,7 +39,11 @@ public class EuropaInjectorModule extends AbstractModule
         TokenAuthDb::getTableDescription,
         RegistryBlobDb::getTableDescription,
         UserDb::getTableDescription,
-        SequenceDb::getTableDescription
+        SequenceDb::getTableDescription,
+        ContainerRepoDb::getTableDescription,
+        RegistryCredsDb::getTableDescription,
+        NotificationsDb::getTableDescription,
+        RepoEventsDb::getTableDescription
         );
 
     private EuropaConfiguration _europaConfiguration;

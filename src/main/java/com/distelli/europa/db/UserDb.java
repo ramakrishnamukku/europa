@@ -27,7 +27,7 @@ import java.util.Arrays;
 
 @Log4j
 @Singleton
-public class UserDb
+public class UserDb extends BaseDb
 {
     private static final String TABLE_NAME = "users";
 
@@ -42,13 +42,6 @@ public class UserDb
         .put("email", String.class, "email")
         .put("username", String.class, "username");
         return module;
-    }
-
-    private static AttrDescription attr(String name, AttrType type) {
-        return AttrDescription.builder()
-            .attrName(name)
-            .attrType(type)
-            .build();
     }
 
     public static TableDescription getTableDescription() {

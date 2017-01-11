@@ -19,7 +19,7 @@ import com.distelli.jackson.transform.TransformModule;
 
 @Log4j
 @Singleton
-public class SequenceDb
+public class SequenceDb extends BaseDb
 {
     private static final String TABLE_NAME = "sequences";
 
@@ -31,13 +31,6 @@ public class SequenceDb
     }
 
     private Index<Sequence> _main;
-
-    private static AttrDescription attr(String name, AttrType type) {
-        return AttrDescription.builder()
-            .attrName(name)
-            .attrType(type)
-            .build();
-    }
 
     public static TableDescription getTableDescription() {
         return TableDescription.builder()

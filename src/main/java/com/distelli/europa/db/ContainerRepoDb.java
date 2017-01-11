@@ -8,33 +8,72 @@
 */
 package com.distelli.europa.db;
 
+import java.util.Arrays;
 import java.util.List;
-import com.distelli.persistence.ConvertMarker;
-import com.distelli.persistence.Index;
-import com.distelli.persistence.Index;
-import com.distelli.persistence.PageIterator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.distelli.jackson.transform.TransformModule;
+import javax.inject.Inject;
 
-import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.Constants;
+import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.ajax.*;
 import com.distelli.europa.models.*;
+import com.distelli.jackson.transform.TransformModule;
+import com.distelli.persistence.AttrDescription;
+import com.distelli.persistence.AttrType;
+import com.distelli.persistence.ConvertMarker;
+import com.distelli.persistence.Index;
+import com.distelli.persistence.IndexDescription;
+import com.distelli.persistence.IndexType;
+import com.distelli.persistence.PageIterator;
+import com.distelli.persistence.TableDescription;
 import com.distelli.webserver.*;
-import javax.inject.Inject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Singleton;
+
 import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
-public class ContainerRepoDb
+public class ContainerRepoDb extends BaseDb
 {
     private Index<ContainerRepo> _main;
     private Index<ContainerRepo> _secondaryIndex;
+    private Index<ContainerRepo> _byCredId;
 
     private EuropaConfiguration _europaConfiguration;
 
     private final ObjectMapper _om = new ObjectMapper();
+
+    public static TableDescription getTableDescription() {
+        return TableDescription.builder()
+            .tableName("repos")
+            .indexes(
+                Arrays.asList(
+                    IndexDescription.builder()
+                    .hashKey(attr("hk", AttrType.STR))
+                    .rangeKey(attr("id", AttrType.STR))
+                    .indexType(IndexType.MAIN_INDEX)
+                    .readCapacity(1L)
+                    .writeCapacity(1L)
+                    .build(),
+                    IndexDescription.builder()
+                    .indexName("hk-sidx-index")
+                    .hashKey(attr("hk", AttrType.STR))
+                    .rangeKey(attr("sidx", AttrType.STR))
+                    .indexType(IndexType.GLOBAL_SECONDARY_INDEX)
+                    .readCapacity(1L)
+                    .writeCapacity(1L)
+                    .build(),
+                    IndexDescription.builder()
+                    .indexName("hk-cid-index")
+                    .hashKey(attr("hk", AttrType.STR))
+                    .rangeKey(attr("cid", AttrType.NUM))
+                    .indexType(IndexType.GLOBAL_SECONDARY_INDEX)
+                    .readCapacity(1L)
+                    .writeCapacity(1L)
+                    .build()))
+            .build();
+    }
+
     private TransformModule createTransforms(TransformModule module) {
         module.createTransform(ContainerRepo.class)
         .put("hk", String.class,
@@ -105,7 +144,7 @@ public class ContainerRepoDb
         _om.registerModule(createTransforms(new TransformModule()));
         _main = indexFactory.create(ContainerRepo.class)
         .withTableName("repos")
-        .withNoEncrypt("hk", "id", "sidx")
+        .withNoEncrypt("hk", "id", "sidx", "cid")
         .withHashKeyName("hk")
         .withRangeKeyName("id")
         .withConvertValue(_om::convertValue)
@@ -113,12 +152,21 @@ public class ContainerRepoDb
         .build();
 
         _secondaryIndex = indexFactory.create(ContainerRepo.class)
-        .withIndexName("repos", "provider-index")
-        .withNoEncrypt("hk", "id", "sidx")
+        .withIndexName("repos", "hk-sidx-index")
+        .withNoEncrypt("hk", "id", "sidx", "cid")
         .withHashKeyName("hk")
         .withRangeKeyName("sidx")
         .withConvertValue(_om::convertValue)
-        .withConvertMarker(convertMarkerFactory.create("hk", "sidx"))
+        .withConvertMarker(convertMarkerFactory.create("hk", "id", "sidx"))
+        .build();
+
+        _byCredId = indexFactory.create(ContainerRepo.class)
+        .withIndexName("repos", "hk-cid-index")
+        .withNoEncrypt("hk", "id", "sidx", "cid")
+        .withHashKeyName("hk")
+        .withRangeKeyName("cid")
+        .withConvertValue(_om::convertValue)
+        .withConvertMarker(convertMarkerFactory.create("hk", "id", "cid"))
         .build();
     }
 
@@ -199,5 +247,13 @@ public class ContainerRepoDb
                          id.toLowerCase())
         .set("levent", lastEvent)
         .when((expr) -> expr.eq("id", id.toLowerCase()));
+    }
+
+    public List<ContainerRepo> listReposByCred(String domain, String credId, PageIterator pageIterator)
+    {
+        return _byCredId.queryItems(getHashKey(domain),
+                                    pageIterator)
+        .eq(credId.toLowerCase())
+        .list();
     }
 }

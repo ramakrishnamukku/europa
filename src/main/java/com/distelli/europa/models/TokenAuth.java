@@ -13,4 +13,5 @@ public class TokenAuth {
     private String domain;
     private String token;
     private TokenAuthStatus status;
+    private Long created;
 }

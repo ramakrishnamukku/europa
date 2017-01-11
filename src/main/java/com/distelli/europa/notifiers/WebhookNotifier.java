@@ -82,6 +82,7 @@ public class WebhookNotifier
         record.setResponse(response);
         record.setUrl(record.getUrl());
         record.setSecret(record.getSecret());
+        record.setNotificationTime(System.currentTimeMillis());
         saveNotificationRecord(nfId, record);
         return nfId;
     }
@@ -130,6 +131,7 @@ public class WebhookNotifier
         record.setUrl(url);
         record.setSecret(notification.getSecret());
         record.setNotificationId(nfId.toCanonicalId());
+        record.setNotificationTime(System.currentTimeMillis());
         saveNotificationRecord(nfId, record);
         return nfId;
     }

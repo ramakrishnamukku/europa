@@ -8,31 +8,60 @@
 */
 package com.distelli.europa.db;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import com.distelli.persistence.ConvertMarker;
-import com.distelli.persistence.Index;
-import com.distelli.persistence.Index;
-import com.distelli.persistence.PageIterator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.distelli.jackson.transform.TransformModule;
-import com.distelli.europa.EuropaConfiguration;
+import javax.inject.Inject;
 
 import com.distelli.europa.Constants;
+import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.models.*;
-import javax.inject.Inject;
+import com.distelli.jackson.transform.TransformModule;
+import com.distelli.persistence.AttrDescription;
+import com.distelli.persistence.AttrType;
+import com.distelli.persistence.ConvertMarker;
+import com.distelli.persistence.Index;
+import com.distelli.persistence.IndexDescription;
+import com.distelli.persistence.IndexType;
+import com.distelli.persistence.PageIterator;
+import com.distelli.persistence.TableDescription;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Singleton;
+
 import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
-public class NotificationsDb
+public class NotificationsDb extends BaseDb
 {
     private Index<Notification> _main;
     private Index<Notification> _byRepo;
 
     private final ObjectMapper _om = new ObjectMapper();
     private EuropaConfiguration _europaConfiguration;
+
+    public static TableDescription getTableDescription() {
+        return TableDescription.builder()
+            .tableName("notifications")
+            .indexes(
+                Arrays.asList(
+                    IndexDescription.builder()
+                    .hashKey(attr("hk", AttrType.STR))
+                    .rangeKey(attr("id", AttrType.STR))
+                    .indexType(IndexType.MAIN_INDEX)
+                    .readCapacity(1L)
+                    .writeCapacity(1L)
+                    .build(),
+                    IndexDescription.builder()
+                    .indexName("hk-rid-index")
+                    .hashKey(attr("hk", AttrType.STR))
+                    .rangeKey(attr("rid", AttrType.STR))
+                    .indexType(IndexType.GLOBAL_SECONDARY_INDEX)
+                    .readCapacity(1L)
+                    .writeCapacity(1L)
+                    .build()))
+            .build();
+    }
 
     private TransformModule createTransforms(TransformModule module) {
         module.createTransform(Notification.class)
@@ -41,7 +70,7 @@ public class NotificationsDb
         .put("id", String.class,
              (item) -> item.getId().toLowerCase(),
              (item, id) -> item.setId(id.toLowerCase()))
-        .put("repoId", String.class, "repoId")
+        .put("rid", String.class, "repoId")
         .put("domain", String.class, "domain")
         .put("type", NotificationType.class, "type")
         .put("region", String.class, "region")
@@ -81,12 +110,12 @@ public class NotificationsDb
         .build();
 
         _byRepo = indexFactory.create(Notification.class)
-        .withIndexName("notifications", "repo-index")
+        .withIndexName("notifications", "hk-rid-index")
         .withNoEncrypt("hk", "id", "repoId")
         .withHashKeyName("hk")
-        .withRangeKeyName("repoId")
+        .withRangeKeyName("rid")
         .withConvertValue(_om::convertValue)
-        .withConvertMarker(convertMarkerFactory.create("hk", "repoId"))
+        .withConvertMarker(convertMarkerFactory.create("hk", "rid", "repoId"))
         .build();
     }
 

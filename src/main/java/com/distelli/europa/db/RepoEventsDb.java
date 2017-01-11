@@ -8,6 +8,7 @@
 */
 package com.distelli.europa.db;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import javax.inject.Inject;
@@ -20,7 +21,10 @@ import com.distelli.persistence.AttrType;
 import com.distelli.persistence.ConvertMarker;
 import com.distelli.persistence.Index;
 import com.distelli.persistence.Index;
+import com.distelli.persistence.IndexDescription;
+import com.distelli.persistence.IndexType;
 import com.distelli.persistence.PageIterator;
+import com.distelli.persistence.TableDescription;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Singleton;
@@ -29,13 +33,36 @@ import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
-public class RepoEventsDb
+public class RepoEventsDb extends BaseDb
 {
     private Index<RepoEvent> _main;
     private Index<RepoEvent> _byTime;
 
     private EuropaConfiguration _europaConfiguration;
     private final ObjectMapper _om = new ObjectMapper();
+
+    public static TableDescription getTableDescription() {
+        return TableDescription.builder()
+            .tableName("events")
+            .indexes(
+                Arrays.asList(
+                    IndexDescription.builder()
+                    .hashKey(attr("hk", AttrType.STR))
+                    .rangeKey(attr("id", AttrType.STR))
+                    .indexType(IndexType.MAIN_INDEX)
+                    .readCapacity(1L)
+                    .writeCapacity(1L)
+                    .build(),
+                    IndexDescription.builder()
+                    .indexName("hk-etime-index")
+                    .hashKey(attr("hk", AttrType.STR))
+                    .rangeKey(attr("etime", AttrType.NUM))
+                    .indexType(IndexType.GLOBAL_SECONDARY_INDEX)
+                    .readCapacity(1L)
+                    .writeCapacity(1L)
+                    .build()))
+            .build();
+    }
 
     private TransformModule createTransforms(TransformModule module) {
         module.createTransform(RepoEvent.class)
@@ -87,12 +114,12 @@ public class RepoEventsDb
         .build();
 
         _byTime = indexFactory.create(RepoEvent.class)
-        .withIndexName("events", "etime-index")
+        .withIndexName("events", "hk-etime-index")
         .withNoEncrypt("hk", "id", "etime")
         .withHashKeyName("hk")
         .withRangeKeyName("etime")
         .withConvertValue(_om::convertValue)
-        .withConvertMarker(convertMarkerFactory.create("hk", "etime"))
+        .withConvertMarker(convertMarkerFactory.create("hk", "id", "etime"))
         .build();
     }
 
