@@ -29,4 +29,7 @@ public class RegistryManifest
     /* Domain of uploader. (book-keeping)
      */
     private String uploadedBy;
+    /* The content type of the manifest.
+     */
+    private String contentType;
 }

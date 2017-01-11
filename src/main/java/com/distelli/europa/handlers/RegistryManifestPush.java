@@ -103,6 +103,7 @@ public class RegistryManifestPush extends RegistryBase {
         try {
             _manifestDb.put(RegistryManifest.builder()
                             .uploadedBy(requestContext.getRemoteUser())
+                            .contentType(requestContext.getContentType())
                             .manifestId(finalDigest)
                             .repository(name)
                             .tag(reference)

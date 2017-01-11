@@ -49,7 +49,8 @@ public class RegistryLayerPull extends RegistryBase {
                                     RegistryErrorCode.BLOB_UNKNOWN);
         }
         WebResponse response = new WebResponse(200);
-        response.setResponseHeader("Content-Length", ""+objMeta.getContentLength());
+        // TODO: Fix gzip'ing so content-length CAN be returned !?
+        // response.setResponseHeader("Content-Length", ""+objMeta.getContentLength());
         response.setContentType("application/vnd.docker.container.image.rootfs.diff+x-gtar");
         response.setResponseHeader("Docker-Content-Digest", digest);
         response.setResponseWriter(

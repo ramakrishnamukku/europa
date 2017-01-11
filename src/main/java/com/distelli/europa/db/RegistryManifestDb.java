@@ -36,6 +36,7 @@ public class RegistryManifestDb extends BaseDb {
     private static final String ATTR_MANIFEST_ID = "id";
     private static final String ATTR_DIGESTS = "mds";
     private static final String ATTR_UPLOADED_BY = "by";
+    private static final String ATTR_CONTENT_TYPE = "ty";
 
     private Index<RegistryManifest> _main;
 
@@ -68,7 +69,8 @@ public class RegistryManifestDb extends BaseDb {
             .put(ATTR_TAG, String.class, "tag")
             .put(ATTR_MANIFEST_ID, String.class, "manifestId")
             .put(ATTR_DIGESTS, new TypeReference<Set<String>>(){}, "digests")
-            .put(ATTR_UPLOADED_BY, String.class, "uploadedBy");
+            .put(ATTR_UPLOADED_BY, String.class, "uploadedBy")
+            .put(ATTR_CONTENT_TYPE, String.class, "contentType");
         return module;
     }
 
@@ -93,6 +95,10 @@ public class RegistryManifestDb extends BaseDb {
         // Validate uploadedBy:
         if ( null == manifest.getUploadedBy() || manifest.getUploadedBy().isEmpty() ) {
             throw new IllegalArgumentException("uploadedBy is required parameter");
+        }
+        if ( null == manifest.getContentType() || ! manifest.getContentType().matches("^[^/]{1,127}/[^/]{1,127}$") ) {
+            throw new IllegalArgumentException(
+                "Illegal contentType="+manifest.getContentType()+" expected to match [^/]{1,127}/[^/]{1,127}");
         }
         if ( null == _userDb.getUserByDomain(manifest.getUploadedBy()) ) {
             throw new IllegalArgumentException("Unknown uploadedBy="+manifest.getUploadedBy());

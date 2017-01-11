@@ -60,7 +60,8 @@ public class RegistryManifestPull extends RegistryBase {
                 }));
 
         // TODO: Capture this and return it properly...
-        response.setContentType("application/vnd.docker.distribution.manifest.v1+json");
+        response.setContentType(manifest.getContentType());
+        // TODO: Fix gzip'ing so content-length CAN be returned !?
         //response.setResponseHeader("Content-Length", ""+objMeta.getContentLength());
         return response;
     }
