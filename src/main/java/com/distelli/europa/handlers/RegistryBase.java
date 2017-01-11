@@ -41,7 +41,7 @@ public abstract class RegistryBase extends RequestHandler
                 log.error(ex.getMessage(), ex);
             }
         }
-        WebResponse response = toJson(error.getResponseBody(), error.getErrorCode().getStatusCode());
+        WebResponse response = toJson(error.getResponseBody(), error.getStatusCode());
         for ( Map.Entry<String, String> entry : error.getResponseHeaders().entrySet() ) {
             response.setResponseHeader(entry.getKey(), entry.getValue());
         }

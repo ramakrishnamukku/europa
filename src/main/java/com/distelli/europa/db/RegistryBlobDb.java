@@ -1,7 +1,5 @@
 package com.distelli.europa.db;
 
-import com.distelli.europa.Constants;
-import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.models.*;
 import com.distelli.jackson.transform.TransformModule;
 import com.distelli.persistence.AttrDescription;
@@ -17,6 +15,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.UUID;
 import javax.inject.Inject;
@@ -24,8 +23,8 @@ import javax.inject.Singleton;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.RollbackException;
 import lombok.extern.log4j.Log4j;
-import java.util.ConcurrentModificationException;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
+
 @Log4j
 @Singleton
 public class RegistryBlobDb extends BaseDb {
@@ -36,11 +35,11 @@ public class RegistryBlobDb extends BaseDb {
     private static final String ATTR_UPLOADED_BY = "by";
     private static final String ATTR_UPLOAD_ID = "up";
     private static final String ATTR_MD_ENCODED_STATE = "mdx";
+    private static final String ATTR_MANIFEST_IDS = "mids";
 
     private Index<RegistryBlob> _main;
     private Index<RegistryBlob> _byDigest;
 
-    private EuropaConfiguration _europaConfiguration;
     private final ObjectMapper _om = new ObjectMapper();
 
     @Inject
@@ -60,6 +59,7 @@ public class RegistryBlobDb extends BaseDb {
                     IndexDescription.builder()
                     .indexName(ATTR_DIGEST+"-index")
                     .hashKey(attr(ATTR_DIGEST, AttrType.STR))
+                    .rangeKey(attr(ATTR_BLOB_ID, AttrType.STR))
                     .indexType(IndexType.GLOBAL_SECONDARY_INDEX)
                     .readCapacity(1L)
                     .writeCapacity(1L)
@@ -83,23 +83,22 @@ public class RegistryBlobDb extends BaseDb {
     }
 
     @Inject
-    public RegistryBlobDb(Index.Factory indexFactory,
-                          ConvertMarker.Factory convertMarkerFactory,
-                          EuropaConfiguration europaConfiguration) {
-        _europaConfiguration = europaConfiguration;
+    protected RegistryBlobDb(Index.Factory indexFactory,
+                             ConvertMarker.Factory convertMarkerFactory) {
         _om.registerModule(createTransforms(new TransformModule()));
 
         _main = indexFactory.create(RegistryBlob.class)
             .withTableName(TABLE_NAME)
-            .withNoEncrypt(ATTR_BLOB_ID, ATTR_MD_ENCODED_STATE, ATTR_DIGEST)
+            .withNoEncrypt(ATTR_BLOB_ID, ATTR_MD_ENCODED_STATE, ATTR_DIGEST, ATTR_MANIFEST_IDS)
             .withHashKeyName(ATTR_BLOB_ID)
             .withConvertValue(_om::convertValue)
             .withConvertMarker(convertMarkerFactory.create(ATTR_BLOB_ID))
             .build();
         _byDigest = indexFactory.create(RegistryBlob.class)
             .withTableName(TABLE_NAME)
-            .withNoEncrypt(ATTR_BLOB_ID, ATTR_MD_ENCODED_STATE, ATTR_DIGEST)
+            .withNoEncrypt(ATTR_BLOB_ID, ATTR_MD_ENCODED_STATE, ATTR_DIGEST, ATTR_MANIFEST_IDS)
             .withHashKeyName(ATTR_DIGEST)
+            .withRangeKeyName(ATTR_BLOB_ID)
             .withConvertValue(_om::convertValue)
             .withConvertMarker(convertMarkerFactory.create(ATTR_DIGEST, ATTR_BLOB_ID))
             .build();
@@ -179,6 +178,40 @@ public class RegistryBlobDb extends BaseDb {
         } catch ( RollbackException ex ) {
             throw new ConcurrentModificationException(
                 "attempt to finish upload, but the digest state did not match");
+        }
+    }
+
+    // Returns false if digest does not exist.
+    public boolean addReference(String digest, String manifestId) {
+        for ( int retry=0;;retry++ ) {
+            RegistryBlob blob = getRegistryBlobByDigest(digest);
+            if ( null == blob ) return false;
+            try {
+                _main.updateItem(blob.getBlobId(), null)
+                    .setAdd(ATTR_MANIFEST_IDS, AttrType.STR, manifestId)
+                    .when((expr) -> expr.exists(ATTR_BLOB_ID));
+            } catch ( RollbackException ex ) {
+                log.info(ex.getMessage(), ex);
+                // Give up!
+                if ( retry > 10 ) return false;
+                continue;
+            }
+            break;
+        }
+        return true;
+    }
+
+    public void removeReference(String digest, String manifestId) {
+        for ( PageIterator it : new PageIterator() ) {
+            for ( RegistryBlob blob : _byDigest.queryItems(digest, it).list() ) {
+                try {
+                    _main.updateItem(blob.getBlobId(), null)
+                        .setRemove(ATTR_MANIFEST_IDS, AttrType.STR, manifestId)
+                        .when((expr) -> expr.exists(ATTR_BLOB_ID));
+                } catch ( RollbackException ex ) {
+                    // ignored, just don't want to create a "blank" record.
+                }
+            }
         }
     }
 }

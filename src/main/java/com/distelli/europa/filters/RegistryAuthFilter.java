@@ -64,7 +64,7 @@ public class RegistryAuthFilter implements RequestFilter<RequestContext>
                 log.error(ex.getMessage(), ex);
             }
         }
-        WebResponse response = WebResponse.toJson(error.getResponseBody(), error.getErrorCode().getStatusCode());
+        WebResponse response = WebResponse.toJson(error.getResponseBody(), error.getStatusCode());
         for ( Map.Entry<String, String> entry : error.getResponseHeaders().entrySet() ) {
             response.setResponseHeader(entry.getKey(), entry.getValue());
         }

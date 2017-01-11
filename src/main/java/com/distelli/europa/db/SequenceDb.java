@@ -72,4 +72,8 @@ public class SequenceDb extends BaseDb
     public Long nextUserId() {
         return next("user");
     }
+
+    public Long nextManifestId() {
+        return next("rmanifest");
+    }
 }

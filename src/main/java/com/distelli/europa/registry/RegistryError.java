@@ -7,6 +7,7 @@ import java.util.Collections;
 public class RegistryError extends RuntimeException {
     private static final RegistryErrorCode DEFAULT_CODE = RegistryErrorCode.SERVER_ERROR;
     private RegistryErrorCode _code;
+    private Integer _statusCode;
 
     public RegistryError(String message) {
         this(message, DEFAULT_CODE);
@@ -21,22 +22,41 @@ public class RegistryError extends RuntimeException {
     }
 
     public RegistryError(String message, RegistryErrorCode code) {
-        super(message);
-        _code = code;
+        this(message, code, code.getStatusCode());
     }
 
     public RegistryError(String message, Throwable cause, RegistryErrorCode code) {
-        super(message, cause);
-        _code = code;
+        this(message, cause, code, code.getStatusCode());
     }
 
     public RegistryError(Throwable cause, RegistryErrorCode code) {
+        this(cause, code, code.getStatusCode());
+    }
+
+    public RegistryError(String message, RegistryErrorCode code, int statusCode) {
+        super(message);
+        _code = code;
+        _statusCode = statusCode;
+    }
+
+    public RegistryError(String message, Throwable cause, RegistryErrorCode code, int statusCode) {
+        super(message, cause);
+        _code = code;
+        _statusCode = statusCode;
+    }
+
+    public RegistryError(Throwable cause, RegistryErrorCode code, int statusCode) {
         super(cause);
         _code = code;
+        _statusCode = statusCode;
     }
 
     public RegistryErrorCode getErrorCode() {
         return _code;
+    }
+
+    public int getStatusCode() {
+        return _statusCode;
     }
 
     public Map<String, String> getResponseHeaders() {
@@ -62,6 +82,7 @@ public class RegistryError extends RuntimeException {
             return RegistryError.this.getDetail();
         }
     }
+
     private static class ErrorMessageResponse {
         private ErrorMessage msg;
         public ErrorMessageResponse(ErrorMessage msg) {

@@ -34,7 +34,7 @@ public class RegistryLayerUploadFinish extends RegistryLayerUploadChunk {
         String name = requestContext.getMatchedRoute().getParam("name");
         String blobId = requestContext.getMatchedRoute().getParam("uuid");
         String digest = requestContext.getParameter("digest");
-        if ( null == digest || ! digest.matches("^sha256:[0-9a-fA-F]{64}") ) {
+        if ( null == digest || ! digest.matches("^sha256:[0-9a-fA-F]{64}$") ) {
             throw new RegistryError("Invalid digest, must be sha256:<hex> got="+digest,
                                     RegistryErrorCode.DIGEST_INVALID);
         }
