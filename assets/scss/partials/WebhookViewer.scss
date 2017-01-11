@@ -52,7 +52,7 @@
                 }
 
                 .Url {
-                    flex: 0.4;
+                    flex: 0.7;
                     margin-right: 14px;
                     color: $light-blue;
                     font-size: 0.75rem;
@@ -62,7 +62,12 @@
                     flex: 1;
                     color: $light-blue;
                     font-size: 0.75rem;
+                }
 
+                .Time {
+                    flex: 0.5;
+                    color: $light-blue;
+                    font-size: 0.75rem;
                 }
 
                 &:hover {

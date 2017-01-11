@@ -9,6 +9,7 @@ import Btn from './../components/Btn'
 import Loader from './../components/Loader'
 import Msg from './../components/Msg'
 import NPECheck from './../util/NPECheck'
+import ConvertTimeUTC from './../util/ConvertTimeUTC'
 
 export default class APITokens extends Component{
 	constructor(props) {
@@ -68,11 +69,14 @@ export default class APITokens extends Component{
 			<div className="APIBody">
 				{tokens.sort((firstEvent, secondEvent) => (firstEvent.created > secondEvent.created) ? -1 : 1 ).map((token, i) => {
 					let statusClassName = (token.status == 'ACTIVE') ? 'Flex1 Active' : 'Flex1 Inactive';
+					 let dateCreated = new Date(token.created);
+					 let dateCreatedUTC = ConvertTimeUTC(dateCreated);
+
 					return (
 						<div className="TokenItem" key={i}>
 							<div className="TokenDetails">
 								{this.renderTokenString(token.token)}
-								<span className="Flex1">{token.created}</span>
+								<span className="Flex1">{dateCreatedUTC}</span>
 								<span className={statusClassName}>{token.status}</span>
 								{this.renderIcons(token)}
 							</div>

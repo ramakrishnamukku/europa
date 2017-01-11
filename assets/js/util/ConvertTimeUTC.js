@@ -20,11 +20,11 @@ function convertTime(dateObj, withoutTime) {
     var hours = d.getHours();
     var minutes = d.getMinutes();
     minutes = (minutes.toString().length == 1) ? '0' + minutes : minutes;
-    var amPm = 'AM';
+    var amPm = ' AM';
 
     if(hours > 12) {
       hours = hours - 12;
-      amPm = 'PM';
+      amPm = ' PM';
     }
 
     var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

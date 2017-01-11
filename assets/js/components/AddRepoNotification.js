@@ -62,7 +62,7 @@ export default class AddRepoNotification extends Component {
 							<input className={classNameTarget}
 								   onChange={(e) => this.context.actions.updateNewNotificationField(notifTargetKey, e, false)}
 								   value={NPECheck(this.props, `notif/newNotification/${notifTargetKey}`, '')}
-								   placeholder="Enter Webhook URL"/>
+								   placeholder="http://your_webhook_url/"/>
 							<div>
 								{this.renderTestNotificationStatus(status, statusCode)}
 							</div>

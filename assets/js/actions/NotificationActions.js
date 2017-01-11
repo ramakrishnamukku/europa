@@ -31,7 +31,10 @@ export function notifState() {
     testExistingNotification: {
       key: {
         XHR: false,
-        status: ''
+        status: '',
+        responseCode: null,
+        testNotification: {},
+        displayWebhookData: false
       },
     },
     newNotification: {
@@ -109,10 +112,12 @@ export function testExistingNotification(notification) {
         let status = StatusCode(responseCode);
         this.setState({
           notif: Reducers(this.state.notif, {
-            type: 'SET_EXISTING_NOTIFICATION_TEST_STATUS',
+            type: 'SET_EXISTING_NOTIFICATION_TEST_INFO',
             data: {
               id,
-              status
+              status,
+              responseCode,
+              testNotification: res
             }
           })
         });
@@ -120,6 +125,18 @@ export function testExistingNotification(notification) {
       .catch((err) => {
         console.log(err);
       });
+  });
+}
+
+export function toggleShowExistingNotificationTestResults(notifId) {
+  let id = notifId;
+  this.setState({
+    notif: Reducers(this.state.notif, {
+      type: 'TOGGLE_SHOW_EXISTING_NOTIFICATION_TEST_RESULTS',
+      data: {
+        id
+      }
+    })
   });
 }
 
@@ -258,6 +275,9 @@ export function addRepoNotification(skipXHR) {
               addNotifXHR: false,
               addNotifSuccess: true,
               newNotification: newNotificationState.call(this),
+              testNotification: {},
+              testNotificationStatus: null,
+              showNotificationTestResults: false,
               notifError: ''
             })
           }, () => resolve());
