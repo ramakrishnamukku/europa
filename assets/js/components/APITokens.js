@@ -36,7 +36,10 @@ export default class APITokens extends Component{
 			 	<span className="Flex2">
 			 		API Tokens
 			 	</span>
-			 	<span className="Flex2">
+			 	<span className="Flex1">
+			 		Created
+			 	</span>
+			 	<span className="Flex1">
 			 		Status
 			 	</span>
 			 	<span className="ThickBlueText Actions" onClick={() => this.createAuthToken()}>
@@ -63,12 +66,13 @@ export default class APITokens extends Component{
 		let tokens = NPECheck(this.props, 'settings/tokens/allTokens', []);
 		return (
 			<div className="APIBody">
-				{tokens.map((token, i) => {
-					let statusClassName = (token.status == 'ACTIVE') ? 'Flex2 Active' : 'Flex2 Inactive';
+				{tokens.sort((firstEvent, secondEvent) => (firstEvent.created > secondEvent.created) ? -1 : 1 ).map((token, i) => {
+					let statusClassName = (token.status == 'ACTIVE') ? 'Flex1 Active' : 'Flex1 Inactive';
 					return (
 						<div className="TokenItem" key={i}>
 							<div className="TokenDetails">
 								{this.renderTokenString(token.token)}
+								<span className="Flex1">{token.created}</span>
 								<span className={statusClassName}>{token.status}</span>
 								{this.renderIcons(token)}
 							</div>

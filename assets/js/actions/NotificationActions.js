@@ -28,6 +28,12 @@ export function notifState() {
     redeliverError: '',
     retrieveNotifRecordsError: '',
     currentNotifRecords: [],
+    testExistingNotification: {
+      key: {
+        XHR: false,
+        status: ''
+      },
+    },
     newNotification: {
       ...newNotificationState.call(this)
     }
@@ -57,7 +63,7 @@ export function clearNotifError() {
   });
 }
 
-export function testNotification() {
+export function testNewNotification() {
   if (!isAddNotificationValid.call(this)) return;
 
   RAjax.POST('TestWebhookDelivery', {
@@ -83,6 +89,38 @@ export function testNotification() {
         })
       });
     });
+}
+
+export function testExistingNotification(notification) {
+  let id = notification.id;
+  this.setState({
+    notif: Reducers(this.state.notif, {
+      type: 'TOGGLE_EXISTING_NOTIFICATION_TEST_XHR',
+      data: {
+        id
+      }
+    })
+  }, () => {
+    RAjax.POST('TestWebhookDelivery', {
+        notification
+      })
+      .then((res) => {
+        let responseCode = NPECheck(res, 'response/httpStatusCode', null);
+        let status = StatusCode(responseCode);
+        this.setState({
+          notif: Reducers(this.state.notif, {
+            type: 'SET_EXISTING_NOTIFICATION_TEST_STATUS',
+            data: {
+              id,
+              status
+            }
+          })
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
 }
 
 export function resetTestNotification() {

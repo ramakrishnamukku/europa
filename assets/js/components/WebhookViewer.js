@@ -57,13 +57,14 @@ export default class WebhookViewer extends Component {
 	renderRecordList(){
 		return (
 			<div className="RecordList">
-				{this.props.allWebhookData.map((record, index) => {
+				{this.props.allWebhookData.sort((firstEvent, secondEvent) => (firstEvent.notificationTime > secondEvent.notificationTime) ? -1 : 1 ).map((record, index) => {
 					return (
 						<div key={index} className="RecordListItem">
 							<div className="RecordListItemInfo" onClick={() => this.toggleActiveRecord(record.notificationId)}>
 								{this.renderStatusIcon(record)}
 								<div className="Url" data-tip={record.url} data-for="ToolTipTop">{record.url}</div>
 								<div className="Id">{record.notificationId}</div>
+								<div className="Id">{record.notificationTime}</div>
 								{this.renderExpandIcon(record)}
 							</div>
 							{this.renderWebhookData(record)}

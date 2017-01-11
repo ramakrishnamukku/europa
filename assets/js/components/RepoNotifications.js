@@ -24,6 +24,25 @@ export default class RepoNotifications extends Component {
 				this.context.actions.listRepoNotifications(repoId, true);			
 			});
 	}
+	getNotificationItemClassName(status){
+		let className = 'RepoNotificationListItem ';
+		switch(status) {
+			case 'SUCCESS':
+				return (className += 'SuccessBg');
+			break;
+
+			case 'ERROR':
+				return (className += 'ErrorBg');
+			break;
+
+			case 'WARNING':
+				return (className += 'ErrorBg');
+			break;
+
+			default:
+				return className;
+		}
+	}
 	renderAddNotification(){
 		return (
 			<AddRepoNotification {...this.props} isExistingRepo={true}/>
@@ -40,8 +59,10 @@ export default class RepoNotifications extends Component {
 		);
 	}
 	renderRepoNotificationItem(notif, index){
+		let testStatus = NPECheck(this.props, `notif/testExistingNotification/${notif.id}`, {});
+
 		return (
-			<div key={index} className="RepoNotificationListItem">
+			<div key={index} className={this.getNotificationItemClassName(testStatus.status)}>
 				<div className="Info">
 					<span className="Cell">
 						<span className="Label">
@@ -57,7 +78,7 @@ export default class RepoNotifications extends Component {
 						   data-tip="Copy URL" 
 						   data-for="ToolTipTop"/>
 						<i className="icon icon-dis-output"
-						    
+						    onClick={() => this.context.actions.testExistingNotification(notif)}
 						   data-tip="Test Notification" 
 						   data-for="ToolTipTop"/>
 						<i className="icon icon-dis-trash" 

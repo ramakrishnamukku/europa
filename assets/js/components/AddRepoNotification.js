@@ -86,7 +86,7 @@ export default class AddRepoNotification extends Component {
 	renderTestNotificationButton(){
 		return (
 			<Btn className="Btn"
-				 onClick={() => this.context.actions.testNotification()}
+				 onClick={() => this.context.actions.testNewNotification()}
 				 text="Test Webhook"
 				 canClick={true}/>
 		);
