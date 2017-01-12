@@ -72,7 +72,7 @@ public class Europa
         Log4JConfigurator.setLogLevel("com.distelli.webserver", "DEBUG");
         Log4JConfigurator.setLogLevel("com.distelli.gcr", "DEBUG");
         Log4JConfigurator.setLogLevel("com.distelli.europa.monitor", "ERROR");
-        Log4JConfigurator.setLogLevel("com.distelli.webserver", "DEBUG");
+        Log4JConfigurator.setLogLevel("com.distelli.webserver", "ERROR");
         String configFilePath = cmdLineArgs.getOption("config");
         if(configFilePath == null)
         {

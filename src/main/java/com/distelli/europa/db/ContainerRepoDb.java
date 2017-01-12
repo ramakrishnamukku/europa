@@ -235,6 +235,15 @@ public class ContainerRepoDb extends BaseDb
         return true;
     }
 
+    public List<ContainerRepo> listReposByProvider(String domain,
+                                                   RegistryProvider provider,
+                                                   PageIterator pageIterator)
+    {
+        return _secondaryIndex.queryItems(getHashKey(domain), pageIterator)
+        .beginsWith(String.format("%s:", provider.toString().toLowerCase()))
+        .list();
+    }
+
     public ContainerRepo getRepo(String domain, String id)
     {
         return _main.getItem(getHashKey(domain),
