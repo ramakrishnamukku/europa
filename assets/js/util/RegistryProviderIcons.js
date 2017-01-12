@@ -9,6 +9,7 @@ export default function RegistryProviderIcons(provider){
     'ECR': '/public/images/registry-icons/ecr.svg',
     'DOCKERHUB': '/public/images/registry-icons/dockerhub.svg',
     'PRIVATE': '/public/images/registry-icons/private.svg',
+    'EUROPA': '/public/images/registry-icons/europa.svg'
   };
 
   let icon = icons[provider];

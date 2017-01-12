@@ -4,7 +4,8 @@
 
 export default {
 	'GCR' : 'Google Container Registry',
-	'ECR' : 'Amazon Container Registry',
+	'ECR' : 'EC2 Container Registry',
 	'DOCKERHUB' : 'DockerHub',
-	'PRIVATE': 'Private Registry'
+	'PRIVATE': 'Private Registry',
+	'EUROPA': 'Europa Container Registry'
 }
