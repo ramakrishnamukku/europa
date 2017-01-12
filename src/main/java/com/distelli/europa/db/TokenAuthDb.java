@@ -76,7 +76,7 @@ public class TokenAuthDb extends BaseDb {
             .withNoEncrypt("tok")
             .withHashKeyName("dom")
             .withConvertValue(om::convertValue)
-            .withConvertMarker(convertMarkerFactory.create("dom"))
+            .withConvertMarker(convertMarkerFactory.create("dom", "tok"))
             .build();
     }
 

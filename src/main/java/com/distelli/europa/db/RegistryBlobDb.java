@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
-import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityNotFoundException;

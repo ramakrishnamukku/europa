@@ -9,7 +9,6 @@
 package com.distelli.europa.ajax;
 
 import java.util.List;
-import java.util.UUID;
 import javax.inject.Inject;
 
 import com.distelli.europa.clients.*;

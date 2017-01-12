@@ -11,9 +11,9 @@ import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.net.URISyntaxException;
 
+import com.distelli.utils.CompactUUID;
 import com.distelli.europa.models.*;
 import com.distelli.europa.util.*;
 import com.distelli.utils.HmacSha;
@@ -46,7 +46,7 @@ public class Webhook
     {
         if(content == null)
             throw(new IllegalArgumentException("Invalid Webhook Content: "+content));
-        _eventId = UUID.randomUUID().toString();
+        _eventId = CompactUUID.randomUUID().toString();
         _body = content;
     }
 

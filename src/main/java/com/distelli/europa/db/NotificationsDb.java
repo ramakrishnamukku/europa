@@ -10,9 +10,9 @@ package com.distelli.europa.db;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import javax.inject.Inject;
 
+import com.distelli.utils.CompactUUID;
 import com.distelli.europa.Constants;
 import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.models.*;
@@ -123,7 +123,7 @@ public class NotificationsDb extends BaseDb
     {
         String id = notification.getId();
         if(id == null)
-            notification.setId(UUID.randomUUID().toString());
+            notification.setId(CompactUUID.randomUUID().toString());
         if(notification.getRepoId() == null)
             throw(new IllegalArgumentException("Invalid null repo Id in notification: "+notification));
         if(_europaConfiguration.isMultiTenant() && notification.getDomain() == null)

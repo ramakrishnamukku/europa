@@ -10,10 +10,10 @@ package com.distelli.europa.ajax;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 import java.util.regex.*;
 import javax.inject.Inject;
 
+import com.distelli.utils.CompactUUID;
 import com.distelli.europa.Constants;
 import com.distelli.europa.clients.*;
 import com.distelli.europa.db.*;
@@ -56,7 +56,7 @@ public class SaveRegistryCreds extends AjaxHelper
             if(existingCred == null)
                 throw(new AjaxClientException("Invalid Registry Cred Id: "+id, JsonError.Codes.BadContent, 400));
         } else {
-            id = UUID.randomUUID().toString();
+            id = CompactUUID.randomUUID().toString();
             cred.setId(id);
         }
         //save in the db

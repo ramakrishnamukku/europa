@@ -13,9 +13,9 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.UUID;
 import javax.inject.Inject;
 
+import com.distelli.utils.CompactUUID;
 import org.eclipse.jetty.http.HttpMethod;
 import com.distelli.europa.models.*;
 import com.distelli.europa.notifiers.*;
@@ -58,9 +58,9 @@ public class TestWebhookDelivery extends AjaxHelper
         content.setImage(image);
         content.setRepository(ContainerRepo
                               .builder()
-                              .id(UUID.randomUUID().toString())
+                              .id(CompactUUID.randomUUID().toString())
                               .name("test-repo")
-                              .credId(UUID.randomUUID().toString())
+                              .credId(CompactUUID.randomUUID().toString())
                               .region("us-east-1")
                               .provider(RegistryProvider.ECR)
                               .build());

@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Set;
-import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityNotFoundException;

@@ -11,12 +11,12 @@ package com.distelli.europa.ajax;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.UUID;
 import javax.inject.Inject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import com.distelli.utils.CompactUUID;
 import com.distelli.europa.clients.*;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
@@ -61,7 +61,7 @@ public class SaveContainerRepo extends AjaxHelper
             throw(new AjaxClientException("Invalid Registry Cred: "+repo.getCredId(), JsonError.Codes.BadContent, 400));
         repo.setProvider(cred.getProvider());
         repo.setRegion(cred.getRegion());
-        repo.setId(UUID.randomUUID().toString());
+        repo.setId(CompactUUID.randomUUID().toString());
         validateContainerRepo(repo, cred);
         //before we save the repo in the db lets check that the repo
         //doesn't already exist

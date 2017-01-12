@@ -10,7 +10,6 @@ package com.distelli.europa.db;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import javax.inject.Inject;
 
 import com.distelli.europa.Constants;
@@ -28,6 +27,7 @@ import com.distelli.persistence.TableDescription;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Singleton;
+import com.distelli.utils.CompactUUID;
 
 import lombok.extern.log4j.Log4j;
 
@@ -126,7 +126,7 @@ public class RepoEventsDb extends BaseDb
     {
         String id = repoEvent.getId();
         if(id == null)
-            id = UUID.randomUUID().toString().toLowerCase();
+            id = CompactUUID.randomUUID().toString().toLowerCase();
         else
             id = id.toLowerCase();
         repoEvent.setId(id);
