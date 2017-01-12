@@ -19,6 +19,8 @@ import com.google.inject.Singleton;
 import com.distelli.europa.models.*;
 import com.amazonaws.regions.*;
 import com.distelli.webserver.HTTPMethod;
+import com.distelli.webserver.AjaxHelper;
+import com.distelli.webserver.AjaxRequest;
 
 @Log4j
 @Singleton

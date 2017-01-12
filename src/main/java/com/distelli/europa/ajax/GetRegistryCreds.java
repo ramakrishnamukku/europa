@@ -14,6 +14,8 @@ import javax.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
 import com.distelli.webserver.HTTPMethod;
+import com.distelli.webserver.AjaxHelper;
+import com.distelli.webserver.AjaxRequest;
 
 @Log4j
 @Singleton

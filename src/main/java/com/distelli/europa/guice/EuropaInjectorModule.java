@@ -9,6 +9,7 @@
 package com.distelli.europa.guice;
 
 import com.distelli.cred.CredPair;
+import com.distelli.webserver.AjaxHelperMap;
 import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.monitor.*;
 import com.distelli.persistence.Index;
@@ -62,6 +63,7 @@ public class EuropaInjectorModule extends AbstractModule
         .withKeyId(_europaConfiguration.getDbUser())
         .withSecret(_europaConfiguration.getDbPass());
 
+        bind(AjaxHelperMap.class).to(AjaxHelperMapImpl.class);
         bind(Index.Factory.class).toProvider(new IndexFactoryProvider(endpoint, creds));
         bind(EuropaConfiguration.class).toProvider(new EuropaConfigurationProvider(_europaConfiguration));
         bind(ObjectStore.Factory.class).toProvider(new ObjectStoreFactoryProvider(_europaConfiguration));

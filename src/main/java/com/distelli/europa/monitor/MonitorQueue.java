@@ -66,7 +66,8 @@ public class MonitorQueue
         for(ContainerRepo repo : _reposToMonitor)
         {
             MonitorTask task = _monitorTaskFactory.createMonitorTask(repo, latch);
-            tasks.add(task);
+            if(task != null)
+                tasks.add(task);
         }
         taskList.setTasks(tasks);
         return taskList;

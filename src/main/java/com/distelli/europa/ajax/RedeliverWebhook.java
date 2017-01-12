@@ -22,6 +22,9 @@ import com.distelli.europa.util.*;
 import com.distelli.objectStore.*;
 import com.distelli.webserver.HTTPMethod;
 import com.distelli.webserver.JsonError;
+import com.distelli.webserver.AjaxHelper;
+import com.distelli.webserver.AjaxRequest;
+import com.distelli.webserver.AjaxClientException;
 
 import lombok.extern.log4j.Log4j;
 

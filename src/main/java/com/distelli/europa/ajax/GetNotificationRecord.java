@@ -16,6 +16,8 @@ import com.distelli.europa.notifiers.*;
 import com.distelli.europa.util.*;
 import com.distelli.objectStore.*;
 import com.distelli.webserver.HTTPMethod;
+import com.distelli.webserver.AjaxHelper;
+import com.distelli.webserver.AjaxRequest;
 import com.google.inject.Singleton;
 
 import lombok.extern.log4j.Log4j;

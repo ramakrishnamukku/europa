@@ -5,6 +5,8 @@ import lombok.extern.log4j.Log4j;
 import com.google.inject.Singleton;
 import javax.inject.Inject;
 import com.distelli.webserver.HTTPMethod;
+import com.distelli.webserver.AjaxHelper;
+import com.distelli.webserver.AjaxRequest;
 import com.distelli.europa.Constants;
 import com.distelli.persistence.PageIterator;
 

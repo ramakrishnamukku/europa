@@ -27,6 +27,7 @@ public class MonitorTaskFactory
             return _ecrMonitorTaskFactory.create(repo, latch);
         else if(provider == RegistryProvider.GCR)
             return _gcrMonitorTaskFactory.create(repo, latch);
-        throw(new IllegalArgumentException("Invalid Provider: "+provider));
+        else
+            return null;
     }
 }

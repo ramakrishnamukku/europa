@@ -18,7 +18,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <distelli-common.version>1.4.0</distelli-common.version>
+    <distelli-common.version>1.5.0</distelli-common.version>
     <distelli-persistence.version>2.0.1</distelli-persistence.version>
   </properties>
 
