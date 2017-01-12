@@ -28,6 +28,7 @@ import com.distelli.persistence.TableDescription;
 import com.distelli.webserver.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Singleton;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 
 import lombok.extern.log4j.Log4j;
 
@@ -142,6 +143,7 @@ public class ContainerRepoDb extends BaseDb
                               EuropaConfiguration europaConfiguration) {
         _europaConfiguration = europaConfiguration;
         _om.registerModule(createTransforms(new TransformModule()));
+        _om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         _main = indexFactory.create(ContainerRepo.class)
         .withTableName("repos")
         .withNoEncrypt("hk", "id", "sidx", "cid")
@@ -221,27 +223,25 @@ public class ContainerRepoDb extends BaseDb
         .list();
     }
 
+    public ContainerRepo getRepo(String domain,
+                                 RegistryProvider provider,
+                                 String region,
+                                 String name)
+    {
+        List<ContainerRepo> repos =
+            _secondaryIndex.queryItems(getHashKey(domain), new PageIterator().pageSize(1))
+            .eq(getSecondaryKey(provider, region, name))
+            .list();
+        if ( repos.size() < 1 ) return null;
+        return repos.get(0);
+    }
+
     public boolean repoExists(String domain,
                               RegistryProvider provider,
                               String region,
                               String name)
     {
-        ContainerRepo repo = _secondaryIndex.getItem(getHashKey(domain),
-                                                     getSecondaryKey(provider,
-                                                                     region,
-                                                                     name));
-        if(repo == null)
-            return false;
-        return true;
-    }
-
-    public List<ContainerRepo> listReposByProvider(String domain,
-                                                   RegistryProvider provider,
-                                                   PageIterator pageIterator)
-    {
-        return _secondaryIndex.queryItems(getHashKey(domain), pageIterator)
-        .beginsWith(String.format("%s:", provider.toString().toLowerCase()))
-        .list();
+        return null != getRepo(domain, provider, region, name);
     }
 
     public ContainerRepo getRepo(String domain, String id)

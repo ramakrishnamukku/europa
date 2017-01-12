@@ -27,17 +27,25 @@ import java.security.DigestInputStream;
 import com.distelli.europa.util.ObjectKeyFactory;
 import com.distelli.objectStore.ObjectKey;
 import com.distelli.objectStore.ObjectStore;
+import com.distelli.europa.models.ContainerRepo;
+import com.distelli.europa.models.RepoEvent;
+import com.distelli.europa.models.RepoEventType;
+import com.distelli.europa.models.RegistryProvider;
 import com.distelli.europa.models.RegistryManifest;
 import com.distelli.europa.models.UnknownDigests;
 import com.distelli.europa.db.RegistryBlobDb;
+import com.distelli.europa.db.RepoEventsDb;
+import com.distelli.europa.db.ContainerRepoDb;
 import com.distelli.europa.db.RegistryManifestDb;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.TreeSet;
+import java.util.Collections;
 import com.distelli.europa.registry.RegistryError;
 import com.distelli.europa.registry.RegistryErrorCode;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
+import com.distelli.utils.CompactUUID;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
 
 @Log4j
@@ -63,6 +71,10 @@ public class RegistryManifestPush extends RegistryBase {
     private RegistryManifestDb _manifestDb;
     @Inject
     private RegistryBlobDb _blobDb;
+    @Inject
+    private RepoEventsDb _eventDb;
+    @Inject
+    private ContainerRepoDb _repoDb;
 
     public WebResponse handleRegistryRequest(RequestContext requestContext) {
         try {
@@ -126,6 +138,35 @@ public class RegistryManifestPush extends RegistryBase {
             if ( ! success ) {
                 if ( null != objKey ) _objectStore.delete(objKey);
             }
+        }
+
+        // Best-effort:
+        try {
+            ContainerRepo repoProto = ContainerRepo.builder()
+                .domain(ownerDomain)
+                .name(name)
+                .region("")
+                .provider(RegistryProvider.EUROPA)
+                .build();
+            ContainerRepo repo =
+                _repoDb.getRepo(repoProto.getDomain(), repoProto.getProvider(), repoProto.getRegion(), repoProto.getName());
+            if ( null == repo ) {
+                repo = repoProto;
+                repo.setId(CompactUUID.randomUUID().toString());
+                _repoDb.save(repo);
+            }
+            RepoEvent event = RepoEvent.builder()
+                .domain(ownerDomain)
+                .repoId(repo.getId())
+                .eventType(RepoEventType.PUSH)
+                .eventTime(System.currentTimeMillis())
+                .imageTags(Collections.singletonList(reference))
+                .imageSha(finalDigest) // TODO: Is this right!?
+                .build();
+            _eventDb.save(event);
+            _repoDb.setLastEvent(repo.getDomain(), repo.getId(), event);
+        } catch ( Throwable ex ) {
+            log.error(ex.getMessage(), ex);
         }
 
         WebResponse response = new WebResponse();

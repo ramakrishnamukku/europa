@@ -24,5 +24,4 @@ public class RepoEvent
     @Singular
     protected List<String> imageTags = null;
     protected String imageSha = null;
-    protected String imageManifestId = null;
 }

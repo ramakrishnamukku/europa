@@ -78,7 +78,6 @@ public class RepoEventsDb extends BaseDb
         .put("sha", String.class, "imageSha")
         .put("tags", new TypeReference<List<String>>(){}, "imageTags")
         .put("ntfs", new TypeReference<List<String>>(){}, "notifications")
-        .put("mid", String.class, "imageManifestId")
         .put("etime", Long.class, "eventTime");
         return module;
     }

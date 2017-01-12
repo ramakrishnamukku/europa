@@ -54,9 +54,9 @@ public class RegistryCatalog extends RegistryBase {
             }
         }
         PageIterator pageIterator = new PageIterator().pageSize(pageSize).marker(marker);
-        List<ContainerRepo> repos = _reposDb.listReposByProvider(domain,
-                                                                 RegistryProvider.EUROPA,
-                                                                 pageIterator);
+        List<ContainerRepo> repos = _reposDb.listRepos(domain,
+                                                       RegistryProvider.EUROPA,
+                                                       pageIterator);
         List<String> repoList = new ArrayList<String>();
         String lastRepo = null;
         if(repos != null && repos.size() > 0)
