@@ -8,10 +8,13 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.jetty.http.HttpMethod;
+import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.db.ContainerRepoDb;
 import com.distelli.europa.models.ContainerRepo;
-import com.distelli.europa.models.RegistryProvider;
 import com.distelli.europa.models.RegistryCatalogList;
+import com.distelli.europa.models.RegistryProvider;
+import com.distelli.europa.registry.RegistryError;
+import com.distelli.europa.registry.RegistryErrorCode;
 import com.distelli.persistence.PageIterator;
 import com.distelli.webserver.RequestContext;
 import com.distelli.webserver.RequestHandler;
@@ -25,7 +28,16 @@ import lombok.extern.log4j.Log4j;
 public class RegistryCatalog extends RegistryBase {
     @Inject
     private ContainerRepoDb _reposDb;
+    @Inject
+    private EuropaConfiguration _europaConfiguration;
+
     public WebResponse handleRegistryRequest(RequestContext requestContext) {
+        //If we're running in multi-tenant mode then catalog API is
+        //not supported
+        if(_europaConfiguration.isMultiTenant())
+            throw new RegistryError("/v2/_catalog is unsupported in multi-tenant mode.",
+                                   RegistryErrorCode.UNSUPPORTED);
+
         String pageSizeStr = requestContext.getParameter("n");
         String marker = requestContext.getParameter("last");
         //TODO: Figure out the domain when listing repos
