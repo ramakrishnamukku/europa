@@ -4,6 +4,7 @@ import com.distelli.europa.models.*;
 import com.distelli.jackson.transform.TransformModule;
 import com.distelli.persistence.AttrDescription;
 import com.distelli.persistence.AttrType;
+import com.distelli.persistence.Attribute;
 import com.distelli.persistence.ConvertMarker;
 import com.distelli.persistence.Index;
 import com.distelli.persistence.IndexDescription;
@@ -16,6 +17,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Set;
 import java.util.UUID;
 import javax.inject.Inject;
@@ -24,8 +29,6 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.RollbackException;
 import lombok.extern.log4j.Log4j;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
-import java.util.Set;
-import java.util.HashSet;
 
 @Log4j
 @Singleton
@@ -93,7 +96,26 @@ public class RegistryManifestDb extends BaseDb {
             .withHashKeyName(ATTR_OWNER)
             .withRangeKeyName("rk")
             .withConvertValue(_om::convertValue)
-            .withConvertMarker(convertMarkerFactory.create(ATTR_REPOSITORY, ATTR_TAG))
+            // Custom convert marker implementation to support tag pagination:
+            .withConvertMarker(new ConvertMarker() {
+                    public String toMarker(Map<String, Object> attributes, boolean hasHashKey) {
+                        if ( hasHashKey ) {
+                            return (String)attributes.get("rk");
+                        }
+                        // TODO: implement...
+                        throw new UnsupportedOperationException("scan is not supported");
+                    }
+                    public Attribute[] fromMarker(Object hk, String marker) {
+                        return new Attribute[] {
+                            new Attribute()
+                            .withName(ATTR_OWNER)
+                            .withValue(hk),
+                            new Attribute()
+                            .withName("rk")
+                            .withValue(marker)
+                        };
+                    }
+                })
             .build();
     }
 
@@ -171,5 +193,35 @@ public class RegistryManifestDb extends BaseDb {
     public RegistryManifest getManifestByRepoTag(String owner, String repo, String tag) {
         if ( null == owner ) owner = "d0";
         return _main.getItem(owner, toRK(repo, tag));
+    }
+
+    public List<RegistryManifest> listManifestsByRepo(String owner, String repo, PageIterator iterator) {
+        if ( null == owner ) owner = "d0";
+
+        String beginsWith = toRK(repo, "");
+        String marker = iterator.getMarker();
+        String newMarker = null;
+        if ( null != marker ) {
+            newMarker = toRK(repo, marker);
+            iterator.marker(newMarker);
+        }
+        try {
+            return _main.queryItems(owner, iterator)
+                .beginsWith(beginsWith)
+                .list();
+        } finally {
+            String finalMarker = iterator.getMarker();
+            if ( null != finalMarker ) {
+                if ( finalMarker.equals(newMarker) ) {
+                    // Restore!
+                    iterator.marker(marker);
+                } else if ( finalMarker.startsWith(beginsWith) ) {
+                    iterator.marker(finalMarker.substring(beginsWith.length()));
+                } else {
+                    throw new IllegalStateException(
+                        "Expected marker to begin with "+beginsWith+", but got "+finalMarker);
+                }
+            }
+        }
     }
 }

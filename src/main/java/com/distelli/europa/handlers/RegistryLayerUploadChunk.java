@@ -126,32 +126,6 @@ public class RegistryLayerUploadChunk extends RegistryBase {
         return response;
     }
 
-/*
-        Long[] range = parseRange(requestContext.getHeaderValue("Range"));
-        if ( null == range && ! isLastChunk) {
-            System.err.println("headers="+requestContext.getHeaders());
-            throw new RegistryError(
-                "Expected range to match regex ^(?:0|[1-9][0-9]*)-(?:0|[1-9][0-9]*)$ got="+
-                requestContext.getHeaderValue("Range"),
-                RegistryErrorCode.RANGE_INVALID);
-        }
-
-        long contentLength = requestContext.getContentLength();
-        if ( ! isLastChunk ) {
-            if ( contentLength < MIN_SIZE ) {
-                throw rangeNotSatisfiable("Content-Length must be > "+MIN_SIZE, requestContext, totalSize);
-            }
-        }
-        if ( null != range && range[0] != totalSize ) {
-            throw rangeNotSatisfiable("Expected Range to begin with "+totalSize+", but got "+range[0], requestContext, totalSize);
-        }
-        if ( null != range && range[1]-range[0] != contentLength ) {
-            throw new RegistryError(
-                "Expected Range to end with "+(totalSize+contentLength)+", but got "+range[1],
-                RegistryErrorCode.RANGE_INVALID);
-        }
-*/
-
     protected ObjectPartKey getObjectPartKey(String blobId, String uploadId) {
         ObjectKey objKey = _objectKeyFactory.forRegistryBlobId(blobId);
         return ObjectPartKey.builder()
