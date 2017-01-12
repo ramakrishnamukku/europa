@@ -30,6 +30,11 @@ public class RegistryLayerUploadCancel extends RegistryBase {
     @Inject
     private RegistryBlobDb _blobDb;
     public WebResponse handleRegistryRequest(RequestContext requestContext) {
+        String owner = requestContext.getMatchedRoute().getParam("owner");
+        if ( null != owner && null == getDomainForOwner(owner) ) {
+            throw new RegistryError("Unknown username="+owner,
+                                    RegistryErrorCode.NAME_UNKNOWN);
+        }
         String blobId = requestContext.getMatchedRoute().getParam("uuid");
         if ( null == blobId || blobId.isEmpty() ) {
             throw new RegistryError("Invalid :uuid parameter (must not be empty)",

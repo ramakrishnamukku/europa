@@ -24,6 +24,11 @@ public class RegistryLayerUploadProgress extends RegistryBase {
     private RegistryBlobDb _blobDb;
 
     public WebResponse handleRegistryRequest(RequestContext requestContext) {
+        String owner = requestContext.getMatchedRoute().getParam("owner");
+        if ( null != owner && null == getDomainForOwner(owner) ) {
+            throw new RegistryError("Unknown username="+owner,
+                                    RegistryErrorCode.NAME_UNKNOWN);
+        }
         String name = requestContext.getMatchedRoute().getParam("name");
         String blobId = requestContext.getMatchedRoute().getParam("uuid");
         if ( null == blobId || blobId.isEmpty() ) {
@@ -45,7 +50,7 @@ public class RegistryLayerUploadProgress extends RegistryBase {
         response.setContentType("text/plain");
         response.setResponseHeader("Range", "0-"+totalSize);
         response.setResponseHeader("Docker-Upload-UUID", blobId);
-        response.setResponseHeader("Location", "/v2/"+name+"/blobs/uploads/"+blobId);
+        response.setResponseHeader("Location", joinWithSlash("/v2", owner, name, "blobs/uploads", blobId));
         return response;
     }
 

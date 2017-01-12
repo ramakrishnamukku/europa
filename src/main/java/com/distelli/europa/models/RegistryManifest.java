@@ -13,10 +13,13 @@ import lombok.Singular;
 @AllArgsConstructor
 public class RegistryManifest
 {
-    /* Primary key (part 1).
+    /* Primary key (part 1). This is the domain of the owner.
+     */
+    private String owner;
+    /* Primary key (part 2).
      */
     private String repository;
-    /* Primary key (part 2).
+    /* Primary key (part 3).
      */
     private String tag;
     /* The content digest of the manifest sha256:<hex> (stored in S3).

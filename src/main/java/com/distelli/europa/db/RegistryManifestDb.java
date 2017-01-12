@@ -31,6 +31,7 @@ import java.util.HashSet;
 @Singleton
 public class RegistryManifestDb extends BaseDb {
     private static final String TABLE_NAME = "rmanifest";
+    private static final String ATTR_OWNER = "dom";
     private static final String ATTR_REPOSITORY = "repo";
     private static final String ATTR_TAG = "tag";
     private static final String ATTR_MANIFEST_ID = "id";
@@ -54,8 +55,8 @@ public class RegistryManifestDb extends BaseDb {
             .indexes(
                 Arrays.asList(
                     IndexDescription.builder()
-                    .hashKey(attr(ATTR_REPOSITORY, AttrType.STR))
-                    .rangeKey(attr(ATTR_TAG, AttrType.STR))
+                    .hashKey(attr(ATTR_OWNER, AttrType.STR))
+                    .rangeKey(attr("rk", AttrType.STR))
                     .indexType(IndexType.MAIN_INDEX)
                     .readCapacity(1L)
                     .writeCapacity(1L)
@@ -65,6 +66,8 @@ public class RegistryManifestDb extends BaseDb {
 
     private TransformModule createTransforms(TransformModule module) {
         module.createTransform(RegistryManifest.class)
+            .put(ATTR_OWNER, String.class, "owner")
+            .put("rk", String.class, (manifest) -> toRK(manifest.getRepository(), manifest.getTag()))
             .put(ATTR_REPOSITORY, String.class, "repository")
             .put(ATTR_TAG, String.class, "tag")
             .put(ATTR_MANIFEST_ID, String.class, "manifestId")
@@ -74,6 +77,12 @@ public class RegistryManifestDb extends BaseDb {
         return module;
     }
 
+    private String toRK(String repo, String tag) {
+        if ( null == repo ) throw new NullPointerException("repository can not be null");
+        if ( null == tag ) throw new NullPointerException("tag can not be null");
+        return repo + "/" + tag;
+    }
+
     @Inject
     protected RegistryManifestDb(Index.Factory indexFactory,
                                  ConvertMarker.Factory convertMarkerFactory) {
@@ -81,8 +90,8 @@ public class RegistryManifestDb extends BaseDb {
 
         _main = indexFactory.create(RegistryManifest.class)
             .withTableName(TABLE_NAME)
-            .withHashKeyName(ATTR_REPOSITORY)
-            .withRangeKeyName(ATTR_TAG)
+            .withHashKeyName(ATTR_OWNER)
+            .withRangeKeyName("rk")
             .withConvertValue(_om::convertValue)
             .withConvertMarker(convertMarkerFactory.create(ATTR_REPOSITORY, ATTR_TAG))
             .build();
@@ -92,9 +101,16 @@ public class RegistryManifestDb extends BaseDb {
      * Overwrites with a new registry manifest, potentially
      */
     public void put(RegistryManifest manifest) throws UnknownDigests {
+        if ( null == manifest.getOwner() ) manifest.setOwner("d0");
         // Validate uploadedBy:
         if ( null == manifest.getUploadedBy() || manifest.getUploadedBy().isEmpty() ) {
             throw new IllegalArgumentException("uploadedBy is required parameter");
+        }
+        if ( null == manifest.getRepository() || manifest.getRepository().isEmpty() ) {
+            throw new IllegalArgumentException("repository is required parameter");
+        }
+        if ( null == manifest.getTag() || manifest.getTag().isEmpty() ) {
+            throw new IllegalArgumentException("tag is required parameter");
         }
         if ( null == manifest.getContentType() || ! manifest.getContentType().matches("^[^/]{1,127}/[^/]{1,127}$") ) {
             throw new IllegalArgumentException(
@@ -102,6 +118,9 @@ public class RegistryManifestDb extends BaseDb {
         }
         if ( null == _userDb.getUserByDomain(manifest.getUploadedBy()) ) {
             throw new IllegalArgumentException("Unknown uploadedBy="+manifest.getUploadedBy());
+        }
+        if ( null == _userDb.getUserByDomain(manifest.getOwner()) ) {
+            throw new IllegalArgumentException("Unknown owner="+manifest.getOwner());
         }
 
         String manifestId = manifest.getManifestId();
@@ -149,7 +168,8 @@ public class RegistryManifestDb extends BaseDb {
         }
     }
 
-    public RegistryManifest getManifestByRepoTag(String repo, String tag) {
-        return _main.getItem(repo, tag);
+    public RegistryManifest getManifestByRepoTag(String owner, String repo, String tag) {
+        if ( null == owner ) owner = "d0";
+        return _main.getItem(owner, toRK(repo, tag));
     }
 }

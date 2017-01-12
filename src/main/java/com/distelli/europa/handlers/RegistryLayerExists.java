@@ -29,6 +29,11 @@ public class RegistryLayerExists extends RegistryBase {
     @Inject
     private ObjectKeyFactory _objectKeyFactory;
     public WebResponse handleRegistryRequest(RequestContext requestContext) {
+        String owner = requestContext.getMatchedRoute().getParam("owner");
+        if ( null != owner && null == getDomainForOwner(owner) ) {
+            throw new RegistryError("Unknown username="+owner,
+                                    RegistryErrorCode.NAME_UNKNOWN);
+        }
         String name = requestContext.getMatchedRoute().getParam("name");
         String digest = requestContext.getMatchedRoute().getParam("digest");
 
@@ -39,7 +44,7 @@ public class RegistryLayerExists extends RegistryBase {
 
         RegistryBlob blob = _blobDb.getRegistryBlobByDigest(digest.toLowerCase());
         if ( null == blob ) {
-            throw new RegistryError("Invalid :digest parameter (digest is not known)",
+            throw new RegistryError("Invalid :digest parameter (digest is not known) digest="+digest.toLowerCase(),
                                     RegistryErrorCode.BLOB_UNKNOWN);
         }
         ObjectKey objKey = _objectKeyFactory.forRegistryBlobId(blob.getBlobId());

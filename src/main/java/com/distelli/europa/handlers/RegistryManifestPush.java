@@ -74,6 +74,12 @@ public class RegistryManifestPush extends RegistryBase {
         }
     }
     public WebResponse handleRegistryRequestThrows(RequestContext requestContext) throws Exception {
+        String owner = requestContext.getMatchedRoute().getParam("owner");
+        String ownerDomain = getDomainForOwner(owner);
+        if ( null != owner && null == ownerDomain ) {
+            throw new RegistryError("Unknown username="+owner,
+                                    RegistryErrorCode.NAME_UNKNOWN);
+        }
         String name = requestContext.getMatchedRoute().getParam("name");
         String reference = requestContext.getMatchedRoute().getParam("reference");
         // TODO: Validate name and reference.
@@ -105,6 +111,7 @@ public class RegistryManifestPush extends RegistryBase {
                             .uploadedBy(requestContext.getRemoteUser())
                             .contentType(requestContext.getContentType())
                             .manifestId(finalDigest)
+                            .owner(ownerDomain)
                             .repository(name)
                             .tag(reference)
                             .digests(digests)
@@ -123,7 +130,7 @@ public class RegistryManifestPush extends RegistryBase {
 
         WebResponse response = new WebResponse();
         response.setHttpStatusCode(201);
-        response.setResponseHeader("Location", "/v2/"+name+"/manifests/"+finalDigest);
+        response.setResponseHeader("Location", joinWithSlash("/v2", name, "manifests", finalDigest));
         response.setResponseHeader("Docker-Content-Digest", finalDigest);
         return response;
     }

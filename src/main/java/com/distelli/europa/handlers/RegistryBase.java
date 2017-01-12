@@ -1,21 +1,23 @@
 package com.distelli.europa.handlers;
 
-import org.eclipse.jetty.http.HttpMethod;
-import com.distelli.webserver.RequestHandler;
-import com.distelli.webserver.WebResponse;
-import com.distelli.webserver.RequestContext;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.distelli.europa.db.UserDb;
+import com.distelli.europa.models.User;
 import com.distelli.europa.registry.RegistryAuth;
 import com.distelli.europa.registry.RegistryError;
-import javax.inject.Singleton;
-import java.util.Map;
-import java.util.HashMap;
-import javax.inject.Inject;
-import lombok.extern.log4j.Log4j;
+import com.distelli.webserver.RequestContext;
+import com.distelli.webserver.RequestHandler;
+import com.distelli.webserver.WebResponse;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import lombok.extern.log4j.Log4j;
+import org.eclipse.jetty.http.HttpMethod;
 
 @Log4j
 @Singleton
@@ -24,6 +26,9 @@ public abstract class RegistryBase extends RequestHandler
     abstract public WebResponse handleRegistryRequest(RequestContext requestContext);
 
     private static final ObjectMapper OM = new ObjectMapper();
+
+    @Inject
+    private UserDb _userDb;
 
     public WebResponse handleRequest(RequestContext requestContext) {
         try {
@@ -58,5 +63,28 @@ public abstract class RegistryBase extends RequestHandler
             if ( len <= 0 ) break;
             out.write(buff, 0, len);
         }
+    }
+
+    protected String getDomainForOwner(String owner) {
+        if ( null == owner ) return null;
+        User user = _userDb.getUserByUsername(owner);
+        if ( null == user ) return null;
+        return user.getDomain();
+    }
+
+    protected String joinWithSlash(String... parts) {
+        if ( null == parts || parts.length <= 0 ) return "";
+        StringBuilder sb = new StringBuilder();
+        boolean isFirst = true;
+        for ( String part : parts ) {
+            if ( null == part ) continue;
+            if ( isFirst ) {
+                isFirst = false;
+            } else {
+                sb.append("/");
+            }
+            sb.append(part);
+        }
+        return sb.toString();
     }
 }

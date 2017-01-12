@@ -31,6 +31,11 @@ public class RegistryLayerUploadFinish extends RegistryLayerUploadChunk {
     @Inject
     private RegistryBlobDb _blobDb;
     public WebResponse handleRegistryRequest(RequestContext requestContext) {
+        String owner = requestContext.getMatchedRoute().getParam("owner");
+        if ( null != owner && null == getDomainForOwner(owner) ) {
+            throw new RegistryError("Unknown username="+owner,
+                                    RegistryErrorCode.NAME_UNKNOWN);
+        }
         String name = requestContext.getMatchedRoute().getParam("name");
         String blobId = requestContext.getMatchedRoute().getParam("uuid");
         String digest = requestContext.getParameter("digest");
@@ -57,7 +62,7 @@ public class RegistryLayerUploadFinish extends RegistryLayerUploadChunk {
         _objectStore.completePut(partKey, toObjectPartIds(blob.getPartIds()));
         _blobDb.finishUpload(blobId, blob.getMdEncodedState(), digest);
         WebResponse response = new WebResponse(201);
-        response.setResponseHeader("Location", "/v2/"+name+"/blobs/"+digest);
+        response.setResponseHeader("Location", joinWithSlash("/v2", owner, name, "blobs", digest));
         response.setResponseHeader("Docker-Content-Digest", digest);
         return response;
     }

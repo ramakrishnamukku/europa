@@ -29,6 +29,11 @@ public class RegistryLayerPull extends RegistryBase {
     @Inject
     private ObjectKeyFactory _objectKeyFactory;
     public WebResponse handleRegistryRequest(RequestContext requestContext) {
+        String owner = requestContext.getMatchedRoute().getParam("owner");
+        if ( null != owner && null == getDomainForOwner(owner) ) {
+            throw new RegistryError("Unknown username="+owner,
+                                    RegistryErrorCode.NAME_UNKNOWN);
+        }
         String name = requestContext.getMatchedRoute().getParam("name");
         String digest = requestContext.getMatchedRoute().getParam("digest");
 

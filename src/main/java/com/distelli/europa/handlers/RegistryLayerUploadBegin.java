@@ -1,5 +1,7 @@
 package com.distelli.europa.handlers;
 
+import com.distelli.europa.registry.RegistryError;
+import com.distelli.europa.registry.RegistryErrorCode;
 import com.distelli.europa.util.ObjectKeyFactory;
 import com.distelli.europa.db.RegistryBlobDb;
 import com.distelli.europa.models.RegistryBlob;
@@ -38,6 +40,11 @@ public class RegistryLayerUploadBegin extends RegistryBase {
     }
 
     private WebResponse handleMultipartInit(RequestContext requestContext) {
+        String owner = requestContext.getMatchedRoute().getParam("owner");
+        if ( null != owner && null == getDomainForOwner(owner) ) {
+            throw new RegistryError("Unknown username="+owner,
+                                    RegistryErrorCode.NAME_UNKNOWN);
+        }
         String name = requestContext.getMatchedRoute().getParam("name");
         RegistryBlob blob = null;
         ObjectPartKey partKey = null;
@@ -55,8 +62,8 @@ public class RegistryLayerUploadBegin extends RegistryBase {
                 if ( null != partKey ) _objectStore.abortPut(partKey);
             }
         }
-        // TODO: What to do with the name parameter?
-        String location = "/v2/"+name+"/blobs/uploads/"+blob.getBlobId();
+
+        String location = joinWithSlash("/v2", owner, name, "blobs", "uploads", blob.getBlobId());
         WebResponse response = new WebResponse(202);
         response.setContentType("text/plain");
         response.setResponseHeader("Location", location);
