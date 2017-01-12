@@ -5,7 +5,8 @@ public enum RegistryProvider
     DOCKERHUB,
     ECR,
     PRIVATE,
-    GCR;
+    GCR,
+    EUROPA;
 
     private static final RegistryProvider[] values = values();
 
