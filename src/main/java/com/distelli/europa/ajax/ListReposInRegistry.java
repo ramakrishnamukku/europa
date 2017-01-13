@@ -37,7 +37,7 @@ public class ListReposInRegistry extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
-    public Object get(AjaxRequest ajaxRequest)
+    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
     {
         String credId = ajaxRequest.getParam("credId");
         String credDomain = ajaxRequest.getParam("credDomain");

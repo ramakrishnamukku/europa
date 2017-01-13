@@ -8,19 +8,21 @@
 */
 package com.distelli.europa.ajax;
 
-import java.util.Map;
-import java.util.List;
 import java.util.ArrayList;
-import com.distelli.gcr.*;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import lombok.extern.log4j.Log4j;
-import com.google.inject.Singleton;
-import com.distelli.europa.models.*;
 import com.amazonaws.regions.*;
-import com.distelli.webserver.HTTPMethod;
+import com.distelli.europa.models.*;
+import com.distelli.gcr.*;
 import com.distelli.webserver.AjaxHelper;
 import com.distelli.webserver.AjaxRequest;
+import com.distelli.webserver.HTTPMethod;
+import com.distelli.webserver.RequestContext;
+import com.google.inject.Singleton;
+
+import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
@@ -46,7 +48,7 @@ public class GetRegionsForProvider extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.GET);
     }
 
-    public Object get(AjaxRequest ajaxRequest)
+    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
     {
         RegistryProvider provider = ajaxRequest.getParamAsEnum("provider", RegistryProvider.class, true);
         List<RegistryRegion> regions = new ArrayList<RegistryRegion>();

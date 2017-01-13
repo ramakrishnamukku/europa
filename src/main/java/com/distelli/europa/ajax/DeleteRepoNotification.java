@@ -40,7 +40,7 @@ public class DeleteRepoNotification extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
-    public Object get(AjaxRequest ajaxRequest)
+    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
     {
         String notificationId = ajaxRequest.getParam("notificationId", true);
         String domain = ajaxRequest.getParam("domain");

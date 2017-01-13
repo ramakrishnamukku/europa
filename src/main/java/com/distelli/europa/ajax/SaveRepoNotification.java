@@ -46,7 +46,7 @@ public class SaveRepoNotification extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
-    public Object get(AjaxRequest ajaxRequest)
+    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
     {
         String repoId = ajaxRequest.getParam("repoId", true);
         String repoDomain = ajaxRequest.getParam("repoDomain");

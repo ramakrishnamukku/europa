@@ -1,14 +1,17 @@
 package com.distelli.europa.ajax;
 
-import com.distelli.europa.db.TokenAuthDb;
-import lombok.extern.log4j.Log4j;
-import com.google.inject.Singleton;
 import javax.inject.Inject;
-import com.distelli.webserver.HTTPMethod;
+
+import com.distelli.europa.Constants;
+import com.distelli.europa.db.TokenAuthDb;
+import com.distelli.persistence.PageIterator;
 import com.distelli.webserver.AjaxHelper;
 import com.distelli.webserver.AjaxRequest;
-import com.distelli.europa.Constants;
-import com.distelli.persistence.PageIterator;
+import com.distelli.webserver.HTTPMethod;
+import com.distelli.webserver.RequestContext;
+import com.google.inject.Singleton;
+
+import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
@@ -22,7 +25,7 @@ public class ListAuthTokens extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.GET);
     }
 
-    public Object get(AjaxRequest ajaxRequest)
+    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
     {
         return _tokenAuthDb.getTokens(Constants.DOMAIN_ZERO, new PageIterator().pageSize(1000));
     }

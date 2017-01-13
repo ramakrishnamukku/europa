@@ -38,7 +38,7 @@ public class TestWebhookDelivery extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
-    public Object get(AjaxRequest ajaxRequest)
+    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
     {
         Notification notification = ajaxRequest.convertContent("/notification", Notification.class,
                                                                true);

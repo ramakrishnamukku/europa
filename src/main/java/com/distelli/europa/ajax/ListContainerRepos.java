@@ -37,7 +37,7 @@ public class ListContainerRepos extends AjaxHelper
        - pageSize (optional)
        - marker (optional)
     */
-    public Object get(AjaxRequest ajaxRequest)
+    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
     {
         RegistryProvider provider = ajaxRequest.getParamAsEnum("provider", RegistryProvider.class);
         String region = ajaxRequest.getParam("region");

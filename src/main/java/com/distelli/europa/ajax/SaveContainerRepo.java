@@ -49,7 +49,7 @@ public class SaveContainerRepo extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
-    public Object get(AjaxRequest ajaxRequest)
+    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
     {
         ContainerRepo repo = ajaxRequest.convertContent("/repo", ContainerRepo.class,
                                                        true); //throw if null

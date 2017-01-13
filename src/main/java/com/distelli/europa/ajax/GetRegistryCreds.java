@@ -8,14 +8,17 @@
 */
 package com.distelli.europa.ajax;
 
-import com.distelli.europa.models.*;
-import com.distelli.europa.db.*;
 import javax.inject.Inject;
-import com.google.inject.Singleton;
-import lombok.extern.log4j.Log4j;
-import com.distelli.webserver.HTTPMethod;
+
+import com.distelli.europa.db.*;
+import com.distelli.europa.models.*;
 import com.distelli.webserver.AjaxHelper;
 import com.distelli.webserver.AjaxRequest;
+import com.distelli.webserver.HTTPMethod;
+import com.distelli.webserver.RequestContext;
+import com.google.inject.Singleton;
+
+import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
@@ -33,7 +36,7 @@ public class GetRegistryCreds extends AjaxHelper
        Params:
        - id (reqired)
     */
-    public Object get(AjaxRequest ajaxRequest)
+    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
     {
         String id = ajaxRequest.getParam("id",
                                          true); //throw if missing

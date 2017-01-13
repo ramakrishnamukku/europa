@@ -28,7 +28,7 @@ public class ListRepoEvents extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.GET);
     }
 
-    public Object get(AjaxRequest ajaxRequest)
+    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
     {
         String repoId = ajaxRequest.getParam("repoId", true);
         int pageSize = ajaxRequest.getParamAsInt("pageSize", 100);

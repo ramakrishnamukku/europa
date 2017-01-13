@@ -39,7 +39,7 @@ public class DeleteRegistryCreds extends AjaxHelper
        - Provider (reqired)
        - Region (required)
     */
-    public Object get(AjaxRequest ajaxRequest)
+    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
     {
         String id = ajaxRequest.getParam("id",
                                          true); //throw if missing

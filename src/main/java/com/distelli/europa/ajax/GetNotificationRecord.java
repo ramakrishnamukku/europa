@@ -15,9 +15,10 @@ import com.distelli.europa.models.*;
 import com.distelli.europa.notifiers.*;
 import com.distelli.europa.util.*;
 import com.distelli.objectStore.*;
-import com.distelli.webserver.HTTPMethod;
 import com.distelli.webserver.AjaxHelper;
 import com.distelli.webserver.AjaxRequest;
+import com.distelli.webserver.HTTPMethod;
+import com.distelli.webserver.RequestContext;
 import com.google.inject.Singleton;
 
 import lombok.extern.log4j.Log4j;
@@ -36,7 +37,7 @@ public class GetNotificationRecord extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.GET);
     }
 
-    public Object get(AjaxRequest ajaxRequest)
+    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
     {
         String id = ajaxRequest.getParam("notificationId",
                                          true); //throw if missing

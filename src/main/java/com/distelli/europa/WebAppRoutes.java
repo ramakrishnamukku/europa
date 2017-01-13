@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlet.DefaultServlet;
+import com.distelli.webserver.AjaxRequestHandler;
 import com.distelli.webserver.RouteMatcher;
 import com.distelli.europa.handlers.*;
 import lombok.extern.log4j.Log4j;

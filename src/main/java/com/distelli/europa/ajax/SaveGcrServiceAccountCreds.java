@@ -39,7 +39,7 @@ public class SaveGcrServiceAccountCreds extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
-    public Object get(AjaxRequest ajaxRequest)
+    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
     {
         RegistryCred cred = ajaxRequest.convertContent(RegistryCred.class,
                                                        true); //throw if null

@@ -35,7 +35,7 @@ public class ListRegistryCreds extends AjaxHelper
        Params:
        - Provider (optional)
     */
-    public Object get(AjaxRequest ajaxRequest)
+    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
     {
         PageIterator pageIterator = new PageIterator().pageSize(1000).forward();
         RegistryProvider provider = ajaxRequest.getParamAsEnum("provider", RegistryProvider.class);
