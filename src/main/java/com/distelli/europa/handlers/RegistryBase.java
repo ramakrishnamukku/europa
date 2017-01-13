@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.log4j.Log4j;
 import org.eclipse.jetty.http.HttpMethod;
+import java.util.StringJoiner;
 
 @Log4j
 @Singleton
@@ -76,18 +77,12 @@ public abstract class RegistryBase extends RequestHandler
 
     protected String joinWithSlash(String... parts) {
         if ( null == parts || parts.length <= 0 ) return "";
-        StringBuilder sb = new StringBuilder();
-        boolean isFirst = true;
+        StringJoiner joiner = new StringJoiner("/");
         for ( String part : parts ) {
             if ( null == part ) continue;
-            if ( isFirst ) {
-                isFirst = false;
-            } else {
-                sb.append("/");
-            }
-            sb.append(part);
+            joiner.add(part);
         }
-        return sb.toString();
+        return joiner.toString();
     }
 
     protected int getPageSize(RequestContext requestContext) {

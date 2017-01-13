@@ -161,7 +161,7 @@ public class RegistryManifestPush extends RegistryBase {
                 .eventType(RepoEventType.PUSH)
                 .eventTime(System.currentTimeMillis())
                 .imageTags(Collections.singletonList(reference))
-                .imageSha(finalDigest) // TODO: Is this right!?
+                .imageSha(getImageId(manifest))
                 .build();
             _eventDb.save(event);
             _repoDb.setLastEvent(repo.getDomain(), repo.getId(), event);
@@ -174,6 +174,13 @@ public class RegistryManifestPush extends RegistryBase {
         response.setResponseHeader("Location", joinWithSlash("/v2", name, "manifests", finalDigest));
         response.setResponseHeader("Docker-Content-Digest", finalDigest);
         return response;
+    }
+
+    private String getImageId(JsonNode manifest) {
+        // schemaVersion=2
+        JsonNode digest = manifest.at("/config/digest");
+        if ( digest.isTextual() ) return digest.asText();
+        return null;
     }
 
     private Set<String> getDigests(JsonNode manifest) {
