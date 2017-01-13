@@ -45,9 +45,8 @@ public class RegistryCatalog extends RegistryBase {
             .pageSize(getPageSize(requestContext))
             .marker(requestContext.getParameter("last"));
 
-        List<ContainerRepo> repos = _reposDb.listRepos(ownerDomain,
-                                                       RegistryProvider.EUROPA,
-                                                       pageIterator);
+        List<ContainerRepo> repos = _reposDb.listEuropaRepos(ownerDomain,
+                                                             pageIterator);
 
         Response response = new Response();
         response.repositories = repos.stream()

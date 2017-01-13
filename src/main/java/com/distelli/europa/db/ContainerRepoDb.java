@@ -19,6 +19,7 @@ import com.distelli.europa.models.*;
 import com.distelli.jackson.transform.TransformModule;
 import com.distelli.persistence.AttrDescription;
 import com.distelli.persistence.AttrType;
+import com.distelli.persistence.Attribute;
 import com.distelli.persistence.ConvertMarker;
 import com.distelli.persistence.Index;
 import com.distelli.persistence.IndexDescription;
@@ -29,7 +30,7 @@ import com.distelli.webserver.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Singleton;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-
+import java.util.Map;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
@@ -159,7 +160,38 @@ public class ContainerRepoDb extends BaseDb
         .withHashKeyName("hk")
         .withRangeKeyName("sidx")
         .withConvertValue(_om::convertValue)
-        .withConvertMarker(convertMarkerFactory.create("hk", "sidx", "id"))
+            // Custom convert marker implementation to support /v2/_catalog API:
+            .withConvertMarker(new ConvertMarker() {
+                    public String toMarker(Map<String, Object> attributes, boolean hasHashKey) {
+                        if ( hasHashKey ) {
+                            return attributes.get("sidx") + ":" +
+                                attributes.get("id");
+                        }
+                        // TODO: implement...
+                        throw new UnsupportedOperationException("scan is not supported");
+                    }
+                    public Attribute[] fromMarker(Object hk, String marker) {
+                        String[] attrs = marker.split(":", 4);
+                        if ( null == attrs || attrs.length != 4 ) {
+                            throw new IllegalArgumentException(
+                                "Expected marker in format <provider>:<region>:<name>:<id> got="+marker);
+                        }
+                        return new Attribute[] {
+                            new Attribute()
+                            .withName("hk")
+                            .withValue(hk),
+                            new Attribute()
+                            .withName("sidx")
+                            .withValue(getSecondaryKey(
+                                           RegistryProvider.valueOf(attrs[0].toUpperCase()),
+                                           attrs[1],
+                                           attrs[2])),
+                            new Attribute()
+                            .withName("id")
+                            .withValue(attrs[3])
+                        };
+                    }
+                })
         .build();
 
         _byCredId = indexFactory.create(ContainerRepo.class)
@@ -208,6 +240,54 @@ public class ContainerRepoDb extends BaseDb
         return _secondaryIndex.queryItems(getHashKey(domain), pageIterator)
         .beginsWith(rangeKey)
         .list();
+    }
+
+    public List<ContainerRepo> listEuropaRepos(String domain,
+                                               PageIterator pageIterator)
+    {
+        String marker = pageIterator.getMarker();
+        String newMarker = null;
+        if ( null != marker ) {
+            String sidx = getSecondaryKey(
+                RegistryProvider.EUROPA,
+                "",
+                marker);
+            ContainerRepo repo = null;
+            for ( PageIterator it : new PageIterator().pageSize(100) ) {
+                List<ContainerRepo> list = _secondaryIndex.queryItems(getHashKey(domain), it)
+                    .eq(sidx)
+                    .list();
+                if ( list.size() > 0 ) repo = list.get(list.size()-1);
+            }
+            if ( null == repo ) {
+                newMarker = sidx + ":";
+            } else {
+                newMarker = _secondaryIndex.toMarker(repo, true);
+            }
+            pageIterator.marker(newMarker);
+        }
+
+        String rangeKey = String.format("%s:", RegistryProvider.EUROPA.toString().toLowerCase());
+        try {
+            return _secondaryIndex.queryItems(getHashKey(domain), pageIterator)
+                .beginsWith(rangeKey)
+                .list();
+        } finally {
+            String outMarker = pageIterator.getMarker();
+            if ( null != outMarker ) {
+                if ( newMarker != null && newMarker.equals(outMarker) ) {
+                    // restore...
+                    pageIterator.marker(marker);
+                } else if ( outMarker.startsWith(rangeKey) ) {
+                    String[] attrs = outMarker.split(":", 4);
+                    if ( attrs.length != 4 ) throw new IllegalStateException("Unexpected marker="+marker);
+                    pageIterator.marker(attrs[2]);
+                } else {
+                    throw new IllegalStateException(
+                        "Expected marker to begin with "+rangeKey+" marker="+outMarker);
+                }
+            }
+        }
     }
 
     public List<ContainerRepo> listRepos(String domain,
