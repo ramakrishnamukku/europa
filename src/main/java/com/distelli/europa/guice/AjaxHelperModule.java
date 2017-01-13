@@ -52,6 +52,8 @@ public class AjaxHelperModule extends AbstractModule
         addBinding(CreateAuthToken.class);
         addBinding(SetAuthTokenStatus.class);
         addBinding(DeleteAuthToken.class);
+
+        bind(AjaxHelperMap.class).to(AjaxHelperMapImpl.class);
     }
 
     private void addBinding(Class<? extends AjaxHelper> clazz)

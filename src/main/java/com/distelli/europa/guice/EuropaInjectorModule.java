@@ -63,7 +63,6 @@ public class EuropaInjectorModule extends AbstractModule
         .withKeyId(_europaConfiguration.getDbUser())
         .withSecret(_europaConfiguration.getDbPass());
 
-        bind(AjaxHelperMap.class).to(AjaxHelperMapImpl.class);
         bind(Index.Factory.class).toProvider(new IndexFactoryProvider(endpoint, creds));
         bind(EuropaConfiguration.class).toProvider(new EuropaConfigurationProvider(_europaConfiguration));
         bind(ObjectStore.Factory.class).toProvider(new ObjectStoreFactoryProvider(_europaConfiguration));
