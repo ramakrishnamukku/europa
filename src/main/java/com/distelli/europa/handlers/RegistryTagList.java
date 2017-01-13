@@ -21,7 +21,6 @@ import com.distelli.persistence.PageIterator;
 @Log4j
 @Singleton
 public class RegistryTagList extends RegistryBase {
-    private static int DEFAULT_PAGE_SIZE = 100;
     @Inject
     private RegistryManifestDb _manifestDb;
     private static class Response {
@@ -59,11 +58,5 @@ public class RegistryTagList extends RegistryBase {
             webResponse.setResponseHeader("Link", location + "; rel=\"next\"");
         }
         return webResponse;
-    }
-    private int getPageSize(RequestContext requestContext) {
-        try {
-            return Integer.parseInt(requestContext.getParameter("n"));
-        } catch ( NumberFormatException ex ) {}
-        return DEFAULT_PAGE_SIZE;
     }
 }

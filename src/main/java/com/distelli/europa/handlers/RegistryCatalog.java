@@ -11,7 +11,6 @@ import org.eclipse.jetty.http.HttpMethod;
 import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.db.ContainerRepoDb;
 import com.distelli.europa.models.ContainerRepo;
-import com.distelli.europa.models.RegistryCatalogList;
 import com.distelli.europa.models.RegistryProvider;
 import com.distelli.europa.registry.RegistryError;
 import com.distelli.europa.registry.RegistryErrorCode;
@@ -20,63 +19,53 @@ import com.distelli.webserver.RequestContext;
 import com.distelli.webserver.RequestHandler;
 import com.distelli.webserver.WebResponse;
 import com.fasterxml.jackson.databind.JsonNode;
-
+import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
 public class RegistryCatalog extends RegistryBase {
+    private static int DEFAULT_PAGE_SIZE = 100;
     @Inject
     private ContainerRepoDb _reposDb;
-    @Inject
-    private EuropaConfiguration _europaConfiguration;
+
+    private static class Response {
+        public List<String> repositories;
+    }
 
     public WebResponse handleRegistryRequest(RequestContext requestContext) {
-        //If we're running in multi-tenant mode then catalog API is
-        //not supported
-        if(_europaConfiguration.isMultiTenant())
-            throw new RegistryError("/v2/_catalog is unsupported in multi-tenant mode.",
-                                   RegistryErrorCode.UNSUPPORTED);
-
-        String pageSizeStr = requestContext.getParameter("n");
-        String marker = requestContext.getParameter("last");
-        //TODO: Figure out the domain when listing repos
-        String domain = null;
-        int pageSize = 10;
-        if(pageSizeStr != null)
-        {
-            try {
-                pageSize = Integer.parseInt(pageSizeStr);
-            } catch(NumberFormatException nfe) {
-                //If the page size parameter is invalid just ignore it
-                //and default to 10.
-                pageSize = 10;
-            }
+        String owner = requestContext.getMatchedRoute().getParam("owner");
+        String ownerDomain = getDomainForOwner(owner);
+        if ( null != owner && null == ownerDomain ) {
+            throw new RegistryError("Unknown username="+owner,
+                                    RegistryErrorCode.NAME_UNKNOWN);
         }
-        PageIterator pageIterator = new PageIterator().pageSize(pageSize).marker(marker);
-        List<ContainerRepo> repos = _reposDb.listRepos(domain,
+
+        PageIterator pageIterator = new PageIterator()
+            .pageSize(getPageSize(requestContext))
+            .marker(requestContext.getParameter("last"));
+
+        List<ContainerRepo> repos = _reposDb.listRepos(ownerDomain,
                                                        RegistryProvider.EUROPA,
                                                        pageIterator);
-        List<String> repoList = new ArrayList<String>();
-        String lastRepo = null;
-        if(repos != null && repos.size() > 0)
-        {
-            for(ContainerRepo repo : repos) {
-                repoList.add(repo.getName());
-                lastRepo = repo.getName();
+
+        Response response = new Response();
+        response.repositories = repos.stream()
+            .map((repo) -> joinWithSlash(owner, repo.getName()))
+            .collect(Collectors.toList());
+
+        String location = null;
+        if ( null != pageIterator.getMarker() ) {
+            location = joinWithSlash("/v2", owner, "_catalog") + "?last=" + pageIterator.getMarker();
+            if ( DEFAULT_PAGE_SIZE != pageIterator.getPageSize() ) {
+                location = location + "&n="+pageIterator.getPageSize();
             }
         }
-        RegistryCatalogList catalogList = RegistryCatalogList
-        .builder()
-        .repositories(repoList)
-        .build();
 
-        //Link: <<url>?n=<n from the request>&last=<last repository in response>>; rel="next"
-        String hostPort = requestContext.getHostPort(null);
-        String proto = requestContext.getProto();
-        WebResponse response = WebResponse.toJson(catalogList, 200);
-        if(lastRepo != null)
-            response.setResponseHeader("Link", proto+"://"+hostPort+"?n="+pageSize+"&last="+lastRepo+">; rel=next");
-        return response;
+        WebResponse webResponse = toJson(response);
+        if ( null != location ) {
+            webResponse.setResponseHeader("Link", location + "; rel=\"next\"");
+        }
+        return webResponse;
     }
 }

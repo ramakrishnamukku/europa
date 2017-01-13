@@ -121,7 +121,7 @@ public class RegistryBlobDb extends BaseDb {
 
     public RegistryBlob getRegistryBlobByDigest(String digest) {
         List<RegistryBlob> results =
-            _byDigest.queryItems(digest, new PageIterator().pageSize(1)).list();
+            _byDigest.queryItems(digest.toLowerCase(), new PageIterator().pageSize(1)).list();
         if ( results.isEmpty() ) return null;
         return results.get(0);
     }
@@ -172,7 +172,7 @@ public class RegistryBlobDb extends BaseDb {
                 .remove(ATTR_PART_IDS)
                 .remove(ATTR_MD_ENCODED_STATE)
                 .remove(ATTR_UPLOAD_ID)
-                .set(ATTR_DIGEST, digest)
+                .set(ATTR_DIGEST, digest.toLowerCase())
                 .when((expr) -> expr.eq(ATTR_MD_ENCODED_STATE, currentMDState));
         } catch ( RollbackException ex ) {
             throw new ConcurrentModificationException(
@@ -182,6 +182,7 @@ public class RegistryBlobDb extends BaseDb {
 
     // Returns false if digest does not exist.
     public boolean addReference(String digest, String manifestId) {
+        digest = digest.toLowerCase();
         for ( int retry=0;;retry++ ) {
             RegistryBlob blob = getRegistryBlobByDigest(digest);
             if ( null == blob ) return false;
@@ -201,6 +202,7 @@ public class RegistryBlobDb extends BaseDb {
     }
 
     public void removeReference(String digest, String manifestId) {
+        digest = digest.toLowerCase();
         for ( PageIterator it : new PageIterator() ) {
             for ( RegistryBlob blob : _byDigest.queryItems(digest, it).list() ) {
                 try {

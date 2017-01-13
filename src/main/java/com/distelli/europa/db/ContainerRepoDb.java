@@ -159,7 +159,7 @@ public class ContainerRepoDb extends BaseDb
         .withHashKeyName("hk")
         .withRangeKeyName("sidx")
         .withConvertValue(_om::convertValue)
-        .withConvertMarker(convertMarkerFactory.create("hk", "id", "sidx"))
+        .withConvertMarker(convertMarkerFactory.create("hk", "sidx", "id"))
         .build();
 
         _byCredId = indexFactory.create(ContainerRepo.class)
@@ -168,7 +168,7 @@ public class ContainerRepoDb extends BaseDb
         .withHashKeyName("hk")
         .withRangeKeyName("cid")
         .withConvertValue(_om::convertValue)
-        .withConvertMarker(convertMarkerFactory.create("hk", "id", "cid"))
+        .withConvertMarker(convertMarkerFactory.create("hk", "cid", "id"))
         .build();
     }
 

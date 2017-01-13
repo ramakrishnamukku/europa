@@ -46,6 +46,17 @@ public class RegistryLayerUploadBegin extends RegistryBase {
                                     RegistryErrorCode.NAME_UNKNOWN);
         }
         String name = requestContext.getMatchedRoute().getParam("name");
+        String digest = requestContext.getParameter("mount");
+        if ( null != digest ) {
+            RegistryBlob blob = _blobDb.getRegistryBlobByDigest(digest);
+            if ( null != blob ) {
+                WebResponse response = new WebResponse(201);
+                response.setContentType("text/plain");
+                response.setResponseHeader("Location", joinWithSlash("/v2", owner, name, "blobs", digest));
+                response.setResponseHeader("Docker-Content-Digest", digest);
+                return response;
+            }
+        }
         RegistryBlob blob = null;
         ObjectPartKey partKey = null;
         

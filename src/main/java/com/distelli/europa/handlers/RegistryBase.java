@@ -23,6 +23,8 @@ import org.eclipse.jetty.http.HttpMethod;
 @Singleton
 public abstract class RegistryBase extends RequestHandler
 {
+    protected static int DEFAULT_PAGE_SIZE = 100;
+
     abstract public WebResponse handleRegistryRequest(RequestContext requestContext);
 
     private static final ObjectMapper OM = new ObjectMapper();
@@ -86,5 +88,12 @@ public abstract class RegistryBase extends RequestHandler
             sb.append(part);
         }
         return sb.toString();
+    }
+
+    protected int getPageSize(RequestContext requestContext) {
+        try {
+            return Integer.parseInt(requestContext.getParameter("n"));
+        } catch ( NumberFormatException ex ) {}
+        return DEFAULT_PAGE_SIZE;
     }
 }
