@@ -128,6 +128,16 @@ public class RegistryManifestPush extends RegistryBase {
                             .tag(reference)
                             .digests(digests)
                             .build());
+            // Always write a reference to support pulling via @sha256:...
+            _manifestDb.put(RegistryManifest.builder()
+                            .uploadedBy(requestContext.getRemoteUser())
+                            .contentType(requestContext.getContentType())
+                            .manifestId(finalDigest)
+                            .owner(ownerDomain)
+                            .repository(name)
+                            .tag(finalDigest)
+                            .digests(digests)
+                            .build());
             success = true;
         } catch ( UnknownDigests ex ) {
             // TODO: make this be a list of digests...

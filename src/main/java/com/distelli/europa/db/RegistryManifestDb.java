@@ -173,6 +173,7 @@ public class RegistryManifestDb extends BaseDb {
         boolean success = false;
         try {
             RegistryManifest old = _main.putItem(manifest);
+            // TODO: Record history on this repository reference as changing over time...
             if ( null != old && null != old.getDigests() && null != old.getManifestId() ) {
                 // clean-up references:
                 for ( String digest : old.getDigests() ) {
