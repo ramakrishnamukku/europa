@@ -1,5 +1,6 @@
 package com.distelli.europa;
 
+import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.db.TokenAuthDb;
 import com.distelli.europa.guice.EuropaInjectorModule;
@@ -90,7 +91,7 @@ public class TestRegistryAPI {
 
         servlet.setRequestContextFactory(new RequestContextFactory() {
                 public RequestContext getRequestContext(HTTPMethod method, HttpServletRequest request) {
-                    return new RequestContext(method, request, false);
+                    return new EuropaRequestContext(method, request, false);
                 }
             });
         servlet.setRequestFilters(INJECTOR.getInstance(RegistryAuthFilter.class));
@@ -153,7 +154,7 @@ public class TestRegistryAPI {
                     if(className.equalsIgnoreCase("com.distelli.europa.handlers.RegistryVersionCheck"))
                     {
                         return new RegistryVersionCheck() {
-                            public WebResponse handleRegistryRequest(RequestContext requestContext) {
+                            public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
                                 throw new RuntimeException("system failure");
                             }
                         };
