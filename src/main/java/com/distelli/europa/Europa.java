@@ -93,7 +93,7 @@ public class Europa
         Log4JConfigurator.setLogLevel("com.distelli.webserver", "DEBUG");
         Log4JConfigurator.setLogLevel("com.distelli.gcr", "DEBUG");
         Log4JConfigurator.setLogLevel("com.distelli.europa.monitor", "ERROR");
-        Log4JConfigurator.setLogLevel("com.distelli.webserver", "ERROR");
+        //Log4JConfigurator.setLogLevel("com.distelli.webserver", "DEBUG");
         String configFilePath = _cmdLineArgs.getOption("config");
         if(configFilePath == null)
         {
@@ -198,11 +198,7 @@ public class Europa
 
         WebServlet registryApiServlet = new WebServlet(_registryApiRouteMatcher, _requestHandlerFactory);
         servlet.setRequestContextFactory(_requestContextFactory);
-        registryApiServlet.setRequestContextFactory(new RequestContextFactory() {
-                public RequestContext getRequestContext(HTTPMethod method, HttpServletRequest request) {
-                    return new RequestContext(method, request, false);
-                }
-            });
+        registryApiServlet.setRequestContextFactory(_requestContextFactory);
         registryApiServlet.setRequestFilters(_registryApiFilters);
         webServer.addWebServlet("/v2/*", registryApiServlet);
 
