@@ -1,5 +1,6 @@
 package com.distelli.europa.handlers;
 
+import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.db.RegistryBlobDb;
 import com.distelli.europa.models.RegistryBlob;
 import com.distelli.europa.models.RegistryBlobPart;
@@ -43,7 +44,7 @@ public class RegistryLayerUploadChunk extends RegistryBase {
     @Inject
     private RegistryBlobDb _blobDb;
 
-    public WebResponse handleRegistryRequest(RequestContext requestContext) {
+    public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
         try {
             return handleRegistryRequest(requestContext, false);
         } catch ( RuntimeException ex ) {
@@ -53,12 +54,9 @@ public class RegistryLayerUploadChunk extends RegistryBase {
         }
     }
 
-    public WebResponse handleRegistryRequest(RequestContext requestContext, boolean isLastChunk) throws Exception {
-        String owner = requestContext.getMatchedRoute().getParam("owner");
-        if ( null != owner && null == getDomainForOwner(owner) ) {
-            throw new RegistryError("Unknown username="+owner,
-                                    RegistryErrorCode.NAME_UNKNOWN);
-        }
+    public WebResponse handleRegistryRequest(EuropaRequestContext requestContext, boolean isLastChunk) throws Exception {
+        String ownerUsername = requestContext.getOwnerUsername();
+        String ownerDomain = requestContext.getOwnerDomain();
         String name = requestContext.getMatchedRoute().getParam("name");
         String blobId = requestContext.getMatchedRoute().getParam("uuid");
         if ( null == blobId || blobId.isEmpty() ) {
@@ -122,7 +120,7 @@ public class RegistryLayerUploadChunk extends RegistryBase {
         response.setContentType("text/plain");
         response.setResponseHeader("Range", "0-"+(totalSize+contentLength));
         response.setResponseHeader("Docker-Upload-UUID", blobId);
-        response.setResponseHeader("Location", joinWithSlash("/v2", owner, name, "blobs/uploads", blobId));
+        response.setResponseHeader("Location", joinWithSlash("/v2", ownerUsername, name, "blobs/uploads", blobId));
         return response;
     }
 
@@ -146,14 +144,14 @@ public class RegistryLayerUploadChunk extends RegistryBase {
         return range;
     }
 
-    private RegistryError rangeNotSatisfiable(String reason, RequestContext requestContext, long totalSize) {
-        String owner = requestContext.getMatchedRoute().getParam("owner");
+    private RegistryError rangeNotSatisfiable(String reason, EuropaRequestContext requestContext, long totalSize) {
+        String ownerUsername = requestContext.getOwnerUsername();
         String name = requestContext.getMatchedRoute().getParam("name");
         String blobId = requestContext.getMatchedRoute().getParam("uuid");
         return new RegistryError(reason, RegistryErrorCode.RANGE_NOT_SATISFIABLE) {
             public Map<String, String> getResponseHeaders() {
                 return new HashMap<String, String>() {{
-                    put("Location", joinWithSlash("/v2", owner, name, "blobs/uploads", blobId));
+                    put("Location", joinWithSlash("/v2", ownerUsername, name, "blobs/uploads", blobId));
                     put("Range", "0-"+totalSize);
                     put("Docker-Upload-UUID", blobId);
                 }};

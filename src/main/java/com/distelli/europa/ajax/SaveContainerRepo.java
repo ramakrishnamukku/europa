@@ -30,10 +30,11 @@ import com.distelli.persistence.PageIterator;
 import com.google.inject.Singleton;
 import org.eclipse.jetty.http.HttpMethod;
 import lombok.extern.log4j.Log4j;
+import com.distelli.europa.EuropaRequestContext;
 
 @Log4j
 @Singleton
-public class SaveContainerRepo extends AjaxHelper
+public class SaveContainerRepo extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private RegistryCredsDb _credsDb;
@@ -49,23 +50,25 @@ public class SaveContainerRepo extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
-    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
+    public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         ContainerRepo repo = ajaxRequest.convertContent("/repo", ContainerRepo.class,
                                                        true); //throw if null
         //Validate that the fields we want are non-null
         FieldValidator.validateNonNull(repo, "credId", "name");
+        String repoDomain = requestContext.getOwnerDomain();
         //Now get the cred from the credId
-        RegistryCred cred = _credsDb.getCred(repo.getDomain(), repo.getCredId());
+        RegistryCred cred = _credsDb.getCred(repoDomain, repo.getCredId());
         if(cred == null)
             throw(new AjaxClientException("Invalid Registry Cred: "+repo.getCredId(), JsonError.Codes.BadContent, 400));
         repo.setProvider(cred.getProvider());
         repo.setRegion(cred.getRegion());
         repo.setId(CompactUUID.randomUUID().toString());
+        repo.setDomain(repoDomain);
         validateContainerRepo(repo, cred);
         //before we save the repo in the db lets check that the repo
         //doesn't already exist
-        if(_reposDb.repoExists(repo.getDomain(), repo.getProvider(), repo.getRegion(), repo.getName()))
+        if(_reposDb.repoExists(repoDomain, repo.getProvider(), repo.getRegion(), repo.getName()))
             throw(new AjaxClientException("The specified container repo is already connected: "+
                                           repo.getProvider()+", "+repo.getName(),
                                           AjaxErrors.Codes.RepoAlreadyConnected,
@@ -82,7 +85,7 @@ public class SaveContainerRepo extends AjaxHelper
             }
 
             notification.setRepoId(repo.getId());
-            notification.setDomain(repo.getDomain());
+            notification.setDomain(repoDomain);
             notification.setRepoProvider(repo.getProvider());
             notification.setRegion(repo.getRegion());
             notification.setRepoName(repo.getName());

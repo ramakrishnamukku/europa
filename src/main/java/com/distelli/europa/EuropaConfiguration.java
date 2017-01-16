@@ -25,8 +25,6 @@ public class EuropaConfiguration
     @Getter @Setter
     private String dbPass;
     @Getter @Setter
-    private boolean multiTenant = false;
-    @Getter @Setter
     private int dbMaxPoolSize = 2;
     @Getter @Setter
     private ObjectStoreConfig objectStore;

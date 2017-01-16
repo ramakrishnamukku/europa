@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import javax.inject.Singleton;
 import com.distelli.persistence.PageIterator;
+import com.distelli.europa.Constants;
 
 import com.distelli.europa.models.*;
 import com.distelli.europa.db.*;
@@ -48,7 +49,7 @@ public class MonitorQueue
         _reposToMonitor = new ArrayList<ContainerRepo>();
         PageIterator pageIterator = new PageIterator().pageSize(1000);
         do {
-            List<ContainerRepo> repos = _containerRepoDb.listRepos(null, pageIterator);
+            List<ContainerRepo> repos = _containerRepoDb.listRepos(Constants.DOMAIN_ZERO, pageIterator);
             _reposToMonitor.addAll(repos);
         } while(pageIterator.getMarker() != null);
         _shouldReload = false;

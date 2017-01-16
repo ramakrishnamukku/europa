@@ -15,10 +15,11 @@ import com.distelli.webserver.*;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
+import com.distelli.europa.EuropaRequestContext;
 
 @Log4j
 @Singleton
-public class ListRepoEvents extends AjaxHelper
+public class ListRepoEvents extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private RepoEventsDb _db;
@@ -28,12 +29,12 @@ public class ListRepoEvents extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.GET);
     }
 
-    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
+    public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         String repoId = ajaxRequest.getParam("repoId", true);
         int pageSize = ajaxRequest.getParamAsInt("pageSize", 100);
         String marker = ajaxRequest.getParam("marker");
-        String domain = ajaxRequest.getParam("domain");
+        String domain = requestContext.getOwnerDomain();
 
         PageIterator pageIterator = new PageIterator()
         .pageSize(pageSize)

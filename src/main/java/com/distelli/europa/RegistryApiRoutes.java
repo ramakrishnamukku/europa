@@ -33,18 +33,18 @@ public class RegistryApiRoutes
         ROUTES.add("GET", "/v2/:name/manifests/:reference", RegistryManifestPull.class);
         ROUTES.add("HEAD", "/v2/:name/manifests/:reference", RegistryManifestExists.class);
         ROUTES.add("DELETE", "/v2/:name/manifests/:reference", RegistryManifestDelete.class);
-        ROUTES.add("PUT", "/v2/:owner/:name/manifests/:reference", RegistryManifestPush.class);
-        ROUTES.add("GET", "/v2/:owner/:name/manifests/:reference", RegistryManifestPull.class);
-        ROUTES.add("HEAD", "/v2/:owner/:name/manifests/:reference", RegistryManifestExists.class);
-        ROUTES.add("DELETE", "/v2/:owner/:name/manifests/:reference", RegistryManifestDelete.class);
+        ROUTES.add("PUT", "/v2/:name/manifests/:reference", RegistryManifestPush.class);
+        ROUTES.add("GET", "/v2/:name/manifests/:reference", RegistryManifestPull.class);
+        ROUTES.add("HEAD", "/v2/:name/manifests/:reference", RegistryManifestExists.class);
+        ROUTES.add("DELETE", "/v2/:name/manifests/:reference", RegistryManifestDelete.class);
 
         // Blobs:
         ROUTES.add("GET", "/v2/:name/blobs/:digest", RegistryLayerPull.class);
         ROUTES.add("HEAD", "/v2/:name/blobs/:digest", RegistryLayerExists.class);
         ROUTES.add("DELETE", "/v2/:name/blobs/:digest", RegistryLayerDelete.class);
-        ROUTES.add("GET", "/v2/:owner/:name/blobs/:digest", RegistryLayerPull.class);
-        ROUTES.add("HEAD", "/v2/:owner/:name/blobs/:digest", RegistryLayerExists.class);
-        ROUTES.add("DELETE", "/v2/:owner/:name/blobs/:digest", RegistryLayerDelete.class);
+        ROUTES.add("GET", "/v2/:name/blobs/:digest", RegistryLayerPull.class);
+        ROUTES.add("HEAD", "/v2/:name/blobs/:digest", RegistryLayerExists.class);
+        ROUTES.add("DELETE", "/v2/:name/blobs/:digest", RegistryLayerDelete.class);
 
         // Blob Upload:
         ROUTES.add("POST", "/v2/:name/blobs/uploads", RegistryLayerUploadBegin.class);
@@ -52,15 +52,14 @@ public class RegistryApiRoutes
         ROUTES.add("PATCH", "/v2/:name/blobs/uploads/:uuid", RegistryLayerUploadChunk.class);
         ROUTES.add("GET", "/v2/:name/blobs/uploads/:uuid", RegistryLayerUploadProgress.class);
         ROUTES.add("DELETE", "/v2/:name/blobs/uploads/:uuid", RegistryLayerUploadCancel.class);
-        ROUTES.add("POST", "/v2/:owner/:name/blobs/uploads", RegistryLayerUploadBegin.class);
-        ROUTES.add("PUT", "/v2/:owner/:name/blobs/uploads/:uuid", RegistryLayerUploadFinish.class);
-        ROUTES.add("PATCH", "/v2/:owner/:name/blobs/uploads/:uuid", RegistryLayerUploadChunk.class);
-        ROUTES.add("GET", "/v2/:owner/:name/blobs/uploads/:uuid", RegistryLayerUploadProgress.class);
-        ROUTES.add("DELETE", "/v2/:owner/:name/blobs/uploads/:uuid", RegistryLayerUploadCancel.class);
+        ROUTES.add("POST", "/v2/:name/blobs/uploads", RegistryLayerUploadBegin.class);
+        ROUTES.add("PUT", "/v2/:name/blobs/uploads/:uuid", RegistryLayerUploadFinish.class);
+        ROUTES.add("PATCH", "/v2/:name/blobs/uploads/:uuid", RegistryLayerUploadChunk.class);
+        ROUTES.add("GET", "/v2/:name/blobs/uploads/:uuid", RegistryLayerUploadProgress.class);
+        ROUTES.add("DELETE", "/v2/:name/blobs/uploads/:uuid", RegistryLayerUploadCancel.class);
 
         ROUTES.add("GET", "/v2/:name/tags/list", RegistryTagList.class);
-        ROUTES.add("GET", "/v2/:owner/:name/tags/list", RegistryTagList.class);
-        ROUTES.add("GET", "/v2/:owner/_catalog", RegistryCatalog.class);
+        ROUTES.add("GET", "/v2/:name/tags/list", RegistryTagList.class);
         ROUTES.add("GET", "/v2/_catalog", RegistryCatalog.class);
 
         //TODO: set a default route matcher that returns an error json for the registry API

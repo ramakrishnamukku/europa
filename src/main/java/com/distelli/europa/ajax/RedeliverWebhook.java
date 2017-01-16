@@ -26,12 +26,12 @@ import com.distelli.webserver.AjaxRequest;
 import com.distelli.webserver.HTTPMethod;
 import com.distelli.webserver.JsonError;
 import com.distelli.webserver.RequestContext;
-
+import com.distelli.europa.EuropaRequestContext;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
-public class RedeliverWebhook extends AjaxHelper
+public class RedeliverWebhook extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private WebhookNotifier _webhookNotifier;
@@ -47,7 +47,7 @@ public class RedeliverWebhook extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
-    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
+    public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         String id = ajaxRequest.getParam("notificationId",
                                          true); //throw if missing
@@ -55,7 +55,7 @@ public class RedeliverWebhook extends AjaxHelper
                                          true); //throw if missing
         String repoId = ajaxRequest.getParam("repoId",
                                              true); //throw if missing
-        String domain = null;
+        String domain = requestContext.getOwnerDomain();
         NotificationId notificationId = NotificationId.fromCanonicalId(id);
         NotificationType type = notificationId.getType();
         if(type != NotificationType.WEBHOOK)

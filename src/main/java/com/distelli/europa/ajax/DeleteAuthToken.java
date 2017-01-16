@@ -16,11 +16,12 @@ import com.distelli.webserver.JsonSuccess;
 import com.distelli.webserver.RequestContext;
 import com.google.inject.Singleton;
 
+import com.distelli.europa.EuropaRequestContext;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
-public class DeleteAuthToken extends AjaxHelper
+public class DeleteAuthToken extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private TokenAuthDb _tokenAuthDb;
@@ -30,12 +31,11 @@ public class DeleteAuthToken extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
-    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
+    public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
-        String token = ajaxRequest.getParam("token",
-                                            true); //throw if missing
+        String token = ajaxRequest.getParam("token", true); //throw if missing
         try {
-            _tokenAuthDb.deleteToken(token);
+            _tokenAuthDb.deleteToken(requestContext.getOwnerDomain(), token);
         } catch(RollbackException rbe) {
             throw(new AjaxClientException("Cannot Delete active Token", AjaxErrors.Codes.TokenIsActive, 400));
         }

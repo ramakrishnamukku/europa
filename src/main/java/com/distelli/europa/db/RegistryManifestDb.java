@@ -46,9 +46,6 @@ public class RegistryManifestDb extends BaseDb {
     private final ObjectMapper _om = new ObjectMapper();
 
     @Inject
-    private UserDb _userDb;
-
-    @Inject
     private RegistryBlobDb _blobDb;
 
     public static TableDescription getTableDescription() {
@@ -137,12 +134,12 @@ public class RegistryManifestDb extends BaseDb {
             throw new IllegalArgumentException(
                 "Illegal contentType="+manifest.getContentType()+" expected to match [^/]{1,127}/[^/]{1,127}");
         }
-        if ( null == _userDb.getUserByDomain(manifest.getUploadedBy()) ) {
-            throw new IllegalArgumentException("Unknown uploadedBy="+manifest.getUploadedBy());
-        }
-        if ( null == _userDb.getUserByDomain(manifest.getOwner()) ) {
-            throw new IllegalArgumentException("Unknown owner="+manifest.getOwner());
-        }
+        // if ( null == _userDb.getUserByDomain(manifest.getUploadedBy()) ) {
+        //     throw new IllegalArgumentException("Unknown uploadedBy="+manifest.getUploadedBy());
+        // }
+        // if ( null == _userDb.getUserByDomain(manifest.getOwner()) ) {
+        //     throw new IllegalArgumentException("Unknown owner="+manifest.getOwner());
+        // }
 
         String manifestId = manifest.getManifestId();
         if ( null == manifestId || ! manifestId.matches("^sha256:[0-9a-f]{64}$") ) {

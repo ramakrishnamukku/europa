@@ -1,5 +1,6 @@
 package com.distelli.europa.handlers;
 
+import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.registry.RegistryError;
 import com.distelli.europa.registry.RegistryErrorCode;
 import com.distelli.europa.util.ObjectKeyFactory;
@@ -29,12 +30,9 @@ public class RegistryLayerUploadCancel extends RegistryBase {
     private ObjectKeyFactory _objectKeyFactory;
     @Inject
     private RegistryBlobDb _blobDb;
-    public WebResponse handleRegistryRequest(RequestContext requestContext) {
-        String owner = requestContext.getMatchedRoute().getParam("owner");
-        if ( null != owner && null == getDomainForOwner(owner) ) {
-            throw new RegistryError("Unknown username="+owner,
-                                    RegistryErrorCode.NAME_UNKNOWN);
-        }
+    public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
+        String ownerUsername = requestContext.getOwnerUsername();
+        String ownerDomain = requestContext.getOwnerDomain();
         String blobId = requestContext.getMatchedRoute().getParam("uuid");
         if ( null == blobId || blobId.isEmpty() ) {
             throw new RegistryError("Invalid :uuid parameter (must not be empty)",

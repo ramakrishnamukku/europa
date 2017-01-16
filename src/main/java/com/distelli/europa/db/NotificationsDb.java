@@ -14,7 +14,6 @@ import javax.inject.Inject;
 
 import com.distelli.utils.CompactUUID;
 import com.distelli.europa.Constants;
-import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.models.*;
 import com.distelli.jackson.transform.TransformModule;
 import com.distelli.persistence.AttrDescription;
@@ -38,7 +37,6 @@ public class NotificationsDb extends BaseDb
     private Index<Notification> _byRepo;
 
     private final ObjectMapper _om = new ObjectMapper();
-    private EuropaConfiguration _europaConfiguration;
 
     public static TableDescription getTableDescription() {
         return TableDescription.builder()
@@ -83,21 +81,12 @@ public class NotificationsDb extends BaseDb
 
     private final String getHashKey(String domain)
     {
-        if(_europaConfiguration.isMultiTenant())
-        {
-            if(domain == null)
-                throw(new IllegalArgumentException("Invalid null domain for multi-tenant setup"));
-        }
-        else
-            domain = Constants.DOMAIN_ZERO;
         return domain.toLowerCase();
     }
 
     @Inject
     public NotificationsDb(Index.Factory indexFactory,
-                           ConvertMarker.Factory convertMarkerFactory,
-                           EuropaConfiguration europaConfiguration) {
-        _europaConfiguration = europaConfiguration;
+                           ConvertMarker.Factory convertMarkerFactory) {
         _om.registerModule(createTransforms(new TransformModule()));
 
         _main = indexFactory.create(Notification.class)
@@ -126,9 +115,8 @@ public class NotificationsDb extends BaseDb
             notification.setId(CompactUUID.randomUUID().toString());
         if(notification.getRepoId() == null)
             throw(new IllegalArgumentException("Invalid null repo Id in notification: "+notification));
-        if(_europaConfiguration.isMultiTenant() && notification.getDomain() == null)
-            throw(new IllegalArgumentException("Invalid null domain in multi-tenant setup for Notification: "+
-                                               notification));
+        if(notification.getDomain() == null)
+            throw(new IllegalArgumentException("Invalid null domain for Notification: "+notification));
         _main.putItem(notification);
     }
 

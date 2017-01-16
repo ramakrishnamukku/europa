@@ -1,5 +1,6 @@
 package com.distelli.europa.handlers;
 
+import com.distelli.europa.EuropaRequestContext;
 import org.eclipse.jetty.http.HttpMethod;
 import com.distelli.webserver.RequestHandler;
 import com.distelli.webserver.WebResponse;
@@ -14,7 +15,7 @@ import lombok.extern.log4j.Log4j;
 @Log4j
 @Singleton
 public class RegistryVersionCheck extends RegistryBase {
-    public WebResponse handleRegistryRequest(RequestContext requestContext) {
+    public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
         WebResponse response = new WebResponse(200);
         response.setResponseHeader("Docker-Distribution-API-Version", "registry/2.0");
         return response;

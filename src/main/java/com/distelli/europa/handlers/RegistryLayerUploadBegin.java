@@ -1,5 +1,6 @@
 package com.distelli.europa.handlers;
 
+import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.registry.RegistryError;
 import com.distelli.europa.registry.RegistryErrorCode;
 import com.distelli.europa.util.ObjectKeyFactory;
@@ -28,23 +29,20 @@ public class RegistryLayerUploadBegin extends RegistryBase {
     @Inject
     private RegistryBlobDb _blobDb;
 
-    public WebResponse handleRegistryRequest(RequestContext requestContext) {
+    public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
         String digest = requestContext.getMatchedRoute().getParam("digest");
         if ( null == digest ) return handleMultipartInit(requestContext);
         return handleMonolithicUpload(requestContext);
     }
 
-    private WebResponse handleMonolithicUpload(RequestContext requestContext) {
+    private WebResponse handleMonolithicUpload(EuropaRequestContext requestContext) {
         // TODO: support this API too...
         throw new UnsupportedOperationException();
     }
 
-    private WebResponse handleMultipartInit(RequestContext requestContext) {
-        String owner = requestContext.getMatchedRoute().getParam("owner");
-        if ( null != owner && null == getDomainForOwner(owner) ) {
-            throw new RegistryError("Unknown username="+owner,
-                                    RegistryErrorCode.NAME_UNKNOWN);
-        }
+    private WebResponse handleMultipartInit(EuropaRequestContext requestContext) {
+        String ownerUsername = requestContext.getOwnerUsername();
+        String ownerDomain = requestContext.getOwnerDomain();
         String name = requestContext.getMatchedRoute().getParam("name");
         String digest = requestContext.getParameter("mount");
         if ( null != digest ) {
@@ -52,17 +50,17 @@ public class RegistryLayerUploadBegin extends RegistryBase {
             if ( null != blob ) {
                 WebResponse response = new WebResponse(201);
                 response.setContentType("text/plain");
-                response.setResponseHeader("Location", joinWithSlash("/v2", owner, name, "blobs", digest));
+                response.setResponseHeader("Location", joinWithSlash("/v2", ownerUsername, name, "blobs", digest));
                 response.setResponseHeader("Docker-Content-Digest", digest);
                 return response;
             }
         }
         RegistryBlob blob = null;
         ObjectPartKey partKey = null;
-        
+
         boolean success = false;
         try {
-            blob = _blobDb.newRegistryBlob(requestContext.getRemoteUser());            
+            blob = _blobDb.newRegistryBlob(requestContext.getRemoteUser());
             partKey = _objectStore.newMultipartPut(_objectKeyFactory.forRegistryBlobId(blob.getBlobId()));
             _blobDb.setUploadId(blob.getBlobId(), partKey.getUploadId());
             success = true;
@@ -74,7 +72,7 @@ public class RegistryLayerUploadBegin extends RegistryBase {
             }
         }
 
-        String location = joinWithSlash("/v2", owner, name, "blobs", "uploads", blob.getBlobId());
+        String location = joinWithSlash("/v2", ownerUsername, name, "blobs", "uploads", blob.getBlobId());
         WebResponse response = new WebResponse(202);
         response.setContentType("text/plain");
         response.setResponseHeader("Location", location);

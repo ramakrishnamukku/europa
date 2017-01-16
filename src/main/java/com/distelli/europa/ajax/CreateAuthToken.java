@@ -12,12 +12,12 @@ import com.distelli.webserver.AjaxRequest;
 import com.distelli.webserver.HTTPMethod;
 import com.distelli.webserver.RequestContext;
 import com.google.inject.Singleton;
-
+import com.distelli.europa.EuropaRequestContext;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
-public class CreateAuthToken extends AjaxHelper
+public class CreateAuthToken extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private TokenAuthDb _tokenAuthDb;
@@ -27,11 +27,11 @@ public class CreateAuthToken extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
-    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
+    public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         TokenAuth tokenAuth = TokenAuth
         .builder()
-        .domain(Constants.DOMAIN_ZERO)
+        .domain(requestContext.getOwnerDomain())
         .token(CompactUUID.randomUUID().toString())
         .status(TokenAuthStatus.ACTIVE)
         .created(System.currentTimeMillis())

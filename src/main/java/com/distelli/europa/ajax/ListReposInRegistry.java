@@ -24,10 +24,11 @@ import com.google.inject.Singleton;
 import org.eclipse.jetty.http.HttpMethod;
 import lombok.extern.log4j.Log4j;
 import javax.inject.Inject;
+import com.distelli.europa.EuropaRequestContext;
 
 @Log4j
 @Singleton
-public class ListReposInRegistry extends AjaxHelper
+public class ListReposInRegistry extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private RegistryCredsDb _credsDb;
@@ -37,10 +38,10 @@ public class ListReposInRegistry extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
-    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
+    public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         String credId = ajaxRequest.getParam("credId");
-        String credDomain = ajaxRequest.getParam("credDomain");
+        String credDomain = requestContext.getOwnerDomain();
         RegistryProvider provider = null;
         String secret = null;
         String region = null;

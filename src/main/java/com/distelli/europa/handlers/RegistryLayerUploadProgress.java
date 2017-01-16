@@ -1,6 +1,7 @@
 package com.distelli.europa.handlers;
 
 import java.util.List;
+import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.db.RegistryBlobDb;
 import com.distelli.europa.models.RegistryBlob;
 import com.distelli.europa.models.RegistryBlobPart;
@@ -23,12 +24,9 @@ public class RegistryLayerUploadProgress extends RegistryBase {
     @Inject
     private RegistryBlobDb _blobDb;
 
-    public WebResponse handleRegistryRequest(RequestContext requestContext) {
-        String owner = requestContext.getMatchedRoute().getParam("owner");
-        if ( null != owner && null == getDomainForOwner(owner) ) {
-            throw new RegistryError("Unknown username="+owner,
-                                    RegistryErrorCode.NAME_UNKNOWN);
-        }
+    public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
+        String ownerUsername = requestContext.getOwnerUsername();
+        String ownerDomain = requestContext.getOwnerDomain();
         String name = requestContext.getMatchedRoute().getParam("name");
         String blobId = requestContext.getMatchedRoute().getParam("uuid");
         if ( null == blobId || blobId.isEmpty() ) {
@@ -40,7 +38,8 @@ public class RegistryLayerUploadProgress extends RegistryBase {
             throw new RegistryError("Invalid :uuid parameter", RegistryErrorCode.BLOB_UPLOAD_UNKNOWN);
         }
         if ( null == blob.getUploadId() ) {
-            throw new RegistryError("The :uuid parameter specifies an upload that already succeeded.", RegistryErrorCode.BLOB_UPLOAD_INVALID);
+            throw new RegistryError("The :uuid parameter specifies an upload that already succeeded.",
+                                    RegistryErrorCode.BLOB_UPLOAD_INVALID);
         }
         // TODO: Validate the uploadId... just not sure how to do that with current
         // ObjectStore API (and this isn't that important)...
@@ -50,7 +49,7 @@ public class RegistryLayerUploadProgress extends RegistryBase {
         response.setContentType("text/plain");
         response.setResponseHeader("Range", "0-"+totalSize);
         response.setResponseHeader("Docker-Upload-UUID", blobId);
-        response.setResponseHeader("Location", joinWithSlash("/v2", owner, name, "blobs/uploads", blobId));
+        response.setResponseHeader("Location", joinWithSlash("/v2", ownerUsername, name, "blobs/uploads", blobId));
         return response;
     }
 

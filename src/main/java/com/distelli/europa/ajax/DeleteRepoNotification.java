@@ -25,10 +25,11 @@ import com.google.inject.Singleton;
 import org.eclipse.jetty.http.HttpMethod;
 import lombok.extern.log4j.Log4j;
 import javax.inject.Inject;
+import com.distelli.europa.EuropaRequestContext;
 
 @Log4j
 @Singleton
-public class DeleteRepoNotification extends AjaxHelper
+public class DeleteRepoNotification extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private NotificationsDb _notificationDb;
@@ -40,10 +41,10 @@ public class DeleteRepoNotification extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
-    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
+    public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         String notificationId = ajaxRequest.getParam("notificationId", true);
-        String domain = ajaxRequest.getParam("domain");
+        String domain = requestContext.getOwnerDomain();
         _notificationDb.deleteNotification(domain, notificationId);
         _monitorQueue.setReload(true);
         return JsonSuccess.Success;

@@ -13,12 +13,13 @@ import com.distelli.webserver.HTTPMethod;
 import com.distelli.webserver.JsonSuccess;
 import com.distelli.webserver.RequestContext;
 import com.google.inject.Singleton;
+import com.distelli.europa.EuropaRequestContext;
 
 import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
-public class SetAuthTokenStatus extends AjaxHelper
+public class SetAuthTokenStatus extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private TokenAuthDb _tokenAuthDb;
@@ -28,12 +29,13 @@ public class SetAuthTokenStatus extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
-    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
+    public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         TokenAuth tokenAuth = ajaxRequest.convertContent(TokenAuth.class, true);
         FieldValidator.validateNonNull(tokenAuth, "token", "status");
 
-        _tokenAuthDb.setStatus(tokenAuth.getToken(),
+        _tokenAuthDb.setStatus(requestContext.getOwnerDomain(),
+                               tokenAuth.getToken(),
                                tokenAuth.getStatus());
         return JsonSuccess.Success;
     }

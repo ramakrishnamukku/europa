@@ -40,19 +40,24 @@ import lombok.extern.log4j.Log4j;
 @Log4j
 public class Europa
 {
-    private RequestHandlerFactory _requestHandlerFactory = null;
-    private RequestFilter[] _registryApiFilters;
-    private StaticContentErrorHandler _staticContentErrorHandler = null;
-    private int _port = 8080;
+    protected RequestHandlerFactory _requestHandlerFactory = null;
+    protected RequestContextFactory _requestContextFactory = null;
+    protected RequestFilter[] _registryApiFilters = null;
+    protected RequestFilter[] _webappFilters = null;
+    protected StaticContentErrorHandler _staticContentErrorHandler = null;
+    protected int _port = 8080;
 
     @Inject
-    private ObjectStore _objectStore;
+    protected ObjectStore _objectStore;
     @Inject
-    private ObjectKeyFactory _objectKeyFactory;
+    protected ObjectKeyFactory _objectKeyFactory;
 
     @Inject
-    private MonitorQueue _monitorQueue;
-    private Thread _monitorThread;
+    protected MonitorQueue _monitorQueue;
+    protected Thread _monitorThread;
+
+    protected RouteMatcher _webappRouteMatcher = null;
+    protected RouteMatcher _registryApiRouteMatcher = null;
 
     public Europa(String[] args)
     {
@@ -110,27 +115,36 @@ public class Europa
                                                        new ObjectStoreModule(),
                                                        new EuropaInjectorModule(europaConfiguration));
         injector.injectMembers(this);
+        initialize(injector);
+    }
+
+    protected void initialize(Injector injector)
+    {
         _registryApiFilters = new RequestFilter[] {
             injector.getInstance(RegistryAuthFilter.class)
         };
 
-        initialize();
-        _requestHandlerFactory = new RequestHandlerFactory() {
-                public RequestHandler getRequestHandler(MatchedRoute route) {
-                    return injector.getInstance(route.getRequestHandler());
-                }
-            };
-        _staticContentErrorHandler = injector.getInstance(StaticContentErrorHandler.class);
-    }
-
-    private void initialize()
-    {
         try {
             _objectStore.createBucket(_objectKeyFactory.getDefaultBucket());
         } catch(Throwable t) {
             log.error("Failed to create default bucket: "+_objectKeyFactory.getDefaultBucket()+
                       ": "+t.getMessage(), t);
         }
+
+        _requestContextFactory = new RequestContextFactory() {
+                public RequestContext getRequestContext(HTTPMethod httpMethod, HttpServletRequest request) {
+                    return new EuropaRequestContext(httpMethod, request);
+                }
+            };
+
+        _requestHandlerFactory = new RequestHandlerFactory() {
+                public RequestHandler getRequestHandler(MatchedRoute route) {
+                    return injector.getInstance(route.getRequestHandler());
+                }
+            };
+        _staticContentErrorHandler = injector.getInstance(StaticContentErrorHandler.class);
+        _registryApiRouteMatcher = RegistryApiRoutes.getRouteMatcher();
+        _webappRouteMatcher = WebAppRoutes.getRouteMatcher();
     }
 
     public void start()
@@ -139,7 +153,10 @@ public class Europa
         _monitorThread = new Thread(monitor);
         _monitorThread.start();
 
-        WebServlet servlet = new WebServlet(WebAppRoutes.getRouteMatcher(), _requestHandlerFactory);
+        WebServlet servlet = new WebServlet(_webappRouteMatcher, _requestHandlerFactory);
+        servlet.setRequestContextFactory(_requestContextFactory);
+        if(_webappFilters != null)
+            servlet.setRequestFilters(_webappFilters);
         WebServer webServer = new WebServer(_port, servlet, "/");
 
         ServletHolder staticHolder = new ServletHolder(DefaultServlet.class);
@@ -150,7 +167,8 @@ public class Europa
         staticHolder.setInitParameter("cacheControl", "max-age=3600");
         webServer.addStandardServlet("/public/*", staticHolder);
 
-        WebServlet registryApiServlet = new WebServlet(RegistryApiRoutes.getRouteMatcher(), _requestHandlerFactory);
+        WebServlet registryApiServlet = new WebServlet(_registryApiRouteMatcher, _requestHandlerFactory);
+        servlet.setRequestContextFactory(_requestContextFactory);
         registryApiServlet.setRequestContextFactory(new RequestContextFactory() {
                 public RequestContext getRequestContext(HTTPMethod method, HttpServletRequest request) {
                     return new RequestContext(method, request, false);

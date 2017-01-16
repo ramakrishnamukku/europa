@@ -13,7 +13,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.distelli.europa.Constants;
-import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.ajax.*;
 import com.distelli.europa.models.*;
 import com.distelli.jackson.transform.TransformModule;
@@ -40,8 +39,6 @@ public class ContainerRepoDb extends BaseDb
     private Index<ContainerRepo> _main;
     private Index<ContainerRepo> _secondaryIndex;
     private Index<ContainerRepo> _byCredId;
-
-    private EuropaConfiguration _europaConfiguration;
 
     private final ObjectMapper _om = new ObjectMapper();
 
@@ -97,37 +94,17 @@ public class ContainerRepoDb extends BaseDb
 
     private final String getHashKey(ContainerRepo repo)
     {
-        if(_europaConfiguration.isMultiTenant())
-        {
-            if(repo == null)
-                throw(new IllegalArgumentException("Invalid null repo in multi-tenant setup"));
-            return getHashKey(repo.getDomain());
-        }
-        return Constants.DOMAIN_ZERO;
+        return getHashKey(repo.getDomain());
     }
 
     private final String getHashKey(String domain)
     {
-        if(_europaConfiguration.isMultiTenant())
-        {
-            if(domain == null)
-                throw(new IllegalArgumentException("Invalid null domain in multi-tenant setup for ContainerRepo"));
-
-            return domain.toLowerCase();
-        }
-        return Constants.DOMAIN_ZERO;
+        return domain.toLowerCase();
     }
 
     private final void setHashKey(ContainerRepo repo, String domain)
     {
-        if(_europaConfiguration.isMultiTenant())
-        {
-            if(domain == null)
-                throw(new IllegalArgumentException("Invalid null domain in multi-tenant setup for ContainerRepo"));
-
-            repo.setDomain(domain);
-        }
-        repo.setDomain(null);
+        repo.setDomain(domain);
     }
 
     private final String getSecondaryKey(RegistryProvider provider, String region, String name)
@@ -140,9 +117,7 @@ public class ContainerRepoDb extends BaseDb
 
     @Inject
     protected ContainerRepoDb(Index.Factory indexFactory,
-                              ConvertMarker.Factory convertMarkerFactory,
-                              EuropaConfiguration europaConfiguration) {
-        _europaConfiguration = europaConfiguration;
+                              ConvertMarker.Factory convertMarkerFactory) {
         _om.registerModule(createTransforms(new TransformModule()));
         _om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         _main = indexFactory.create(ContainerRepo.class)
@@ -215,9 +190,8 @@ public class ContainerRepoDb extends BaseDb
         String id = repo.getId();
         if(id == null)
             throw(new IllegalArgumentException("Invalid id "+id+" in container repo"));
-        if(_europaConfiguration.isMultiTenant() && repo.getDomain() == null)
-            throw(new IllegalArgumentException("Invalid null domain in multi-tenant setup for ContainerRepo: "+
-                                               repo));
+        if(repo.getDomain() == null)
+            throw(new IllegalArgumentException("Invalid null domain for ContainerRepo: "+repo));
         _main.putItem(repo);
     }
 

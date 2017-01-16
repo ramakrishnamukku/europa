@@ -16,10 +16,11 @@ import javax.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
 import org.eclipse.jetty.http.HttpMethod;
+import com.distelli.europa.EuropaRequestContext;
 
 @Log4j
 @Singleton
-public class DeleteContainerRepo extends AjaxHelper
+public class DeleteContainerRepo extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private ContainerRepoDb _db;
@@ -35,11 +36,11 @@ public class DeleteContainerRepo extends AjaxHelper
        Params:
        - id (reqired)
     */
-    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
+    public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         String id = ajaxRequest.getParam("id",
                                          true); //throw if missing
-        String domain = ajaxRequest.getParam("domain");
+        String domain = requestContext.getOwnerDomain();
         _db.deleteRepo(domain, id);
         _monitorQueue.setReload(true);
         return JsonSuccess.Success;
