@@ -46,16 +46,17 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Stage;
-
+import java.util.Arrays;
 import lombok.extern.log4j.Log4j;
+import java.util.List;
 
 @Log4j
 public class Europa
 {
     protected RequestHandlerFactory _requestHandlerFactory = null;
-    protected RequestContextFactory _requestContextFactory = null;
-    protected RequestFilter[] _registryApiFilters = null;
-    protected RequestFilter[] _webappFilters = null;
+    protected RequestContextFactory<EuropaRequestContext> _requestContextFactory = null;
+    protected List<RequestFilter<EuropaRequestContext>> _registryApiFilters = null;
+    protected List<RequestFilter<EuropaRequestContext>> _webappFilters = null;
     protected StaticContentErrorHandler _staticContentErrorHandler = null;
     protected int _port = 8080;
 
@@ -137,9 +138,8 @@ public class Europa
 
     protected void initialize(Injector injector)
     {
-        _registryApiFilters = new RequestFilter[] {
-            injector.getInstance(RegistryAuthFilter.class)
-        };
+        _registryApiFilters = Arrays.asList(
+            injector.getInstance(RegistryAuthFilter.class));
 
         try {
             _objectStore.createBucket(_objectKeyFactory.getDefaultBucket());
@@ -148,11 +148,7 @@ public class Europa
                       ": "+t.getMessage(), t);
         }
 
-        _requestContextFactory = new RequestContextFactory() {
-                public RequestContext getRequestContext(HTTPMethod httpMethod, HttpServletRequest request) {
-                    return new EuropaRequestContext(httpMethod, request);
-                }
-            };
+        _requestContextFactory = (method, req) -> new EuropaRequestContext(method, req);
 
         _requestHandlerFactory = new RequestHandlerFactory() {
                 public RequestHandler getRequestHandler(MatchedRoute route) {
@@ -170,7 +166,8 @@ public class Europa
         _monitorThread = new Thread(monitor);
         _monitorThread.start();
 
-        WebServlet servlet = new WebServlet(_webappRouteMatcher, _requestHandlerFactory);
+        WebServlet<EuropaRequestContext> servlet =
+            new WebServlet<EuropaRequestContext>(_webappRouteMatcher, _requestHandlerFactory);
         servlet.setRequestContextFactory(_requestContextFactory);
         if(_webappFilters != null)
             servlet.setRequestFilters(_webappFilters);
@@ -184,7 +181,8 @@ public class Europa
         staticHolder.setInitParameter("cacheControl", "max-age=3600");
         webServer.addStandardServlet("/public/*", staticHolder);
 
-        WebServlet registryApiServlet = new WebServlet(_registryApiRouteMatcher, _requestHandlerFactory);
+        WebServlet<EuropaRequestContext> registryApiServlet =
+            new WebServlet<EuropaRequestContext>(_registryApiRouteMatcher, _requestHandlerFactory);
         servlet.setRequestContextFactory(_requestContextFactory);
         registryApiServlet.setRequestContextFactory(_requestContextFactory);
         registryApiServlet.setRequestFilters(_registryApiFilters);
