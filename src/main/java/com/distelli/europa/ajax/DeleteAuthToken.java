@@ -35,7 +35,7 @@ public class DeleteAuthToken extends AjaxHelper<EuropaRequestContext>
     {
         String token = ajaxRequest.getParam("token", true); //throw if missing
         try {
-            _tokenAuthDb.deleteToken(requestContext.getOwnerDomain(), token);
+            _tokenAuthDb.deleteToken(requestContext.getRequesterDomain(), token);
         } catch(RollbackException rbe) {
             throw(new AjaxClientException("Cannot Delete active Token", AjaxErrors.Codes.TokenIsActive, 400));
         }

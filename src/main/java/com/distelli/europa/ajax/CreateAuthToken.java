@@ -31,7 +31,7 @@ public class CreateAuthToken extends AjaxHelper<EuropaRequestContext>
     {
         TokenAuth tokenAuth = TokenAuth
         .builder()
-        .domain(requestContext.getOwnerDomain())
+        .domain(requestContext.getRequesterDomain())
         .token(CompactUUID.randomUUID().toString())
         .status(TokenAuthStatus.ACTIVE)
         .created(System.currentTimeMillis())

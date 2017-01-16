@@ -18,6 +18,7 @@ import com.distelli.webserver.RequestContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.distelli.europa.registry.RegistryAuth;
 import com.distelli.europa.registry.RegistryError;
+import com.distelli.europa.EuropaRequestContext;
 import javax.inject.Singleton;
 import java.util.Map;
 import java.util.HashMap;
@@ -25,7 +26,7 @@ import javax.inject.Inject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Log4j
-public class RegistryAuthFilter implements RequestFilter<RequestContext>
+public class RegistryAuthFilter implements RequestFilter<EuropaRequestContext>
 {
     @Inject
     private RegistryAuth _auth;
@@ -41,7 +42,7 @@ public class RegistryAuthFilter implements RequestFilter<RequestContext>
 
     }
 
-    public WebResponse filter(RequestContext requestContext, RequestFilterChain next)
+    public WebResponse filter(EuropaRequestContext requestContext, RequestFilterChain next)
     {
         try {
             _auth.authenticate(requestContext);

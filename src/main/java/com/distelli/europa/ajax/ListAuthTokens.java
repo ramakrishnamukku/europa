@@ -27,7 +27,7 @@ public class ListAuthTokens extends AjaxHelper<EuropaRequestContext>
 
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
-        return _tokenAuthDb.getTokens(requestContext.getOwnerDomain(),
+        return _tokenAuthDb.getTokens(requestContext.getRequesterDomain(),
                                       new PageIterator().pageSize(1000));
     }
 }
