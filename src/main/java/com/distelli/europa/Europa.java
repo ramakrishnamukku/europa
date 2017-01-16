@@ -11,6 +11,8 @@ package com.distelli.europa;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.Set;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,15 +22,27 @@ import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletHolder;
 import com.distelli.europa.EuropaConfiguration.EuropaStage;
+import com.distelli.europa.db.RegistryBlobDb;
+import com.distelli.europa.db.TokenAuthDb;
+import com.distelli.europa.filters.RegistryAuthFilter;
 import com.distelli.europa.guice.*;
+import com.distelli.europa.handlers.StaticContentErrorHandler;
 import com.distelli.europa.monitor.*;
 import com.distelli.europa.util.*;
-import com.distelli.utils.Log4JConfigurator;
-import com.distelli.europa.handlers.StaticContentErrorHandler;
-import com.distelli.europa.filters.RegistryAuthFilter;
 import com.distelli.objectStore.*;
 import com.distelli.objectStore.impl.ObjectStoreModule;
+import com.distelli.persistence.TableDescription;
 import com.distelli.persistence.impl.PersistenceModule;
+import com.distelli.utils.Log4JConfigurator;
+import com.distelli.europa.db.DbTableCreator;
+import com.distelli.europa.db.TokenAuthDb;
+import com.distelli.europa.db.RegistryBlobDb;
+import com.distelli.europa.db.SequenceDb;
+import com.distelli.europa.db.ContainerRepoDb;
+import com.distelli.europa.db.RegistryCredsDb;
+import com.distelli.europa.db.NotificationsDb;
+import com.distelli.europa.db.RepoEventsDb;
+import com.distelli.europa.db.RegistryManifestDb;
 import com.distelli.webserver.*;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -59,6 +73,7 @@ public class Europa
     protected RouteMatcher _webappRouteMatcher = null;
     protected RouteMatcher _registryApiRouteMatcher = null;
     protected CmdLineArgs _cmdLineArgs = null;
+    protected Set<TableDescription> _tableDescriptions = null;
 
     public Europa(String[] args)
     {
@@ -116,6 +131,15 @@ public class Europa
                                                        new ObjectStoreModule(),
                                                        new EuropaInjectorModule(europaConfiguration));
         injector.injectMembers(this);
+        _tableDescriptions = new HashSet<TableDescription>();
+        _tableDescriptions.add(TokenAuthDb.getTableDescription());
+        _tableDescriptions.add(RegistryBlobDb.getTableDescription());
+        _tableDescriptions.add(SequenceDb.getTableDescription());
+        _tableDescriptions.add(ContainerRepoDb.getTableDescription());
+        _tableDescriptions.add(RegistryCredsDb.getTableDescription());
+        _tableDescriptions.add(NotificationsDb.getTableDescription());
+        _tableDescriptions.add(RepoEventsDb.getTableDescription());
+        _tableDescriptions.add(RegistryManifestDb.getTableDescription());
         initialize(injector);
     }
 
@@ -146,6 +170,10 @@ public class Europa
         _staticContentErrorHandler = injector.getInstance(StaticContentErrorHandler.class);
         _registryApiRouteMatcher = RegistryApiRoutes.getRouteMatcher();
         _webappRouteMatcher = WebAppRoutes.getRouteMatcher();
+
+        //Now initialize tables
+        DbTableCreator tableCreator = injector.getInstance(DbTableCreator.class);
+        tableCreator.createTables(_tableDescriptions);
     }
 
     public void start()

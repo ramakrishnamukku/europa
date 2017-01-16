@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Arrays;
 import javax.inject.Provider;
 import lombok.extern.log4j.Log4j;
+import com.distelli.europa.db.DbTableCreator;
 import com.distelli.europa.db.TokenAuthDb;
 import com.distelli.europa.db.RegistryBlobDb;
 import com.distelli.europa.db.SequenceDb;
@@ -36,17 +37,6 @@ import com.distelli.objectStore.*;
 @Log4j
 public class EuropaInjectorModule extends AbstractModule
 {
-    private static List<Provider<TableDescription>> TABLES = Arrays.asList(
-        TokenAuthDb::getTableDescription,
-        RegistryBlobDb::getTableDescription,
-        SequenceDb::getTableDescription,
-        ContainerRepoDb::getTableDescription,
-        RegistryCredsDb::getTableDescription,
-        NotificationsDb::getTableDescription,
-        RepoEventsDb::getTableDescription,
-        RegistryManifestDb::getTableDescription
-        );
-
     private EuropaConfiguration _europaConfiguration;
 
     public EuropaInjectorModule(EuropaConfiguration europaConfiguration)
@@ -65,6 +55,7 @@ public class EuropaInjectorModule extends AbstractModule
         bind(EuropaConfiguration.class).toProvider(new EuropaConfigurationProvider(_europaConfiguration));
         bind(ObjectStore.Factory.class).toProvider(new ObjectStoreFactoryProvider(_europaConfiguration));
         bind(ObjectStore.class).toProvider(new ObjectStoreProvider());
+        bind(DbTableCreator.class).toInstance(new DbTableCreator(endpoint, creds));
         bind(MysqlDataSource.class).toInstance(new MysqlDataSource() {
                 public int getMaximumPoolSize()
                 {
@@ -79,11 +70,5 @@ public class EuropaInjectorModule extends AbstractModule
         install(new FactoryModuleBuilder()
                 .implement(MonitorTask.class, GcrMonitorTask.class)
                 .build(GcrMonitorTask.Factory.class));
-
-        Multibinder<TableDescription> tableBinder =
-            Multibinder.newSetBinder(binder(), TableDescription.class);
-        for ( Provider<TableDescription> tableProvider : TABLES ) {
-            tableBinder.addBinding().toProvider(tableProvider);
-        }
     }
 }
