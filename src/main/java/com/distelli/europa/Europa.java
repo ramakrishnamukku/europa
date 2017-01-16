@@ -58,11 +58,12 @@ public class Europa
 
     protected RouteMatcher _webappRouteMatcher = null;
     protected RouteMatcher _registryApiRouteMatcher = null;
+    protected CmdLineArgs _cmdLineArgs = null;
 
     public Europa(String[] args)
     {
-        CmdLineArgs cmdLineArgs = new CmdLineArgs(args);
-        boolean logToConsole = cmdLineArgs.hasOption(Constants.LOG_TO_CONSOLE_ARG);
+        _cmdLineArgs = new CmdLineArgs(args);
+        boolean logToConsole = _cmdLineArgs.hasOption(Constants.LOG_TO_CONSOLE_ARG);
         // Initialize Logging
         File logsDir = new File("./logs/");
         if(!logsDir.exists())
@@ -78,14 +79,14 @@ public class Europa
         Log4JConfigurator.setLogLevel("com.distelli.gcr", "DEBUG");
         Log4JConfigurator.setLogLevel("com.distelli.europa.monitor", "ERROR");
         Log4JConfigurator.setLogLevel("com.distelli.webserver", "ERROR");
-        String configFilePath = cmdLineArgs.getOption("config");
+        String configFilePath = _cmdLineArgs.getOption("config");
         if(configFilePath == null)
         {
             log.fatal("Missing value for arg --config");
             System.exit(1);
         }
 
-        String portStr = cmdLineArgs.getOption("port");
+        String portStr = _cmdLineArgs.getOption("port");
         if(portStr != null)
         {
             try {
@@ -97,7 +98,7 @@ public class Europa
         }
 
         EuropaStage stage = EuropaStage.prod;
-        String stageArg = cmdLineArgs.getOption("stage");
+        String stageArg = _cmdLineArgs.getOption("stage");
         if(stageArg != null) {
             try {
                 stage = EuropaStage.valueOf(stageArg);
