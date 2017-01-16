@@ -1,7 +1,6 @@
 package com.distelli.europa.handlers;
 
 import com.distelli.europa.EuropaRequestContext;
-import com.distelli.europa.models.User;
 import com.distelli.europa.registry.RegistryAuth;
 import com.distelli.europa.registry.RegistryError;
 import com.distelli.webserver.RequestContext;
@@ -64,13 +63,6 @@ public abstract class RegistryBase extends RequestHandler<EuropaRequestContext>
             out.write(buff, 0, len);
         }
     }
-
-    // protected String getDomainForOwner(String owner) {
-    //     if ( null == owner ) return null;
-    //     User user = _userDb.getUserByUsername(owner);
-    //     if ( null == user ) return null;
-    //     return user.getDomain();
-    // }
 
     protected String joinWithSlash(String... parts) {
         if ( null == parts || parts.length <= 0 ) return "";

@@ -60,7 +60,7 @@ public class RegistryLayerUploadBegin extends RegistryBase {
 
         boolean success = false;
         try {
-            blob = _blobDb.newRegistryBlob(requestContext.getRemoteUser());
+            blob = _blobDb.newRegistryBlob(requestContext.getRequesterDomain());
             partKey = _objectStore.newMultipartPut(_objectKeyFactory.forRegistryBlobId(blob.getBlobId()));
             _blobDb.setUploadId(blob.getBlobId(), partKey.getUploadId());
             success = true;

@@ -117,7 +117,7 @@ public class RegistryManifestPush extends RegistryBase {
         boolean success = false;
         try {
             _manifestDb.put(RegistryManifest.builder()
-                            .uploadedBy(requestContext.getRemoteUser())
+                            .uploadedBy(requestContext.getRequesterDomain())
                             .contentType(requestContext.getContentType())
                             .manifestId(finalDigest)
                             .owner(ownerDomain)
@@ -127,7 +127,7 @@ public class RegistryManifestPush extends RegistryBase {
                             .build());
             // Always write a reference to support pulling via @sha256:...
             _manifestDb.put(RegistryManifest.builder()
-                            .uploadedBy(requestContext.getRemoteUser())
+                            .uploadedBy(requestContext.getRequesterDomain())
                             .contentType(requestContext.getContentType())
                             .manifestId(finalDigest)
                             .owner(ownerDomain)

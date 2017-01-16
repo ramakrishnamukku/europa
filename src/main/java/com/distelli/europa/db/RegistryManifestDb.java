@@ -119,7 +119,9 @@ public class RegistryManifestDb extends BaseDb {
      * Overwrites with a new registry manifest, potentially
      */
     public void put(RegistryManifest manifest) throws UnknownDigests {
-        if ( null == manifest.getOwner() ) manifest.setOwner("d0");
+        if ( null == manifest.getOwner() || manifest.getOwner().isEmpty()) {
+            throw new IllegalArgumentException("owner is required parameter");
+        }
         // Validate uploadedBy:
         if ( null == manifest.getUploadedBy() || manifest.getUploadedBy().isEmpty() ) {
             throw new IllegalArgumentException("uploadedBy is required parameter");
@@ -134,12 +136,6 @@ public class RegistryManifestDb extends BaseDb {
             throw new IllegalArgumentException(
                 "Illegal contentType="+manifest.getContentType()+" expected to match [^/]{1,127}/[^/]{1,127}");
         }
-        // if ( null == _userDb.getUserByDomain(manifest.getUploadedBy()) ) {
-        //     throw new IllegalArgumentException("Unknown uploadedBy="+manifest.getUploadedBy());
-        // }
-        // if ( null == _userDb.getUserByDomain(manifest.getOwner()) ) {
-        //     throw new IllegalArgumentException("Unknown owner="+manifest.getOwner());
-        // }
 
         String manifestId = manifest.getManifestId();
         if ( null == manifestId || ! manifestId.matches("^sha256:[0-9a-f]{64}$") ) {
