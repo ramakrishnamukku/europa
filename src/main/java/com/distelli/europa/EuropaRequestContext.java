@@ -36,7 +36,7 @@ public class EuropaRequestContext extends RequestContext
     {
         super(httpMethod, request, unmarshallJson);
     }
-
+    
     public EuropaRequestContext(HTTPMethod httpMethod, HttpServletRequest request)
     {
         super(httpMethod, request, true);
