@@ -41,9 +41,6 @@ public class RegistryBlobDb extends BaseDb {
 
     private final ObjectMapper _om = new ObjectMapper();
 
-    @Inject
-    private UserDb _userDb;
-
     public static TableDescription getTableDescription() {
         return TableDescription.builder()
             .tableName(TABLE_NAME)
@@ -106,9 +103,6 @@ public class RegistryBlobDb extends BaseDb {
     public RegistryBlob newRegistryBlob(String uploadedBy) {
         if ( null == uploadedBy || uploadedBy.isEmpty() ) {
             throw new IllegalArgumentException("uploadedBy is required parameter");
-        }
-        if ( null == _userDb.getUserByDomain(uploadedBy) ) {
-            throw new IllegalArgumentException("Unknown uploadedBy="+uploadedBy);
         }
         RegistryBlob blob = RegistryBlob.builder()
             .blobId(CompactUUID.randomUUID().toString())

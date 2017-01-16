@@ -32,6 +32,11 @@ public class EuropaRequestContext extends RequestContext
     @Getter @Setter
     protected String _ownerUsername = null;
 
+    public EuropaRequestContext(HTTPMethod httpMethod, HttpServletRequest request, boolean unmarshallJson)
+    {
+        super(httpMethod, request, unmarshallJson);
+    }
+    
     public EuropaRequestContext(HTTPMethod httpMethod, HttpServletRequest request)
     {
         super(httpMethod, request, true);

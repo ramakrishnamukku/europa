@@ -17,10 +17,11 @@ import javax.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
 import org.eclipse.jetty.http.HttpMethod;
+import com.distelli.europa.EuropaRequestContext;
 
 @Log4j
 @Singleton
-public class ListContainerRepos extends AjaxHelper
+public class ListContainerRepos extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private ContainerRepoDb _db;
@@ -37,13 +38,13 @@ public class ListContainerRepos extends AjaxHelper
        - pageSize (optional)
        - marker (optional)
     */
-    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
+    public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         RegistryProvider provider = ajaxRequest.getParamAsEnum("provider", RegistryProvider.class);
         String region = ajaxRequest.getParam("region");
         int pageSize = ajaxRequest.getParamAsInt("pageSize", 100);
         String marker = ajaxRequest.getParam("marker");
-        String domain = ajaxRequest.getParam("domain");
+        String domain = requestContext.getOwnerDomain();
 
         PageIterator pageIterator = new PageIterator()
         .pageSize(pageSize)

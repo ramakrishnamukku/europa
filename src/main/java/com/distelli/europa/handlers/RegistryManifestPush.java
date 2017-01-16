@@ -1,5 +1,6 @@
 package com.distelli.europa.handlers;
 
+import com.distelli.europa.EuropaRequestContext;
 import org.eclipse.jetty.http.HttpMethod;
 import com.distelli.webserver.RequestHandler;
 import com.distelli.webserver.WebResponse;
@@ -52,7 +53,7 @@ import static javax.xml.bind.DatatypeConverter.printHexBinary;
 @Singleton
 public class RegistryManifestPush extends RegistryBase {
     private static ObjectMapper OM = new ObjectMapper();
-    
+
     static {
         // Support deserializing interfaces:
         OM.registerModule(new MrBeanModule());
@@ -76,7 +77,7 @@ public class RegistryManifestPush extends RegistryBase {
     @Inject
     private ContainerRepoDb _repoDb;
 
-    public WebResponse handleRegistryRequest(RequestContext requestContext) {
+    public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
         try {
             return handleRegistryRequestThrows(requestContext);
         } catch ( RuntimeException ex ) {
@@ -85,13 +86,9 @@ public class RegistryManifestPush extends RegistryBase {
             throw new RuntimeException(ex);
         }
     }
-    public WebResponse handleRegistryRequestThrows(RequestContext requestContext) throws Exception {
-        String owner = requestContext.getMatchedRoute().getParam("owner");
-        String ownerDomain = getDomainForOwner(owner);
-        if ( null != owner && null == ownerDomain ) {
-            throw new RegistryError("Unknown username="+owner,
-                                    RegistryErrorCode.NAME_UNKNOWN);
-        }
+    public WebResponse handleRegistryRequestThrows(EuropaRequestContext requestContext) throws Exception {
+        String ownerUsername = requestContext.getOwnerUsername();
+        String ownerDomain = requestContext.getOwnerDomain();
         String name = requestContext.getMatchedRoute().getParam("name");
         String reference = requestContext.getMatchedRoute().getParam("reference");
         // TODO: Validate name and reference.
@@ -120,7 +117,7 @@ public class RegistryManifestPush extends RegistryBase {
         boolean success = false;
         try {
             _manifestDb.put(RegistryManifest.builder()
-                            .uploadedBy(requestContext.getRemoteUser())
+                            .uploadedBy(requestContext.getRequesterDomain())
                             .contentType(requestContext.getContentType())
                             .manifestId(finalDigest)
                             .owner(ownerDomain)
@@ -130,7 +127,7 @@ public class RegistryManifestPush extends RegistryBase {
                             .build());
             // Always write a reference to support pulling via @sha256:...
             _manifestDb.put(RegistryManifest.builder()
-                            .uploadedBy(requestContext.getRemoteUser())
+                            .uploadedBy(requestContext.getRequesterDomain())
                             .contentType(requestContext.getContentType())
                             .manifestId(finalDigest)
                             .owner(ownerDomain)

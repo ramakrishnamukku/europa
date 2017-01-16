@@ -1,7 +1,6 @@
 package com.distelli.europa.handlers;
 
-import com.distelli.europa.db.UserDb;
-import com.distelli.europa.models.User;
+import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.registry.RegistryAuth;
 import com.distelli.europa.registry.RegistryError;
 import com.distelli.webserver.RequestContext;
@@ -22,18 +21,15 @@ import java.util.StringJoiner;
 
 @Log4j
 @Singleton
-public abstract class RegistryBase extends RequestHandler
+public abstract class RegistryBase extends RequestHandler<EuropaRequestContext>
 {
     protected static int DEFAULT_PAGE_SIZE = 100;
 
-    abstract public WebResponse handleRegistryRequest(RequestContext requestContext);
+    abstract public WebResponse handleRegistryRequest(EuropaRequestContext requestContext);
 
     private static final ObjectMapper OM = new ObjectMapper();
 
-    @Inject
-    private UserDb _userDb;
-
-    public WebResponse handleRequest(RequestContext requestContext) {
+    public WebResponse handleRequest(EuropaRequestContext requestContext) {
         try {
             return handleRegistryRequest(requestContext);
         } catch ( RegistryError ex ) {
@@ -66,13 +62,6 @@ public abstract class RegistryBase extends RequestHandler
             if ( len <= 0 ) break;
             out.write(buff, 0, len);
         }
-    }
-
-    protected String getDomainForOwner(String owner) {
-        if ( null == owner ) return null;
-        User user = _userDb.getUserByUsername(owner);
-        if ( null == user ) return null;
-        return user.getDomain();
     }
 
     protected String joinWithSlash(String... parts) {

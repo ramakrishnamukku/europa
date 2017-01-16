@@ -16,13 +16,14 @@ import com.distelli.webserver.AjaxHelper;
 import com.distelli.webserver.AjaxRequest;
 import com.distelli.webserver.HTTPMethod;
 import com.distelli.webserver.RequestContext;
+import com.distelli.europa.EuropaRequestContext;
 import com.google.inject.Singleton;
 
 import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
-public class GetRegistryCreds extends AjaxHelper
+public class GetRegistryCreds extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private RegistryCredsDb _db;
@@ -36,11 +37,11 @@ public class GetRegistryCreds extends AjaxHelper
        Params:
        - id (reqired)
     */
-    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
+    public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         String id = ajaxRequest.getParam("id",
                                          true); //throw if missing
-        String domain = ajaxRequest.getParam("domain");
+        String domain = requestContext.getOwnerDomain();
         RegistryCred cred = _db.getCred(domain, id);
         if(cred != null)
             cred.setSecret(null);

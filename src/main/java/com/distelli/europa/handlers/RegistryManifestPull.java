@@ -1,5 +1,6 @@
 package com.distelli.europa.handlers;
 
+import com.distelli.europa.EuropaRequestContext;
 import org.eclipse.jetty.http.HttpMethod;
 import com.distelli.webserver.RequestHandler;
 import com.distelli.webserver.WebResponse;
@@ -32,20 +33,16 @@ public class RegistryManifestPull extends RegistryBase {
     @Inject
     private RegistryManifestDb _manifestDb;
 
-    public WebResponse handleRegistryRequest(RequestContext requestContext) {
-        String owner = requestContext.getMatchedRoute().getParam("owner");
-        String ownerDomain = getDomainForOwner(owner);
-        if ( null != owner && null == ownerDomain ) {
-            throw new RegistryError("Unknown username="+owner,
-                                    RegistryErrorCode.NAME_UNKNOWN);
-        }
+    public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
+        String ownerUsername = requestContext.getOwnerUsername();
+        String ownerDomain = requestContext.getOwnerDomain();
         String name = requestContext.getMatchedRoute().getParam("name");
         String reference = requestContext.getMatchedRoute().getParam("reference");
 
         RegistryManifest manifest = _manifestDb.getManifestByRepoTag(ownerDomain, name, reference);
         if ( null == manifest ) {
             throw new RegistryError(
-                "No manifest exists with owner="+owner+" name="+name+" reference="+reference,
+                "No manifest exists with name="+name+" reference="+reference,
                 RegistryErrorCode.MANIFEST_UNKNOWN);
         }
 

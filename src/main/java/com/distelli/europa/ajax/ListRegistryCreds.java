@@ -18,10 +18,11 @@ import javax.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
 import org.eclipse.jetty.http.HttpMethod;
+import com.distelli.europa.EuropaRequestContext;
 
 @Log4j
 @Singleton
-public class ListRegistryCreds extends AjaxHelper
+public class ListRegistryCreds extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private RegistryCredsDb _db;
@@ -35,11 +36,11 @@ public class ListRegistryCreds extends AjaxHelper
        Params:
        - Provider (optional)
     */
-    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
+    public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         PageIterator pageIterator = new PageIterator().pageSize(1000).forward();
         RegistryProvider provider = ajaxRequest.getParamAsEnum("provider", RegistryProvider.class);
-        String domain = ajaxRequest.getParam("domain");
+        String domain = requestContext.getOwnerDomain();
         List<RegistryCred> creds;
         if(provider != null)
             creds = _db.listCredsForProvider(domain, provider, pageIterator);

@@ -8,6 +8,7 @@ import java.util.Base64;
 import java.net.URI;
 import java.util.StringTokenizer;
 import lombok.extern.log4j.Log4j;
+import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.db.TokenAuthDb;
 import com.distelli.europa.models.TokenAuth;
 import javax.inject.Inject;
@@ -20,7 +21,7 @@ public class RegistryAuth {
     @Inject
     private TokenAuthDb _tokenAuthDb;
 
-    public void authenticate(RequestContext context) throws RegistryError {
+    public void authenticate(EuropaRequestContext context) throws RegistryError {
         String authorization = context.getHeaderValue("Authorization");
         if ( null == authorization ) {
             log.debug("Missing authorization header");
@@ -36,7 +37,7 @@ public class RegistryAuth {
         requireAuth("Unsupported Authorization scheme="+scheme, context);
     }
 
-    private void basicAuth(RequestContext context, String tokenStr) {
+    private void basicAuth(EuropaRequestContext context, String tokenStr) {
         byte[] token;
         try {
             token = Base64.getDecoder().decode(tokenStr);
@@ -65,6 +66,7 @@ public class RegistryAuth {
             TokenAuth tokenAuth = _tokenAuthDb.getToken(passwd);
             if ( null != tokenAuth ) {
                 context.setRemoteUser(tokenAuth.getDomain());
+                context.setRequesterDomain(tokenAuth.getDomain());
                 return;
             }
         }

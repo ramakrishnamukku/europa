@@ -20,12 +20,12 @@ import com.distelli.webserver.AjaxRequest;
 import com.distelli.webserver.HTTPMethod;
 import com.distelli.webserver.RequestContext;
 import com.google.inject.Singleton;
-
+import com.distelli.europa.EuropaRequestContext;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
-public class GetNotificationRecord extends AjaxHelper
+public class GetNotificationRecord extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     protected ObjectStore _objectStore;
@@ -37,7 +37,7 @@ public class GetNotificationRecord extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.GET);
     }
 
-    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
+    public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         String id = ajaxRequest.getParam("notificationId",
                                          true); //throw if missing

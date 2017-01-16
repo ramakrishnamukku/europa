@@ -13,7 +13,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.distelli.europa.Constants;
-import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.models.*;
 import com.distelli.jackson.transform.TransformModule;
 import com.distelli.persistence.AttrType;
@@ -38,7 +37,6 @@ public class RepoEventsDb extends BaseDb
     private Index<RepoEvent> _main;
     private Index<RepoEvent> _byTime;
 
-    private EuropaConfiguration _europaConfiguration;
     private final ObjectMapper _om = new ObjectMapper();
 
     public static TableDescription getTableDescription() {
@@ -84,13 +82,6 @@ public class RepoEventsDb extends BaseDb
 
     private final String getHashKey(String domain, String repoId)
     {
-        if(_europaConfiguration.isMultiTenant())
-        {
-            if(domain == null)
-                throw(new IllegalArgumentException("Invalid null domain for multi-tenant setup"));
-        }
-        else
-            domain = Constants.DOMAIN_ZERO;
         return String.format("%s:%s",
                              domain.toLowerCase(),
                              repoId.toLowerCase());
@@ -98,9 +89,7 @@ public class RepoEventsDb extends BaseDb
 
     @Inject
     public RepoEventsDb(Index.Factory indexFactory,
-                        ConvertMarker.Factory convertMarkerFactory,
-                        EuropaConfiguration europaConfiguration) {
-        _europaConfiguration = europaConfiguration;
+                        ConvertMarker.Factory convertMarkerFactory) {
         _om.registerModule(createTransforms(new TransformModule()));
 
         _main = indexFactory.create(RepoEvent.class)
@@ -132,9 +121,8 @@ public class RepoEventsDb extends BaseDb
         repoEvent.setId(id);
         if(repoEvent.getRepoId() == null)
             throw(new IllegalArgumentException("Invalid null repo Id in repoEvent: "+repoEvent));
-        if(_europaConfiguration.isMultiTenant() && repoEvent.getDomain() == null)
-            throw(new IllegalArgumentException("Invalid null domain in multi-tenant setup for RepoEvent: "+
-                                               repoEvent));
+        if(repoEvent.getDomain() == null)
+            throw(new IllegalArgumentException("Invalid null domain for RepoEvent: "+repoEvent));
         _main.putItem(repoEvent);
     }
 

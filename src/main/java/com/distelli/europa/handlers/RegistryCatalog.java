@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.distelli.europa.EuropaRequestContext;
 import org.eclipse.jetty.http.HttpMethod;
 import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.db.ContainerRepoDb;
@@ -33,14 +34,9 @@ public class RegistryCatalog extends RegistryBase {
         public List<String> repositories;
     }
 
-    public WebResponse handleRegistryRequest(RequestContext requestContext) {
-        String owner = requestContext.getMatchedRoute().getParam("owner");
-        String ownerDomain = getDomainForOwner(owner);
-        if ( null != owner && null == ownerDomain ) {
-            throw new RegistryError("Unknown username="+owner,
-                                    RegistryErrorCode.NAME_UNKNOWN);
-        }
-
+    public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
+        String ownerUsername = requestContext.getOwnerUsername();
+        String ownerDomain = requestContext.getOwnerDomain();
         PageIterator pageIterator = new PageIterator()
             .pageSize(getPageSize(requestContext))
             .marker(requestContext.getParameter("last"));
@@ -50,12 +46,12 @@ public class RegistryCatalog extends RegistryBase {
 
         Response response = new Response();
         response.repositories = repos.stream()
-            .map((repo) -> joinWithSlash(owner, repo.getName()))
+            .map((repo) -> joinWithSlash(ownerUsername, repo.getName()))
             .collect(Collectors.toList());
 
         String location = null;
         if ( null != pageIterator.getMarker() ) {
-            location = joinWithSlash("/v2", owner, "_catalog") + "?last=" + pageIterator.getMarker();
+            location = joinWithSlash("/v2", ownerUsername, "_catalog") + "?last=" + pageIterator.getMarker();
             if ( DEFAULT_PAGE_SIZE != pageIterator.getPageSize() ) {
                 location = location + "&n="+pageIterator.getPageSize();
             }

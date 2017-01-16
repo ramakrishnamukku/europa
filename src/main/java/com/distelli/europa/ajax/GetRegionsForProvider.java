@@ -20,13 +20,14 @@ import com.distelli.webserver.AjaxHelper;
 import com.distelli.webserver.AjaxRequest;
 import com.distelli.webserver.HTTPMethod;
 import com.distelli.webserver.RequestContext;
+import com.distelli.europa.EuropaRequestContext;
 import com.google.inject.Singleton;
 
 import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
-public class GetRegionsForProvider extends AjaxHelper
+public class GetRegionsForProvider extends AjaxHelper<EuropaRequestContext>
 {
     private static Map<String, String> ecrRegionToArea = new HashMap<String, String>();
     static {
@@ -48,7 +49,7 @@ public class GetRegionsForProvider extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.GET);
     }
 
-    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
+    public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         RegistryProvider provider = ajaxRequest.getParamAsEnum("provider", RegistryProvider.class, true);
         List<RegistryRegion> regions = new ArrayList<RegistryRegion>();

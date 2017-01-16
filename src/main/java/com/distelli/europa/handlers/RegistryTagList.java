@@ -1,5 +1,6 @@
 package com.distelli.europa.handlers;
 
+import com.distelli.europa.EuropaRequestContext;
 import org.eclipse.jetty.http.HttpMethod;
 import com.distelli.webserver.RequestHandler;
 import com.distelli.webserver.WebResponse;
@@ -27,13 +28,9 @@ public class RegistryTagList extends RegistryBase {
         public String name;
         public List<String> tags;
     }
-    public WebResponse handleRegistryRequest(RequestContext requestContext) {
-        String owner = requestContext.getMatchedRoute().getParam("owner");
-        String ownerDomain = getDomainForOwner(owner);
-        if ( null != owner && null == ownerDomain ) {
-            throw new RegistryError("Unknown username="+owner,
-                                    RegistryErrorCode.NAME_UNKNOWN);
-        }
+    public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
+        String ownerUsername = requestContext.getOwnerUsername();
+        String ownerDomain = requestContext.getOwnerDomain();
         String name = requestContext.getMatchedRoute().getParam("name");
         PageIterator it = new PageIterator()
             .pageSize(getPageSize(requestContext))
@@ -41,14 +38,14 @@ public class RegistryTagList extends RegistryBase {
         List<RegistryManifest> manifests = _manifestDb.listManifestsByRepo(ownerDomain, name, it);
 
         Response response = new Response();
-        response.name = joinWithSlash(owner, name);
+        response.name = joinWithSlash(ownerUsername, name);
         response.tags = manifests.stream()
             .map((manifest) -> manifest.getTag())
             .collect(Collectors.toList());
 
         String location = null;
         if ( null != it.getMarker() ) {
-            location = joinWithSlash("/v2", owner, name, "tags/list") + "?last=" + it.getMarker();
+            location = joinWithSlash("/v2", ownerUsername, name, "tags/list") + "?last=" + it.getMarker();
             if ( DEFAULT_PAGE_SIZE != it.getPageSize() ) {
                 location = location + "&n="+it.getPageSize();
             }

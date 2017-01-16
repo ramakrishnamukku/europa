@@ -14,7 +14,6 @@ import javax.inject.Inject;
 
 import com.distelli.europa.Constants;
 import com.distelli.persistence.IndexDescription;
-import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.ajax.*;
 import com.distelli.europa.models.*;
 import com.distelli.jackson.transform.TransformModule;
@@ -36,8 +35,6 @@ public class RegistryCredsDb extends BaseDb
 {
     private Index<RegistryCred> _main;
     private Index<RegistryCred> _secondaryIndex;
-
-    private EuropaConfiguration _europaConfiguration;
 
     private final ObjectMapper _om = new ObjectMapper();
     public static TableDescription getTableDescription() {
@@ -87,10 +84,8 @@ public class RegistryCredsDb extends BaseDb
 
     @Inject
     protected RegistryCredsDb(Index.Factory indexFactory,
-                              ConvertMarker.Factory convertMarkerFactory,
-                              EuropaConfiguration europaConfiguration)
+                              ConvertMarker.Factory convertMarkerFactory)
     {
-        _europaConfiguration = europaConfiguration;
         _om.registerModule(createTransforms(new TransformModule()));
         _main = indexFactory.create(RegistryCred.class)
         .withTableName("creds")
@@ -113,37 +108,17 @@ public class RegistryCredsDb extends BaseDb
 
     private final String getHashKey(RegistryCred cred)
     {
-        if(_europaConfiguration.isMultiTenant())
-        {
-            if(cred == null)
-                throw(new IllegalArgumentException("Invalid null cred in multi-tenant setup"));
-            return getHashKey(cred.getDomain());
-        }
-        return Constants.DOMAIN_ZERO;
+        return getHashKey(cred.getDomain());
     }
 
     private final String getHashKey(String domain)
     {
-        if(_europaConfiguration.isMultiTenant())
-        {
-            if(domain == null)
-                throw(new IllegalArgumentException("Invalid null domain in multi-tenant setup for RegistryCred"));
-
-            return domain.toLowerCase();
-        }
-        return Constants.DOMAIN_ZERO;
+        return domain.toLowerCase();
     }
 
     private final void setHashKey(RegistryCred cred, String domain)
     {
-        if(_europaConfiguration.isMultiTenant())
-        {
-            if(domain == null)
-                throw(new IllegalArgumentException("Invalid null domain in multi-tenant setup for RegistryCred"));
-
-            cred.setDomain(domain);
-        }
-        cred.setDomain(null);
+        cred.setDomain(domain);
     }
 
     private final String getSecondaryRangeKey(RegistryProvider provider, String region, String name)
@@ -165,9 +140,8 @@ public class RegistryCredsDb extends BaseDb
         String id = cred.getId();
         if(id == null)
             throw(new IllegalArgumentException("Invalid id "+id+" in Registry Cred"));
-        if(_europaConfiguration.isMultiTenant() && cred.getDomain() == null)
-            throw(new IllegalArgumentException("Invalid null domain in multi-tenant setup for RegistryCred: "+
-                                               cred));
+        if(cred.getDomain() == null)
+            throw(new IllegalArgumentException("Invalid null domain for RegistryCred: "+cred));
         _main.putItem(cred);
     }
 

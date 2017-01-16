@@ -26,10 +26,11 @@ import com.distelli.persistence.PageIterator;
 import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
 import org.eclipse.jetty.http.HttpMethod;
+import com.distelli.europa.EuropaRequestContext;
 
 @Log4j
 @Singleton
-public class SaveGcrServiceAccountCreds extends AjaxHelper
+public class SaveGcrServiceAccountCreds extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private RegistryCredsDb _db;
@@ -39,7 +40,7 @@ public class SaveGcrServiceAccountCreds extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
-    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
+    public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         RegistryCred cred = ajaxRequest.convertContent(RegistryCred.class,
                                                        true); //throw if null
@@ -50,9 +51,11 @@ public class SaveGcrServiceAccountCreds extends AjaxHelper
         validateRegistryCreds(cred);
         cred.setCreated(System.currentTimeMillis());
         String id = cred.getId();
+        String credDomain = requestContext.getOwnerDomain();
+        cred.setDomain(credDomain);
         if(id != null) {
             //check that cred with that id exists
-            RegistryCred existingCred = _db.getCred(cred.getDomain(), id.toLowerCase());
+            RegistryCred existingCred = _db.getCred(credDomain, id.toLowerCase());
             if(existingCred == null)
                 throw(new AjaxClientException("Invalid Registry Cred Id: "+id, JsonError.Codes.BadContent, 400));
         } else {

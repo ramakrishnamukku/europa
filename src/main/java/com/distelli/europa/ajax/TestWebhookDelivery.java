@@ -22,13 +22,14 @@ import com.distelli.europa.notifiers.*;
 import com.distelli.europa.util.*;
 import com.distelli.webserver.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.distelli.europa.EuropaRequestContext;
 import com.google.inject.Singleton;
 
 import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
-public class TestWebhookDelivery extends AjaxHelper
+public class TestWebhookDelivery extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     protected WebhookClient _webhookClient;
@@ -38,7 +39,7 @@ public class TestWebhookDelivery extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
-    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
+    public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         Notification notification = ajaxRequest.convertContent("/notification", Notification.class,
                                                                true);

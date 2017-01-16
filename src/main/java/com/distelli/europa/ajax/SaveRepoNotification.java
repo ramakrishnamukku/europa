@@ -29,10 +29,11 @@ import lombok.extern.log4j.Log4j;
 import javax.inject.Inject;
 import java.net.MalformedURLException;
 import java.net.URL;
+import com.distelli.europa.EuropaRequestContext;
 
 @Log4j
 @Singleton
-public class SaveRepoNotification extends AjaxHelper
+public class SaveRepoNotification extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private ContainerRepoDb _repoDb;
@@ -46,10 +47,10 @@ public class SaveRepoNotification extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.POST);
     }
 
-    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
+    public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         String repoId = ajaxRequest.getParam("repoId", true);
-        String repoDomain = ajaxRequest.getParam("repoDomain");
+        String repoDomain = requestContext.getOwnerDomain();
         ContainerRepo repo = _repoDb.getRepo(repoDomain, repoId);
         if(repo == null)
             throw(new AjaxClientException("Invalid RepoId: "+repoId, JsonError.Codes.BadParam, 400));
@@ -64,7 +65,7 @@ public class SaveRepoNotification extends AjaxHelper
                                           JsonError.Codes.BadContent, 400));
         }
         notification.setRepoId(repo.getId());
-        notification.setDomain(repo.getDomain());
+        notification.setDomain(repoDomain);
         notification.setRepoProvider(repo.getProvider());
         notification.setRegion(repo.getRegion());
         notification.setRepoName(repo.getName());

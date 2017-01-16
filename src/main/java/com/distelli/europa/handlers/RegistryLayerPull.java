@@ -1,5 +1,6 @@
 package com.distelli.europa.handlers;
 
+import com.distelli.europa.EuropaRequestContext;
 import org.eclipse.jetty.http.HttpMethod;
 import com.distelli.webserver.RequestHandler;
 import com.distelli.webserver.WebResponse;
@@ -28,12 +29,9 @@ public class RegistryLayerPull extends RegistryBase {
     private ObjectStore _objectStore;
     @Inject
     private ObjectKeyFactory _objectKeyFactory;
-    public WebResponse handleRegistryRequest(RequestContext requestContext) {
-        String owner = requestContext.getMatchedRoute().getParam("owner");
-        if ( null != owner && null == getDomainForOwner(owner) ) {
-            throw new RegistryError("Unknown username="+owner,
-                                    RegistryErrorCode.NAME_UNKNOWN);
-        }
+    public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
+        String ownerUsername = requestContext.getOwnerUsername();
+        String ownerDomain = requestContext.getOwnerDomain();
         String name = requestContext.getMatchedRoute().getParam("name");
         String digest = requestContext.getMatchedRoute().getParam("digest");
 

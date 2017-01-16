@@ -95,16 +95,19 @@ public class TokenAuthDb extends BaseDb {
         _main.putItemOrThrow(tokenAuth);
     }
 
-    public void setStatus(String token, TokenAuthStatus status)
+    public void setStatus(String domain, String token, TokenAuthStatus status)
     {
         _main.updateItem(token, null)
         .set("stat", status)
-        .when((expr) -> expr.exists("tok"));
+        .when((expr) -> expr.and(expr.exists("tok"),
+                                 expr.eq("dom", domain.toLowerCase())));
     }
 
-    public void deleteToken(String token)
+    public void deleteToken(String domain, String token)
         throws RollbackException
     {
-        _main.deleteItem(token, null, (expr) -> expr.eq("stat", "INACTIVE"));
+        _main.deleteItem(token, null,
+                         (expr) -> expr.and(expr.eq("stat", "INACTIVE"),
+                                            expr.eq("dom", domain.toLowerCase())));
     }
 }

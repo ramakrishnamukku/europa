@@ -9,6 +9,7 @@ package com.distelli.europa.ajax;
 
 import com.distelli.persistence.PageIterator;
 
+import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
 import com.distelli.webserver.*;
@@ -18,7 +19,7 @@ import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
-public class ListRepoNotifications extends AjaxHelper
+public class ListRepoNotifications extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private NotificationsDb _db;
@@ -28,12 +29,12 @@ public class ListRepoNotifications extends AjaxHelper
         this.supportedHttpMethods.add(HTTPMethod.GET);
     }
 
-    public Object get(AjaxRequest ajaxRequest, RequestContext requestContext)
+    public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         String repoId = ajaxRequest.getParam("repoId", true);
         int pageSize = ajaxRequest.getParamAsInt("pageSize", 100);
         String marker = ajaxRequest.getParam("marker");
-        String domain = ajaxRequest.getParam("domain");
+        String domain = requestContext.getOwnerDomain();
 
         PageIterator pageIterator = new PageIterator()
         .pageSize(pageSize)
