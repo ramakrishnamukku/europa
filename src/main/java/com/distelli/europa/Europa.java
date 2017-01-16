@@ -31,10 +31,8 @@ import com.distelli.europa.monitor.*;
 import com.distelli.europa.util.*;
 import com.distelli.objectStore.*;
 import com.distelli.objectStore.impl.ObjectStoreModule;
-import com.distelli.persistence.TableDescription;
 import com.distelli.persistence.impl.PersistenceModule;
 import com.distelli.utils.Log4JConfigurator;
-import com.distelli.europa.db.DbTableCreator;
 import com.distelli.europa.db.TokenAuthDb;
 import com.distelli.europa.db.RegistryBlobDb;
 import com.distelli.europa.db.SequenceDb;
@@ -73,7 +71,6 @@ public class Europa
     protected RouteMatcher _webappRouteMatcher = null;
     protected RouteMatcher _registryApiRouteMatcher = null;
     protected CmdLineArgs _cmdLineArgs = null;
-    protected Set<TableDescription> _tableDescriptions = null;
 
     public Europa(String[] args)
     {
@@ -125,22 +122,17 @@ public class Europa
         EuropaConfiguration europaConfiguration = EuropaConfiguration.fromFile(new File(configFilePath));
         europaConfiguration.setStage(stage);
         europaConfiguration.validate();
-        final Injector injector = Guice.createInjector(Stage.PRODUCTION,
-                                                       new PersistenceModule(),
-                                                       new AjaxHelperModule(),
-                                                       new ObjectStoreModule(),
-                                                       new EuropaInjectorModule(europaConfiguration));
+        Injector injector = createInjector(europaConfiguration);
         injector.injectMembers(this);
-        _tableDescriptions = new HashSet<TableDescription>();
-        _tableDescriptions.add(TokenAuthDb.getTableDescription());
-        _tableDescriptions.add(RegistryBlobDb.getTableDescription());
-        _tableDescriptions.add(SequenceDb.getTableDescription());
-        _tableDescriptions.add(ContainerRepoDb.getTableDescription());
-        _tableDescriptions.add(RegistryCredsDb.getTableDescription());
-        _tableDescriptions.add(NotificationsDb.getTableDescription());
-        _tableDescriptions.add(RepoEventsDb.getTableDescription());
-        _tableDescriptions.add(RegistryManifestDb.getTableDescription());
         initialize(injector);
+    }
+
+    protected Injector createInjector(EuropaConfiguration europaConfiguration) {
+        return Guice.createInjector(Stage.PRODUCTION,
+                                    new PersistenceModule(),
+                                    new AjaxHelperModule(),
+                                    new ObjectStoreModule(),
+                                    new EuropaInjectorModule(europaConfiguration));
     }
 
     protected void initialize(Injector injector)
@@ -170,10 +162,6 @@ public class Europa
         _staticContentErrorHandler = injector.getInstance(StaticContentErrorHandler.class);
         _registryApiRouteMatcher = RegistryApiRoutes.getRouteMatcher();
         _webappRouteMatcher = WebAppRoutes.getRouteMatcher();
-
-        //Now initialize tables
-        DbTableCreator tableCreator = injector.getInstance(DbTableCreator.class);
-        tableCreator.createTables(_tableDescriptions);
     }
 
     public void start()
