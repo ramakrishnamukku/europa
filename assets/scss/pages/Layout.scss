@@ -4,10 +4,10 @@ nav {
     position: relative;
     width: 100%;
     background-color: $dark-blue;
-    height: 43px;
+    height: 45px;
     display: flex;
     flex-direction: row;
-    padding: 1px 0 0;
+    padding: 0 0 0;
 
     .MaxWidthContainer {
         position: relative;
@@ -15,16 +15,46 @@ nav {
         margin: 0 auto;
         width: 100%;
         display: flex;
-        justify-content: space-between;
-        align-items: center;
 
-        .Logo {
-            height: 32px;
+        .SettingsNav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
             a {
-                img {
-                    height: 30px;
+                i {
+                    font-size: 1.4rem;
+                    position: relative;
+                    top: 2px;
                 }
+            }
+        }
+
+        .MainNav {
+            height: 45px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+
+            img {
+                height: 30px;
+                 margin: 0 70px 0 0;
+                 position: relative;
+                 top: 2px;
+            }
+
+            a.MainNavLink {
+                height: 45px;
+                padding: 0 21px;
+                background: none;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: center;
+                align-items: center;
+                color: #fff;
+                font-size: .85rem;
+                font-weight: 600;
             }
         }
     }
@@ -36,9 +66,6 @@ nav {
     }
 
     .NavButtonContainer {
-        position: relative;
-        justify-content: center;
-        align-items: center;
 
         a {
             color: inherit;
@@ -276,6 +303,10 @@ nav {
 
 .JustifyCenter {
     justify-content: center;
+}
+
+.JustifyFlexStart {
+    align-items: flex-start;
 }
 
 .FlexEnd {

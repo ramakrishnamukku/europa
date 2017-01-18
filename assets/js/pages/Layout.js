@@ -6,6 +6,7 @@ import React, {Component, PropTypes} from 'react'
 import {Link} from 'react-router'
 import ReactTooltip from 'react-tooltip'
 import ActionBinder from './../util/ActionBinder'
+import NPECheck from './../util/NPECheck'
 
 // Actions
 import * as GeneralActions from './../actions/GeneralActions'
@@ -17,7 +18,7 @@ import * as SettingsActions from './../actions/SettingsActions'
 export default class Layout extends Component {
 	constructor(props) {
 		super(props);
-		
+
 		// Main State Store
 		this.state = {
 			...this.getBaseState()
@@ -85,26 +86,64 @@ export default class Layout extends Component {
 		};
 	}
 	getChildContextActions(){
-		return [ RegistryActions, 
+		return [ RegistryActions,
 			     RepoActions,
-			     NotificationActions, 
-			     SettingsActions 
+			     NotificationActions,
+			     SettingsActions
 			   ];
 	}
+	highlightNav(sections, root=null) {
+		let shouldHighlight = false;
+		let location = NPECheck(this.props, 'location/pathname', []);
+
+		if (location.length == 1 && location[0] == "/" && root) {
+			return { background: "#25a69c" }
+		}
+
+		if (location) {
+			let split = location.split("/");
+			if (sections.indexOf(split[1]) != -1) {
+				shouldHighlight = true;
+			}
+		}
+
+		if (shouldHighlight) {
+			return { background: "#25a69c" }
+		}
+	}
+	defaultHighlight() {
+		debugger
+
+	}
 	render() {
+		console.log(this.props)
 		return (
 			<div className="PageContainer">
 				<nav className="TopNav">
 				 <div className="MaxWidthContainer">
-					<div className="Logo">
+
+					<div className="FlexRow MainNav">
 						<Link to="/">
 							<img src="/public/images/distelli-europa-logo.svg"
 									 alt="Distelli Europa" />
 						</Link>
+						<Link to="/"
+							    className="MainNavLink"
+							    style={this.highlightNav(["repository", "new-repository"], true) }>
+							<span>Repositories</span>
+						</Link>
+						<Link to="/pipelines"
+							    className="MainNavLink"
+							    style={ this.highlightNav(["pipelines"]) }>
+							<span>Pipelines</span>
+						</Link>
 					</div>
-					<div className="FlexRow NavButtonContainer">
+
+					<div className="FlexRow FlexEnd SettingsNav">
 						<div className="Flex1">
-							<Link to="/settings" data-tip="Settings" data-for="ToolTipBottom">
+							<Link to="/settings"
+										data-tip="Settings"
+										data-for="ToolTipBottom">
 								<i className="icon icon-dis-settings"/>
 							</Link>
 						</div>
