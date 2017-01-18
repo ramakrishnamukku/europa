@@ -20,7 +20,11 @@ public class EuropaTestConfigProvider implements Provider<EuropaTestConfig>
 
     public EuropaTestConfigProvider()
     {
-        _europaTestConfig = EuropaTestConfig.fromFile(new File("./EuropaTestConfig.json"));
+        String testConfigFilePath = System.getenv("EUROPA_TEST_CONFIG");
+        if(testConfigFilePath == null)
+            throw(new IllegalArgumentException("You must set the EUROPA_TEST_CONFIG env variable before running the tests"));
+        File testConfigFile = new File(testConfigFilePath);
+        _europaTestConfig = EuropaTestConfig.fromFile(testConfigFile);
     }
 
     @Override
