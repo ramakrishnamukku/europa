@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Collections;
 import javax.inject.Singleton;
 import javax.inject.Inject;
+import java.util.TreeSet;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
@@ -28,11 +29,14 @@ import java.util.stream.Collectors;
 import javax.persistence.RollbackException;
 import javax.persistence.EntityNotFoundException;
 import java.lang.reflect.InvocationTargetException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 
 @Log4j
 @Singleton
 public class PipelineDb extends BaseDb
 {
+    private static final long SPACING = 10;
+
     private static final String TABLE_NAME = "pipelines";
 
     // Force it to sort "first".
@@ -51,17 +55,15 @@ public class PipelineDb extends BaseDb
         public Pipeline pipeline;
         public PipelineComponent component;
         public Long componentIndex; // Desired index.
-        public Long componentIndexPriority; // Higher comes first.
 
         public PipelineItem(Pipeline pipeline) {
             this.pipeline = pipeline;
         }
 
-        public PipelineItem(Pipeline pipeline, PipelineComponent component, long index, long indexPriority) {
+        public PipelineItem(Pipeline pipeline, PipelineComponent component, long index) {
             this.pipeline = pipeline;
             this.component = component;
             this.componentIndex = index;
-            this.componentIndexPriority = indexPriority;
         }
 
         public PipelineItem(Long type) {
@@ -78,6 +80,8 @@ public class PipelineDb extends BaseDb
         }
 
         public String getDomain() {
+            // We don't want containers in this index:
+            if ( null != component ) return null;
             return pipeline.getDomain().toLowerCase();
         }
         public void setDomain(String domain) {
@@ -100,10 +104,8 @@ public class PipelineDb extends BaseDb
         public void setType(Long type) {}
         public String getContainerRepoId() {
             // We don't want containers in this index:
-            if ( null == component ) {
-                return pipeline.getContainerRepoId();
-            }
-            return null;
+            if ( null != component ) return null;
+            return pipeline.getContainerRepoId();
         }
         public void setContainerRepoId(String crid) {
             pipeline.setContainerRepoId(crid);
@@ -147,8 +149,6 @@ public class PipelineDb extends BaseDb
         }
     }
 
-    @Inject
-    private SequenceDb _seq;
     private Index<PipelineItem> _main;
     private Index<PipelineItem> _byContainerRepoId;
 
@@ -190,7 +190,6 @@ public class PipelineDb extends BaseDb
             // Component "hidden" fields:
             .put("ty", Long.class, "type")
             .put("idx", Long.class, "componentIndex")
-            .put("idxp", Long.class, "componentIndexPriority")
             // Component fields:
             .put("cid", String.class, "componentId")
             // PCCopyToRepository fields:
@@ -217,6 +216,7 @@ public class PipelineDb extends BaseDb
     protected PipelineDb(Index.Factory indexFactory,
                          ConvertMarker.Factory convertMarkerFactory)
     {
+        _om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         _om.registerModule(createTransforms(new TransformModule()));
         _main = indexFactory.create(PipelineItem.class)
             .withTableDescription(TABLE_DESCRIPTION)
@@ -228,10 +228,11 @@ public class PipelineDb extends BaseDb
     public void createPipeline(Pipeline pipeline) {
         pipeline.setId(CompactUUID.randomUUID().toString());
         if ( null != pipeline.getComponents() ) {
-            long index = 0;
+            long idx = SPACING;
             for ( PipelineComponent component : pipeline.getComponents() ) {
                 component.setId(CompactUUID.randomUUID().toString());
-                _main.putItemOrThrow(new PipelineItem(pipeline, component, index++, 0));
+                _main.putItemOrThrow(new PipelineItem(pipeline, component, idx));
+                idx += SPACING;
             }
         }
         _main.putItemOrThrow(new PipelineItem(pipeline));
@@ -252,7 +253,7 @@ public class PipelineDb extends BaseDb
         return _byContainerRepoId.queryItems(domain, iterator)
             .list()
             .stream()
-            .map( (item) -> item.pipeline )
+            .map((item) -> item.pipeline)
             .collect(Collectors.toList());
     }
 
@@ -278,18 +279,22 @@ public class PipelineDb extends BaseDb
         return result;
     }
 
-    // afterPipelineComponentId is the id of the pipeline component this is added after.
-    // if null, this is added at the "beginning" of the list of pipeline components.
-    public void addPipelineComponent(Pipeline pipeline, PipelineComponent component, int toIndex) {
+    // Add new pipeline component so it is before the specified componentId. Set to null
+    // to make this component come first.
+    public void addPipelineComponent(String pipelineId, PipelineComponent component, String beforeComponentId) {
+        if ( null == pipelineId ) throw new NullPointerException("pipelineId must not be null");
+        Pipeline pipeline = new Pipeline();
+        pipeline.setId(pipelineId);
+        long idx = allocateIdxBefore(pipelineId, beforeComponentId);
         component.setId(CompactUUID.randomUUID().toString());
-        _main.putItemOrThrow(new PipelineItem(pipeline, component, toIndex, _seq.nextPipelineComponentPriority()));
+        _main.putItemOrThrow(new PipelineItem(pipeline, component, idx));
     }
 
-    public void movePipelineComponent(String pipelineId, String componentId, int toIndex) {
+    public void movePipelineComponent(String pipelineId, String componentId, String beforeComponentId) {
+        long idx = allocateIdxBefore(pipelineId, beforeComponentId);
         try {
             _main.updateItem(pipelineId, componentId)
-                .set("idx", toIndex)
-                .set("idxp", _seq.nextPipelineComponentPriority())
+                .set("idx", idx)
                 .when((expr) -> expr.exists("id"));
         } catch ( RollbackException ex ) {
             throw new EntityNotFoundException("Invalid pipelineId="+pipelineId+" componentId="+componentId);
@@ -309,41 +314,136 @@ public class PipelineDb extends BaseDb
         }
     }
 
+    protected static class PKIdx implements Comparable<PKIdx> {
+        public String id;
+        public String cid;
+        public Long idx;
+        @Override
+        public int compareTo(PKIdx other) {
+            // Sort low indexes first:
+            int result = idx.compareTo(other.idx);
+            if ( 0 != result ) return result;
+            return cid.compareTo(other.cid);
+        }
+        @Override
+        public String toString() {
+            return "{cid="+cid+",idx="+idx+"}";
+        }
+    }
+    private long allocateIdxBefore(String pipelineId, String beforeComponentId) {
+        // [1] Collect the set of all components, finding beforeComponent:
+        TreeSet<PKIdx> components = new TreeSet<>();
+        PKIdx beforeComponent = null;
+        for ( PageIterator it : new PageIterator() ) {
+            for ( PKIdx item : _main.queryItems(pipelineId, it)
+                      .list(Arrays.asList("id", "cid", "idx"), PKIdx.class) )
+            {
+                if ( null == item.idx || null == item.id || null == item.cid ) {
+                    continue;
+                }
+                components.add(item);
+                if ( item.cid.equals(beforeComponentId) ) {
+                    beforeComponent = item;
+                }
+            }
+        }
+        // [2] Make sure beforeComponentId was found:
+        if ( null != beforeComponentId && null == beforeComponent ) {
+            throw new EntityNotFoundException(
+                "Invalid pipelineId="+pipelineId+" beforeComponentId="+beforeComponentId);
+        }
+        // [3] No components, assign "first index":
+        if ( 0 == components.size() ) return SPACING;
+
+        // [4] Find a space:
+        PKIdx left = ( null == beforeComponent )
+            ? components.last()
+            : components.lower(beforeComponent);
+        PKIdx right = beforeComponent;
+
+        // [5] Space already exists:
+        if ( doesSpaceExist(left, right) ) {
+            if ( null == left ) {
+                return right.idx - 1;
+            }
+            return left.idx + 1;
+        }
+
+        PKIdx high = right;
+        PKIdx low = left;
+
+        long increment = 0;
+        while ( high != null || low != null ) {
+            if ( null != low ) {
+                PKIdx next = components.lower(low);
+                if ( doesSpaceExist(next, low) ) {
+                    high = left;
+                    increment = -1L;
+                    break;
+                }
+                low = next;
+            }
+            if ( null != high ) {
+                PKIdx next = components.higher(high);
+                if ( doesSpaceExist(high, next) ) {
+                    // Found a space:
+                    low = right;
+                    increment = 1L;
+                    break;
+                }
+                high = next;
+            }
+        }
+        if ( 0 == increment || null == high || null == low ) {
+            throw new IllegalStateException("unreachable");
+        }
+        if ( increment < 0 ) {
+            // [5.a] Shift down:
+            while ( true ) {
+                incrementIdx(low, increment);
+                if ( low.compareTo(high) >= 0 ) break;
+                low = components.higher(low);
+            }
+        } else {
+            // [5.b] Shift up:
+            while ( true ) {
+                incrementIdx(high, increment);
+                if ( low.compareTo(high) >= 0 ) break;
+                high = components.lower(high);
+            }
+        }
+        return high.idx;
+    }
+    private boolean doesSpaceExist(PKIdx low, PKIdx high) {
+        if ( null == low ) {
+            return high.idx > 0;
+        }
+        if ( null == high ) {
+            return low.idx < Long.MAX_VALUE - 100;
+        }
+        return high.idx - low.idx > 2;
+    }
+    private void incrementIdx(PKIdx item, long amount) {
+        try {
+            _main.updateItem(item.id, item.cid)
+                .increment("idx", amount)
+                .when((expr) -> expr.exists("idx"));
+        } catch ( RollbackException ex ){}
+    }
+
     private List<PipelineComponent> sortComponents(List<PipelineItem> items) {
-        // TODO: Find a better algorithm...
         Collections.sort(items, (a, b) -> {
                 int result = 0;
-                // [a] Higher component index priorities are first.
-                if ( null != a.componentIndexPriority && null != b.componentIndexPriority ) {
-                    result = b.componentIndexPriority.compareTo(a.componentIndexPriority);
-                    if ( 0 != result ) return result;
-                }
-                // [b] Lower index priorities are first.
+                // [a] Sort by index:
                 if ( null != a.componentIndex && null != b.componentIndex ) {
                     result = a.componentIndex.compareTo(b.componentIndex);
                     if ( 0 != result ) return result;
                 }
-                // [c] Sort by id:
+                // [b] Sort by id:
                 return a.component.getId().compareTo(b.component.getId());
             });
-
-        PipelineComponent[] result = new PipelineComponent[items.size()];
-        for ( PipelineItem item : items ) {
-            int index = ( null == item.componentIndex ) ? 0 : item.componentIndex.intValue();
-            for ( int i=0; i < result.length; i++ ) {
-                // Find the closest index.
-                if ( tryIndex(result, index-i, item.component) ) break;
-                if ( tryIndex(result, index+i, item.component) ) break;
-            }
-        }
-        return Arrays.asList(result);
-    }
-
-    private boolean tryIndex(PipelineComponent[] result, int idx, PipelineComponent comp) {
-        if ( idx < 0 ) return false;
-        if ( idx >= result.length ) return false;
-        if ( null != result[idx] ) return false;
-        result[idx] = comp;
-        return true;
+        return items.stream()
+            .map((item) -> item.component)
+            .collect(Collectors.toList());
     }
 }

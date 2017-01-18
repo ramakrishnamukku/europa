@@ -12,16 +12,16 @@
   <scm>
     <connection>scm:git:git@github.com:Distelli/europa.git</connection>
     <url>https://github.com/Distelli/europa.git</url>
+    <tag>HEAD</tag>
   </scm>
 
-  <repositories>
+  <distributionManagement>
     <repository>
+      <uniqueVersion>false</uniqueVersion>
       <id>distelli-mvn-repo</id>
       <url>${distelli-repo.url}</url>
-      <releases><enabled>true</enabled></releases>
-      <snapshots><enabled>true</enabled></snapshots>
     </repository>
-  </repositories>
+  </distributionManagement>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -80,7 +80,14 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-        <version>2.2.2</version>
+        <version>2.4.2</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.scm</groupId>
+            <artifactId>maven-scm-provider-gitexe</artifactId>
+            <version>1.8.1</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
     <extensions>

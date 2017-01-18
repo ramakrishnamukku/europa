@@ -13,6 +13,9 @@ public/js/*
 public/css/*
 public/*.svg
 
+pom.xml.releaseBackup
+release.properties
+
 .DS_Store
 */.DS_Store
 tmp/*

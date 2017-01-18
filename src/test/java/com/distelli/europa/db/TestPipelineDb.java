@@ -83,18 +83,32 @@ public class TestPipelineDb {
             assertEquals(got.getContainerRepoId(), "X");
             assertEqualComponents(got.getComponents(), pipeline.getComponents());
 
-            pipelineDb.addPipelineComponent(pipeline,
-                                            PCCopyToRepository.builder()
-                                            .destinationContainerRepoId("0")
-                                            .build(), 1);
-            // A 0 B C D E
-            pipelineDb.movePipelineComponent(pipeline.getId(), pipeline.getComponents().get(4).getId(), 0);
-            // E 0 A B C D
+            PipelineComponent pcA = pipeline.getComponents().get(0);
+            PipelineComponent pcB = pipeline.getComponents().get(1);
+            PipelineComponent pcC = pipeline.getComponents().get(2);
+            PipelineComponent pcD = pipeline.getComponents().get(3);
+            PipelineComponent pcE = pipeline.getComponents().get(4);
+
+            // A 0 B C D E:
+            PipelineComponent pc0 = PCCopyToRepository.builder()
+                .destinationContainerRepoId("0")
+                .build();
+            pipelineDb.addPipelineComponent(pipeline.getId(), pc0, pcB.getId());
+
+            // A E 0 B C D:
+            pipelineDb.movePipelineComponent(pipeline.getId(),
+                                             pcE.getId(),
+                                             pc0.getId());
+
             assertEquals(getDestinationContainerRepoIds(pipelineDb.getPipeline(pipeline.getId()).getComponents()),
-                         new String[]{"E", "0", "A", "B", "C", "D"});
+                         new String[]{"A", "E", "0", "B", "C", "D"});
+            // E 0 B C D:
+            pipelineDb.removePipelineComponent(pipeline.getId(), pcA.getId());
+            assertEquals(getDestinationContainerRepoIds(pipelineDb.getPipeline(pipeline.getId()).getComponents()),
+                         new String[]{"E", "0", "B", "C", "D"});
         } finally {
             if ( null != pipeline.getId() ) {
-                //pipelineDb.removePipeline(pipeline.getId());
+                pipelineDb.removePipeline(pipeline.getId());
             }
         }
     }
