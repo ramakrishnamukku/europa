@@ -86,19 +86,16 @@ export default class Layout extends Component {
 		};
 	}
 	getChildContextActions(){
-		return [ RegistryActions,
-			     RepoActions,
-			     NotificationActions,
-			     SettingsActions
-			   ];
+		return [
+			RegistryActions,
+      RepoActions,
+      NotificationActions,
+      SettingsActions
+    ];
 	}
 	highlightNav(sections, root=null) {
 		let shouldHighlight = false;
 		let location = NPECheck(this.props, 'location/pathname', []);
-
-		if (location.length == 1 && location[0] == "/" && root) {
-			return { background: "#25a69c" }
-		}
 
 		if (location) {
 			let split = location.split("/");
@@ -107,12 +104,12 @@ export default class Layout extends Component {
 			}
 		}
 
-		if (shouldHighlight) {
+		if (shouldHighlight
+				|| location.length == 1 && location[0] == "/" && root) {
 			return { background: "#25a69c" }
 		}
 	}
 	render() {
-		console.log(this.props)
 		return (
 			<div className="PageContainer">
 				<nav className="TopNav">
@@ -166,7 +163,3 @@ Layout.childContextTypes = {
 	actions: PropTypes.object,
 	router: PropTypes.object
 };
-
-
-
-
