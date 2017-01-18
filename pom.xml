@@ -15,15 +15,6 @@
     <tag>HEAD</tag>
   </scm>
 
-  <repositories>
-    <repository>
-      <id>distelli-mvn-repo</id>
-      <url>${distelli-repo.url}</url>
-      <releases><enabled>true</enabled></releases>
-      <snapshots><enabled>true</enabled></snapshots>
-    </repository>
-  </repositories>
-
   <distributionManagement>
     <repository>
       <uniqueVersion>false</uniqueVersion>
