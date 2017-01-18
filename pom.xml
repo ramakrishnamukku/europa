@@ -23,6 +23,14 @@
     </repository>
   </repositories>
 
+  <distributionManagement>
+    <repository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>distelli-mvn-repo</id>
+      <url>${distelli-repo.url}</url>
+    </repository>
+  </distributionManagement>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <distelli-common.version>3.0.0</distelli-common.version>
