@@ -20,6 +20,11 @@ export default class Layout extends Component {
 		
 		// Main State Store
 		this.state = {
+			...this.getBaseState()
+		};
+	}
+	getBaseState(){
+		return {
 			registries: [],
 			registriesMap: {},
 			repos: [],
@@ -49,7 +54,7 @@ export default class Layout extends Component {
 				registriesInterval: null,
 				reposInterval: null
 			}
-		};
+		}
 	}
 	componentDidMount() {
 		this.setState({
@@ -72,16 +77,19 @@ export default class Layout extends Component {
 		clearInterval(this.state.intervals.reposInterval);
 	}
 	getChildContext() {
+		let actions = this.getChildContextActions();
 
-		let actions = [ RegistryActions, 
-					    RepoActions,
-					    NotificationActions, 
-					    SettingsActions 
-					  ];
 		return {
 			actions: ActionBinder(actions, this),
 			router: this.context.router
 		};
+	}
+	getChildContextActions(){
+		return [ RegistryActions, 
+			     RepoActions,
+			     NotificationActions, 
+			     SettingsActions 
+			   ];
 	}
 	render() {
 		return (
