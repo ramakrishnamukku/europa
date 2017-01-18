@@ -111,10 +111,6 @@ export default class Layout extends Component {
 			return { background: "#25a69c" }
 		}
 	}
-	defaultHighlight() {
-		debugger
-
-	}
 	render() {
 		console.log(this.props)
 		return (
