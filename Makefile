@@ -17,8 +17,8 @@ clean:
 	mvn -q clean
 
 package:
-	mvn -q -DincludeScope=runtime dependency:copy-dependencies package
-	yarn run build-all
+	mvn -q -DincludeScope=runtime dependency:copy-dependencies package assembly:single
+#	yarn run build-all
 
 show-deps:
 	mvn dependency:tree
