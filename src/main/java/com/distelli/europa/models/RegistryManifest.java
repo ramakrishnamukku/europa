@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Singular;
 
 @Data
-@Builder
+@Builder(toBuilder=true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegistryManifest

@@ -29,6 +29,9 @@ import com.distelli.europa.util.ObjectKeyFactory;
 import com.distelli.objectStore.ObjectKey;
 import com.distelli.objectStore.ObjectStore;
 import com.distelli.europa.models.ContainerRepo;
+import com.distelli.persistence.PageIterator;
+import com.distelli.europa.models.Pipeline;
+import com.distelli.europa.models.PipelineComponent;
 import com.distelli.europa.models.RepoEvent;
 import com.distelli.europa.models.RepoEventType;
 import com.distelli.europa.models.RegistryProvider;
@@ -38,6 +41,7 @@ import com.distelli.europa.db.RegistryBlobDb;
 import com.distelli.europa.db.RepoEventsDb;
 import com.distelli.europa.db.ContainerRepoDb;
 import com.distelli.europa.db.RegistryManifestDb;
+import com.distelli.europa.db.PipelineDb;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.TreeSet;
@@ -47,6 +51,7 @@ import com.distelli.europa.registry.RegistryErrorCode;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.distelli.utils.CompactUUID;
+import com.google.inject.Injector;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
 
 @Log4j
@@ -76,6 +81,10 @@ public class RegistryManifestPush extends RegistryBase {
     private RepoEventsDb _eventDb;
     @Inject
     private ContainerRepoDb _repoDb;
+    @Inject
+    private PipelineDb _pipelineDb;
+    @Inject
+    private Injector _injector;
 
     public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
         try {
@@ -100,8 +109,8 @@ public class RegistryManifestPush extends RegistryBase {
         MessageDigest digestCalc = MessageDigest.getInstance("SHA-256");
         DigestInputStream digestStream = new DigestInputStream(counter, digestCalc);
 
-        JsonNode manifest = OM.readTree(digestStream);
-        Set<String> digests = getDigests(manifest);
+        JsonNode manifestJson = OM.readTree(digestStream);
+        Set<String> digests = getDigests(manifestJson);
 
         long contentLength = counter.getCount();
         is.reset();
@@ -115,16 +124,19 @@ public class RegistryManifestPush extends RegistryBase {
         }
 
         boolean success = false;
+        RegistryManifest oldManifest = null;
+        RegistryManifest manifest = RegistryManifest.builder()
+            .uploadedBy(requestContext.getRequesterDomain())
+            .contentType(requestContext.getContentType())
+            .manifestId(finalDigest)
+            .owner(ownerDomain)
+            .repository(name)
+            .tag(reference)
+            .digests(digests)
+            .build();
+
         try {
-            _manifestDb.put(RegistryManifest.builder()
-                            .uploadedBy(requestContext.getRequesterDomain())
-                            .contentType(requestContext.getContentType())
-                            .manifestId(finalDigest)
-                            .owner(ownerDomain)
-                            .repository(name)
-                            .tag(reference)
-                            .digests(digests)
-                            .build());
+            oldManifest = _manifestDb.put(manifest);
             // Always write a reference to support pulling via @sha256:...
             _manifestDb.put(RegistryManifest.builder()
                             .uploadedBy(requestContext.getRequesterDomain())
@@ -168,10 +180,14 @@ public class RegistryManifestPush extends RegistryBase {
                 .eventType(RepoEventType.PUSH)
                 .eventTime(System.currentTimeMillis())
                 .imageTags(Collections.singletonList(reference))
-                .imageSha(getImageId(manifest))
+                .imageSha(getImageId(manifestJson))
                 .build();
             _eventDb.save(event);
             _repoDb.setLastEvent(repo.getDomain(), repo.getId(), event);
+
+            if ( null == oldManifest || ! finalDigest.equals(oldManifest.getManifestId()) ) {
+                executePipeline(repo, reference, manifest);
+            }
         } catch ( Throwable ex ) {
             log.error(ex.getMessage(), ex);
         }
@@ -181,6 +197,22 @@ public class RegistryManifestPush extends RegistryBase {
         response.setResponseHeader("Location", joinWithSlash("/v2", name, "manifests", finalDigest));
         response.setResponseHeader("Docker-Content-Digest", finalDigest);
         return response;
+    }
+
+    private void executePipeline(ContainerRepo repo, String tag, RegistryManifest manifest) {
+        for ( PageIterator it : new PageIterator() ) {
+            for ( Pipeline pipeline : _pipelineDb.listByContainerRepoId(repo.getDomain(), repo.getId(), it) ) {
+                executePipeline(_pipelineDb.getPipeline(pipeline.getId()), repo, tag, manifest);
+            }
+        }
+    }
+
+    private void executePipeline(Pipeline pipeline, ContainerRepo repo, String tag, RegistryManifest manifest) {
+        for ( PipelineComponent component : pipeline.getComponents() ) {
+            // TODO: Find a cleaner way to inject...
+            _injector.injectMembers(component);
+            if ( ! component.execute(repo, tag, manifest) ) break;
+        }
     }
 
     private String getImageId(JsonNode manifest) {

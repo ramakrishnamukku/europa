@@ -30,6 +30,7 @@ import com.distelli.europa.db.ContainerRepoDb;
 import com.distelli.europa.db.RegistryCredsDb;
 import com.distelli.europa.db.NotificationsDb;
 import com.distelli.europa.db.RepoEventsDb;
+import com.distelli.europa.db.PipelineDb;
 import com.distelli.europa.db.RegistryManifestDb;
 import com.distelli.objectStore.*;
 
@@ -44,7 +45,8 @@ public class EuropaInjectorModule extends AbstractModule
         RegistryCredsDb::getTableDescription,
         NotificationsDb::getTableDescription,
         RepoEventsDb::getTableDescription,
-        RegistryManifestDb::getTableDescription
+        RegistryManifestDb::getTableDescription,
+        PipelineDb::getTableDescription
         );
 
     private EuropaConfiguration _europaConfiguration;

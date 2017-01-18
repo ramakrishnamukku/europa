@@ -118,7 +118,7 @@ public class RegistryManifestDb extends BaseDb {
     /**
      * Overwrites with a new registry manifest, potentially
      */
-    public void put(RegistryManifest manifest) throws UnknownDigests {
+    public RegistryManifest put(RegistryManifest manifest) throws UnknownDigests {
         if ( null == manifest.getOwner() || manifest.getOwner().isEmpty()) {
             throw new IllegalArgumentException("owner is required parameter");
         }
@@ -164,8 +164,9 @@ public class RegistryManifestDb extends BaseDb {
         }
 
         boolean success = false;
+        RegistryManifest old = null;
         try {
-            RegistryManifest old = _main.putItem(manifest);
+            old = _main.putItem(manifest);
             // TODO: Record history on this repository reference as changing over time...
             if ( null != old && null != old.getDigests() && null != old.getManifestId() ) {
                 // clean-up references:
@@ -181,6 +182,7 @@ public class RegistryManifestDb extends BaseDb {
                 }
             }
         }
+        return old;
     }
 
     public RegistryManifest getManifestByRepoTag(String owner, String repo, String tag) {

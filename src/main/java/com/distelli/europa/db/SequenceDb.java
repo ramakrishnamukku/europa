@@ -76,4 +76,9 @@ public class SequenceDb extends BaseDb
     public Long nextManifestId() {
         return next("rmanifest");
     }
+
+    // Used for ordering pipeline components:
+    public Long nextPipelineComponentPriority() {
+        return next("pcpriority");
+    }
 }
