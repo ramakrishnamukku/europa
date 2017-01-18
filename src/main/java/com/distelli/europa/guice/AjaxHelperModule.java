@@ -25,6 +25,7 @@ public class AjaxHelperModule extends AbstractModule
     protected void configure()
     {
         //Add ajax bindings here
+        addBinding(ListPipelines.class);
         addBinding(GetRegionsForProvider.class);
         addBinding(ListReposInRegistry.class);
         //Cred CRUD helpers

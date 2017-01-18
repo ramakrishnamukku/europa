@@ -17,7 +17,7 @@ export default class Repositories extends Component {
 		this.state = {};
 	}
 	componentDidMount() {
-		this.context.actions.listRepos();	
+		this.context.actions.listRepos();
 	}
 	toAddRepo(){
 		this.context.router.push('/new-repository');
@@ -79,7 +79,7 @@ export default class Repositories extends Component {
 				<div className="FlexRow">
 					{lastEvent.imageTags.map((tag, index) => {
 						return (
-							<span className="Tag" key={index}>{tag}</span>	
+							<span className="Tag" key={index}>{tag}</span>
 						);
 					})}
 				</div>
@@ -88,7 +88,7 @@ export default class Repositories extends Component {
 	}
 	renderSearchRepos(){
 		return (
-			<input className="BlueBorder Search" 
+			<input className="BlueBorder Search"
 			       placeholder="Filter repositories.."
 				   onChange={(e) => this.context.actions.filterRepos(e, false)}
 			/>
@@ -110,7 +110,7 @@ export default class Repositories extends Component {
 			<div className="ContentContainer">
 				<div className="PageHeader">
 					<h2>
-						{`${reposLength} ${noun}`} 
+						{`${reposLength} ${noun}`}
 					</h2>
 					<div className="FlexRow">
 						<div className="Flex1">
@@ -123,7 +123,7 @@ export default class Repositories extends Component {
 				<div>
 					{this.renderSearchRepos()}
 					{this.renderLegend()}
-					{this.renderRepos()}		
+					{this.renderRepos()}
 				</div>
 			</div>
 		);
@@ -134,7 +134,7 @@ export default class Repositories extends Component {
 				<div className="NoContent">
 					<h3>
 						You have no repositories to monitor
-					</h3>		
+					</h3>
 					<Btn className="LargeBlueButton"
 						 onClick={() => this.toAddRepo()}
 						 text="Add Repository"
@@ -149,16 +149,16 @@ export default class Repositories extends Component {
 			<div className="ContentContainer">
 				<div className="NoContent">
 					<h3>
-					</h3>		
+					</h3>
 					<p>
 						No Results
 					</p>
 				</div>
 			</div>
-		);		
+		);
 	}
 	render() {
-		if(this.props.reposXHR) {
+		if (this.props.reposXHR) {
 			return (
 				<div className="PageLoader">
 					<Loader />

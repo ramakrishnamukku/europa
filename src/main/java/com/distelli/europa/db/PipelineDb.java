@@ -208,7 +208,7 @@ public class PipelineDb extends BaseDb
             .put("exS", ExecutionStatus.class,
                  (item) -> item.getComponent("getLastExecutionStatus", ExecutionStatus.class),
                  (item, status) -> item.setComponent("setLastExecutionStatus", ExecutionStatus.class, status));
-            
+
         return module;
     }
 

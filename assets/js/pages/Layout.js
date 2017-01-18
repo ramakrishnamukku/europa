@@ -11,6 +11,7 @@ import NPECheck from './../util/NPECheck'
 // Actions
 import * as GeneralActions from './../actions/GeneralActions'
 import * as RepoActions from './../actions/RepoActions'
+import * as PipelineActions from './../actions/PipelineActions'
 import * as NotificationActions from './../actions/NotificationActions'
 import * as RegistryActions from './../actions/RegistryActions'
 import * as SettingsActions from './../actions/SettingsActions'
@@ -44,6 +45,12 @@ export default class Layout extends Component {
 			},
 			repoDetails: {
 				...RepoActions.repoDetailsState()
+			},
+			pipelines: {
+				...PipelineActions.pipelinesState()
+			},
+			pipeline: {
+				...PipelineActions.singlePipelineState()
 			},
 			notif: {
 				...NotificationActions.notifState()
@@ -89,6 +96,7 @@ export default class Layout extends Component {
 		return [
 			RegistryActions,
       RepoActions,
+      PipelineActions,
       NotificationActions,
       SettingsActions
     ];
