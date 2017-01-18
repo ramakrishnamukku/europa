@@ -31,12 +31,16 @@ public class EuropaRequestContext extends RequestContext
     protected String _ownerDomain = Constants.DOMAIN_ZERO;
     @Getter @Setter
     protected String _ownerUsername = null;
+    @Getter @Setter
+    protected boolean _ajaxRequest = false;
+    @Getter @Setter
+    protected boolean _registryApiRequest = false;
 
     public EuropaRequestContext(HTTPMethod httpMethod, HttpServletRequest request, boolean unmarshallJson)
     {
         super(httpMethod, request, unmarshallJson);
     }
-    
+
     public EuropaRequestContext(HTTPMethod httpMethod, HttpServletRequest request)
     {
         super(httpMethod, request, true);

@@ -56,7 +56,7 @@ public class AjaxHelperModule extends AbstractModule
         bind(AjaxHelperMap.class).to(AjaxHelperMapImpl.class);
     }
 
-    private void addBinding(Class<? extends AjaxHelper> clazz)
+    protected void addBinding(Class<? extends AjaxHelper> clazz)
     {
         MapBinder<String, AjaxHelper> mapbinder = MapBinder.newMapBinder(binder(), String.class, AjaxHelper.class);
         mapbinder.addBinding(clazz.getSimpleName()).to(clazz);

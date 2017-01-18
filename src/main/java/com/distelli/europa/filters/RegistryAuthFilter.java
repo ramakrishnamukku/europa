@@ -45,6 +45,7 @@ public class RegistryAuthFilter implements RequestFilter<EuropaRequestContext>
     public WebResponse filter(EuropaRequestContext requestContext, RequestFilterChain next)
     {
         try {
+            requestContext.setRegistryApiRequest(true);
             _auth.authenticate(requestContext);
             WebResponse response = next.filter(requestContext);
             response.setResponseHeader("Docker-Distribution-Api-Version", "registry/2.0");
