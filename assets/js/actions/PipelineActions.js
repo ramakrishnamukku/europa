@@ -45,12 +45,12 @@ export function listPipelines() {
   });
 }
 
-export function createPipeline() {
+export function createPipeline(postData) {
   return new Promise((resolve, reject) => {
     this.setState({
       newPipelineXHR: true
     }, () => {
-      RAjax.GET('NewPipeline')
+      RAjax.POST('NewPipeline', {}, postData)
       .then(res => {
         // TODO
       })
@@ -63,12 +63,12 @@ export function createPipeline() {
   });
 }
 
-export function removePipeline() {
+export function removePipeline(postData) {
   return new Promise((resolve, reject) => {
     this.setState({
       removePipelineXHR: true
     }, () => {
-      RAjax.GET('RemovePipeline')
+      RAjax.POST('RemovePipeline', {}, postData)
       .then(res => {
         // TODO
       })
@@ -81,12 +81,12 @@ export function removePipeline() {
   });
 }
 
-export function addPipelineComponent() {
+export function addPipelineComponent(postData) {
   return new Promise((resolve, reject) => {
     this.setState({
       addPipelineComponentXHR: true
     }, () => {
-      RAjax.GET('AddPipelineComponent')
+      RAjax.POST('AddPipelineComponent', {}, postData)
       .then(res => {
         // TODO
       })
@@ -99,12 +99,12 @@ export function addPipelineComponent() {
   });
 }
 
-export function movePipelineComponent() {
+export function movePipelineComponent(postData) {
   return new Promise((resolve, reject) => {
     this.setState({
       movePipelineComponentXHR: true
     }, () => {
-      RAjax.GET('MovePipelineComponent')
+      RAjax.POST('MovePipelineComponent', {}, postData)
       .then(res => {
         // TODO
       })
@@ -117,12 +117,12 @@ export function movePipelineComponent() {
   });
 }
 
-export function removePipelineComponent() {
+export function removePipelineComponent(postData) {
   return new Promise((resolve, reject) => {
     this.setState({
       removePipelineComponentXHR: true
     }, () => {
-      RAjax.GET('RemovePipelineComponent')
+      RAjax.POST('RemovePipelineComponent', {}, postData)
       .then(res => {
         // TODO
       })

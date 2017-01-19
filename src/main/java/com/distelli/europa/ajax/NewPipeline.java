@@ -33,8 +33,16 @@ public class NewPipeline extends AjaxHelper<EuropaRequestContext>
 
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
-        // TODO - implement
         String domain = requestContext.getOwnerDomain();
-        return null;
+        String containerRepoId = ajaxRequest.getParam("containerRepoId", true);
+
+        Pipeline pipeline = Pipeline.builder()
+            .domain(domain)
+            .containerRepoId(containerRepoId)
+            .build();
+
+        _db.createPipeline(pipeline);
+
+        return JsonSuccess.Success;
     }
 }
