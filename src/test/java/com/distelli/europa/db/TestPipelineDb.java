@@ -19,6 +19,7 @@ import org.junit.Test;
 import java.util.UUID;
 import java.util.List;
 import com.distelli.europa.models.PCCopyToRepository;
+import com.distelli.utils.Log4JConfigurator;
 import static org.junit.Assert.*;
 
 public class TestPipelineDb {
@@ -49,12 +50,18 @@ public class TestPipelineDb {
         INJECTOR.injectMembers(this);
     }
 
+    @BeforeClass
+    public static void beforeClass()
+    {
+        Log4JConfigurator.configure(true);
+        Log4JConfigurator.setLogLevel("com.zaxxer.hikari", "INFO");
+    }
+
     @Test
-    public void test() {
+    public void test() throws Exception {
         String domain = UUID.randomUUID().toString();
         Pipeline pipeline = Pipeline.builder()
-            .domain(domain)
-            .containerRepoId("X")
+            .name("super-pipes")
             .components(
                 Arrays.asList(
                     PCCopyToRepository.builder()
@@ -80,13 +87,16 @@ public class TestPipelineDb {
         try {
             pipelineDb.createPipeline(pipeline);
 
-            List<Pipeline> list = pipelineDb.listByContainerRepoId(domain, "X", new PageIterator());
+            pipelineDb.setContainerRepo(pipeline.getId(), domain, "Y");
+
+            List<Pipeline> list = pipelineDb.listByContainerRepoId(domain, "Y", new PageIterator());
             assertEquals(list.size(), 1);
             assertEquals(list.get(0).getId(), pipeline.getId());
 
             Pipeline got = pipelineDb.getPipeline(pipeline.getId());
+            assertEquals(got.getName(), "super-pipes");
             assertEquals(got.getDomain(), domain);
-            assertEquals(got.getContainerRepoId(), "X");
+            assertEquals(got.getContainerRepoId(), "Y");
             assertEqualComponents(got.getComponents(), pipeline.getComponents());
 
             PipelineComponent pcA = pipeline.getComponents().get(0);
@@ -114,7 +124,7 @@ public class TestPipelineDb {
                          new String[]{"E", "0", "B", "C", "D"});
         } finally {
             if ( null != pipeline.getId() ) {
-                pipelineDb.removePipeline(pipeline.getId());
+                //pipelineDb.removePipeline(pipeline.getId());
             }
         }
     }

@@ -17,6 +17,7 @@ public class Pipeline
     private String id;
     // Trigger for pipeline execution:
     private String containerRepoId;
+    private String name;
     @Singular
     private List<PipelineComponent> components;
 }

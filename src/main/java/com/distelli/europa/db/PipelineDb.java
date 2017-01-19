@@ -81,7 +81,7 @@ public class PipelineDb extends BaseDb
 
         public String getDomain() {
             // We don't want containers in this index:
-            if ( null != component ) return null;
+            if ( null != component || null == pipeline.getDomain() ) return null;
             return pipeline.getDomain().toLowerCase();
         }
         public void setDomain(String domain) {
@@ -109,6 +109,13 @@ public class PipelineDb extends BaseDb
         }
         public void setContainerRepoId(String crid) {
             pipeline.setContainerRepoId(crid);
+        }
+        public String getName() {
+            if ( null != component ) return null;
+            return pipeline.getName();
+        }
+        public void setName(String name) {
+            pipeline.setName(name);
         }
         public String getComponentId() {
             if ( null == component ) return CID_FOR_PIPELINE;
@@ -187,6 +194,7 @@ public class PipelineDb extends BaseDb
             .put("dom", String.class, "domain")
             .put("id", String.class, "id")
             .put("crid", String.class, "containerRepoId")
+            .put("nam", String.class, "name")
             // Component "hidden" fields:
             .put("ty", Long.class, "type")
             .put("idx", Long.class, "componentIndex")
@@ -281,6 +289,17 @@ public class PipelineDb extends BaseDb
         }
         result.setComponents(sortComponents(items));
         return result;
+    }
+
+    public void setContainerRepo(String pipelineId, String domain, String containerRepoId) {
+        try {
+            _main.updateItem(pipelineId, CID_FOR_PIPELINE)
+                .set("dom", domain)
+                .set("crid", containerRepoId)
+                .when((expr) -> expr.exists("id"));
+        } catch ( RollbackException ex ) {
+            throw new EntityNotFoundException("Invalid pipelineId="+pipelineId);
+        }
     }
 
     // Add new pipeline component so it is before the specified componentId. Set to null
