@@ -142,7 +142,6 @@ export default class Repositories extends Component {
 				</div>
 			</div>
 		);
-
 	}
 	renderNoResults(){
 		return (

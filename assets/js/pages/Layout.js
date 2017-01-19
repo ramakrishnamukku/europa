@@ -19,13 +19,12 @@ import * as SettingsActions from './../actions/SettingsActions'
 export default class Layout extends Component {
 	constructor(props) {
 		super(props);
-
 		// Main State Store
 		this.state = {
 			...this.getBaseState()
 		};
 	}
-	getBaseState(){
+	getBaseState() {
 		return {
 			registries: [],
 			registriesMap: {},
@@ -46,10 +45,10 @@ export default class Layout extends Component {
 			repoDetails: {
 				...RepoActions.repoDetailsState()
 			},
-			pipelines: {
+			pipelinesStore: {
 				...PipelineActions.pipelinesState()
 			},
-			pipeline: {
+			pipelineStore: {
 				...PipelineActions.singlePipelineState()
 			},
 			notif: {
@@ -92,7 +91,7 @@ export default class Layout extends Component {
 			router: this.context.router
 		};
 	}
-	getChildContextActions(){
+	getChildContextActions() {
 		return [
 			RegistryActions,
       RepoActions,
