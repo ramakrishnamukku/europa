@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.Arrays;
 import javax.inject.Inject;
 import com.distelli.europa.guice.EuropaInjectorModule;
+import com.distelli.persistence.PageIterator;
 import com.distelli.persistence.impl.PersistenceModule;
 import com.distelli.objectStore.impl.ObjectStoreModule;
 import com.google.inject.Guice;
@@ -78,6 +79,11 @@ public class TestPipelineDb {
             .build();
         try {
             pipelineDb.createPipeline(pipeline);
+
+            List<Pipeline> list = pipelineDb.listByContainerRepoId(domain, "X", new PageIterator());
+            assertEquals(list.size(), 1);
+            assertEquals(list.get(0).getId(), pipeline.getId());
+
             Pipeline got = pipelineDb.getPipeline(pipeline.getId());
             assertEquals(got.getDomain(), domain);
             assertEquals(got.getContainerRepoId(), "X");

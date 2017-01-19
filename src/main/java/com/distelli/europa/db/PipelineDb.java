@@ -165,7 +165,7 @@ public class PipelineDb extends BaseDb
                 .build(),
                 IndexDescription.builder()
                 .hashKey(attr("dom", AttrType.STR))
-                .hashKey(attr("crid", AttrType.STR))
+                .rangeKey(attr("crid", AttrType.STR))
                 .indexName("dom-crid-index")
                 .indexType(IndexType.GLOBAL_SECONDARY_INDEX)
                 .readCapacity(1L)
@@ -220,6 +220,10 @@ public class PipelineDb extends BaseDb
         _om.registerModule(createTransforms(new TransformModule()));
         _main = indexFactory.create(PipelineItem.class)
             .withTableDescription(TABLE_DESCRIPTION)
+            .withConvertValue(_om::convertValue)
+            .build();
+        _byContainerRepoId = indexFactory.create(PipelineItem.class)
+            .withTableDescription(TABLE_DESCRIPTION, "dom-crid-index")
             .withConvertValue(_om::convertValue)
             .build();
     }
