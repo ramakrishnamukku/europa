@@ -8,52 +8,70 @@
 */
 package com.distelli.europa.guice;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import javax.inject.Provider;
+
 import com.distelli.cred.CredPair;
-import com.distelli.webserver.AjaxHelperMap;
 import com.distelli.europa.EuropaConfiguration;
+import com.distelli.europa.db.ContainerRepoDb;
+import com.distelli.europa.db.NotificationsDb;
+import com.distelli.europa.db.PipelineDb;
+import com.distelli.europa.db.RegistryBlobDb;
+import com.distelli.europa.db.RegistryCredsDb;
+import com.distelli.europa.db.RegistryManifestDb;
+import com.distelli.europa.db.RepoEventsDb;
+import com.distelli.europa.db.SequenceDb;
+import com.distelli.europa.db.TokenAuthDb;
 import com.distelli.europa.monitor.*;
+import com.distelli.objectStore.*;
 import com.distelli.persistence.Index;
 import com.distelli.persistence.TableDescription;
 import com.distelli.persistence.impl.mysql.MysqlDataSource;
+import com.distelli.webserver.AjaxHelperMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.Multibinder;
-import java.net.URI;
-import java.util.List;
-import java.util.Arrays;
-import javax.inject.Provider;
+
 import lombok.extern.log4j.Log4j;
-import com.distelli.europa.db.TokenAuthDb;
-import com.distelli.europa.db.RegistryBlobDb;
-import com.distelli.europa.db.SequenceDb;
-import com.distelli.europa.db.ContainerRepoDb;
-import com.distelli.europa.db.RegistryCredsDb;
-import com.distelli.europa.db.NotificationsDb;
-import com.distelli.europa.db.RepoEventsDb;
-import com.distelli.europa.db.PipelineDb;
-import com.distelli.europa.db.RegistryManifestDb;
-import com.distelli.objectStore.*;
 
 @Log4j
 public class EuropaInjectorModule extends AbstractModule
 {
-    private static List<Provider<TableDescription>> TABLES = Arrays.asList(
-        TokenAuthDb::getTableDescription,
-        RegistryBlobDb::getTableDescription,
-        SequenceDb::getTableDescription,
-        ContainerRepoDb::getTableDescription,
-        RegistryCredsDb::getTableDescription,
-        NotificationsDb::getTableDescription,
-        RepoEventsDb::getTableDescription,
-        RegistryManifestDb::getTableDescription,
-        PipelineDb::getTableDescription
-        );
-
+    protected List<Provider<TableDescription>> _tables = null;
     private EuropaConfiguration _europaConfiguration;
 
     public EuropaInjectorModule(EuropaConfiguration europaConfiguration)
     {
+        _tables = new ArrayList<Provider<TableDescription>>();
+        addTableDescription(TokenAuthDb.getTableDescription());
+        addTableDescription(RegistryBlobDb.getTableDescription());
+        addTableDescription(SequenceDb.getTableDescription());
+        addTableDescription(ContainerRepoDb.getTableDescription());
+        addTableDescription(RegistryCredsDb.getTableDescription());
+        addTableDescription(NotificationsDb.getTableDescription());
+        addTableDescription(RepoEventsDb.getTableDescription());
+        addTableDescription(RegistryManifestDb.getTableDescription());
+        addTableDescription(PipelineDb.getTableDescription());
+
         _europaConfiguration = europaConfiguration;
+    }
+
+    protected void addTableDescription(final TableDescription tableDescription)
+    {
+        _tables.add(new Provider<TableDescription>() {
+                public TableDescription get()
+                {
+                    return tableDescription;
+                }
+            });
+    }
+
+    protected void configureEuropaConfiguration()
+    {
+        bind(EuropaConfiguration.class).toProvider(new EuropaConfigurationProvider(_europaConfiguration));
     }
 
     protected void configure()
@@ -64,7 +82,7 @@ public class EuropaInjectorModule extends AbstractModule
         .withSecret(_europaConfiguration.getDbPass());
 
         bind(Index.Factory.class).toProvider(new IndexFactoryProvider(endpoint, creds));
-        bind(EuropaConfiguration.class).toProvider(new EuropaConfigurationProvider(_europaConfiguration));
+        configureEuropaConfiguration();
         bind(ObjectStore.Factory.class).toProvider(new ObjectStoreFactoryProvider(_europaConfiguration));
         bind(ObjectStore.class).toProvider(new ObjectStoreProvider());
         bind(MysqlDataSource.class).toInstance(new MysqlDataSource() {
@@ -84,7 +102,7 @@ public class EuropaInjectorModule extends AbstractModule
 
         Multibinder<TableDescription> tableBinder =
             Multibinder.newSetBinder(binder(), TableDescription.class);
-        for ( Provider<TableDescription> tableProvider : TABLES ) {
+        for ( Provider<TableDescription> tableProvider : _tables ) {
             tableBinder.addBinding().toProvider(tableProvider);
         }
     }

@@ -19,17 +19,17 @@ import com.distelli.objectStore.*;
 public class EuropaConfiguration
 {
     @Getter @Setter
-    private String dbEndpoint;
+    protected String dbEndpoint;
     @Getter @Setter
-    private String dbUser;
+    protected String dbUser;
     @Getter @Setter
-    private String dbPass;
+    protected String dbPass;
     @Getter @Setter
-    private int dbMaxPoolSize = 2;
+    protected int dbMaxPoolSize = 2;
     @Getter @Setter
-    private ObjectStoreConfig objectStore;
+    protected ObjectStoreConfig objectStore;
     @Getter @Setter
-    private EuropaStage stage;
+    protected EuropaStage stage;
 
     public static enum EuropaStage {
         alpha,
@@ -38,24 +38,24 @@ public class EuropaConfiguration
         prod
     }
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    protected static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     static {
         OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     public static class ObjectStoreConfig {
         @Getter @Setter
-        private String type;
+        protected String type;
         @Getter @Setter
-        private String diskStorageRoot;
+        protected String diskStorageRoot;
         @Getter @Setter
-        private String endpoint;
+        protected String endpoint;
         @Getter @Setter
-        private String cred;
+        protected String cred;
         @Getter @Setter
-        private String bucket;
+        protected String bucket;
         @Getter @Setter
-        private String pathPrefix;
+        protected String pathPrefix;
     }
 
     public EuropaConfiguration()

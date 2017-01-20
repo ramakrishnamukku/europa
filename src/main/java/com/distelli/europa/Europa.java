@@ -72,6 +72,8 @@ public class Europa
     protected RouteMatcher _webappRouteMatcher = null;
     protected RouteMatcher _registryApiRouteMatcher = null;
     protected CmdLineArgs _cmdLineArgs = null;
+    protected EuropaStage _stage = null;
+    protected String _configFilePath = null;
 
     public Europa(String[] args)
     {
@@ -88,12 +90,12 @@ public class Europa
             Log4JConfigurator.configure(logsDir, "Europa");
         Log4JConfigurator.setLogLevel("INFO");
         Log4JConfigurator.setLogLevel("com.distelli.europa", "DEBUG");
-        Log4JConfigurator.setLogLevel("com.distelli.webserver", "DEBUG");
-        Log4JConfigurator.setLogLevel("com.distelli.gcr", "DEBUG");
+        Log4JConfigurator.setLogLevel("com.distelli.webserver", "ERROR");
+        Log4JConfigurator.setLogLevel("com.distelli.gcr", "ERROR");
         Log4JConfigurator.setLogLevel("com.distelli.europa.monitor", "ERROR");
         //Log4JConfigurator.setLogLevel("com.distelli.webserver", "DEBUG");
-        String configFilePath = _cmdLineArgs.getOption("config");
-        if(configFilePath == null)
+        _configFilePath = _cmdLineArgs.getOption("config");
+        if(_configFilePath == null)
         {
             log.fatal("Missing value for arg --config");
             System.exit(1);
@@ -110,45 +112,28 @@ public class Europa
             }
         }
 
-        EuropaStage stage = EuropaStage.prod;
+        _stage = EuropaStage.prod;
         String stageArg = _cmdLineArgs.getOption("stage");
         if(stageArg != null) {
             try {
-                stage = EuropaStage.valueOf(stageArg);
+                _stage = EuropaStage.valueOf(stageArg);
             } catch(Throwable t) {
                 throw(new RuntimeException("Invalid value for stage: "+stageArg, t));
             }
         }
-
-        EuropaConfiguration europaConfiguration = EuropaConfiguration.fromFile(new File(configFilePath));
-        europaConfiguration.setStage(stage);
-        europaConfiguration.validate();
-        Injector injector = createInjector(europaConfiguration);
-        injector.injectMembers(this);
-        initialize(injector);
+        initialize();
     }
 
-    protected Injector createInjector(EuropaConfiguration europaConfiguration) {
-        return Guice.createInjector(Stage.PRODUCTION,
-                                    new PersistenceModule(),
-                                    new AjaxHelperModule(),
-                                    new ObjectStoreModule(),
-                                    new EuropaInjectorModule(europaConfiguration));
-    }
-
-    protected void initialize(Injector injector)
+    protected void initializeWebServer(Injector injector)
     {
         _registryApiFilters = Arrays.asList(
             injector.getInstance(RegistryAuthFilter.class));
 
-        try {
-            _objectStore.createBucket(_objectKeyFactory.getDefaultBucket());
-        } catch(Throwable t) {
-            log.error("Failed to create default bucket: "+_objectKeyFactory.getDefaultBucket()+
-                      ": "+t.getMessage(), t);
-        }
-
-        _requestContextFactory = (method, req) -> new EuropaRequestContext(method, req);
+        _requestContextFactory = new RequestContextFactory() {
+                public RequestContext getRequestContext(HTTPMethod httpMethod, HttpServletRequest request) {
+                    return new EuropaRequestContext(httpMethod, request);
+                }
+            };
 
         _requestHandlerFactory = new RequestHandlerFactory() {
                 public RequestHandler getRequestHandler(MatchedRoute route) {
@@ -158,6 +143,31 @@ public class Europa
         _staticContentErrorHandler = injector.getInstance(StaticContentErrorHandler.class);
         _registryApiRouteMatcher = RegistryApiRoutes.getRouteMatcher();
         _webappRouteMatcher = WebAppRoutes.getRouteMatcher();
+    }
+
+    protected void initializeObjectStore()
+    {
+        try {
+            _objectStore.createBucket(_objectKeyFactory.getDefaultBucket());
+        } catch(Throwable t) {
+            log.error("Failed to create default bucket: "+_objectKeyFactory.getDefaultBucket()+
+                      ": "+t.getMessage(), t);
+        }
+    }
+
+    protected void initialize()
+    {
+        EuropaConfiguration europaConfiguration = EuropaConfiguration.fromFile(new File(_configFilePath));
+        europaConfiguration.setStage(_stage);
+        europaConfiguration.validate();
+
+        Injector injector = Guice.createInjector(Stage.PRODUCTION,
+                                                 new PersistenceModule(),
+                                                 new AjaxHelperModule(),
+                                                 new ObjectStoreModule(),
+                                                 new EuropaInjectorModule(europaConfiguration));
+        injector.injectMembers(this);
+        initializeWebServer(injector);
     }
 
     public void start()
