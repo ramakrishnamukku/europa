@@ -4,21 +4,55 @@
 
 .ControlRoom {
     position: relative;
-    
     width: 100%;
     border-radius: 3px;
     min-height: 600px;
 
     .Header {
 		border-radius: 3px 3px 0px 0px;
-		background-color: $dark-blue;	
+		background-color: $dark-blue;
 		height: 40px;
 		display: flex;
     }
 
-
     .Body {
 		background-color: $curtain-color;
 		min-height: 600px;
+
+        .CR_Header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 3px 3px 0px 0px;
+            padding: 0 10px;
+            flex: 1;
+            background-color: #EA3F67;
+            height: 35px;
+
+            span.CR_HeaderTitle {
+                font-weight: bold;
+                color: #fff;
+            }
+
+            span.CR_HeaderClose {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                i {
+                    color: #fff;
+                    font-size: 1.2rem;
+
+                    &:hover {
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+
+        .CR_BodyContent {
+            padding: 14px;
+        }
     }
 }

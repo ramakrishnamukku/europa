@@ -34,15 +34,16 @@ public class NewPipeline extends AjaxHelper<EuropaRequestContext>
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         String domain = requestContext.getOwnerDomain();
-        String containerRepoId = ajaxRequest.getParam("containerRepoId", true);
+        String name = ajaxRequest.getParam("name", true);
+        PageIterator pageIterator = new PageIterator().pageSize(100);
 
         Pipeline pipeline = Pipeline.builder()
-            .domain(domain)
-            .containerRepoId(containerRepoId)
-            .build();
+                                    .domain(domain)
+                                    .name(name)
+                                    .build();
 
         _db.createPipeline(pipeline);
 
-        return JsonSuccess.Success;
+        return _db.listByDomain(domain, pageIterator);
     }
 }

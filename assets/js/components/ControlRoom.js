@@ -9,7 +9,7 @@ export default class ControlRoom extends Component {
 		super(props);
 		this.state = {};
 	}
-	renderHeader(){
+	renderHeader() {
 		if(this.props.renderHeaderContent) {
 			return (
 				<div className="Header" style={this.props.headerStyle || {}}>
@@ -18,7 +18,7 @@ export default class ControlRoom extends Component {
 			);
 		}
 	}
-	renderBody(){
+	renderBody() {
 		return (
 			<div className="Body" style={this.props.bodyStyle || {}}>
 				{this.props.renderBodyContent()}
@@ -32,7 +32,6 @@ export default class ControlRoom extends Component {
 				{this.renderBody()}
 			</div>
 		);
-		
 	}
 }
 

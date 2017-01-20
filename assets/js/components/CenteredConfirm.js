@@ -9,16 +9,18 @@ export default  class CenteredConfirm extends Component {
     super(props);
     this.state = {};
   }
-  renderMsg(){
-    if (this.props.message) {
+  renderMsg() {
+    if (this.props.message && !this.props.noMessage) {
       return (
         <div>
-          <span style={this.props.messageStyle || {}}>{this.props.message}</span>
+          <span style={this.props.messageStyle || {}}>
+            {this.props.message}
+          </span>
         </div>
       );
     }
   }
-  render(){
+  render() {
     return (
       <div className="CenteredDelete">
         {this.renderMsg()}
@@ -40,6 +42,7 @@ export default  class CenteredConfirm extends Component {
 
 CenteredConfirm.propTypes = {
   message: React.PropTypes.string,
+  noMessage: React.PropTypes.bool,
   confirmButtonText:  React.PropTypes.string,
   confirmButtonStyle: React.PropTypes.object,
   onConfirm: React.PropTypes.func.isRequired,
@@ -47,6 +50,7 @@ CenteredConfirm.propTypes = {
 };
 
 CenteredConfirm.defaultProps = {
+  noMessage: false,
   message: "Are you sure?",
   confirmButtonStyle: "Continue"
 };

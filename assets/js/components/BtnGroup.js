@@ -9,24 +9,25 @@ export default class BtnGroup extends Component {
 		super(props);
 		this.state = {};
 	}
-	renderButton(b, i){
+	renderButton(b, i) {
 		let btnClass = 'IconBtn';
 
-		if(b.isActive) {
+		if (b.isActive) {
 			btnClass += ' Active';
 		}
 
 		return (
-			<div key={i} className={btnClass} 
-				 onClick={ b.onClick ? b.onClick : null }
-				 style={(b.leftMargin) ? {marginLeft: '5px'} : {}} 
-				 data-tip={b.toolTip} 
-				 data-for="ToolTipBottom">
+			<div key={i}
+					 className={btnClass}
+					 onClick={ b.onClick ? b.onClick : null }
+					 style={(b.leftMargin) ? {marginLeft: '5px'} : {}}
+					 data-tip={b.toolTip}
+					 data-for="ToolTipBottom">
 				<i className={b.icon} />
 			</div>
 		);
 	}
-	render(){
+	render() {
 		return (
 			<div className="BtnGroup">
 				{this.props.buttons.map(this.renderButton)}
@@ -40,9 +41,9 @@ BtnGroup.propTypes = {
 	  PropTypes.shape({
 	    icon: PropTypes.string,
 	    onClick: PropTypes.func,
-		isActive: PropTypes.bool,
-		leftMargin: PropTypes.bool,
-		toolTip: PropTypes.string
+			isActive: PropTypes.bool,
+			leftMargin: PropTypes.bool,
+			toolTip: PropTypes.string
 	  })
 	)
 }

@@ -1,0 +1,55 @@
+.PipelinesListItem {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    background: #f5f7f9;
+    width: 100%;
+    margin: 0 0 10px;
+    height: 56px;
+    border-radius: 3px;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    &:nth-child(odd) {
+        background: #ededee;
+    }
+
+    span:first-child {
+        width: 49px;
+        font-size: 1.8rem;
+        margin: 0;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    span {
+        margin: 0 49px 0 14px;
+        font-weight: 700;
+    }
+
+    span:last-child {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: flex-end;
+        margin: 0 21px 0 0;
+
+        i {
+            font-size: 1.4rem;
+            color: rgba(0,0,0,.25);
+        }
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}
+
+
