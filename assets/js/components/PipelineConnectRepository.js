@@ -33,11 +33,18 @@ export default class PipelineConnectRepository extends Component {
                        onCancel={ () => this.context.actions.setPipelinePageSection(null) } />
     );
   }
+  onRepoClick() {
+    if (this.props.initialConnect) {
+      this.context.actions.updateInitialRepoConnect(repo);
+    } else {
+      this.context.actions.addPipelineComponent(repo);
+    }
+  }
   renderRepoItem(repo, index) {
     return (
       <div key={index}
            className="ListItem FlexRow"
-           onClick={() => this.context.actions.updateInitialRepoConnect(repo) }>
+           onClick={this.onRepoClick}>
         <img src={RegistryProviderIcons(repo.provider)} />
         {repo.name}
       </div>

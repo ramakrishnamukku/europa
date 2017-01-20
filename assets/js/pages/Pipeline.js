@@ -11,14 +11,23 @@ import PipelineConnectRepository from './../components/PipelineConnectRepository
 export default class Pipeline extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      pipelineContainerRepo: null,
+      loading: true
+    };
   }
   componentDidMount() {
-    this.context.actions.getPipeline(this.props.params.pipelineId);
-
-    if (this.props.repos.length == 0) {
-      this.context.actions.listRepos();
-    }
+    this.context.actions.listRepos()
+    .then( () => {
+      this.context.actions.getPipeline(this.props.params.pipelineId)
+      .then(pipeline => {
+        let repo = this.props.repos.filter(repo => repo.id == pipeline.containerRepoId)[0];
+        this.setState({
+          pipelineContainerRepo: repo || null,
+          loading: false
+        })
+      });
+    })
   }
   renderPage(pipeline) {
     switch (this.props.pipelineStore.section) {
@@ -75,10 +84,9 @@ export default class Pipeline extends Component {
 
 
   render() {
-    console.log(this.props.pipelineStore)
     let pipeline = this.props.pipelineStore.pipeline;
 
-    if (this.props.pipelineStore.getPipelineXHR || !pipeline) {
+    if (this.state.loading) {
       return (
         <div className="PageLoader">
           <Loader />

@@ -144,7 +144,7 @@ export function getPipeline(pipelineId) {
             pipeline: res,
             getPipelineXHR: false,
           })
-        }, () => resolve() );
+        }, () => resolve(res) );
       })
       .catch(err => {
         this.setState({
@@ -257,7 +257,9 @@ export function removePipeline(postData) {
   });
 }
 
-export function addPipelineComponent(postData) {
+export function addPipelineComponent(repo) {
+  // TODO, prepare the postData object
+
   return new Promise((resolve, reject) => {
     this.setState({
       pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
