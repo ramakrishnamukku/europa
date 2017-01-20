@@ -38,9 +38,9 @@ nav {
 
             img {
                 height: 30px;
-                 margin: 0 70px 0 0;
-                 position: relative;
-                 top: 2px;
+                margin: 0 70px 0 0;
+                position: relative;
+                top: 2px;
             }
 
             a.MainNavLink {
@@ -66,7 +66,6 @@ nav {
     }
 
     .NavButtonContainer {
-
         a {
             color: inherit;
             text-decoration: none;
@@ -91,7 +90,31 @@ nav {
     display: flex;
 }
 
+.LandingPageNav {
+    position: relative;
+    width: 100%;
+    background-color: $dark-blue;
+    height: 100px;
+    display: flex;
+    flex-direction: row;
+    padding: 1px 0 0;
+    justify-content: center;
+    align-items: center;
+
+    .PremiumLogo {}
+}
+
+.PageContainer.Dark {
+    background-color: $curtain-color;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
 .PageContent {
+    position: relative;
+    min-height: calc(100% - 275px);
+
     .MaxWidthContainer {
         position: relative;
         max-width: $max-width;
@@ -321,7 +344,6 @@ nav {
     justify-content: space-between;
 }
 
-
 .LightBlueColor {
     color: $light-blue;
 }
@@ -344,6 +366,7 @@ nav {
 
 .ItalicText {
     @extend .Clickable;
+
     font-size: 0.875rem;
     font-style: italic;
     padding-right: 28px;

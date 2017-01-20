@@ -8,6 +8,7 @@
 @import "global/colors.scss";
 
 // Layout
+@import "pages/LandingPage";
 @import "pages/Layout";
 @import "pages/Pipelines";
 @import "pages/Repositories";
@@ -22,6 +23,7 @@
 @import "partials/ContentRow";
 @import "partials/ControlRoom";
 @import "partials/Dropdown";
+@import "partials/Footer";
 @import "partials/Msg";
 @import "partials/Loader";
 @import "partials/RadioButton";

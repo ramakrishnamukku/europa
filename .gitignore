@@ -8,10 +8,8 @@
 
 target/**
 */target/**
-node_modules
-public/js/*
-public/css/*
-public/*.svg
+node_modules/*
+public/*
 
 pom.xml.releaseBackup
 release.properties

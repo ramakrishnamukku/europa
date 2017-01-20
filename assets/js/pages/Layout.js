@@ -16,6 +16,8 @@ import * as NotificationActions from './../actions/NotificationActions'
 import * as RegistryActions from './../actions/RegistryActions'
 import * as SettingsActions from './../actions/SettingsActions'
 
+import Footer from './../components/Footer'
+
 export default class Layout extends Component {
 	constructor(props) {
 		super(props);
@@ -116,20 +118,28 @@ export default class Layout extends Component {
 			return { background: "#25a69c" }
 		}
 	}
-	render() {
-		return (
-			<div className="PageContainer">
-				<nav className="TopNav">
-				 <div className="MaxWidthContainer">
+	renderNav(){
+		if(NPECheck(this.props, 'location/pathname', '') == '/') {
+			return (
+				<Link to="/">
+					<div className="LandingPageNav">
+						<img className="PremiumLogo" src="/public/images/distelli-europa-community-logo.svg"/>
+					</div>
+				</Link>
+			);
+		} 
 
+		return (
+			<nav className="TopNav">
+			 	<div className="MaxWidthContainer">
 					<div className="FlexRow MainNav">
-						<Link to="/">
+						<Link to="/repositories">
 							<img src="/public/images/distelli-europa-logo.svg"
 									 alt="Distelli Europa" />
 						</Link>
-						<Link to="/"
+						<Link to="/repositories"
 							    className="MainNavLink"
-							    style={this.highlightNav(["repository", "new-repository"], true) }>
+							    style={this.highlightNav(["repository", "new-repository", "repositories"], true) }>
 							<span>Repositories</span>
 						</Link>
 						<Link to="/pipelines"
@@ -148,8 +158,26 @@ export default class Layout extends Component {
 							</Link>
 						</div>
 					</div>
-					</div>
-				</nav>
+				</div>
+			</nav>
+		);
+	}
+	renderFooter(){
+		if(NPECheck(this.props, 'location/pathname', '') == '/') {
+			return (
+				<Footer />
+			);
+		}
+	}
+	render() {
+		let pageContainerClassName = 'PageContainer';
+
+		if((NPECheck(this.props, 'location/pathname', '') == '/')) pageContainerClassName += ' Dark';
+
+
+		return (
+			<div className={pageContainerClassName}>
+				{this.renderNav()}
 				<div className="PageContent">
 					<div className="MaxWidthContainer">
 						{React.cloneElement(this.props.children, {...this.state}, null)}
@@ -157,6 +185,7 @@ export default class Layout extends Component {
 						<ReactTooltip id="ToolTipTop" place="top" type="dark" effect="float"/>
 					</div>
 				</div>
+				{this.renderFooter()}
 			</div>
 		);
 	}

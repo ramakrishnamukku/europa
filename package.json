@@ -1,7 +1,7 @@
 {
-  "name": "RAM",
+  "name": "Europa",
   "version": "0.0.1",
-  "description": "Distelli Registry Action Monitor",
+  "description": "Distelli Europa",
   "main": "index.js",
   "repository": {
     "url": "https://github.com/Distelli/Europa.git",
@@ -23,6 +23,7 @@
     "babel-preset-stage-0": "^6.5.0",
     "babel-relay-plugin": "0.9.3",
     "babel-runtime": "^6.11.6",
+    "copy-webpack-plugin": "^4.0.1",
     "debounce": "^1.0.0",
     "es6-promise": "^4.0.5",
     "file-loader": "^0.9.0",

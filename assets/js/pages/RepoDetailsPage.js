@@ -41,7 +41,7 @@ export default class RepoDetailsPage extends Component {
 		clearInterval(this.state.pollEventsInterval);
 	}
 	toRepoList(){
-		this.context.router.push('/');
+		this.context.router.push('/repositories');
 	}
 	renderRepoSettings(activeRepo){
 		if(this.props.repoDetails.showSettings) {

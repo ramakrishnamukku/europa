@@ -7,7 +7,7 @@ export default class NewPipeline extends Component {
     this.state = {};
   }
   toHome(){
-    this.context.router.push('/');
+    this.context.router.push('/repositories');
   }
   render() {
     return (
