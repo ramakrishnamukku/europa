@@ -44,7 +44,7 @@ export default class RepoEventTimeline extends Component {
 						<h3>
 							No Events Found
 						</h3>
-						<p> If you just added this repoistory, it may take a second to populate historical events.</p>
+						<p> If you just added this repository, it may take a second to populate historical events.</p>
 					</div>
 				</div>
 			);
