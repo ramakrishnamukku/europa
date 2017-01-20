@@ -127,7 +127,7 @@ export default class Layout extends Component {
 					</div>
 				</Link>
 			);
-		} 
+		}
 
 		return (
 			<nav className="TopNav">

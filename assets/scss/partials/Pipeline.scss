@@ -1,0 +1,43 @@
+div.project-pipeline {
+  display: flex;
+  flex-flow: column nowrap;
+  padding: 0;
+}
+
+div.project-pipeline div.sources {
+  display: flex;
+  flex-flow: column nowrap;
+  border-bottom: 1px solid rgba(0,0,0,.1);
+  padding: 0 0 0;
+}
+
+div.project-pipeline div.stages {
+  margin: 14px 0;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+div.project-pipeline div.add-step {
+  display: flex;
+  margin: 21px 0 0;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+div.project-pipeline div.add-step div.button {
+  width: 200px;
+}
+
+div.new-pipeline-form {
+  display: block;
+  background: #fff;
+  border-top: 4px solid black;
+  width: calc(100% - 14px);
+  margin: -9px auto 0;
+  min-height: 500px;
+  padding: 21px 0;
+  height: 100vh;
+}
+
+div.new-pipeline-form-interior {}

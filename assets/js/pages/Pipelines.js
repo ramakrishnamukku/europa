@@ -4,6 +4,7 @@ import Btn from './../components/Btn'
 import Loader from './../components/Loader'
 import BtnGroup from './../components/BtnGroup'
 import ControlRoom from './../components/ControlRoom'
+import PipelineStageItem from './../components/PipelineStageItem'
 import CenteredConfirm from './../components/CenteredConfirm'
 
 export default class Pipelines extends Component {
@@ -19,12 +20,12 @@ export default class Pipelines extends Component {
       <div className="ContentContainer">
         <div className="NoContent">
           <h3>
-            No Pipelines
+            You have not created a Pipeline
           </h3>
           <Btn className="LargeBlueButton"
-             onClick={() => console.log("todo")}
-             text="Add Pipeline"
-             canClick={true} />
+               onClick={ this.context.actions.toggleInitNewPipeline }
+               text="Add Pipeline"
+               canClick={true} />
         </div>
       </div>
     );
@@ -109,7 +110,7 @@ export default class Pipelines extends Component {
     if (this.props.pipelinesStore.initNewPipeline) return;
 
     const store = this.props.pipelinesStore;
-    let pipes = store.pipelines;
+    let pipes = store.pipelines || [];
 
     if (store.filteredPipelines) {
       pipes = store.filteredPipelines;
@@ -125,11 +126,13 @@ export default class Pipelines extends Component {
         {pipes.map((pipeline, idx) => {
           return (
             <div className="PipelinesListItem"
+
                  key={pipeline.id}>
               <span>
                 <i className="icon-dis-pipeline" />
               </span>
-              <span>
+              <span onClick={ () => this.context.router.push(`/pipelines/${pipeline.id}`) }
+                    style={ { color: "#1DAFE9"} }>
                 {pipeline.name}
               </span>
               <span>
@@ -152,7 +155,6 @@ export default class Pipelines extends Component {
     );
   }
   render() {
-    console.log(this.props)
     if (this.props.pipelinesStore.pipelinesXHR) {
       return (
         <div className="PageLoader">

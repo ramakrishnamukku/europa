@@ -1,0 +1,219 @@
+div.pipeline-stage-item {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+div.pipeline-grey-wrap {
+    background: #E0E0E0;
+    border: 1px solid #D1D3D4;
+    border-radius: 3px;
+    padding: 14px;
+}
+
+div.pipeline-stage-item div.stage-item-details {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    background: #fff;
+    border-radius: 3px;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.left-icon-col {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    background: #3a73e1;
+    width: 35px;
+    border-radius: 3px 0 0 3px;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.left-icon-col i {
+    color: #fff;
+    font-size: 1.6rem;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.stage-destinations {
+    display: flex;
+    flex-flow: column nowrap;
+    flex: 1;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.add-stage-destination {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    padding: 7px;
+    background: #def3fb;
+    border-radius: 0 0 3px 0;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.add-stage-destination:hover {
+    cursor: pointer;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.add-stage-destination span {
+    color: #2bb0e7;
+    font-weight: bold;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.stage-destination {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    padding: 0 14px;
+    min-height: 65px;
+    height: auto;
+    flex: 1;
+    border-top: 1px solid #E6E7E8;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.stage-destination:first-of-type {
+    border-radius: 3px;
+    border-top: 0px;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.stage-destination:first-of-type {
+    border-radius: 3px;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.stage-destination:first-child {
+    border-top: none;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.stage-destination div.stage-dest-interior {
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.stage-destination div.stage-dest-interior div.stage-dest-details {
+    display: flex;
+    flex: 1;
+    flex-flow: column nowrap;
+    padding: 6px 0;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.stage-destination div.stage-dest-interior div.stage-dest-details span.stage-not-connected {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 300;
+    color: #888;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.stage-destination div.stage-dest-interior i.stage-object-notication-icon {
+    margin: 0 4px 0 0;
+    position: relative;
+    top: 1.5px;
+    font-size: 1.6rem;
+    color: #a478ad;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.stage-destination div.stage-dest-interior i.stage-object-notication-icon:hover {
+    cursor: pointer;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.stage-destination div.stage-dest-interior div.stage-dest-details div {
+    padding: 1px 0 2px;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: center;
+    display: flex;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.stage-destination div.stage-dest-interior div.stage-dest-details div div.meta-details {
+    width: auto;
+    margin: 0 14px -1px 0;
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.stage-destination div.stage-dest-interior div.stage-dest-details div div.meta-details strong {
+    margin: 0 4px 0 0;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.stage-destination div.stage-dest-interior div.delete-stage {
+    width: 35px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.stage-destination div.stage-dest-interior div.delete-stage i {
+    color: #bcbec0;
+    font-size: 1.8rem;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.stage-destination div.stage-dest-interior div.delete-stage i:hover {
+    cursor: pointer;
+    color: red;
+}
+
+div.pipeline-stage-item div.stage-trigger {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: flex-start;
+    height: 65px;
+}
+
+div.pipeline-stage-item div.stage-trigger-toggle {
+    flex: 1;
+    margin: 0 0 0 14px;
+}
+
+div.pipeline-stage-item div.stage-trigger div.stage-trigger-toggle-check {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+div.pipeline-stage-item div.stage-trigger div.stage-trigger-toggle-check i {
+    font-size: 1.8rem;
+    color: #77bf60;
+}
+
+div.pipeline-stage-item div.stage-trigger div.stage-trigger-toggle-check span {
+    display: block;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 0 0 0 5px;
+}
+
+div.pipeline-stage-item div.stage-trigger div.stage-trigger-toggle-check select {
+    border-left: 2px solid #1eabe6;
+    font-size: 1.1rem;
+    border-right: none;
+    border-top: none;
+    border-bottom: none;
+    padding: 0 5px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 0;
+    height: 16px;
+    background: none;
+    margin: 0 0 0 14px;
+    position: relative;
+    top: 0;
+}
+
+div.pipeline-stage-item div.stage-trigger div.stage-trigger-pipe {
+    height: inherit;
+    margin: 0 0 0 39px;
+}
+
+div.pipeline-stage-item div.stage-trigger div.stage-trigger-pipe img {
+    display: block;
+    height: 100%;
+    width: auto;
+}
