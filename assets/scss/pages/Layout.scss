@@ -20,6 +20,11 @@ nav {
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 75px;
+
+            .Flex1 {
+                text-align: right;
+            }
 
             a {
                 i {
