@@ -16,9 +16,6 @@ export default class Pipelines extends Component {
   componentDidMount() {
     this.context.actions.listPipelines();
   }
-  componentWillUnmount() {
-    this.context.actions.resetPipelinesState();
-  }
   renderNoPipelines() {
     return (
       <div className="ContentContainer">
