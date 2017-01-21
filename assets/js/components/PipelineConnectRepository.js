@@ -18,7 +18,8 @@ export default class PipelineConnectRepository extends Component {
     };
   }
   renderConfirm() {
-    if (this.props.pipelinesStore.setContainerRepoXHR) {
+    if (this.props.pipelineStore.setContainerRepoXHR
+        || this.props.pipelineStore.addPipelineComponentXHR) {
       return (
         <div className="PageLoader">
           <Loader />
@@ -29,22 +30,17 @@ export default class PipelineConnectRepository extends Component {
       <CenteredConfirm confirmButtonText="Connect"
                        noMessage={true}
                        confirmButtonStyle={{}}
-                       onConfirm={ this.context.actions.setContainerRepo }
+                       onConfirm={ this.props.initialConnect
+                                   ? this.context.actions.setContainerRepo
+                                   : this.context.actions.addPipelineComponent }
                        onCancel={ () => this.context.actions.setPipelinePageSection(null) } />
     );
-  }
-  onRepoClick() {
-    if (this.props.initialConnect) {
-      this.context.actions.updateInitialRepoConnect(repo);
-    } else {
-      this.context.actions.addPipelineComponent(repo);
-    }
   }
   renderRepoItem(repo, index) {
     return (
       <div key={index}
            className="ListItem FlexRow"
-           onClick={this.onRepoClick}>
+           onClick={ () => this.context.actions.updateRepoConnect(repo) }>
         <img src={RegistryProviderIcons(repo.provider)} />
         {repo.name}
       </div>
@@ -75,7 +71,7 @@ export default class PipelineConnectRepository extends Component {
                         renderItem={(repo, index) => this.renderRepoItem(repo, index)}
                         inputPlaceholder="Docker Image Repository"
                         inputClassName="BlueBorder FullWidth White"
-                        inputValue={NPECheck(this.props.pipelineStore, 'initialRepoConnect/name', "")}
+                        inputValue={NPECheck(this.props.pipelineStore, 'repoConnectTemplate/name', "")}
                         className="Flex1" />
             </div>
             <div className="Flex1">

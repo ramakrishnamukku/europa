@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 import { Link } from 'react-router'
+import NPECheck from './../util/NPECheck'
 import Btn from './../components/Btn'
 import Loader from './../components/Loader'
 import BtnGroup from './../components/BtnGroup'
@@ -14,6 +15,9 @@ export default class Pipelines extends Component {
   }
   componentDidMount() {
     this.context.actions.listPipelines();
+  }
+  componentWillUnmount() {
+    this.context.actions.resetPipelinesState();
   }
   renderNoPipelines() {
     return (
@@ -51,7 +55,7 @@ export default class Pipelines extends Component {
     }
   }
   inputClassName(selector) {
-    let hasSelector = this.props.pipelinesStore.newPipelineTemplate.errorFields.includes(selector)
+    let hasSelector = NPECheck(this.props.pipelinesStore, 'newPipelineTemplate/errorFields', []).includes(selector)
     let className = "BlueBorder FullWidth";
     if (hasSelector) {
       className = "BlueBorder FullWidth Error";
@@ -78,7 +82,7 @@ export default class Pipelines extends Component {
             </label>
             <input className={this.inputClassName("name")}
                    style={ {background: "#fff"} }
-                   value={this.props.pipelinesStore.newPipelineTemplate[name]}
+                   value={NPECheck(this.props.pipelinesStore, 'newPipelineTemplate/name', "")}
                    placeholder="Enter Pipeline name..."
                    onChange={(e) => this.context.actions.updateNewPipelineTemplate("name", e.target.value)} />
           </div>
@@ -126,7 +130,6 @@ export default class Pipelines extends Component {
         {pipes.map((pipeline, idx) => {
           return (
             <div className="PipelinesListItem"
-
                  key={pipeline.id}>
               <span>
                 <i className="icon-dis-pipeline" />
@@ -136,8 +139,7 @@ export default class Pipelines extends Component {
                 {pipeline.name}
               </span>
               <span>
-                <i className="icon-dis-trash"
-                   onClick={ () => this.context.actions.removePipeline({pipelineId: pipeline.id}) } />
+                {/* Saved for delete confirm */}
               </span>
             </div>
           );

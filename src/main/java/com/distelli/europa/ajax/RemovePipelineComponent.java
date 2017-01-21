@@ -33,8 +33,11 @@ public class RemovePipelineComponent extends AjaxHelper<EuropaRequestContext>
 
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
-        // TODO - implement
-        String domain = requestContext.getOwnerDomain();
-        return null;
+        String pipelineId = ajaxRequest.getParam("pipelineId", true);
+        String pipelineComponentId = ajaxRequest.getParam("pipelineComponentId", true);
+
+        _db.removePipelineComponent(pipelineId, pipelineComponentId);
+
+        return _db.getPipeline(pipelineId);
     }
 }

@@ -1,32 +1,27 @@
 import React, { Component, PropTypes } from 'react'
+import ConvertTimeFriendly from './../util/ConvertTimeFriendly'
+import CenteredConfirm from './../components/CenteredConfirm'
+import Loader from './../components/Loader'
 
 export default class PipelineStageItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      deleteToggled: false
+      deleteToggled: false,
+      pipelineComponent: this.props.pipelineComponent
     };
   }
   renderTrigger() {
     if (this.props.empty) return;
     // Don't render for the last stage
-    if (this.props.pipeline.components.length - 1 == this.props.idx) return;
+    if (this.props.pipelineStore.pipeline.components.length - 1 == this.props.idx) return;
+    if (this.props.pipelineStore.pipeline.components.length == 0
+        && this.props.firstStage) return;
 
     return (
       <div className="stage-trigger">
         <div className="stage-trigger-pipe">
-          <img src={ this.props.stage.triggerOn
-                     ? "/_assets/images/dis-pipeline-green.svg"
-                     : "/_assets/images/dis-pipeline-yellow.svg" } />
-        </div>
-        <div className="stage-trigger-toggle">
-          <div className="stage-trigger-toggle-check">
-            <i className={this.props.stage.triggerOn
-                          ? "icon-dis-box-check cursor-on-hover"
-                          : "icon-dis-box-uncheck cursor-on-hover"}
-               onClick={this.toggleAutoDeployTrigger} />
-            <span>Auto Push</span>
-          </div>
+          <img src="/public/images/dis-pipeline-green.svg" />
         </div>
       </div>
     );
@@ -49,7 +44,7 @@ export default class PipelineStageItem extends Component {
           <div className="stage-dest-details">
             <div style={ {position: "relative", top: "2px"} }>
               <span style={{color: "#3a73e1", fontSize: "1.3rem", fontWeight: "bold"}}>
-                {dest.deploymentName}
+                hi
               </span>
             </div>
             <div>
@@ -67,7 +62,6 @@ export default class PipelineStageItem extends Component {
       </div>
     );
   }
-
   renderEmptyStage() {
     return (
       <div className="pipeline-stage-item">
@@ -89,12 +83,7 @@ export default class PipelineStageItem extends Component {
       </div>
     );
   }
-
-  render() {
-    if (this.props.empty) {
-      return this.renderEmptyStage();
-    }
-
+  renderStage(repo) {
     return (
       <div className="pipeline-stage-item">
         <div className="pipeline-grey-wrap">
@@ -103,7 +92,7 @@ export default class PipelineStageItem extends Component {
               <i className="icon-dis-repo" />
             </div>
             <div className="stage-destinations">
-              {this.renderStageDetails()}
+              {this.renderInterior(repo)}
             </div>
           </div>
         </div>
@@ -111,7 +100,97 @@ export default class PipelineStageItem extends Component {
       </div>
     );
   }
+  renderDeleteStage() {
+    if (!this.props.firstStage) {
+      return (
+        <div className="delete-stage">
+          <i className="icon-dis-close"
+             onClick={() => this.setState({deleteToggled: !this.state.deleteToggled})} />
+        </div>
+      );
+    }
+  }
+  renderInterior(repo) {
+    if (this.state.deleteToggled) {
+      return (
+        <div className="stage-destination">
+          <CenteredConfirm onConfirm={ () => this.context.actions.removePipelineComponent(this.state.pipelineComponent.id) }
+                           onCancel={ () => this.setState({deleteToggled: !this.state.deleteToggled}) }
+                           confirmButtonStyle={{background: "#df423a"}}
+                           confirmButtonText="Remove"
+                           messageStyle={ {fontSize: ".75rem", margin: "7px 0 4px"} }
+                           message="Are you sure you want to remove this stage?" />
+        </div>
+      );
+    }
+
+    if (!this.props.firstStage
+        && this.props.pipelineStore.removePipelineComponentXHR
+        && this.props.pipelineStore.removePipelineComponentXHR == this.state.pipelineComponent.id) {
+      return (
+        <div className="stage-destination">
+          <div className="PageLoader">
+            <Loader />
+          </div>
+        </div>
+      );
+    }
+
+    let lastEvent = repo.lastEvent;
+    let friendlyTime = (lastEvent.eventTime) ? ConvertTimeFriendly(lastEvent.eventTime) : 'Unknown';
+
+    return (
+      <div className="stage-destination">
+        <div className="stage-dest-interior">
+          <div className="stage-dest-details">
+            <div style={ {position: "relative", top: "2px"} }>
+              <span style={{color: "#3a73e1", fontSize: "1rem", fontWeight: "bold"}}>
+                {repo.name}
+              </span>
+            </div>
+            <div>
+              <div className="meta-details">
+                <strong>Last Pushed:</strong>
+                <span>{friendlyTime}</span>
+              </div>
+              <div className="meta-details">
+                <strong>Tags:</strong>
+                <span>
+                  {lastEvent.imageTags.map((tag, index) => {
+                    return (
+                      <span className="Tag" key={index}>
+                        {tag}
+                      </span>
+                    );
+                  })}
+                </span>
+              </div>
+            </div>
+          </div>
+          {this.renderDeleteStage()}
+        </div>
+      </div>
+    );
+  }
+  render() {
+        console.log(this.props)
+    if (this.props.empty) {
+      return this.renderEmptyStage();
+    }
+
+    return this.renderStage(this.props.repo);
+  }
 }
+
+PipelineStageItem.childContextTypes = {
+    actions: PropTypes.object,
+    router: PropTypes.object
+};
+
+PipelineStageItem.contextTypes = {
+    actions: PropTypes.object,
+    router: PropTypes.object
+};
 
 PipelineStageItem.propTypes = {
   empty: PropTypes.bool,

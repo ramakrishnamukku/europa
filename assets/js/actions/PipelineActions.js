@@ -31,7 +31,7 @@ export function pipelinesState() {
 export function singlePipelineState() {
   return {
     pipeline: null,
-    initialRepoConnect: null,
+    repoConnectTemplate: null,
     section: null,
     // XHR
     getPipelineXHR: false,
@@ -43,6 +43,18 @@ export function singlePipelineState() {
   }
 }
 
+export function resetSinglePipelineState() {
+  this.setState({
+    pipelineStore: GR.modifyProperty(this.state.pipelineStore, singlePipelineState.call(this))
+  });
+}
+
+export function resetPipelinesState() {
+  this.setState({
+    pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, pipelinesState.call(this))
+  });
+}
+
 export function setPipelinePageSection(section) {
   this.setState({
     pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
@@ -51,10 +63,10 @@ export function setPipelinePageSection(section) {
   })
 }
 
-export function updateInitialRepoConnect(repo) {
+export function updateRepoConnect(repo) {
   this.setState({
     pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
-      initialRepoConnect: repo
+      repoConnectTemplate: repo
     })
   })
 }
@@ -160,7 +172,7 @@ export function getPipeline(pipelineId) {
 export function setContainerRepo() {
   const postData = {
     pipelineId: this.state.pipelineStore.pipeline.id,
-    containerRepoId: this.state.pipelineStore.initialRepoConnect.id
+    containerRepoId: this.state.pipelineStore.repoConnectTemplate.id
   }
 
   return new Promise((resolve, reject) => {
@@ -175,7 +187,7 @@ export function setContainerRepo() {
           pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
             pipeline: res,
             setContainerRepoXHR: false,
-            initialRepoConnect: null,
+            repoConnectTemplate: null,
             section: null
           })
         }, () => resolve() );
@@ -230,7 +242,11 @@ export function createPipeline() {
   });
 }
 
-export function removePipeline(postData) {
+export function removePipeline() {
+  const postData = {
+    pipelineId: this.state.pipelineStore.pipeline.id
+  }
+
   return new Promise((resolve, reject) => {
     this.setState({
       pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
@@ -244,7 +260,10 @@ export function removePipeline(postData) {
             pipelines: res,
             removePipelineXHR: false,
           })
-        }, () => resolve() );
+        }, () => {
+          this.context.router.push('/pipelines')
+          resetSinglePipelineState.call(this)
+        });
       })
       .catch(err => {
         this.setState({
@@ -257,22 +276,31 @@ export function removePipeline(postData) {
   });
 }
 
-export function addPipelineComponent(repo) {
-  // TODO, prepare the postData object
+export function addPipelineComponent() {
+  const postData = {
+    destinationContainerRepoId: this.state.pipelineStore.repoConnectTemplate.id,
+    pipelineId: this.state.pipelineStore.pipeline.id
+  }
 
   return new Promise((resolve, reject) => {
     this.setState({
-      pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
+      pipelinesStore: GR.modifyProperty(this.state.pipelineStore, {
         addPipelineComponentXHR: true,
       })
     }, () => {
       RAjax.POST('AddPipelineComponent', {}, postData)
       .then(res => {
-        // TODO
+        this.setState({
+          pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
+            pipeline: res,
+            addPipelineComponentXHR: false,
+            section: null,
+          })
+        }, () => resolve(res) );
       })
       .catch(err => {
         this.setState({
-          pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
+          pipelinesStore: GR.modifyProperty(this.state.pipelineStore, {
             addPipelineComponentXHR: false,
           })
         }, () => reject() );
@@ -303,20 +331,30 @@ export function movePipelineComponent(postData) {
   });
 }
 
-export function removePipelineComponent(postData) {
+export function removePipelineComponent(pipelineComponentId) {
+  const postData = {
+    pipelineComponentId: pipelineComponentId,
+    pipelineId: this.state.pipelineStore.pipeline.id
+  }
+
   return new Promise((resolve, reject) => {
     this.setState({
-      pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
-        removePipelineComponentXHR: true,
+      pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
+        removePipelineComponentXHR: pipelineComponentId,
       })
     }, () => {
       RAjax.POST('RemovePipelineComponent', {}, postData)
       .then(res => {
-        // TODO
+        this.setState({
+          pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
+            pipeline: res,
+            removePipelineComponentXHR: false,
+          })
+        }, () => resolve(res) );
       })
       .catch(err => {
         this.setState({
-          pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
+          pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
             removePipelineComponentXHR: false,
           })
         }, () => reject() );

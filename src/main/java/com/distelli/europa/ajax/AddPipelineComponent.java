@@ -13,6 +13,8 @@ import com.distelli.gcr.auth.*;
 import com.distelli.gcr.models.*;
 import com.distelli.persistence.*;
 import com.distelli.webserver.*;
+import com.distelli.europa.models.PipelineComponent;
+import com.distelli.europa.models.PCCopyToRepository;
 import com.google.inject.Singleton;
 import org.eclipse.jetty.http.HttpMethod;
 import lombok.extern.log4j.Log4j;
@@ -33,8 +35,15 @@ public class AddPipelineComponent extends AjaxHelper<EuropaRequestContext>
 
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
-        // TODO - implement
-        String domain = requestContext.getOwnerDomain();
-        return null;
+        String pipelineId = ajaxRequest.getParam("pipelineId", true);
+        String destinationContainerRepoId = ajaxRequest.getParam("destinationContainerRepoId", true);
+
+        PipelineComponent component = PCCopyToRepository.builder()
+            .destinationContainerRepoId(destinationContainerRepoId)
+            .build();
+
+        _db.addPipelineComponent(pipelineId, component, null);
+
+        return _db.getPipeline(pipelineId);
     }
 }
