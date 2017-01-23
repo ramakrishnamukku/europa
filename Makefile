@@ -33,7 +33,6 @@ git-is-master:
 	[ master = "$$(git rev-parse --abbrev-ref HEAD)" ]
 
 publish: git-is-clean git-is-master
-	. ~/.distelli.config && \
 	mvn -Dsurefire.useFile=false -DgenerateBackupPoms=false -DuseReleaseProfile=false -DscmCommentPrefix='[skip ci][release:prepare]' release:prepare release:perform && \
 	git push --follow-tags
 
