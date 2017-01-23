@@ -21,10 +21,12 @@ public class EuropaTestConfigProvider implements Provider<EuropaTestConfig>
     public EuropaTestConfigProvider()
     {
         String testConfigFilePath = System.getenv("EUROPA_TEST_CONFIG");
-        if(testConfigFilePath == null)
-            throw(new IllegalArgumentException("You must set the EUROPA_TEST_CONFIG env variable before running the tests"));
-        File testConfigFile = new File(testConfigFilePath);
-        _europaTestConfig = EuropaTestConfig.fromFile(testConfigFile);
+        if(testConfigFilePath != null) {
+            File testConfigFile = new File(testConfigFilePath);
+            _europaTestConfig = EuropaTestConfig.fromFile(testConfigFile);
+        } else {
+            _europaTestConfig = EuropaTestConfig.fromEnvironment();
+        }
     }
 
     @Override
