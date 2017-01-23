@@ -30,13 +30,18 @@ div.pipeline-stage-item div.stage-destination-wrap div.left-icon-col {
     justify-content: center;
     align-items: center;
     background: #3a73e1;
-    width: 35px;
+    width: 30px;
     border-radius: 3px 0 0 3px;
 }
 
 div.pipeline-stage-item div.stage-destination-wrap div.left-icon-col i {
     color: #fff;
     font-size: 1.6rem;
+}
+
+div.pipeline-stage-item div.stage-destination-wrap div.left-icon-col img {
+    width: 21px;
+    height: auto;
 }
 
 div.pipeline-stage-item div.stage-destination-wrap div.stage-destinations {
@@ -130,14 +135,16 @@ div.pipeline-stage-item div.stage-destination-wrap div.stage-destination div.sta
 
 div.pipeline-stage-item div.stage-destination-wrap div.stage-destination div.stage-dest-interior div.stage-dest-details div div.meta-details {
     width: auto;
-    margin: 0 14px -1px 0;
+    margin: 0 28px -1px 0;
     display: flex;
     flex-flow: row nowrap;
-    font-size: .8rem;
+    font-size: .6875rem;
+    font-weight: 400;
 }
 
 div.pipeline-stage-item div.stage-destination-wrap div.stage-destination div.stage-dest-interior div.stage-dest-details div div.meta-details strong {
     margin: 0 4px 0 0;
+    font-weight: 600;
 }
 
 div.pipeline-stage-item div.stage-destination-wrap div.stage-destination div.stage-dest-interior div.delete-stage {

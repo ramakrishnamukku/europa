@@ -156,6 +156,7 @@ export default class Pipeline extends Component {
     );
   }
   render() {
+    console.log(this.state)
     let pipeline = this.props.pipelineStore.pipeline;
 
     if (this.state.loading) {

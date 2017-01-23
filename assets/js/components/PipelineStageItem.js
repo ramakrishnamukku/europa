@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import ConvertTimeFriendly from './../util/ConvertTimeFriendly'
 import CenteredConfirm from './../components/CenteredConfirm'
 import Loader from './../components/Loader'
+import NPECheck from './../util/NPECheck'
 
 export default class PipelineStageItem extends Component {
   constructor(props) {
@@ -31,37 +32,6 @@ export default class PipelineStageItem extends Component {
       return <option value="">Select...</option>
     }
   }
-  renderStageDetails() {
-    if (this.state.deleteToggled) {
-      return (
-        <div>are you sure?</div>
-      );
-    }
-
-    return (
-      <div className="stage-destination">
-        <div className="stage-dest-interior">
-          <div className="stage-dest-details">
-            <div style={ {position: "relative", top: "2px"} }>
-              <span style={{color: "#3a73e1", fontSize: "1.3rem", fontWeight: "bold"}}>
-                hi
-              </span>
-            </div>
-            <div>
-              <div className="meta-details">
-                <strong>Cluster:</strong>
-                <span>Foo</span>
-              </div>
-            </div>
-            <div className="delete-stage">
-              <i className="icon-dis-close"
-                 onClick={() => this.setState({deleteToggled: !this.state.deleteToggled})} />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
   renderEmptyStage() {
     return (
       <div className="pipeline-stage-item">
@@ -88,8 +58,8 @@ export default class PipelineStageItem extends Component {
       <div className="pipeline-stage-item">
         <div className="pipeline-grey-wrap">
           <div className="stage-destination-wrap">
-            <div className="left-icon-col">
-              <i className="icon-dis-repo" />
+            <div className="left-icon-col" style={ {background: "#2E5597"} }>
+              <img src="/public/images/distelli-europa-mark.svg"/>
             </div>
             <div className="stage-destinations">
               {this.renderInterior(repo)}
@@ -136,7 +106,10 @@ export default class PipelineStageItem extends Component {
       );
     }
 
-    let lastEvent = repo.lastEvent;
+    let lastEvent = NPECheck(repo, 'lastEvent', {
+      imageTags: [],
+      imageSha: "N/A"
+    });
     let friendlyTime = (lastEvent.eventTime) ? ConvertTimeFriendly(lastEvent.eventTime) : 'Unknown';
 
     return (
@@ -144,7 +117,7 @@ export default class PipelineStageItem extends Component {
         <div className="stage-dest-interior">
           <div className="stage-dest-details">
             <div style={ {position: "relative", top: "2px"} }>
-              <span style={{color: "#3a73e1", fontSize: "1rem", fontWeight: "bold"}}>
+              <span style={{color: "#1DAFE9", fontSize: ".75rem", fontWeight: "900"}}>
                 {repo.name}
               </span>
             </div>
@@ -152,6 +125,14 @@ export default class PipelineStageItem extends Component {
               <div className="meta-details">
                 <strong>Last Pushed:</strong>
                 <span>{friendlyTime}</span>
+              </div>
+              <div className="meta-details">
+                <strong>Image SHA:</strong>
+                <span>
+                  { lastEvent.imageSha != "N/A"
+                    ? `${lastEvent.imageSha.substring(7, lastEvent.imageSha.length)}`
+                    : lastEvent.imageSha }
+                </span>
               </div>
               <div className="meta-details">
                 <strong>Tags:</strong>
@@ -173,7 +154,6 @@ export default class PipelineStageItem extends Component {
     );
   }
   render() {
-        console.log(this.props)
     if (this.props.empty) {
       return this.renderEmptyStage();
     }
