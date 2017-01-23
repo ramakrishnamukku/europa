@@ -49,6 +49,14 @@ input.BlueBorder.Search {
     }
 }
 
+input.BlueBorder.Search.Small {
+    font-size: 0.9rem;
+    background-size: 14px 14px;
+    background-position: 0px 11px;
+    padding-left: 20px;
+}
+
+
 select.BlueBorder.SuccessBg, input.BlueBorder.SuccessBg {
     background-color: $light-green;
 }
