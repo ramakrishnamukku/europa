@@ -35,7 +35,7 @@ export function listRegistries() {
   this.setState({
     registriesXHR: (this.state.registries.length) ? false : true
   }, () => {
-    RAjax.GET('ListRegistryCreds', {})
+    RAjax.GET.call(this, 'ListRegistryCreds', {})
       .then((res) => {
 
         let registriesMap = res.reduce((cur, repo) => {
@@ -72,7 +72,7 @@ export function deleteRegistry() {
       deleteRegistryXHR: true
     })
   }, () => {
-    RAjax.POST('DeleteRegistryCreds', {}, this.state.registry.registrySelectedForDelete)
+    RAjax.POST.call(this, 'DeleteRegistryCreds', {}, this.state.registry.registrySelectedForDelete)
       .then((res) => {
         this.setState({
           registry: GA.modifyProperty(this.state.registry, {
@@ -199,7 +199,7 @@ export function addRegistryRequest() {
         url = 'SaveGcrServiceAccountCreds'
       }
 
-      RAjax.POST(url, this.state.addRegistry.newRegistry)
+      RAjax.POST.call(this, url, this.state.addRegistry.newRegistry)
         .then((res) => {
           this.setState({
             addRegistry: GA.modifyProperty(this.state.addRegistry, {
@@ -286,7 +286,7 @@ export function getRegionsForProvider() {
     let provider = NPECheck(this.state.addRegistry, 'newRegistry/provider', null);
 
     if (provider) {
-      RAjax.GET('GetRegionsForProvider', {
+      RAjax.GET.call(this, 'GetRegionsForProvider', {
           provider
         })
         .then((res) => {

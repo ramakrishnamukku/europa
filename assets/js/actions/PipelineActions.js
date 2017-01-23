@@ -122,7 +122,7 @@ export function listPipelines() {
         pipelinesXHR: true,
       })
     }, () => {
-      RAjax.GET('ListPipelines')
+      RAjax.GET.call(this, 'ListPipelines')
       .then(res => {
         this.setState({
           pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
@@ -149,7 +149,7 @@ export function getPipeline(pipelineId) {
         getPipelineXHR: true,
       })
     }, () => {
-      RAjax.GET('GetPipeline', { pipelineId } )
+      RAjax.GET.call(this, 'GetPipeline', { pipelineId } )
       .then(res => {
         this.setState({
           pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
@@ -181,7 +181,7 @@ export function setContainerRepo() {
         setContainerRepoXHR: true,
       })
     }, () => {
-      RAjax.POST('SetPipelineContainerRepoId', {}, postData)
+      RAjax.POST.call(this, 'SetPipelineContainerRepoId', {}, postData)
       .then(res => {
         this.setState({
           pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
@@ -220,7 +220,7 @@ export function createPipeline() {
         newPipelineXHR: true,
       })
     }, () => {
-      RAjax.POST('NewPipeline', {}, newPipeline)
+      RAjax.POST.call(this, 'NewPipeline', {}, newPipeline)
       .then(res => {
         this.setState({
           pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
@@ -253,7 +253,7 @@ export function removePipeline() {
         removePipelineXHR: true,
       })
     }, () => {
-      RAjax.POST('RemovePipeline', {}, postData)
+      RAjax.POST.call(this, 'RemovePipeline', {}, postData)
       .then(res => {
         this.setState({
           pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
@@ -288,7 +288,7 @@ export function addPipelineComponent() {
         addPipelineComponentXHR: true,
       })
     }, () => {
-      RAjax.POST('AddPipelineComponent', {}, postData)
+      RAjax.POST.call(this, 'AddPipelineComponent', {}, postData)
       .then(res => {
         this.setState({
           pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
@@ -316,7 +316,7 @@ export function movePipelineComponent(postData) {
         movePipelineComponentXHR: true,
       })
     }, () => {
-      RAjax.POST('MovePipelineComponent', {}, postData)
+      RAjax.POST.call(this, 'MovePipelineComponent', {}, postData)
       .then(res => {
         // TODO
       })
@@ -343,7 +343,7 @@ export function removePipelineComponent(pipelineComponentId) {
         removePipelineComponentXHR: pipelineComponentId,
       })
     }, () => {
-      RAjax.POST('RemovePipelineComponent', {}, postData)
+      RAjax.POST.call(this, 'RemovePipelineComponent', {}, postData)
       .then(res => {
         this.setState({
           pipelineStore: GR.modifyProperty(this.state.pipelineStore, {

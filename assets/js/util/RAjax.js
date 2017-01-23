@@ -1,8 +1,17 @@
 /*
   @author Sam Heutmaker [samheutmaker@gmail.com]
 */
+import NPECheck from './NPECheck'
 
-export function POST(operation = '', content = {}, params = {}, url = '/ajax') {
+const baseURL = '/ajax'
+
+export function POST(operation = '', content = {}, params = {}, url = baseURL) {
+  let username = NPECheck(this, 'state/ctx/username', false);
+
+  if (url == baseURL && username) {
+    url = `/${username}${url}`
+  }
+
   let request = new Request(url, {
     method: 'POST',
     mode: 'cors',
@@ -28,7 +37,13 @@ export function POST(operation = '', content = {}, params = {}, url = '/ajax') {
     });
 }
 
-export function GET(operation = '', params = {}, url = '/ajax') {
+export function GET(operation = '', params = {}, url = baseURL) {
+  let username = NPECheck(this, 'state/ctx/username', false);
+
+  if (url == baseURL && username) {
+    url = `/${username}${url}`
+  }
+
   params = {
     op: operation,
     ...params,

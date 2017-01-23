@@ -69,7 +69,7 @@ export function clearNotifError() {
 export function testNewNotification() {
   if (!isAddNotificationValid.call(this)) return;
 
-  RAjax.POST('TestWebhookDelivery', {
+  RAjax.POST.call(this, 'TestWebhookDelivery', {
       notification: this.state.notif.newNotification
     })
     .then((res) => {
@@ -104,7 +104,7 @@ export function testExistingNotification(notification) {
       }
     })
   }, () => {
-    RAjax.POST('TestWebhookDelivery', {
+    RAjax.POST.call(this, 'TestWebhookDelivery', {
         notification
       })
       .then((res) => {
@@ -164,7 +164,7 @@ export function listRepoNotifications(repoId, skipXHR) {
         notifsXHR: (skipXHR) ? false : true
       })
     }, () => {
-      RAjax.GET('ListRepoNotifications', {
+      RAjax.GET.call(this, 'ListRepoNotifications', {
           repoId
         })
         .then((res) => {
@@ -199,7 +199,7 @@ export function redeliverNotification(recordId) {
         redeliverXHRID: recordId
       })
     }, () => {
-      RAjax.POST('RedeliverWebhook', {}, {
+      RAjax.POST.call(this, 'RedeliverWebhook', {}, {
           notificationId: recordId,
           repoId,
           eventId
@@ -268,7 +268,7 @@ export function addRepoNotification(skipXHR) {
         addNotifXHR: (skipXHR) ? false : true
       })
     }, () => {
-      RAjax.POST('SaveRepoNotification', postData, params)
+      RAjax.POST.call(this, 'SaveRepoNotification', postData, params)
         .then((res) => {
           this.setState({
             notif: GA.modifyProperty(this.state.notif, {
@@ -340,7 +340,7 @@ export function deleteNotification(skipXHR) {
         deleteNotificationXHR: (skipXHR) ? false : true
       })
     }, () => {
-      RAjax.POST('DeleteRepoNotification', {}, {
+      RAjax.POST.call(this, 'DeleteRepoNotification', {}, {
           notificationId: this.state.notif.deleteNotifId
         })
         .then((res) => {
@@ -419,7 +419,7 @@ export function appendNotificationRecord(newRecord) {
 }
 
 export function getNotificationRecord(recordId) {
-  return RAjax.GET('GetNotificationRecord', {
+  return RAjax.GET.call(this, 'GetNotificationRecord', {
     notificationId: recordId
   });
 }

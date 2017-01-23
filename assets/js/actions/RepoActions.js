@@ -25,7 +25,7 @@ export function listRepos() {
     this.setState({
       reposXHR: (this.state.repos.length) ? false : true
     }, () => {
-      RAjax.GET('ListContainerRepos', {})
+      RAjax.GET.call(this, 'ListContainerRepos', {})
         .then((res) => {
 
           let reposMap = res.reduce((cur, repo) => {
@@ -135,7 +135,7 @@ export function listReposForRegistry() {
         reposInRegistryQuery: '',
       })
     }, () => {
-      RAjax.POST('ListReposInRegistry', {}, credId ? {
+      RAjax.POST.call(this, 'ListReposInRegistry', {}, credId ? {
           credId
         } : registry)
         .then((res) => {
@@ -238,7 +238,7 @@ export function addRepoRequest(afterAddCb) {
     })
   }, () => {
 
-    RAjax.POST('SaveContainerRepo', postData)
+    RAjax.POST.call(this, 'SaveContainerRepo', postData)
       .then((res) => {
         this.setState({
           addRepo: GA.modifyProperty(this.state.addRepo, {
@@ -381,7 +381,7 @@ export function deleteActiveRepo(afterDeleteCb) {
       deleteXHR: true
     })
   }, () => {
-    RAjax.POST('DeleteContainerRepo', {}, {
+    RAjax.POST.call(this, 'DeleteContainerRepo', {}, {
         id: this.state.repoDetails.activeRepo.id
       })
       .then((res) => {
@@ -417,7 +417,7 @@ export function listRepoEvents(repoId, skipXHR) {
       eventsXHR: (skipXHR) ? false : true
     })
   }, () => {
-    RAjax.GET('ListRepoEvents', {
+    RAjax.GET.call(this, 'ListRepoEvents', {
         repoId
       })
       .then((res) => {

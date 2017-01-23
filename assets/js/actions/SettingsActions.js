@@ -69,7 +69,7 @@ export function listAuthTokens() {
       }
     })
   }, () => {
-    RAjax.GET('ListAuthTokens', {})
+    RAjax.GET.call(this, 'ListAuthTokens', {})
       .then((res) => {
         this.setState({
           settings: Reducers(this.state.settings, {
@@ -108,7 +108,7 @@ export function createAuthToken() {
         }
       })
     }, () => {
-      RAjax.POST('CreateAuthToken')
+      RAjax.POST.call(this, 'CreateAuthToken')
         .then((res) => {
           this.setState({
             settings: Reducers(this.state.settings, {
@@ -149,7 +149,7 @@ export function deleteAuthToken() {
     }, () => {
       let token = NPECheck(this.state, 'settings/tokens/selectedTokenForDelete', '');
 
-      RAjax.POST('DeleteAuthToken', {}, {
+      RAjax.POST.call(this, 'DeleteAuthToken', {}, {
           token
         })
         .then((res) => {
@@ -193,7 +193,7 @@ export function setAuthTokenStatus(tokenString, status) {
         }
       })
     }, () => {
-      RAjax.POST('SetAuthTokenStatus', {
+      RAjax.POST.call(this, 'SetAuthTokenStatus', {
           token: tokenString,
           status
         })
