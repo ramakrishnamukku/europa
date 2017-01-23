@@ -152,7 +152,7 @@ public class Europa
     protected void initialize()
     {
         EuropaConfiguration europaConfiguration = null;
-        if(_configFilePath == null)
+        if(_configFilePath != null)
             europaConfiguration = EuropaConfiguration.fromFile(new File(_configFilePath));
         else
             europaConfiguration = EuropaConfiguration.fromEnvironment();
