@@ -27,11 +27,15 @@ public class TestPipelineDb {
 
     private static Injector createInjector() {
         String path = System.getenv("EUROPA_CONFIG");
-        if ( null == path )
-            path = "EuropaConfig.json";
-        File file = new File(path);
-        if ( ! file.exists() ) return null;
-        EuropaConfiguration config = EuropaConfiguration.fromFile(file);
+        EuropaConfiguration config = null;
+        if(path != null) {
+            File file = new File(path);
+            if(!file.exists())
+                throw(new IllegalStateException("Invalid value for EUROPA_CONFIG env var: "+path));
+            config = EuropaConfiguration.fromFile(file);
+        } else {
+            config = EuropaConfiguration.fromEnvironment();
+        }
         return Guice.createInjector(
             new PersistenceModule(),
             new ObjectStoreModule(),

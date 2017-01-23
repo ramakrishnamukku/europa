@@ -17,5 +17,7 @@ release.properties
 .DS_Store
 */.DS_Store
 tmp/*
+europa-config.sh
+europa-test-config.sh
 EuropaConfig.json
 EuropaTestConfig.json

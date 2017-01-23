@@ -95,12 +95,6 @@ public class Europa
         Log4JConfigurator.setLogLevel("com.distelli.europa.monitor", "ERROR");
         //Log4JConfigurator.setLogLevel("com.distelli.webserver", "DEBUG");
         _configFilePath = _cmdLineArgs.getOption("config");
-        if(_configFilePath == null)
-        {
-            log.fatal("Missing value for arg --config");
-            System.exit(1);
-        }
-
         String portStr = _cmdLineArgs.getOption("port");
         if(portStr != null)
         {
@@ -157,7 +151,11 @@ public class Europa
 
     protected void initialize()
     {
-        EuropaConfiguration europaConfiguration = EuropaConfiguration.fromFile(new File(_configFilePath));
+        EuropaConfiguration europaConfiguration = null;
+        if(_configFilePath == null)
+            europaConfiguration = EuropaConfiguration.fromFile(new File(_configFilePath));
+        else
+            europaConfiguration = EuropaConfiguration.fromEnvironment();
         europaConfiguration.setStage(_stage);
         europaConfiguration.validate();
 

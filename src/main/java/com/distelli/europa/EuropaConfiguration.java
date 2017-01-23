@@ -14,8 +14,10 @@ import lombok.Getter;
 import lombok.Setter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.log4j.Log4j;
 import com.distelli.objectStore.*;
 
+@Log4j
 public class EuropaConfiguration
 {
     @Getter @Setter
@@ -95,6 +97,58 @@ public class EuropaConfiguration
                 throw(new RuntimeException("Invalid or Missing value for config: objectStore.diskStorageRoot"));
             break;
         }
+    }
+
+    public static final EuropaConfiguration fromEnvironment() {
+        String dbEndpoint = getEnvVar("EUROPA_DB_ENDPOINT");
+        String dbUser = getEnvVar("EUROPA_DB_USER");
+        String dbPass = getEnvVar("EUROPA_DB_PASS");
+        int dbPoolSize = 2;
+        String dbPoolSizeStr = null;
+        try {
+            dbPoolSizeStr = getEnvVar("EUROPA_DB_POOL_SIZE");
+            dbPoolSize = Integer.parseInt(dbPoolSizeStr);
+        } catch(Throwable t) {
+            log.error("Invalid Value for Env Variable: EUROPA_DB_POOL_SIZE");
+            dbPoolSize = 2;
+        }
+        String objectStoreType = getEnvVar("EUROPA_OS_TYPE");
+        String objectStoreEndpoint = getEnvVar("EUROPA_OS_ENDPOINT");
+        String objectStoreCredKey = getEnvVar("EUROPA_OS_CRED_KEY");
+        String objectStoreCredSecret = getEnvVar("EUROPA_OS_CRED_SECRET");
+        String objectStoreBucket = getEnvVar("EUROPA_OS_BUCKET");
+        String objectStoreDiskStorageRoot = null;
+        String objectStorePathPrefix = null;
+        try {
+            objectStorePathPrefix = getEnvVar("EUROPA_OS_PATH_PREFIX");
+            objectStorePathPrefix = getEnvVar("EUROPA_OS_DISK_ROOT");
+        } catch(IllegalStateException ise) {
+            //these are not required variables
+        }
+
+        EuropaConfiguration config = new EuropaConfiguration();
+        config.setDbEndpoint(dbEndpoint);
+        config.setDbUser(dbUser);
+        config.setDbPass(dbPass);
+        config.setDbMaxPoolSize(dbPoolSize);
+
+        ObjectStoreConfig osConfig = new ObjectStoreConfig();
+        osConfig.setType(objectStoreType);
+        osConfig.setDiskStorageRoot(objectStoreDiskStorageRoot);
+        osConfig.setEndpoint(objectStoreEndpoint);
+        osConfig.setCred(String.format("%s:%s", objectStoreCredKey, objectStoreCredSecret));
+        osConfig.setBucket(objectStoreBucket);
+        osConfig.setPathPrefix(objectStorePathPrefix);
+        config.setObjectStore(osConfig);
+        return config;
+    }
+
+    private static final String getEnvVar(String varName)
+    {
+        String value = System.getenv(varName);
+        if(value != null)
+            return value;
+        throw(new IllegalStateException("Missing Env Variable: "+varName));
     }
 
     public static final EuropaConfiguration fromFile(File configFile)
