@@ -3,7 +3,7 @@
 
   <groupId>com.distelli.europa</groupId>
   <artifactId>Europa</artifactId>
-  <version>0.0.8</version>
+  <version>0.0.9-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Europa</name>
@@ -12,7 +12,7 @@
   <scm>
     <connection>scm:git:git@github.com:Distelli/europa.git</connection>
     <url>https://github.com/Distelli/europa.git</url>
-    <tag>Europa-0.0.8</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <distributionManagement>
