@@ -2,7 +2,7 @@ FROM distelli/java-base
 
 ADD target/dependency/*.jar target/*.jar /europa/lib/
 ADD run.sh /europa/run.sh
-ADD public/* /europa/public/
+ADD public /europa/public/
 
 EXPOSE 8080
 
