@@ -186,6 +186,7 @@ public class Europa
         staticHolder.setInitParameter("dirAllowed","true");
         staticHolder.setInitParameter("pathInfoOnly","true");
         staticHolder.setInitParameter("etags", "true");
+        staticHolder.setInitParameter("gzip", "true");
         staticHolder.setInitParameter("cacheControl", "max-age=3600");
         webServer.addStandardServlet("/public/*", staticHolder);
 
