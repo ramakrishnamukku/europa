@@ -82,7 +82,7 @@ public class EuropaConfiguration
         try {
             objectStoreType = ObjectStoreType.valueOf(this.objectStore.type.toUpperCase());
         } catch(Throwable t) {
-            throw(new RuntimeException("Illegal value for config: objectStore.bucket. Expected S3 or DISK"));
+            throw(new RuntimeException("Illegal value for config: objectStore.type. Expected S3 or DISK"));
         }
         switch(objectStoreType)
         {
