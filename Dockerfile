@@ -1,4 +1,4 @@
-FROM distelli/java-base
+FROM openjdk:8
 
 ADD target/dependency/*.jar target/*.jar /europa/lib/
 ADD run /europa/run
