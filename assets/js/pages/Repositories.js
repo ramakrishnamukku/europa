@@ -48,7 +48,7 @@ export default class Repositories extends Component {
 					     src={RegistryProviderIcons(repo.provider)}/>
 					<div className="Flex1 FlexColumn">
 						<span className="RepoName">{repo.name}</span>
-						<span className="RepoProvider">{RegistryNames[repo.provider]}</span>
+						<span className="RepoProvider">{RegistryNames(true)[repo.provider]}</span>
 					</div>
 					{this.renderRepoItemDetails(repo)}
 					<div className="FlexColumn" style={{flex: '0.45', alignItems: 'flex-end', paddingRight: '7px', justifyContent: 'center'}}>

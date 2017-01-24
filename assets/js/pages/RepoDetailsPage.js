@@ -97,7 +97,7 @@ export default class RepoDetailsPage extends Component {
 			<div className="SmallHeader FlexRow SpaceBetween">
 				<div className="FlexColumn Flex1">
 					<h3>{activeRepo.name}</h3>
-					<span>{RegistryNames[activeRepo.provider]}</span>
+					<span>{RegistryNames(true)[activeRepo.provider]}</span>
 				</div>
 				<div>
 					{this.renderActions()}

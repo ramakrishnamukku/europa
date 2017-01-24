@@ -136,7 +136,7 @@ export default class AddRegistry extends Component {
 				</div>
 				<div className="FlexColumn">
 					<span className="Label">
-						{RegistryNames[reg.provider]}
+						{RegistryNames(true)[reg.provider]}
 					</span>
 					<span className="FlexRow">
 						<span className="Cell">
@@ -153,9 +153,9 @@ export default class AddRegistry extends Component {
 		);
 	}
 	renderSelectProvider(readOnly, isEdit){
-		let providers = Object.keys(RegistryNames);
+		let providers = Object.keys(RegistryNames(false));
 		let selectedProvider = NPECheck(this.props, 'addRegistry/newRegistry/provider', '');
-		let selectedProviderName = (selectedProvider) ? RegistryNames[selectedProvider] : '';
+		let selectedProviderName = (selectedProvider) ? RegistryNames(true)[selectedProvider] : '';
 
 		if(isEdit) {
 			return (
@@ -183,7 +183,8 @@ export default class AddRegistry extends Component {
 		);
 	}
 	renderProviderListItem(registryProvider, index){
-		let reg = RegistryNames[registryProvider];
+		let reg = RegistryNames(false)[registryProvider];
+
 		let className = "ListItem FlexRow";
 
 		if(this.props.standaloneMode) {

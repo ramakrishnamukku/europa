@@ -8,7 +8,6 @@ import ControlRoom from './../components/ControlRoom'
 import Dropdown from './../components/Dropdown'
 import CenteredConfirm from './../components/CenteredConfirm'
 import RegistryProviderIcons from './../util/RegistryProviderIcons'
-import RegistryNames from './../util/RegistryNames'
 
 export default class PipelineConnectRepository extends Component {
   constructor(props) {
