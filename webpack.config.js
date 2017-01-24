@@ -1,7 +1,8 @@
-const path = require('path');
-const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const path = require('path')
+const webpack = require('webpack')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const CompressionPlugin = require("compression-webpack-plugin")
 
 var plugins = [
   new ExtractTextPlugin('[name]', {
@@ -17,7 +18,14 @@ var plugins = [
   }, {
     from: 'assets/images',
     to: 'images'
-  }])
+  }]),
+  new CompressionPlugin({
+    asset: "[path].gz[query]",
+    algorithm: "gzip",
+    test: /\.js$|\.html$|\.css$/,
+    threshold: 10240,
+    minRatio: 0.8
+  })
 ]
 
 var IS_PRODUCTION = process.env.NODE_ENV == "production"
