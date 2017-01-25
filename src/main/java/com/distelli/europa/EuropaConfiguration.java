@@ -121,7 +121,7 @@ public class EuropaConfiguration
         String objectStorePathPrefix = null;
         try {
             objectStorePathPrefix = getEnvVar("EUROPA_OS_PATH_PREFIX");
-            objectStorePathPrefix = getEnvVar("EUROPA_OS_DISK_ROOT");
+            objectStoreDiskStorageRoot = getEnvVar("EUROPA_OS_DISK_ROOT");
         } catch(IllegalStateException ise) {
             //these are not required variables
         }
