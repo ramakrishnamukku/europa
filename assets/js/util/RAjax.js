@@ -28,7 +28,14 @@ export function POST(operation = '', content = {}, params = {}, url = baseURL) {
 
   return fetch(request)
     .then((response) => {
-      let json = response.json();
+      let json;
+
+      try {
+        json = response.json();
+      } catch(e) {
+        return Promise.reject.bind(Promise);
+      }
+
       if (response.status >= 200 && response.status < 300) {
         return json;
       } else {
@@ -65,7 +72,14 @@ export function GET(operation = '', params = {}, url = baseURL) {
 
   return fetch(request)
     .then((response) => {
-      let json = response.json();
+      let json;
+
+      try {
+        json = response.json();
+      } catch(e) {
+        return Promise.reject.bind(Promise);
+      }
+      
       if (response.status >= 200 && response.status < 300) {
         return json;
       } else {

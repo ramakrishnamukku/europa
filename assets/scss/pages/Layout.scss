@@ -106,7 +106,11 @@ nav {
     justify-content: center;
     align-items: center;
 
-    .PremiumLogo {}
+    .PremiumLogo {
+        width: 200px;
+        top: 4px;
+        position: relative;
+    }
 }
 
 .PageContainer.Dark {
