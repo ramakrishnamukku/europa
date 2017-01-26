@@ -129,7 +129,10 @@ export function newRegistryState() {
     provider: '',
     region: '',
     key: '',
-    secret: ''
+    secret: '',
+    username: '',
+    password: '',
+    endpoint: ''
   };
 }
 

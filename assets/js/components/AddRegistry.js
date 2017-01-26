@@ -19,6 +19,9 @@ let keyName = 'name';
 let region = 'region';
 let key = 'key';
 let secret = 'secret';
+let username = 'username';
+let password = 'password';
+let endpoint = 'endpoint';
 
 export default class AddRegistry extends Component {
 	constructor(props) {
@@ -261,6 +264,46 @@ export default class AddRegistry extends Component {
 			);
 		}
 	}
+	renderInputUsername(){
+		return (
+			<div className="Flex1">
+				<label className="small FlexColumn" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
+					Username
+				</label>
+				<input className={this.inputClassName(username)}
+					   value={this.props.addRegistry.newRegistry[username]}
+					   placeholder="Enter Username.."
+					   onChange={(e) => this.context.actions.updateNewRegistryField(username, e)} />
+			</div>
+		);
+	}
+	renderInputPassword(){
+		return (
+			<div className="Flex1">
+				<label className="small FlexColumn" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
+					Password
+				</label>
+				<input className={this.inputClassName(password)}
+					   value={this.props.addRegistry.newRegistry[password]}
+					   type="password"
+					   placeholder="Enter Password.."
+					   onChange={(e) => this.context.actions.updateNewRegistryField(password, e)} />
+			</div>
+		);
+	}
+	renderInputEndpoint(){
+		return (
+			<div className="Flex1">
+				<label className="small FlexColumn" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
+					Endpoint
+				</label>
+				<input className={this.inputClassName(endpoint)}
+					   value={this.props.addRegistry.newRegistry[endpoint]}
+					   placeholder="Enter Endpoint.."
+					   onChange={(e) => this.context.actions.updateNewRegistryField(endpoint, e)} />
+			</div>
+		);
+	}
 	renderSelectRegion(readOnly, isEdit){		
 		let regionValue = this.props.addRegistry.newRegistry[region]
 
@@ -321,6 +364,7 @@ export default class AddRegistry extends Component {
 	renderNewRegistryCredentials(){
 		if(this.props.addRepo.newRepoCredsType == 'NEW' || this.props.standaloneMode) {
 
+
 			let isEdit = this.props.isEdit;
 			let className = (isEdit) ? 'AddEditRegistryCreds Edit' : 'AddEditRegistryCreds';
 			let readOnly = {};
@@ -330,18 +374,62 @@ export default class AddRegistry extends Component {
 				readOnly['disabled'] = 'disabled';
 			}
 
-			return (
-				<div className="FlexColumn">
-					<div className={className} style={this.props.standaloneMode ? {} : {margin: '0 -6px'}}>
-						{this.renderSelectProvider(readOnly, isEdit)}
-						{this.renderInputKeyName(readOnly, isEdit)}
-						{this.renderInputPublicKey(readOnly, isEdit)}
-						{this.renderInputPrivateKey(readOnly, isEdit)}
-						{this.renderSelectRegion(readOnly, isEdit)}
-					</div>
-					{this.renderUploadGCEServiceAccount()}
-				</div>
-			);
+			let provider = NPECheck(this.props, 'addRegistry/newRegistry/provider', 'ECR');
+
+			switch(provider) {
+				case '':
+				case 'ECR':
+					return (
+						<div className="FlexColumn">
+							<div className={className} style={this.props.standaloneMode ? {} : {margin: '0 -6px'}}>
+								{this.renderSelectProvider(readOnly, isEdit)}
+								{this.renderInputKeyName(readOnly, isEdit)}
+								{this.renderInputPublicKey(readOnly, isEdit)}
+								{this.renderInputPrivateKey(readOnly, isEdit)}
+								{this.renderSelectRegion(readOnly, isEdit)}
+							</div>
+						</div>
+					);
+				break;
+				case 'GCR':
+					return (
+						<div className="FlexColumn">
+							<div className={className} style={this.props.standaloneMode ? {} : {margin: '0 -6px'}}>
+								{this.renderSelectProvider(readOnly, isEdit)}
+								{this.renderInputKeyName(readOnly, isEdit)}
+								{this.renderSelectRegion(readOnly, isEdit)}
+							</div>
+							{this.renderUploadGCEServiceAccount()}
+						</div>
+					);
+				break;
+				case 'DOCKERHUB':
+					return (
+						<div className="FlexColumn">
+							<div className={className} style={this.props.standaloneMode ? {} : {margin: '0 -6px'}}>
+								{this.renderSelectProvider(readOnly, isEdit)}
+								{this.renderInputKeyName(readOnly, isEdit)}
+								{this.renderInputUsername(readOnly, isEdit)}
+								{this.renderInputPassword(readOnly, isEdit)}
+							</div>
+						</div>
+					);
+				break;
+
+				case 'PRIVATE':
+					return (
+						<div className="FlexColumn">
+							<div className={className} style={this.props.standaloneMode ? {} : {margin: '0 -6px'}}>
+								{this.renderSelectProvider(readOnly, isEdit)}
+								{this.renderInputKeyName(readOnly, isEdit)}
+								{this.renderInputUsername(readOnly, isEdit)}
+								{this.renderInputPassword(readOnly, isEdit)}
+								{this.renderInputEndpoint(readOnly, isEdit)}
+							</div>
+						</div>
+					);
+				break;
+			}
 		}
 	}
 	renderErrorMsg(){
