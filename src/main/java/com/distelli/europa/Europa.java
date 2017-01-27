@@ -24,6 +24,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import com.distelli.europa.EuropaConfiguration.EuropaStage;
 import com.distelli.europa.db.RegistryBlobDb;
 import com.distelli.europa.db.TokenAuthDb;
+import com.distelli.europa.filters.StorageInitFilter;
 import com.distelli.europa.filters.RegistryAuthFilter;
 import com.distelli.europa.guice.*;
 import com.distelli.europa.handlers.StaticContentErrorHandler;
@@ -118,8 +119,8 @@ public class Europa
 
     protected void initializeWebServer(Injector injector)
     {
-        _registryApiFilters = Arrays.asList(
-            injector.getInstance(RegistryAuthFilter.class));
+        _webappFilters = Arrays.asList(injector.getInstance(StorageInitFilter.class));
+        _registryApiFilters = Arrays.asList(injector.getInstance(RegistryAuthFilter.class));
 
         _requestContextFactory = new RequestContextFactory() {
                 public RequestContext getRequestContext(HTTPMethod httpMethod, HttpServletRequest request) {
