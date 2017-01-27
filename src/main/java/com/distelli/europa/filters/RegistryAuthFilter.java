@@ -29,9 +29,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class RegistryAuthFilter implements RequestFilter<EuropaRequestContext>
 {
     @Inject
-    private RegistryAuth _auth;
+    protected RegistryAuth _auth;
 
-    private static ObjectMapper OM = new ObjectMapper();
+    protected static ObjectMapper OM = new ObjectMapper();
     static {
         OM.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         OM.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
@@ -46,7 +46,7 @@ public class RegistryAuthFilter implements RequestFilter<EuropaRequestContext>
     {
         try {
             requestContext.setRegistryApiRequest(true);
-            _auth.authenticate(requestContext);
+            authenticate(requestContext);
             WebResponse response = next.filter(requestContext);
             response.setResponseHeader("Docker-Distribution-Api-Version", "registry/2.0");
             return response;
@@ -58,7 +58,11 @@ public class RegistryAuthFilter implements RequestFilter<EuropaRequestContext>
         }
     }
 
-    private WebResponse handleError(RegistryError error) {
+    protected void authenticate(EuropaRequestContext requestContext) {
+        _auth.authenticate(requestContext);
+    }
+
+    protected WebResponse handleError(RegistryError error) {
         if ( log.isInfoEnabled() ) {
             try {
                 log.info("RegistryError: "+error.getErrorCode()+" "+OM.writeValueAsString(error.getResponseBody()));
