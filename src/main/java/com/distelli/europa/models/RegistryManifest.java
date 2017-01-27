@@ -35,4 +35,12 @@ public class RegistryManifest
     /* The content type of the manifest.
      */
     private String contentType;
+    /**
+     * The sum of all the blobs referenced by this image. Might not be available.
+     */
+    private Long virtualSize;
+    /**
+     * When this manifest was pushed. Might not be available.
+     */
+    private Long pushTime;
 }

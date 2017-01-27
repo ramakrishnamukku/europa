@@ -25,9 +25,9 @@ public class DockerImage
 {
     @Singular
     protected List<String> imageTags = null;
-    protected String imageSha = null;
+    protected String imageSha = null; // this is the MANIFEST sha!
     protected Long pushTime = null;
-    protected Long imageSize = null;
+    protected Long imageSize = null; // this is the virtual size!
 
     public void addImageTag(String imageTag)
     {

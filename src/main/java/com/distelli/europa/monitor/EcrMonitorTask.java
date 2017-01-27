@@ -9,7 +9,7 @@
 package com.distelli.europa.monitor;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -52,10 +52,21 @@ public class EcrMonitorTask extends RepoMonitorTask
             log.debug("Monitoring ECR Repo: "+_repo);
         if(_ecrClient == null)
             initEcrClient();
-        List<DockerImageId> images = listImages();
-        List<RepoEvent> events = listEvents();
-        List<DockerImageId> imagesToSave = getNewImages(images, events);
-        saveNewEvents(imagesToSave);
+
+        
+        Map<String, DockerImageId> imageTags = listImageTags();
+
+        // Filter out the changes:
+        for ( String removed : findChanges(imageTags, DockerImageId::getSha) ) {
+            imageTags.put(removed, DockerImageId.builder()
+                          .tag(removed)
+                          .build());
+        }
+
+        // Transform into DockerImage objects, and save them:
+        saveNewEvents(
+            saveManifestChanges(
+                toDockerImages(imageTags.values())));
     }
 
     private void initEcrClient()
@@ -70,24 +81,36 @@ public class EcrMonitorTask extends RepoMonitorTask
         _ecrClient = new ECRClient(registryCred);
     }
 
-    private List<DockerImageId> listImages()
+    private Map<String, DockerImageId> listImageTags()
     {
-        List<DockerImageId> imageIdList = new ArrayList<DockerImageId>();
+        Map<String, DockerImageId> images = new HashMap<>();
         if(_ecrClient == null)
-            return imageIdList;
+            return images;
 
         PageIterator iter = new PageIterator().pageSize(100);
         if(log.isDebugEnabled())
             log.debug("Listing images from ECR repo: "+_repo);
         do {
-            List<DockerImageId> images = _ecrClient.listImages(_repo, iter);
-            imageIdList.addAll(images);
+            for ( DockerImageId imageId : _ecrClient.listImages(_repo, iter) ) {
+                images.put(imageId.getTag(), imageId);
+            }
         } while(iter.getMarker() != null);
 
 
         if(log.isDebugEnabled())
-            log.debug("Found "+imageIdList.size()+" images in ECR repo: "+_repo);
-        return imageIdList;
+            log.debug("Found "+images.size()+" images in ECR repo: "+_repo);
+        return images;
+    }
+
+    private List<DockerImage> toDockerImages(Collection<DockerImageId> imageIds) {
+        List<DockerImage> images = new ArrayList<>();
+        if ( imageIds.size() < 1 ) return images;
+        PageIterator pageIterator = new PageIterator().pageSize(100);
+        do {
+            // TODO: Do I need to deal with "deleted" tags specially?
+            images.addAll(_ecrClient.describeImages(_repo, imageIds, pageIterator));
+        } while(pageIterator.getMarker() != null);
+        return images;
     }
 
     protected List<DockerImage> describeImages(List<DockerImageId> images, PageIterator pageIterator)

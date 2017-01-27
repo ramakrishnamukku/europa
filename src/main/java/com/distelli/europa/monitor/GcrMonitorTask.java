@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 import javax.inject.Inject;
 
@@ -48,10 +50,45 @@ public class GcrMonitorTask extends RepoMonitorTask
 
         if(_gcrClient == null)
             initGcrClient();
-        List<DockerImageId> images = listImages();
-        List<RepoEvent> events = listEvents();
-        List<DockerImageId> imagesToSave = getNewImages(images, events);
-        saveNewEvents(imagesToSave);
+
+        // Get all the image tags:
+        Map<String, GcrImageTag> imageTags = listImageTags();
+
+        // Filter out the changes:
+        for ( String removed : findChanges(imageTags, GcrImageTag::getSha) ) {
+            imageTags.put(removed, GcrImageTag.builder()
+                          .tag(removed)
+                          .created(System.currentTimeMillis())
+                          .build());
+        }
+
+        // Transform into DockerImage objects, and save them:
+        saveNewEvents(
+            saveManifestChanges(
+                toDockerImages(imageTags.values())));
+    }
+
+    private List<DockerImage> toDockerImages(Collection<GcrImageTag> imageTags) {
+        Map<String, DockerImage> imagesBySha = new LinkedHashMap<String, DockerImage>();
+        for ( GcrImageTag imageTag : imageTags ) {
+            DockerImage image = imagesBySha.get(imageTag.getSha());
+            if ( null == image ) {
+                image = DockerImage.builder()
+                    .imageSha(imageTag.getSha())
+                    .pushTime(imageTag.getCreated())
+                    .imageSize(null) // GCR doesn't have this :(.
+                    .imageTag(imageTag.getTag())
+                    .build();
+                imagesBySha.put(imageTag.getSha(), image);
+            } else {
+                if ( image.getPushTime() > imageTag.getCreated() ) {
+                    // Use the oldest push time:
+                    image.setPushTime(imageTag.getCreated());
+                }
+                image.addImageTag(imageTag.getTag());
+            }
+        }
+        return new ArrayList<>(imagesBySha.values());
     }
 
     private void initGcrClient()
@@ -68,11 +105,11 @@ public class GcrMonitorTask extends RepoMonitorTask
         _gcrClient = new GcrClient(gcrCreds, gcrRegion);
     }
 
-    private List<DockerImageId> listImages()
+    private Map<String, GcrImageTag> listImageTags()
     {
-        List<DockerImageId> imageIdList = new ArrayList<DockerImageId>();
+        Map<String, GcrImageTag> images = new HashMap<>();
         if(_gcrClient == null)
-            return imageIdList;
+            return images;
 
         GcrIterator iter = GcrIterator.builder().pageSize(100).build();
         if(log.isDebugEnabled())
@@ -82,14 +119,8 @@ public class GcrMonitorTask extends RepoMonitorTask
                 List<GcrImageTag> imageTags = _gcrClient.listImageTags(_repo.getName(), iter);
                 for(GcrImageTag imgTag : imageTags)
                 {
-                    DockerImageId imageId = DockerImageId
-                    .builder()
-                    .tag(imgTag.getTag())
-                    .sha(imgTag.getSha())
-                    .pushTime(imgTag.getCreated())
-                    .repoUri(_repo.getRepoUri())
-                    .build();
-                    imageIdList.add(imageId);
+                    // toDockerImage(
+                    images.put(imgTag.getTag(), imgTag);
                 }
             } catch(Throwable t) {
                 throw(new RuntimeException(t));
@@ -97,34 +128,7 @@ public class GcrMonitorTask extends RepoMonitorTask
         } while(iter.getMarker() != null);
 
         if(log.isDebugEnabled())
-            log.debug("Found "+imageIdList.size()+" images in GCR repo: "+_repo);
-        return imageIdList;
-    }
-
-    protected List<DockerImage> describeImages(List<DockerImageId> images, PageIterator pageIterator)
-    {
-        Map<String, DockerImage> imagesBySha = new HashMap<String, DockerImage>();
-        List<DockerImage> imageList = new ArrayList<DockerImage>();
-        for(DockerImageId imageId : images)
-        {
-            String imageSha = imageId.getSha();
-            DockerImage image = null;
-            image = imagesBySha.get(imageSha);
-            if(image == null)
-            {
-                image = DockerImage
-                .builder()
-                .imageSha(imageSha)
-                .pushTime(imageId.getPushTime())
-                .imageSize(null) //GCR doesn't seem to give us the image size
-                .imageTag(imageId.getTag())
-                .build();
-                imagesBySha.put(imageSha, image);
-                imageList.add(image);
-            } else {
-                image.addImageTag(imageId.getTag());
-            }
-        }
-        return imageList;
+            log.debug("Found "+images.size()+" images in GCR repo: "+_repo);
+        return images;
     }
 }

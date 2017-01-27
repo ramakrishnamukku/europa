@@ -19,8 +19,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class DockerImageId
 {
-    protected String repoUri;
     protected String tag;
-    protected String sha;
-    protected Long pushTime;
+    protected String sha; // manifest sha returned from registry.
 }

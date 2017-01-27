@@ -90,7 +90,6 @@ public class ECRClient
             .builder()
             .tag(imageId.getImageTag())
             .sha(imageId.getImageDigest())
-            .repoUri(repo.getRepoUri())
             .build();
             imageIdList.add(dockerImageId);
         }
@@ -98,7 +97,7 @@ public class ECRClient
         return imageIdList;
     }
 
-    public List<DockerImage> describeImages(ContainerRepo repo, List<DockerImageId> imageIds, PageIterator pageIterator)
+    public List<DockerImage> describeImages(ContainerRepo repo, Collection<DockerImageId> imageIds, PageIterator pageIterator)
     {
         List<ImageIdentifier> imageIdentifiers = null;
         if(imageIds != null)

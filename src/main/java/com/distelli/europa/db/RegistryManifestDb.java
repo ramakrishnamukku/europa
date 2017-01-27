@@ -184,6 +184,11 @@ public class RegistryManifestDb extends BaseDb {
         return old;
     }
 
+    public void remove(String domain, String repoId, String tag) {
+        if ( null == domain ) domain = "d0";
+        _main.deleteItem(domain, toRK(repoId, tag));
+    }
+
     public RegistryManifest getManifestByRepoIdTag(String domain, String repoId, String tag) {
         if ( null == domain ) domain = "d0";
         return _main.getItem(domain, toRK(repoId, tag));
