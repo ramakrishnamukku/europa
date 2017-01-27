@@ -336,6 +336,7 @@ export function repoDetailsState() {
     events: [],
     eventsXHR: false,
     eventsError: '',
+    timelineSection: 'EVENTS',
     activeEventId: null,
   };
 }
@@ -409,6 +410,14 @@ export function toggleActiveRepoSettings() {
       showSettings: !this.state.repoDetails.showSettings
     })
   })
+}
+
+export function setTimelineSection(section = ''){
+  this.setState({
+    repoDetails: GA.modifyProperty(this.state.repoDetails, {
+      timelineSection: section
+    })
+  });
 }
 
 export function listRepoEvents(repoId, skipXHR) {

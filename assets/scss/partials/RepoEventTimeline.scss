@@ -17,6 +17,28 @@
             flex-direction: row;
             justify-content: space-between;
 
+            .TimelineNavigation {
+                display: flex;
+                flex-direction: row;
+
+                div.Active {
+                    color: $salmon;
+                }
+
+                div {
+                    margin: 0 9px;
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    align-items: center;
+                    color: white;
+
+                    &:hover {
+                        cursor: pointer;
+                    }
+                }
+            }
+
             i.icon-dis-waiting {
                 font-size: 1.2rem;
             }
@@ -28,8 +50,72 @@
             background-color: $curtain-color;
             padding: 21px 10px;
         }
+
+        .TagsContainer {
+            display: flex;
+            flex-direction: column;
+            background-color: $curtain-color;
+        }
     }
 
+    // Event Tags Timeline
+    .RepoTagItem {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 10px 5px;
+
+        &:nth-of-type(2n - 1) {
+            background-color: $light-grey;
+        }
+
+        &:nth-of-type(2n) {
+            background-color: $dark-grey;
+        }
+
+        img.ProviderIcon {
+            margin: 0 21px 0 0;
+            width: 40px;
+            height: 40px;
+        }
+
+        .ImageSha {
+            flex: 1;
+            color: $black;
+            font-weight: 400;
+            font-size: 0.75rem;
+            margin-right: 14px;
+        }
+
+        .Tags {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            position: relative;
+            top: -2px;
+        }
+
+        .Pushed {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+
+            .Label {
+                color: $black;
+                font-weight: 400;
+                font-size: 0.75rem;
+            }
+
+            .Value {
+                color: $grey;
+                font-weight: 400;
+                font-size: 0.75rem;
+            }
+        }
+    }
+
+    // Event Timeline
     .RepoEventContainer {
         display: flex;
         flex-direction: column;
