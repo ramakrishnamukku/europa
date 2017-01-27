@@ -26,6 +26,7 @@ import com.distelli.webserver.HTTPMethod;
 import com.distelli.webserver.JsonError;
 import com.distelli.webserver.JsonSuccess;
 
+import javax.inject.Provider;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
@@ -34,6 +35,8 @@ public class SaveStorageSettings extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private SettingsDb _settingsDb;
+    @Inject
+    private Provider<StorageSettings> _storageSettingsProvider;
 
     public SaveStorageSettings()
     {
@@ -42,8 +45,12 @@ public class SaveStorageSettings extends AjaxHelper<EuropaRequestContext>
 
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
-        StorageSettings storageSettings = ajaxRequest.convertContent(StorageSettings.class,
-                                                                     true); //throw if null
+        StorageSettings storageSettings = _storageSettingsProvider.get();
+        if(storageSettings != null)
+            return JsonSuccess.Success;
+
+        storageSettings = ajaxRequest.convertContent(StorageSettings.class,
+                                                     true); //throw if null
         List<EuropaSetting> europaSettings = storageSettings.toEuropaSettings();
         for(EuropaSetting setting : europaSettings)
             _settingsDb.save(setting);
