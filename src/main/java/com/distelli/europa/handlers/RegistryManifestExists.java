@@ -23,6 +23,7 @@ import com.distelli.objectStore.ObjectMetadata;
 import com.distelli.europa.models.RegistryManifest;
 import com.distelli.europa.registry.RegistryError;
 import com.distelli.europa.registry.RegistryErrorCode;
+import javax.inject.Provider;
 
 @Log4j
 @Singleton
@@ -30,7 +31,7 @@ public class RegistryManifestExists extends RegistryBase {
     @Inject
     private ObjectKeyFactory _objectKeyFactory;
     @Inject
-    private ObjectStore _objectStore;
+    private Provider<ObjectStore> _objectStoreProvider;
     @Inject
     private RegistryManifestDb _manifestDb;
 
@@ -55,8 +56,8 @@ public class RegistryManifestExists extends RegistryBase {
         }
 
         ObjectKey objKey = _objectKeyFactory.forRegistryManifest(manifest.getManifestId());
-
-        ObjectMetadata objMeta = _objectStore.head(objKey);
+        ObjectStore objectStore = _objectStoreProvider.get();
+        ObjectMetadata objMeta = objectStore.head(objKey);
         if ( null == objMeta ) {
             throw new RegistryError(
                 "Manifest is missing from object store. "+objKey,

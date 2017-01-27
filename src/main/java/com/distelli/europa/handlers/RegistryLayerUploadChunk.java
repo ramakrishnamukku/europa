@@ -31,6 +31,7 @@ import javax.persistence.EntityNotFoundException;
 import lombok.extern.log4j.Log4j;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.eclipse.jetty.http.HttpMethod;
+import javax.inject.Provider;
 
 @Log4j
 @Singleton
@@ -38,7 +39,7 @@ public class RegistryLayerUploadChunk extends RegistryBase {
     private static long MIN_SIZE = 5*1048576;
 
     @Inject
-    private ObjectStore _objectStore;
+    private Provider<ObjectStore> _objectStoreProvider;
     @Inject
     private ObjectKeyFactory _objectKeyFactory;
     @Inject
@@ -103,7 +104,8 @@ public class RegistryLayerUploadChunk extends RegistryBase {
 
             is = new DigestInputStream(is, new JDKMessageDigest(digest));
             try {
-                partId = _objectStore.multipartPut(partKey, partNum, contentLength, is);
+                ObjectStore objectStore = _objectStoreProvider.get();
+                partId = objectStore.multipartPut(partKey, partNum, contentLength, is);
             } catch ( EntityNotFoundException ex ) {
                 // Forget about this upload in our DB then...
                 _blobDb.forgetBlob(blobId);

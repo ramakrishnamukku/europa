@@ -8,7 +8,6 @@
 package com.distelli.europa.util;
 
 import com.distelli.europa.EuropaConfiguration;
-import com.distelli.europa.EuropaConfiguration.ObjectStoreConfig;
 import com.distelli.europa.notifiers.*;
 import com.distelli.europa.models.*;
 
@@ -30,11 +29,10 @@ public class ObjectKeyFactory
     public static final String MANIFESTS_PREFIX = "manifests";
 
     @Inject
-    public ObjectKeyFactory(EuropaConfiguration europaConfiguration)
+    public ObjectKeyFactory(StorageSettings storageSettings)
     {
-        ObjectStoreConfig config = europaConfiguration.getObjectStoreConfig();
-        _defaultBucket = config.getBucket();
-        _pathPrefix = config.getPathPrefix();
+        _defaultBucket = storageSettings.getOsBucket();
+        _pathPrefix = storageSettings.getOsPathPrefix();
     }
 
     public String getDefaultBucket()

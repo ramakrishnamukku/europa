@@ -43,26 +43,6 @@ public class GetStorageSettings extends AjaxHelper<EuropaRequestContext>
         List<EuropaSetting> settings = _settingsDb.listSettingsByType(EuropaSettingType.STORAGE);
         if(settings == null || settings.size() == 0)
             return null;
-        StorageSettings storageSettings = new StorageSettings();
-        for(EuropaSetting setting : settings)
-        {
-            String key = setting.getKey();
-            if(key.equalsIgnoreCase(StorageSettings.SETTING_OS_TYPE))
-                storageSettings.setOsType(setting.getValue());
-            else if(key.equalsIgnoreCase(StorageSettings.SETTING_OS_ENDPOINT))
-                storageSettings.setOsEndpoint(setting.getValue());
-            else if(key.equalsIgnoreCase(StorageSettings.SETTING_OS_BUCKET))
-                storageSettings.setOsBucket(setting.getValue());
-            else if(key.equalsIgnoreCase(StorageSettings.SETTING_OS_CRED_KEY))
-                storageSettings.setOsCredKey(setting.getValue());
-            else if(key.equalsIgnoreCase(StorageSettings.SETTING_OS_CRED_SECRET))
-                storageSettings.setOsCredSecret(setting.getValue());
-            else if(key.equalsIgnoreCase(StorageSettings.SETTING_OS_DISK_STORAGE_ROOT))
-                storageSettings.setOsDiskRoot(setting.getValue());
-            else if(key.equalsIgnoreCase(StorageSettings.SETTING_OS_PATH_PREFIX))
-                storageSettings.setOsPathPrefix(setting.getValue());
-        }
-
-        return storageSettings;
+        return StorageSettings.fromEuropaSettings(settings);
     }
 }

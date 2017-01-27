@@ -19,6 +19,7 @@ import com.distelli.objectStore.ObjectStore;
 import com.distelli.objectStore.ObjectKey;
 import com.distelli.objectStore.ObjectMetadata;
 import com.distelli.europa.util.ObjectKeyFactory;
+import javax.inject.Provider;
 
 @Log4j
 @Singleton
@@ -26,7 +27,7 @@ public class RegistryLayerExists extends RegistryBase {
     @Inject
     private RegistryBlobDb _blobDb;
     @Inject
-    private ObjectStore _objectStore;
+    private Provider<ObjectStore> _objectStoreProvider;
     @Inject
     private ObjectKeyFactory _objectKeyFactory;
     public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
@@ -46,7 +47,8 @@ public class RegistryLayerExists extends RegistryBase {
                                     RegistryErrorCode.BLOB_UNKNOWN);
         }
         ObjectKey objKey = _objectKeyFactory.forRegistryBlobId(blob.getBlobId());
-        ObjectMetadata meta = _objectStore.head(objKey);
+        ObjectStore objectStore = _objectStoreProvider.get();
+        ObjectMetadata meta = objectStore.head(objKey);
         if ( null == meta ) {
             throw new RegistryError("Invalid :digest parameter (object key missing "+objKey+")",
                                     RegistryErrorCode.BLOB_UNKNOWN);

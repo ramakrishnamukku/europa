@@ -20,12 +20,13 @@ import com.distelli.objectStore.ObjectStore;
 import com.distelli.objectStore.ObjectPartKey;
 import com.distelli.objectStore.ObjectKey;
 import javax.persistence.EntityNotFoundException;
+import javax.inject.Provider;
 
 @Log4j
 @Singleton
 public class RegistryLayerUploadCancel extends RegistryBase {
     @Inject
-    private ObjectStore _objectStore;
+    private Provider<ObjectStore> _objectStoreProvider;
     @Inject
     private ObjectKeyFactory _objectKeyFactory;
     @Inject
@@ -52,7 +53,8 @@ public class RegistryLayerUploadCancel extends RegistryBase {
             .uploadId(blob.getUploadId())
             .build();
         try {
-            _objectStore.abortPut(partKey);
+            ObjectStore objectStore = _objectStoreProvider.get();
+            objectStore.abortPut(partKey);
         } catch ( EntityNotFoundException ex ) {} // ignore
         _blobDb.forgetBlob(blobId);
         return new WebResponse(204);

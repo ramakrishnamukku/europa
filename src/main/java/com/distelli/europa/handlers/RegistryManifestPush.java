@@ -53,6 +53,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.distelli.utils.CompactUUID;
 import com.google.inject.Injector;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
+import javax.inject.Provider;
 
 @Log4j
 @Singleton
@@ -72,7 +73,7 @@ public class RegistryManifestPush extends RegistryBase {
     @Inject
     private ObjectKeyFactory _objectKeyFactory;
     @Inject
-    private ObjectStore _objectStore;
+    private Provider<ObjectStore> _objectStoreProvider;
     @Inject
     private RegistryManifestDb _manifestDb;
     @Inject
@@ -119,8 +120,9 @@ public class RegistryManifestPush extends RegistryBase {
         String finalDigest = "sha256:" + printHexBinary(digestCalc.digest()).toLowerCase();
 
         ObjectKey objKey = _objectKeyFactory.forRegistryManifest(finalDigest);
-        if ( null == _objectStore.head(objKey) ) {
-            _objectStore.put(objKey, contentLength, is);
+        ObjectStore objectStore = _objectStoreProvider.get();
+        if ( null == objectStore.head(objKey) ) {
+            objectStore.put(objKey, contentLength, is);
         } else {
             objKey = null;
         }
@@ -151,7 +153,7 @@ public class RegistryManifestPush extends RegistryBase {
                                     400);
         } finally {
             if ( ! success ) {
-                if ( null != objKey ) _objectStore.delete(objKey);
+                if ( null != objKey ) objectStore.delete(objKey);
             }
         }
 

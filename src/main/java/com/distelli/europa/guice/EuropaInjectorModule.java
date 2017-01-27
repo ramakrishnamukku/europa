@@ -85,7 +85,6 @@ public class EuropaInjectorModule extends AbstractModule
 
         bind(Index.Factory.class).toProvider(new IndexFactoryProvider(endpoint, creds));
         configureEuropaConfiguration();
-        bind(ObjectStore.Factory.class).toProvider(new ObjectStoreFactoryProvider(_europaConfiguration));
         bind(ObjectStore.class).toProvider(new ObjectStoreProvider());
         bind(MysqlDataSource.class).toInstance(new MysqlDataSource() {
                 public int getMaximumPoolSize()

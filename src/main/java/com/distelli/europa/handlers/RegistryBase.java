@@ -4,24 +4,29 @@ import com.distelli.utils.CompactUUID;
 import com.distelli.europa.db.ContainerRepoDb;
 import com.distelli.europa.models.ContainerRepo;
 import com.distelli.europa.models.RegistryProvider;
-import com.distelli.europa.EuropaRequestContext;
-import com.distelli.europa.registry.RegistryAuth;
-import com.distelli.europa.registry.RegistryError;
-import com.distelli.webserver.RequestContext;
-import com.distelli.webserver.RequestHandler;
-import com.distelli.webserver.WebResponse;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import lombok.extern.log4j.Log4j;
+
 import org.eclipse.jetty.http.HttpMethod;
-import java.util.StringJoiner;
+import com.distelli.europa.EuropaRequestContext;
+import com.distelli.europa.guice.ObjectStoreNotInitialized;
+import com.distelli.europa.registry.RegistryAuth;
+import com.distelli.europa.registry.RegistryError;
+import com.distelli.europa.registry.RegistryErrorCode;
+import com.distelli.webserver.RequestContext;
+import com.distelli.webserver.RequestHandler;
+import com.distelli.webserver.WebResponse;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Singleton
@@ -41,6 +46,9 @@ public abstract class RegistryBase extends RequestHandler<EuropaRequestContext>
             return handleRegistryRequest(requestContext);
         } catch ( RegistryError ex ) {
             return handleError(ex);
+        } catch ( ObjectStoreNotInitialized osni ) {
+            return handleError(new RegistryError("Europa Storage not initialized. Please contact your administrator",
+                                                 RegistryErrorCode.UNSUPPORTED));
         } catch ( Throwable ex ) {
             log.error(ex.getMessage(), ex);
             return handleError(new RegistryError(ex));

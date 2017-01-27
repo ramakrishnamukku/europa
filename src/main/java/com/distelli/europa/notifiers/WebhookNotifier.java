@@ -10,6 +10,7 @@ package com.distelli.europa.notifiers;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import javax.inject.Provider;
 import javax.inject.Inject;
 
 import com.distelli.europa.*;
@@ -29,7 +30,7 @@ import lombok.extern.log4j.Log4j;
 public class WebhookNotifier
 {
     @Inject
-    protected ObjectStore _objectStore;
+    protected Provider<ObjectStore> _objectStoreProvider;
     @Inject
     protected ObjectKeyFactory _objectKeyFactory;
     @Inject
@@ -145,7 +146,8 @@ public class WebhookNotifier
                 log.debug("Saving WebhookRecord: "+record+
                           " for NotificationId: "+notificationId+
                           " to ObjectKey: "+objectKey);
-            _objectStore.put(objectKey, recordBytes);
+            ObjectStore objectStore = _objectStoreProvider.get();
+            objectStore.put(objectKey, recordBytes);
         } catch(Throwable t) {
             log.error("Failed to write WebhookRecord: "+record+": "+t.getMessage(), t);
         }

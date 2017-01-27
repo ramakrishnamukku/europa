@@ -29,7 +29,6 @@ import com.distelli.europa.guice.*;
 import com.distelli.europa.handlers.StaticContentErrorHandler;
 import com.distelli.europa.monitor.*;
 import com.distelli.europa.util.*;
-import com.distelli.objectStore.*;
 import com.distelli.objectStore.impl.ObjectStoreModule;
 import com.distelli.persistence.impl.PersistenceModule;
 import com.distelli.utils.Log4JConfigurator;
@@ -60,8 +59,6 @@ public class Europa
     protected StaticContentErrorHandler _staticContentErrorHandler = null;
     protected int _port = 8080;
 
-    @Inject
-    protected ObjectStore _objectStore;
     @Inject
     protected ObjectKeyFactory _objectKeyFactory;
 
@@ -140,16 +137,6 @@ public class Europa
         _webappRouteMatcher = WebAppRoutes.getRouteMatcher();
     }
 
-    protected void initializeObjectStore()
-    {
-        try {
-            _objectStore.createBucket(_objectKeyFactory.getDefaultBucket());
-        } catch(Throwable t) {
-            log.error("Failed to create default bucket: "+_objectKeyFactory.getDefaultBucket()+
-                      ": "+t.getMessage(), t);
-        }
-    }
-
     protected void initialize()
     {
         EuropaConfiguration europaConfiguration = null;
@@ -158,7 +145,6 @@ public class Europa
         else
             europaConfiguration = EuropaConfiguration.fromEnvironment();
         europaConfiguration.setStage(_stage);
-        europaConfiguration.validate();
 
         Injector injector = Guice.createInjector(Stage.PRODUCTION,
                                                  new PersistenceModule(),

@@ -22,13 +22,14 @@ import com.distelli.webserver.RequestContext;
 import com.google.inject.Singleton;
 import com.distelli.europa.EuropaRequestContext;
 import lombok.extern.log4j.Log4j;
+import javax.inject.Provider;
 
 @Log4j
 @Singleton
 public class GetNotificationRecord extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
-    protected ObjectStore _objectStore;
+    protected Provider<ObjectStore> _objectStoreProvider;
     @Inject
     protected ObjectKeyFactory _objectKeyFactory;
 
@@ -48,7 +49,8 @@ public class GetNotificationRecord extends AjaxHelper<EuropaRequestContext>
         case WEBHOOK:
             ObjectKey objectKey = _objectKeyFactory.forWebhookRecord(notificationId);
             try {
-                byte[] recordBytes = _objectStore.get(objectKey);
+                ObjectStore objectStore = _objectStoreProvider.get();
+                byte[] recordBytes = objectStore.get(objectKey);
                 WebhookRecord webhookRecord = WebhookRecord.fromJsonBytes(recordBytes);
                 webhookRecord.setSecret(null);
                 return webhookRecord;

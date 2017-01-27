@@ -28,6 +28,7 @@ import com.distelli.webserver.JsonError;
 import com.distelli.webserver.RequestContext;
 import com.distelli.europa.EuropaRequestContext;
 import lombok.extern.log4j.Log4j;
+import javax.inject.Provider;
 
 @Log4j
 @Singleton
@@ -38,7 +39,7 @@ public class RedeliverWebhook extends AjaxHelper<EuropaRequestContext>
     @Inject
     private ObjectKeyFactory _objectKeyFactory;
     @Inject
-    private ObjectStore _objectStore;
+    private Provider<ObjectStore> _objectStoreProvider;
     @Inject
     private RepoEventsDb _repoEventsDb;
 
@@ -69,7 +70,8 @@ public class RedeliverWebhook extends AjaxHelper<EuropaRequestContext>
         ObjectKey objectKey = _objectKeyFactory.forWebhookRecord(notificationId);
         WebhookRecord record = null;
         try {
-            byte[] recordBytes = _objectStore.get(objectKey);
+            ObjectStore objectStore = _objectStoreProvider.get();
+            byte[] recordBytes = objectStore.get(objectKey);
             record = WebhookRecord.fromJsonBytes(recordBytes);
         } catch(EntityNotFoundException enfe) {
             throw(new AjaxClientException("Nonexistent WebhookId: "+id, JsonError.Codes.BadContent, 400));

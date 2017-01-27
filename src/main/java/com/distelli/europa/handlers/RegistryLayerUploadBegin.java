@@ -18,12 +18,13 @@ import javax.inject.Inject;
 import lombok.extern.log4j.Log4j;
 import com.distelli.objectStore.ObjectStore;
 import com.distelli.objectStore.ObjectPartKey;
+import javax.inject.Provider;
 
 @Log4j
 @Singleton
 public class RegistryLayerUploadBegin extends RegistryBase {
     @Inject
-    private ObjectStore _objectStore;
+    private Provider<ObjectStore> _objectStoreProvider;
     @Inject
     private ObjectKeyFactory _objectKeyFactory;
     @Inject
@@ -59,16 +60,17 @@ public class RegistryLayerUploadBegin extends RegistryBase {
         ObjectPartKey partKey = null;
 
         boolean success = false;
+        ObjectStore objectStore = _objectStoreProvider.get();
         try {
             blob = _blobDb.newRegistryBlob(requestContext.getRequesterDomain());
-            partKey = _objectStore.newMultipartPut(_objectKeyFactory.forRegistryBlobId(blob.getBlobId()));
+            partKey = objectStore.newMultipartPut(_objectKeyFactory.forRegistryBlobId(blob.getBlobId()));
             _blobDb.setUploadId(blob.getBlobId(), partKey.getUploadId());
             success = true;
         } finally {
             // Try to cleanup on failure...
             if ( ! success ) {
                 if ( null != blob ) _blobDb.forgetBlob(blob.getBlobId());
-                if ( null != partKey ) _objectStore.abortPut(partKey);
+                if ( null != partKey ) objectStore.abortPut(partKey);
             }
         }
 

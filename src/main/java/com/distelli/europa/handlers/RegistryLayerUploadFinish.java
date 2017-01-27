@@ -23,12 +23,13 @@ import com.distelli.objectStore.ObjectPartId;
 import com.distelli.objectStore.ObjectStore;
 import com.distelli.europa.models.RegistryBlobPart;
 import com.distelli.objectStore.ObjectPartKey;
+import javax.inject.Provider;
 
 @Log4j
 @Singleton
 public class RegistryLayerUploadFinish extends RegistryLayerUploadChunk {
     @Inject
-    private ObjectStore _objectStore;
+    private Provider<ObjectStore> _objectStoreProvider;
     @Inject
     private RegistryBlobDb _blobDb;
     public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
@@ -57,7 +58,8 @@ public class RegistryLayerUploadFinish extends RegistryLayerUploadChunk {
         validateDigest(digest, blob.getMdEncodedState());
         ObjectPartKey partKey = getObjectPartKey(blobId, blob.getUploadId());
 
-        _objectStore.completePut(partKey, toObjectPartIds(blob.getPartIds()));
+        ObjectStore objectStore = _objectStoreProvider.get();
+        objectStore.completePut(partKey, toObjectPartIds(blob.getPartIds()));
         _blobDb.finishUpload(blobId, blob.getMdEncodedState(), digest);
         WebResponse response = new WebResponse(201);
         response.setResponseHeader("Location", joinWithSlash("/v2", ownerUsername, name, "blobs", digest));
