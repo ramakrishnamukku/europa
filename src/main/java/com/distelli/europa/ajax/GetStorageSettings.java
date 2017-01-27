@@ -43,6 +43,8 @@ public class GetStorageSettings extends AjaxHelper<EuropaRequestContext>
         List<EuropaSetting> settings = _settingsDb.listRootSettingsByType(EuropaSettingType.STORAGE);
         if(settings == null || settings.size() == 0)
             return null;
-        return StorageSettings.fromEuropaSettings(settings);
+        StorageSettings storageSettings = StorageSettings.fromEuropaSettings(settings);
+        storageSettings.setOsCredSecret(null);
+        return storageSettings;
     }
 }

@@ -130,12 +130,12 @@ public class StorageSettings
         return settingsList;
     }
 
-    private EuropaSetting toSetting(String key, ObjectStoreType value)
+    public static EuropaSetting toSetting(String key, ObjectStoreType value)
     {
         return toSetting(key, value.toString());
     }
 
-    private EuropaSetting toSetting(String key, String value)
+    public static EuropaSetting toSetting(String key, String value)
     {
         return EuropaSetting
         .builder()
