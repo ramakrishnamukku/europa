@@ -40,7 +40,7 @@ public class GetStorageSettings extends AjaxHelper<EuropaRequestContext>
 
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
-        List<EuropaSetting> settings = _settingsDb.listSettingsByType(EuropaSettingType.STORAGE);
+        List<EuropaSetting> settings = _settingsDb.listRootSettingsByType(EuropaSettingType.STORAGE);
         if(settings == null || settings.size() == 0)
             return null;
         return StorageSettings.fromEuropaSettings(settings);

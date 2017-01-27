@@ -36,7 +36,7 @@ public class StorageSettingsProvider implements Provider<StorageSettings>
     {
         if(_storageSettings != null)
             return _storageSettings;
-        List<EuropaSetting> settings = _settingsDb.listSettingsByType(EuropaSettingType.STORAGE);
+        List<EuropaSetting> settings = _settingsDb.listRootSettingsByType(EuropaSettingType.STORAGE);
         if(settings == null || settings.size() == 0)
             return null;
         _storageSettings = StorageSettings.fromEuropaSettings(settings);

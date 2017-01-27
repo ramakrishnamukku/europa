@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EuropaSetting
 {
+    protected String domain;
     protected String key;
     protected String value;
     protected EuropaSettingType type;

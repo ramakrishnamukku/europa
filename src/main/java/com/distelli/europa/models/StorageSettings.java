@@ -11,6 +11,7 @@ package com.distelli.europa.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.distelli.europa.Constants;
 import com.distelli.objectStore.ObjectStoreType;
 import com.distelli.webserver.AjaxClientException;
 
@@ -138,6 +139,7 @@ public class StorageSettings
     {
         return EuropaSetting
         .builder()
+        .domain(Constants.DOMAIN_ZERO)
         .key(key)
         .value(value)
         .type(EuropaSettingType.STORAGE)

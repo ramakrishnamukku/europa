@@ -43,15 +43,16 @@ public class SettingsDb extends BaseDb
         return TableDescription.builder()
         .tableName("settings")
         .indexes(Arrays.asList(IndexDescription.builder()
-                               .hashKey(attr("key", AttrType.STR))
-                               .rangeKey(attr("id", AttrType.STR))
+                               .hashKey(attr("dom", AttrType.STR))
+                               .rangeKey(attr("key", AttrType.STR))
                                .indexType(IndexType.MAIN_INDEX)
                                .readCapacity(1L)
                                .writeCapacity(1L)
                                .build(),
                                IndexDescription.builder()
-                               .indexName("type-index")
-                               .hashKey(attr("type", AttrType.STR))
+                               .indexName("dom-type-index")
+                               .hashKey(attr("dom", AttrType.STR))
+                               .rangeKey(attr("type", AttrType.STR))
                                .indexType(IndexType.GLOBAL_SECONDARY_INDEX)
                                .readCapacity(1L)
                                .writeCapacity(1L)
@@ -61,6 +62,7 @@ public class SettingsDb extends BaseDb
 
     private TransformModule createTransforms(TransformModule module) {
         module.createTransform(EuropaSetting.class)
+        .put("dom", String.class, "domain")
         .put("key", String.class, "key")
         .put("val", String.class, "value")
         .put("type", EuropaSettingType.class, "type");
@@ -79,7 +81,7 @@ public class SettingsDb extends BaseDb
         .build();
 
         _byType = indexFactory.create(EuropaSetting.class)
-        .withTableDescription(getTableDescription(), "type-index")
+        .withTableDescription(getTableDescription(), "dom-type-index")
         .withConvertValue(_om::convertValue)
         .build();
     }
@@ -88,7 +90,13 @@ public class SettingsDb extends BaseDb
         _main.putItem(europaSetting);
     }
 
-    public List<EuropaSetting> listSettingsByType(EuropaSettingType type) {
-        return _byType.queryItems(type.toString(), new PageIterator().pageSize(1000)).list();
+    public List<EuropaSetting> listRootSettingsByType(EuropaSettingType type) {
+        return listSettingsByType(Constants.DOMAIN_ZERO, type);
+    }
+
+    public List<EuropaSetting> listSettingsByType(String domain, EuropaSettingType type) {
+        return _byType.queryItems(domain.toLowerCase(), new PageIterator().pageSize(1000))
+        .eq(type.toString().toLowerCase())
+        .list();
     }
 }
