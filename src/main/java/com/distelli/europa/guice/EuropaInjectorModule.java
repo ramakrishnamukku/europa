@@ -25,6 +25,7 @@ import com.distelli.europa.db.RegistryManifestDb;
 import com.distelli.europa.db.RepoEventsDb;
 import com.distelli.europa.db.SequenceDb;
 import com.distelli.europa.db.TokenAuthDb;
+import com.distelli.europa.db.SettingsDb;
 import com.distelli.europa.monitor.*;
 import com.distelli.objectStore.*;
 import com.distelli.persistence.Index;
@@ -55,6 +56,7 @@ public class EuropaInjectorModule extends AbstractModule
         addTableDescription(RepoEventsDb.getTableDescription());
         addTableDescription(RegistryManifestDb.getTableDescription());
         addTableDescription(PipelineDb.getTableDescription());
+        addTableDescription(SettingsDb.getTableDescription());
 
         _europaConfiguration = europaConfiguration;
     }
