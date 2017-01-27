@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
 import com.distelli.europa.db.RegistryManifestDb;
+import com.distelli.europa.models.ContainerRepo;
 import com.distelli.europa.util.ObjectKeyFactory;
 import com.distelli.objectStore.ObjectKey;
 import com.distelli.objectStore.ObjectStore;
@@ -39,7 +40,14 @@ public class RegistryManifestExists extends RegistryBase {
         String name = requestContext.getMatchedRoute().getParam("name");
         String reference = requestContext.getMatchedRoute().getParam("reference");
 
-        RegistryManifest manifest = _manifestDb.getManifestByRepoTag(ownerDomain, name, reference);
+        ContainerRepo repo = getContainerRepo(ownerDomain, name);
+        if ( null == repo ) {
+            throw new RegistryError(
+                "No manifest exists with name="+name+" reference="+reference,
+                RegistryErrorCode.MANIFEST_UNKNOWN);
+        }
+
+        RegistryManifest manifest = _manifestDb.getManifestByRepoIdTag(ownerDomain, repo.getId(), reference);
         if ( null == manifest ) {
             throw new RegistryError(
                 "No manifest exists with name="+name+" reference="+reference,

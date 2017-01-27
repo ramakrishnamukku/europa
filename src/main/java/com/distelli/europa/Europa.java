@@ -94,6 +94,7 @@ public class Europa
         Log4JConfigurator.setLogLevel("com.distelli.gcr", "ERROR");
         Log4JConfigurator.setLogLevel("com.distelli.europa.monitor", "ERROR");
         //Log4JConfigurator.setLogLevel("com.distelli.webserver", "DEBUG");
+        //Log4JConfigurator.setLogLevel("com.distelli.persistence", "DEBUG");
         _configFilePath = _cmdLineArgs.getOption("config");
         String portStr = _cmdLineArgs.getOption("port");
         if(portStr != null)

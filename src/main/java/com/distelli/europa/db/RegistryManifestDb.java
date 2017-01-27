@@ -33,8 +33,8 @@ import static javax.xml.bind.DatatypeConverter.printHexBinary;
 @Singleton
 public class RegistryManifestDb extends BaseDb {
     private static final String TABLE_NAME = "rmanifest";
-    private static final String ATTR_OWNER = "dom";
-    private static final String ATTR_REPOSITORY = "repo";
+    private static final String ATTR_DOMAIN = "dom";
+    private static final String ATTR_CONTAINER_REPO_ID = "repo";
     private static final String ATTR_TAG = "tag";
     private static final String ATTR_MANIFEST_ID = "id";
     private static final String ATTR_DIGESTS = "mds";
@@ -54,7 +54,7 @@ public class RegistryManifestDb extends BaseDb {
             .indexes(
                 Arrays.asList(
                     IndexDescription.builder()
-                    .hashKey(attr(ATTR_OWNER, AttrType.STR))
+                    .hashKey(attr(ATTR_DOMAIN, AttrType.STR))
                     .rangeKey(attr("rk", AttrType.STR))
                     .indexType(IndexType.MAIN_INDEX)
                     .readCapacity(1L)
@@ -65,9 +65,9 @@ public class RegistryManifestDb extends BaseDb {
 
     private TransformModule createTransforms(TransformModule module) {
         module.createTransform(RegistryManifest.class)
-            .put(ATTR_OWNER, String.class, "owner")
-            .put("rk", String.class, (manifest) -> toRK(manifest.getRepository(), manifest.getTag()))
-            .put(ATTR_REPOSITORY, String.class, "repository")
+            .put(ATTR_DOMAIN, String.class, "domain")
+            .put("rk", String.class, (manifest) -> toRK(manifest.getContainerRepoId(), manifest.getTag()))
+            .put(ATTR_CONTAINER_REPO_ID, String.class, "containerRepoId")
             .put(ATTR_TAG, String.class, "tag")
             .put(ATTR_MANIFEST_ID, String.class, "manifestId")
             .put(ATTR_DIGESTS, new TypeReference<Set<String>>(){}, "digests")
@@ -76,10 +76,10 @@ public class RegistryManifestDb extends BaseDb {
         return module;
     }
 
-    private String toRK(String repo, String tag) {
-        if ( null == repo ) throw new NullPointerException("repository can not be null");
+    private String toRK(String repoId, String tag) {
+        if ( null == repoId ) throw new NullPointerException("containerRepoId can not be null");
         if ( null == tag ) throw new NullPointerException("tag can not be null");
-        return repo + "/" + tag;
+        return repoId + "/" + tag;
     }
 
     @Inject
@@ -88,9 +88,7 @@ public class RegistryManifestDb extends BaseDb {
         _om.registerModule(createTransforms(new TransformModule()));
 
         _main = indexFactory.create(RegistryManifest.class)
-            .withTableName(TABLE_NAME)
-            .withHashKeyName(ATTR_OWNER)
-            .withRangeKeyName("rk")
+            .withTableDescription(getTableDescription())
             .withConvertValue(_om::convertValue)
             // Custom convert marker implementation to support tag pagination:
             .withConvertMarker(new ConvertMarker() {
@@ -98,13 +96,15 @@ public class RegistryManifestDb extends BaseDb {
                         if ( hasHashKey ) {
                             return (String)attributes.get("rk");
                         }
-                        // TODO: implement...
                         throw new UnsupportedOperationException("scan is not supported");
                     }
                     public Attribute[] fromMarker(Object hk, String marker) {
+                        if ( null == hk ) {
+                            throw new UnsupportedOperationException("scan is not supported");
+                        }
                         return new Attribute[] {
                             new Attribute()
-                            .withName(ATTR_OWNER)
+                            .withName(ATTR_DOMAIN)
                             .withValue(hk),
                             new Attribute()
                             .withName("rk")
@@ -119,15 +119,15 @@ public class RegistryManifestDb extends BaseDb {
      * Overwrites with a new registry manifest, potentially
      */
     public RegistryManifest put(RegistryManifest manifest) throws UnknownDigests {
-        if ( null == manifest.getOwner() || manifest.getOwner().isEmpty()) {
-            throw new IllegalArgumentException("owner is required parameter");
+        if ( null == manifest.getDomain() || manifest.getDomain().isEmpty()) {
+            throw new IllegalArgumentException("domain is required parameter");
         }
         // Validate uploadedBy:
         if ( null == manifest.getUploadedBy() || manifest.getUploadedBy().isEmpty() ) {
             throw new IllegalArgumentException("uploadedBy is required parameter");
         }
-        if ( null == manifest.getRepository() || manifest.getRepository().isEmpty() ) {
-            throw new IllegalArgumentException("repository is required parameter");
+        if ( null == manifest.getContainerRepoId() || manifest.getContainerRepoId().isEmpty() ) {
+            throw new IllegalArgumentException("containerRepoId is required parameter");
         }
         if ( null == manifest.getTag() || manifest.getTag().isEmpty() ) {
             throw new IllegalArgumentException("tag is required parameter");
@@ -167,7 +167,6 @@ public class RegistryManifestDb extends BaseDb {
         RegistryManifest old = null;
         try {
             old = _main.putItem(manifest);
-            // TODO: Record history on this repository reference as changing over time...
             if ( null != old && null != old.getDigests() && null != old.getManifestId() ) {
                 // clean-up references:
                 for ( String digest : old.getDigests() ) {
@@ -185,23 +184,23 @@ public class RegistryManifestDb extends BaseDb {
         return old;
     }
 
-    public RegistryManifest getManifestByRepoTag(String owner, String repo, String tag) {
-        if ( null == owner ) owner = "d0";
-        return _main.getItem(owner, toRK(repo, tag));
+    public RegistryManifest getManifestByRepoIdTag(String domain, String repoId, String tag) {
+        if ( null == domain ) domain = "d0";
+        return _main.getItem(domain, toRK(repoId, tag));
     }
 
-    public List<RegistryManifest> listManifestsByRepo(String owner, String repo, PageIterator iterator) {
-        if ( null == owner ) owner = "d0";
+    public List<RegistryManifest> listManifestsByRepoId(String domain, String repoId, PageIterator iterator) {
+        if ( null == domain ) domain = "d0";
 
-        String beginsWith = toRK(repo, "");
+        String beginsWith = toRK(repoId, "");
         String marker = iterator.getMarker();
         String newMarker = null;
         if ( null != marker ) {
-            newMarker = toRK(repo, marker);
+            newMarker = toRK(repoId, marker);
             iterator.marker(newMarker);
         }
         try {
-            return _main.queryItems(owner, iterator)
+            return _main.queryItems(domain, iterator)
                 .beginsWith(beginsWith)
                 .list();
         } finally {

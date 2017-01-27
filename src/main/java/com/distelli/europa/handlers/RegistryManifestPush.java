@@ -102,6 +102,8 @@ public class RegistryManifestPush extends RegistryBase {
         String reference = requestContext.getMatchedRoute().getParam("reference");
         // TODO: Validate name and reference.
 
+        ContainerRepo repo = getOrCreateContainerRepo(ownerDomain, name);
+
         InputStream is = new ResettableInputStream(requestContext.getRequestStream());
         CountingInputStream counter = new CountingInputStream(is);
 
@@ -129,8 +131,8 @@ public class RegistryManifestPush extends RegistryBase {
             .uploadedBy(requestContext.getRequesterDomain())
             .contentType(requestContext.getContentType())
             .manifestId(finalDigest)
-            .owner(ownerDomain)
-            .repository(name)
+            .domain(ownerDomain)
+            .containerRepoId(repo.getId())
             .tag(reference)
             .digests(digests)
             .build();
@@ -138,14 +140,8 @@ public class RegistryManifestPush extends RegistryBase {
         try {
             oldManifest = _manifestDb.put(manifest);
             // Always write a reference to support pulling via @sha256:...
-            _manifestDb.put(RegistryManifest.builder()
-                            .uploadedBy(requestContext.getRequesterDomain())
-                            .contentType(requestContext.getContentType())
-                            .manifestId(finalDigest)
-                            .owner(ownerDomain)
-                            .repository(name)
+            _manifestDb.put(manifest.toBuilder()
                             .tag(finalDigest)
-                            .digests(digests)
                             .build());
             success = true;
         } catch ( UnknownDigests ex ) {
@@ -161,19 +157,6 @@ public class RegistryManifestPush extends RegistryBase {
 
         // Best-effort:
         try {
-            ContainerRepo repoProto = ContainerRepo.builder()
-                .domain(ownerDomain)
-                .name(name)
-                .region("")
-                .provider(RegistryProvider.EUROPA)
-                .build();
-            ContainerRepo repo =
-                _repoDb.getRepo(repoProto.getDomain(), repoProto.getProvider(), repoProto.getRegion(), repoProto.getName());
-            if ( null == repo ) {
-                repo = repoProto;
-                repo.setId(CompactUUID.randomUUID().toString());
-                _repoDb.save(repo);
-            }
             RepoEvent event = RepoEvent.builder()
                 .domain(ownerDomain)
                 .repoId(repo.getId())

@@ -18,6 +18,8 @@ import com.distelli.europa.registry.RegistryError;
 import com.distelli.europa.registry.RegistryErrorCode;
 import java.util.stream.Collectors;
 import com.distelli.persistence.PageIterator;
+import com.distelli.europa.models.ContainerRepo;
+import java.util.Collections;
 
 @Log4j
 @Singleton
@@ -32,10 +34,19 @@ public class RegistryTagList extends RegistryBase {
         String ownerUsername = requestContext.getOwnerUsername();
         String ownerDomain = requestContext.getOwnerDomain();
         String name = requestContext.getMatchedRoute().getParam("name");
+
+        ContainerRepo repo = getContainerRepo(ownerDomain, name);
+        if ( null == repo ) {
+            Response response = new Response();
+            response.name = joinWithSlash(ownerUsername, name);
+            response.tags = Collections.emptyList();
+            return toJson(response);
+        }
+
         PageIterator it = new PageIterator()
             .pageSize(getPageSize(requestContext))
             .marker(requestContext.getParameter("last"));
-        List<RegistryManifest> manifests = _manifestDb.listManifestsByRepo(ownerDomain, name, it);
+        List<RegistryManifest> manifests = _manifestDb.listManifestsByRepoId(ownerDomain, repo.getId(), it);
 
         Response response = new Response();
         response.name = joinWithSlash(ownerUsername, name);

@@ -34,13 +34,14 @@ public class PCCopyToRepository extends PipelineComponent {
         }
         if ( null == repo || null == manifest ) return true;
         if ( null == destinationContainerRepoId ) return true;
+        if ( null == destinationContainerRepoDomain ) return true;
         if ( destinationContainerRepoId.equals(repo.getId()) ) return true;
         ContainerRepo destRepo = _repoDb.getRepo(destinationContainerRepoDomain, destinationContainerRepoId);
         if ( null == destRepo ) return true;
         if ( repo.getProvider() == RegistryProvider.EUROPA ) {
             RegistryManifest copy = manifest.toBuilder()
-                .owner(destRepo.getDomain())
-                .repository(destRepo.getName())
+                .domain(destRepo.getDomain())
+                .containerRepoId(destRepo.getId())
                 .tag(tag)
                 .build();
             _manifestDb.put(copy);

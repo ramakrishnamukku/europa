@@ -1,5 +1,9 @@
 package com.distelli.europa.handlers;
 
+import com.distelli.utils.CompactUUID;
+import com.distelli.europa.db.ContainerRepoDb;
+import com.distelli.europa.models.ContainerRepo;
+import com.distelli.europa.models.RegistryProvider;
 import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.registry.RegistryAuth;
 import com.distelli.europa.registry.RegistryError;
@@ -28,6 +32,9 @@ public abstract class RegistryBase extends RequestHandler<EuropaRequestContext>
     abstract public WebResponse handleRegistryRequest(EuropaRequestContext requestContext);
 
     private static final ObjectMapper OM = new ObjectMapper();
+
+    @Inject
+    private ContainerRepoDb _repoDb;
 
     public WebResponse handleRequest(EuropaRequestContext requestContext) {
         try {
@@ -79,5 +86,25 @@ public abstract class RegistryBase extends RequestHandler<EuropaRequestContext>
             return Integer.parseInt(requestContext.getParameter("n"));
         } catch ( NumberFormatException ex ) {}
         return DEFAULT_PAGE_SIZE;
+    }
+
+    protected ContainerRepo getContainerRepo(String domain, String repoName) {
+        return _repoDb.getRepo(domain, RegistryProvider.EUROPA, "", repoName);
+    }
+
+    protected ContainerRepo getOrCreateContainerRepo(String domain, String repoName) {
+        ContainerRepo repo = getContainerRepo(domain, repoName);
+        if ( null != repo ) return repo;
+        repo = ContainerRepo.builder()
+            .domain(domain)
+            .name(repoName)
+            .region("")
+            .provider(RegistryProvider.EUROPA)
+            .build();
+
+        repo.setId(CompactUUID.randomUUID().toString());
+        _repoDb.save(repo);
+        // Re-fetch to avoid race condition:
+        return getOrCreateContainerRepo(domain, repoName);
     }
 }
