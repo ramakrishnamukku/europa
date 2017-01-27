@@ -26,6 +26,7 @@ export default class RepoDetailsPage extends Component {
 		this.context.actions.listRepos().then(() => {
 			this.context.actions.setActiveRepoDetails(this.state.repoId);
 			this.context.actions.listRepoEvents(this.state.repoId);
+			this.context.actions.listRepoManifests(this.state.repoId);
 		});			
 	}
 	componentDidMount() {

@@ -336,6 +336,9 @@ export function repoDetailsState() {
     events: [],
     eventsXHR: false,
     eventsError: '',
+    manifests: [],
+    manifestsXHR: false,
+    manifestsError: '',
     timelineSection: 'EVENTS',
     activeEventId: null,
   };
@@ -412,7 +415,7 @@ export function toggleActiveRepoSettings() {
   })
 }
 
-export function setTimelineSection(section = ''){
+export function setTimelineSection(section = '') {
   this.setState({
     repoDetails: GA.modifyProperty(this.state.repoDetails, {
       timelineSection: section
@@ -457,5 +460,44 @@ export function toggleEventDetails(eventId = null) {
         activeEventId: (this.state.repoDetails.activeEventId == eventId) ? null : eventId
       })
     }, () => resolve(!!this.state.repoDetails.activeEventId));
+  });
+}
+
+
+export function listRepoManifests(repoId) {
+  return new Promise((resolve, reject) => {
+    this.setState({
+      repoDetails: GA.modifyProperty(this.state.repoDetails, {
+        manifestsXHR: true
+      })
+    }, () => {
+      RAjax.GET.call(this, 'ListRepoManifests', {
+          repoId
+        })
+        .then((res) => {
+          // console.log(res);
+          
+          this.setState({
+            repoDetails: GA.modifyProperty(this.state.repoDetails, {
+              manifests: res,
+              manifestsXHR: false,
+              manifestsError: ''
+            })
+          }, () => resolve())
+
+        })
+        .catch((err) => {
+
+          console.error(err);
+          let errorMsg = NPECheck(err, 'error/message', 'There was an error listing your repoistory tags.');
+          this.setState({
+            repoDetails: GA.modifyProperty(this.state.repoDetails, {
+              manifestsXHR: false,
+              manifestsError: errorMsg
+            })
+          }, () => reject())
+
+        });
+    });
   });
 }

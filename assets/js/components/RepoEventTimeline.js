@@ -21,12 +21,12 @@ export default class RepoEventTimeline extends Component {
 				key: 'OVERVIEW',
 			},
 			{
-				text: 'Events',
-				key: 'EVENTS',
-			},
-			{
 				text: 'Tags',
 				key: 'TAGS',
+			},
+			{
+				text: 'Events',
+				key: 'EVENTS',
 			}
 		];
 
