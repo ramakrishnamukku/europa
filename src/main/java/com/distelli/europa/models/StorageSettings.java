@@ -78,6 +78,9 @@ public class StorageSettings
                 storageSettings.setOsPathPrefix(setting.getValue());
         }
 
+        if(storageSettings.getOsType() == ObjectStoreType.DISK && storageSettings.getOsBucket() == null)
+            storageSettings.setOsBucket(DEFAULT_DISK_BUCKET);
+
         return storageSettings;
     }
 
@@ -121,6 +124,8 @@ public class StorageSettings
             break;
         case DISK:
             settingsList.add(toSetting(SETTING_OS_DISK_STORAGE_ROOT, this.osDiskRoot));
+            if(this.osBucket == null)
+                this.osBucket = DEFAULT_DISK_BUCKET;
             settingsList.add(toSetting(SETTING_OS_BUCKET, this.osBucket));
             break;
         }
