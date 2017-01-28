@@ -9,6 +9,7 @@
 package com.distelli.europa.filters;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.guice.StorageSettingsProvider;
@@ -25,7 +26,7 @@ import lombok.extern.log4j.Log4j;
 public class StorageInitFilter implements RequestFilter<EuropaRequestContext>
 {
     @Inject
-    protected StorageSettingsProvider _storageSettingsProvider;
+    protected Provider<StorageSettings> _storageSettingsProvider;
     @Inject
     protected PageTemplate _pageTemplate;
 
@@ -42,6 +43,7 @@ public class StorageInitFilter implements RequestFilter<EuropaRequestContext>
         StorageSettings storageSettings = _storageSettingsProvider.get();
         if(storageSettings != null)
             return next.filter(requestContext);
+
         JSXProperties jsxProps = new JSXProperties(requestContext) {
                 public boolean getStorage() {
                     return false;

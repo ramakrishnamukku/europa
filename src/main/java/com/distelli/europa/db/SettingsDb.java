@@ -96,7 +96,7 @@ public class SettingsDb extends BaseDb
 
     public List<EuropaSetting> listSettingsByType(String domain, EuropaSettingType type) {
         return _byType.queryItems(domain.toLowerCase(), new PageIterator().pageSize(1000))
-        .eq(type.toString().toLowerCase())
+        .eq(type.toString())
         .list();
     }
 }
