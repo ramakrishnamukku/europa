@@ -8,6 +8,7 @@
 */
 package com.distelli.europa.guice;
 
+import javax.inject.Singleton;
 import com.distelli.cred.CredPair;
 import com.distelli.persistence.Index;
 import com.distelli.persistence.IndexDescription;
@@ -23,6 +24,7 @@ import javax.inject.Provider;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
+@Singleton
 public class IndexFactoryProvider implements Provider<Index.Factory>
 {
     private static final double NS_IN_MS = 1000000.0;
@@ -39,7 +41,6 @@ public class IndexFactoryProvider implements Provider<Index.Factory>
     private URI _endpoint;
     private CredPair _creds;
     private boolean _init = false;
-    private Thread _initThread = null;
     private Throwable _initFailure = null;
     private Index.Factory _indexFactory;
     private float _scaleFactor;
@@ -66,16 +67,10 @@ public class IndexFactoryProvider implements Provider<Index.Factory>
 
     @Override
     public synchronized Index.Factory get() {
-        try {
-            if ( ! _init && null == _initThread ) {
-                _initThread = new Thread(() -> initSchema());
-                _initThread.start();
-            }
-            while ( ! _init ) wait();
-            if ( null != _initFailure ) throw new RuntimeException(_initFailure);
-        } catch ( InterruptedException ex ) {
-            Thread.currentThread().interrupt();
-        }
+            if ( ! _init)
+                initSchema();
+            if ( null != _initFailure )
+                throw new RuntimeException(_initFailure);
         return _indexFactory;
     }
 
@@ -88,7 +83,7 @@ public class IndexFactoryProvider implements Provider<Index.Factory>
     }
 
     // We do this on a separate thread since it may take a long time...
-    private synchronized void initSchema() {
+    private void initSchema() {
         long t0 = System.nanoTime();
         try {
             log.info("DB schema initializing");
@@ -103,8 +98,6 @@ public class IndexFactoryProvider implements Provider<Index.Factory>
         } finally {
             log.info("DB schema initialized in "+(System.nanoTime()-t0)/NS_IN_MS+"ms");
             _init = true;
-            _initThread = null;
-            notifyAll();
         }
     }
 }

@@ -37,7 +37,7 @@ public class RedeliverWebhook extends AjaxHelper<EuropaRequestContext>
     @Inject
     private WebhookNotifier _webhookNotifier;
     @Inject
-    private ObjectKeyFactory _objectKeyFactory;
+    private Provider<ObjectKeyFactory> _objectKeyFactoryProvider;
     @Inject
     private Provider<ObjectStore> _objectStoreProvider;
     @Inject
@@ -67,7 +67,8 @@ public class RedeliverWebhook extends AjaxHelper<EuropaRequestContext>
         if(event == null)
             throw(new AjaxClientException("No such event: "+eventId, JsonError.Codes.BadContent, 400));
 
-        ObjectKey objectKey = _objectKeyFactory.forWebhookRecord(notificationId);
+        ObjectKeyFactory objectKeyFactory = _objectKeyFactoryProvider.get();
+        ObjectKey objectKey = objectKeyFactory.forWebhookRecord(notificationId);
         WebhookRecord record = null;
         try {
             ObjectStore objectStore = _objectStoreProvider.get();

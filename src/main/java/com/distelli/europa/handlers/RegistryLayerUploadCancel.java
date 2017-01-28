@@ -28,7 +28,7 @@ public class RegistryLayerUploadCancel extends RegistryBase {
     @Inject
     private Provider<ObjectStore> _objectStoreProvider;
     @Inject
-    private ObjectKeyFactory _objectKeyFactory;
+    private Provider<ObjectKeyFactory> _objectKeyFactoryProvider;
     @Inject
     private RegistryBlobDb _blobDb;
     public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
@@ -46,7 +46,8 @@ public class RegistryLayerUploadCancel extends RegistryBase {
         if ( null == blob.getUploadId() ) {
             throw new RegistryError("The :uuid parameter specifies an upload that already succeeded.", RegistryErrorCode.BLOB_UPLOAD_INVALID);
         }
-        ObjectKey objKey = _objectKeyFactory.forRegistryBlobId(blobId);
+        ObjectKeyFactory objectKeyFactory = _objectKeyFactoryProvider.get();
+        ObjectKey objKey = objectKeyFactory.forRegistryBlobId(blobId);
         ObjectPartKey partKey = ObjectPartKey.builder()
             .bucket(objKey.getBucket())
             .key(objKey.getKey())

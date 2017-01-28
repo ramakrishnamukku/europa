@@ -8,16 +8,18 @@
 */
 package com.distelli.europa.monitor;
 
+import javax.inject.Provider;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import javax.inject.Singleton;
-import com.distelli.persistence.PageIterator;
-import com.distelli.europa.Constants;
-
-import com.distelli.europa.models.*;
-import com.distelli.europa.db.*;
 import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import com.distelli.europa.Constants;
+import com.distelli.europa.db.*;
+import com.distelli.europa.models.*;
+import com.distelli.persistence.PageIterator;
+
 import lombok.extern.log4j.Log4j;
 
 //This must be annotated with @Singleton so that there is a
@@ -33,6 +35,8 @@ public class MonitorQueue
     private ContainerRepoDb _containerRepoDb;
     @Inject
     private MonitorTaskFactory _monitorTaskFactory;
+    @Inject
+    private Provider<StorageSettings> _storageSettingsProvider;
 
     public MonitorQueue()
     {
@@ -57,6 +61,13 @@ public class MonitorQueue
 
     public synchronized MonitorTaskList getMonitorTasks()
     {
+        StorageSettings storageSettings = _storageSettingsProvider.get();
+        if(storageSettings == null) {
+            if(log.isDebugEnabled())
+                log.debug("Skipping getMonitorTasks. Storage Not Initialized");
+            return null;
+        }
+
         if(_reposToMonitor == null || _shouldReload == true)
             reload();
 

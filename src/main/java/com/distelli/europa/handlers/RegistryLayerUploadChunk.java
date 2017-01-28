@@ -41,7 +41,7 @@ public class RegistryLayerUploadChunk extends RegistryBase {
     @Inject
     private Provider<ObjectStore> _objectStoreProvider;
     @Inject
-    private ObjectKeyFactory _objectKeyFactory;
+    private Provider<ObjectKeyFactory> _objectKeyFactoryProvider;
     @Inject
     private RegistryBlobDb _blobDb;
 
@@ -71,7 +71,8 @@ public class RegistryLayerUploadChunk extends RegistryBase {
         if ( null == blob.getUploadId() ) {
             throw new RegistryError("The :uuid parameter specifies an upload that already succeeded.", RegistryErrorCode.BLOB_UPLOAD_INVALID);
         }
-        ObjectKey objKey = _objectKeyFactory.forRegistryBlobId(blobId);
+        ObjectKeyFactory objectKeyFactory = _objectKeyFactoryProvider.get();
+        ObjectKey objKey = objectKeyFactory.forRegistryBlobId(blobId);
         ObjectPartKey partKey = getObjectPartKey(blobId, blob.getUploadId());
 
         long totalSize = getTotalSize(blob.getPartIds());
@@ -127,7 +128,8 @@ public class RegistryLayerUploadChunk extends RegistryBase {
     }
 
     protected ObjectPartKey getObjectPartKey(String blobId, String uploadId) {
-        ObjectKey objKey = _objectKeyFactory.forRegistryBlobId(blobId);
+        ObjectKeyFactory objectKeyFactory = _objectKeyFactoryProvider.get();
+        ObjectKey objKey = objectKeyFactory.forRegistryBlobId(blobId);
         return ObjectPartKey.builder()
             .bucket(objKey.getBucket())
             .key(objKey.getKey())

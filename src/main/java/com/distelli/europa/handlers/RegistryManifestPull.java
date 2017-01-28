@@ -29,7 +29,7 @@ import javax.inject.Provider;
 @Singleton
 public class RegistryManifestPull extends RegistryBase {
     @Inject
-    private ObjectKeyFactory _objectKeyFactory;
+    private Provider<ObjectKeyFactory> _objectKeyFactoryProvider;
     @Inject
     private Provider<ObjectStore> _objectStoreProvider;
     @Inject
@@ -54,7 +54,8 @@ public class RegistryManifestPull extends RegistryBase {
                 RegistryErrorCode.MANIFEST_UNKNOWN);
         }
 
-        ObjectKey objKey = _objectKeyFactory.forRegistryManifest(manifest.getManifestId());
+        ObjectKeyFactory objectKeyFactory = _objectKeyFactoryProvider.get();
+        ObjectKey objKey = objectKeyFactory.forRegistryManifest(manifest.getManifestId());
         ObjectStore objectStore = _objectStoreProvider.get();
         ObjectMetadata objMeta = objectStore.head(objKey);
         if ( null == objMeta ) {

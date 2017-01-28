@@ -14,6 +14,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
+
+import com.distelli.europa.models.StorageSettings;
+
 import lombok.extern.log4j.Log4j;
 
 @Log4j
@@ -67,6 +70,8 @@ public class RepoMonitor implements Runnable
         throws InterruptedException
     {
         MonitorTaskList taskList = _monitorQueue.getMonitorTasks();
+        if(taskList == null)
+            return;
         List<MonitorTask> tasks = taskList.getTasks();
         CountDownLatch latch = taskList.getCountDownLatch();
         for(MonitorTask task : tasks)

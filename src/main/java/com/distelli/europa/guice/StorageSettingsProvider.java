@@ -11,6 +11,7 @@ package com.distelli.europa.guice;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.inject.Singleton;
 
 import com.distelli.europa.db.SettingsDb;
 import com.distelli.europa.models.EuropaSetting;
@@ -20,6 +21,7 @@ import com.distelli.europa.models.StorageSettings;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
+@Singleton
 public class StorageSettingsProvider implements Provider<StorageSettings>
 {
     @Inject

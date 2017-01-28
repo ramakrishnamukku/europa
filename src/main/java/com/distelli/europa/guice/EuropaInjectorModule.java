@@ -24,9 +24,11 @@ import com.distelli.europa.db.RegistryCredsDb;
 import com.distelli.europa.db.RegistryManifestDb;
 import com.distelli.europa.db.RepoEventsDb;
 import com.distelli.europa.db.SequenceDb;
-import com.distelli.europa.db.TokenAuthDb;
 import com.distelli.europa.db.SettingsDb;
+import com.distelli.europa.db.TokenAuthDb;
+import com.distelli.europa.models.StorageSettings;
 import com.distelli.europa.monitor.*;
+import com.distelli.europa.util.ObjectKeyFactory;
 import com.distelli.objectStore.*;
 import com.distelli.persistence.Index;
 import com.distelli.persistence.TableDescription;
@@ -86,6 +88,8 @@ public class EuropaInjectorModule extends AbstractModule
         bind(Index.Factory.class).toProvider(new IndexFactoryProvider(endpoint, creds));
         configureEuropaConfiguration();
         bind(ObjectStore.class).toProvider(new ObjectStoreProvider());
+        bind(StorageSettings.class).toProvider(new StorageSettingsProvider());
+        bind(ObjectKeyFactory.class).toProvider(new ObjectKeyFactoryProvider());
         bind(MysqlDataSource.class).toInstance(new MysqlDataSource() {
                 public int getMaximumPoolSize()
                 {

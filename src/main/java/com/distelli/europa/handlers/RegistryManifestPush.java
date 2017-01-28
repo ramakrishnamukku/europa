@@ -71,7 +71,7 @@ public class RegistryManifestPush extends RegistryBase {
     }
 
     @Inject
-    private ObjectKeyFactory _objectKeyFactory;
+    private Provider<ObjectKeyFactory> _objectKeyFactoryProvider;
     @Inject
     private Provider<ObjectStore> _objectStoreProvider;
     @Inject
@@ -119,7 +119,8 @@ public class RegistryManifestPush extends RegistryBase {
         is.reset();
         String finalDigest = "sha256:" + printHexBinary(digestCalc.digest()).toLowerCase();
 
-        ObjectKey objKey = _objectKeyFactory.forRegistryManifest(finalDigest);
+        ObjectKeyFactory objectKeyFactory = _objectKeyFactoryProvider.get();
+        ObjectKey objKey = objectKeyFactory.forRegistryManifest(finalDigest);
         ObjectStore objectStore = _objectStoreProvider.get();
         if ( null == objectStore.head(objKey) ) {
             objectStore.put(objKey, contentLength, is);

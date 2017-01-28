@@ -61,9 +61,6 @@ public class Europa
     protected int _port = 8080;
 
     @Inject
-    protected ObjectKeyFactory _objectKeyFactory;
-
-    @Inject
     protected MonitorQueue _monitorQueue;
     protected Thread _monitorThread;
 

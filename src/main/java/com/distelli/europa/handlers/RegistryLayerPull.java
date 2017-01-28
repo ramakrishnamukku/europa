@@ -29,7 +29,7 @@ public class RegistryLayerPull extends RegistryBase {
     @Inject
     private Provider<ObjectStore> _objectStoreProvider;
     @Inject
-    private ObjectKeyFactory _objectKeyFactory;
+    private Provider<ObjectKeyFactory> _objectKeyFactoryProvider;
     public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
         String ownerUsername = requestContext.getOwnerUsername();
         String ownerDomain = requestContext.getOwnerDomain();
@@ -46,7 +46,8 @@ public class RegistryLayerPull extends RegistryBase {
             throw new RegistryError("Invalid :digest parameter (digest is not known)",
                                     RegistryErrorCode.BLOB_UNKNOWN);
         }
-        ObjectKey objKey = _objectKeyFactory.forRegistryBlobId(blob.getBlobId());
+        ObjectKeyFactory objectKeyFactory = _objectKeyFactoryProvider.get();
+        ObjectKey objKey = objectKeyFactory.forRegistryBlobId(blob.getBlobId());
         ObjectStore objectStore = _objectStoreProvider.get();
         ObjectMetadata objMeta = objectStore.head(objKey);
         if ( null == objMeta ) {

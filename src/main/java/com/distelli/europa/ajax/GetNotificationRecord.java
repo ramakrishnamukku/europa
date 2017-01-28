@@ -31,7 +31,7 @@ public class GetNotificationRecord extends AjaxHelper<EuropaRequestContext>
     @Inject
     protected Provider<ObjectStore> _objectStoreProvider;
     @Inject
-    protected ObjectKeyFactory _objectKeyFactory;
+    protected Provider<ObjectKeyFactory> _objectKeyFactoryProvider;
 
     public GetNotificationRecord()
     {
@@ -47,7 +47,8 @@ public class GetNotificationRecord extends AjaxHelper<EuropaRequestContext>
         switch(type)
         {
         case WEBHOOK:
-            ObjectKey objectKey = _objectKeyFactory.forWebhookRecord(notificationId);
+            ObjectKeyFactory objectKeyFactory = _objectKeyFactoryProvider.get();
+            ObjectKey objectKey = objectKeyFactory.forWebhookRecord(notificationId);
             try {
                 ObjectStore objectStore = _objectStoreProvider.get();
                 byte[] recordBytes = objectStore.get(objectKey);

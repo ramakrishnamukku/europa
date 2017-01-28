@@ -26,7 +26,7 @@ public class RegistryLayerUploadBegin extends RegistryBase {
     @Inject
     private Provider<ObjectStore> _objectStoreProvider;
     @Inject
-    private ObjectKeyFactory _objectKeyFactory;
+    private Provider<ObjectKeyFactory> _objectKeyFactoryProvider;
     @Inject
     private RegistryBlobDb _blobDb;
 
@@ -61,9 +61,10 @@ public class RegistryLayerUploadBegin extends RegistryBase {
 
         boolean success = false;
         ObjectStore objectStore = _objectStoreProvider.get();
+        ObjectKeyFactory objectKeyFactory = _objectKeyFactoryProvider.get();
         try {
             blob = _blobDb.newRegistryBlob(requestContext.getRequesterDomain());
-            partKey = objectStore.newMultipartPut(_objectKeyFactory.forRegistryBlobId(blob.getBlobId()));
+            partKey = objectStore.newMultipartPut(objectKeyFactory.forRegistryBlobId(blob.getBlobId()));
             _blobDb.setUploadId(blob.getBlobId(), partKey.getUploadId());
             success = true;
         } finally {

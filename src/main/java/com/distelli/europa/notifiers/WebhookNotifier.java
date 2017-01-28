@@ -32,7 +32,7 @@ public class WebhookNotifier
     @Inject
     protected Provider<ObjectStore> _objectStoreProvider;
     @Inject
-    protected ObjectKeyFactory _objectKeyFactory;
+    protected Provider<ObjectKeyFactory> _objectKeyFactoryProvider;
     @Inject
     protected WebhookClient _webhookClient;
 
@@ -140,7 +140,8 @@ public class WebhookNotifier
     public void saveNotificationRecord(NotificationId notificationId, WebhookRecord record)
     {
         try {
-            ObjectKey objectKey = _objectKeyFactory.forWebhookRecord(notificationId);
+            ObjectKeyFactory objectKeyFactory = _objectKeyFactoryProvider.get();
+            ObjectKey objectKey = objectKeyFactory.forWebhookRecord(notificationId);
             byte[] recordBytes = record.toJsonBytes();
             if(log.isDebugEnabled())
                 log.debug("Saving WebhookRecord: "+record+

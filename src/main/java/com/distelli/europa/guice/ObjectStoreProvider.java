@@ -12,6 +12,7 @@ import java.net.URI;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
+import javax.inject.Singleton;
 
 import com.distelli.cred.CredPair;
 import com.distelli.cred.CredProvider;
@@ -23,6 +24,7 @@ import com.distelli.objectStore.ObjectStoreType;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
+@Singleton
 public class ObjectStoreProvider implements Provider<ObjectStore>
 {
     @Inject @Named("BASE")
