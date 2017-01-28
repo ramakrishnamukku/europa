@@ -33,13 +33,6 @@ import static javax.xml.bind.DatatypeConverter.printHexBinary;
 @Singleton
 public class RegistryManifestDb extends BaseDb {
     private static final String TABLE_NAME = "rmanifest";
-    private static final String ATTR_DOMAIN = "dom";
-    private static final String ATTR_CONTAINER_REPO_ID = "repo";
-    private static final String ATTR_TAG = "tag";
-    private static final String ATTR_MANIFEST_ID = "id";
-    private static final String ATTR_DIGESTS = "mds";
-    private static final String ATTR_UPLOADED_BY = "by";
-    private static final String ATTR_CONTENT_TYPE = "ty";
 
     private Index<RegistryManifest> _main;
 
@@ -54,7 +47,7 @@ public class RegistryManifestDb extends BaseDb {
             .indexes(
                 Arrays.asList(
                     IndexDescription.builder()
-                    .hashKey(attr(ATTR_DOMAIN, AttrType.STR))
+                    .hashKey(attr("dom", AttrType.STR))
                     .rangeKey(attr("rk", AttrType.STR))
                     .indexType(IndexType.MAIN_INDEX)
                     .readCapacity(1L)
@@ -65,14 +58,16 @@ public class RegistryManifestDb extends BaseDb {
 
     private TransformModule createTransforms(TransformModule module) {
         module.createTransform(RegistryManifest.class)
-            .put(ATTR_DOMAIN, String.class, "domain")
+            .put("dom", String.class, "domain")
             .put("rk", String.class, (manifest) -> toRK(manifest.getContainerRepoId(), manifest.getTag()))
-            .put(ATTR_CONTAINER_REPO_ID, String.class, "containerRepoId")
-            .put(ATTR_TAG, String.class, "tag")
-            .put(ATTR_MANIFEST_ID, String.class, "manifestId")
-            .put(ATTR_DIGESTS, new TypeReference<Set<String>>(){}, "digests")
-            .put(ATTR_UPLOADED_BY, String.class, "uploadedBy")
-            .put(ATTR_CONTENT_TYPE, String.class, "contentType");
+            .put("repo", String.class, "containerRepoId")
+            .put("tag", String.class, "tag")
+            .put("id", String.class, "manifestId")
+            .put("mds", new TypeReference<Set<String>>(){}, "digests")
+            .put("by", String.class, "uploadedBy")
+            .put("ty", String.class, "contentType")
+            .put("vsz", Long.class, "virtualSize")
+            .put("ts", Long.class, "pushTime");
         return module;
     }
 
@@ -104,7 +99,7 @@ public class RegistryManifestDb extends BaseDb {
                         }
                         return new Attribute[] {
                             new Attribute()
-                            .withName(ATTR_DOMAIN)
+                            .withName("dom")
                             .withValue(hk),
                             new Attribute()
                             .withName("rk")

@@ -39,4 +39,7 @@ public class RegistryBlob
      */
     @Singular
     private Set<String> manifestIds;
+    /* The size of the blob uploaded.
+     */
+    private Long size;
 }

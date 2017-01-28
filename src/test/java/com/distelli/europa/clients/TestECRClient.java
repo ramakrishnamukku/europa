@@ -115,8 +115,6 @@ public class TestECRClient
             for(DockerImageId imageId : images)
             {
                 System.out.println("DockerImage: "+imageId);
-                assertThat(imageId.getRepoUri(), is(not(nullValue())));
-                assertThat(imageId.getRepoUri(), equalTo(repo.getRepoUri()));
                 assertThat(imageId.getSha(), is(not(nullValue())));
             }
         }

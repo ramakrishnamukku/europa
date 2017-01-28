@@ -35,32 +35,35 @@ public class RegistryBlobDb extends BaseDb {
     private static final String ATTR_UPLOAD_ID = "up";
     private static final String ATTR_MD_ENCODED_STATE = "mdx";
     private static final String ATTR_MANIFEST_IDS = "mids";
+    private static final String ATTR_SIZE = "sz";
 
     private Index<RegistryBlob> _main;
     private Index<RegistryBlob> _byDigest;
 
     private final ObjectMapper _om = new ObjectMapper();
 
+    private static final TableDescription TABLE_DESCRIPTION = TableDescription.builder()
+        .tableName(TABLE_NAME)
+        .indexes(
+            Arrays.asList(
+                IndexDescription.builder()
+                .hashKey(attr(ATTR_BLOB_ID, AttrType.STR))
+                .indexType(IndexType.MAIN_INDEX)
+                .readCapacity(1L)
+                .writeCapacity(1L)
+                .build(),
+                IndexDescription.builder()
+                .indexName(ATTR_DIGEST+"-index")
+                .hashKey(attr(ATTR_DIGEST, AttrType.STR))
+                .rangeKey(attr(ATTR_BLOB_ID, AttrType.STR))
+                .indexType(IndexType.GLOBAL_SECONDARY_INDEX)
+                .readCapacity(1L)
+                .writeCapacity(1L)
+                .build()))
+        .build();
+
     public static TableDescription getTableDescription() {
-        return TableDescription.builder()
-            .tableName(TABLE_NAME)
-            .indexes(
-                Arrays.asList(
-                    IndexDescription.builder()
-                    .hashKey(attr(ATTR_BLOB_ID, AttrType.STR))
-                    .indexType(IndexType.MAIN_INDEX)
-                    .readCapacity(1L)
-                    .writeCapacity(1L)
-                    .build(),
-                    IndexDescription.builder()
-                    .indexName(ATTR_DIGEST+"-index")
-                    .hashKey(attr(ATTR_DIGEST, AttrType.STR))
-                    .rangeKey(attr(ATTR_BLOB_ID, AttrType.STR))
-                    .indexType(IndexType.GLOBAL_SECONDARY_INDEX)
-                    .readCapacity(1L)
-                    .writeCapacity(1L)
-                    .build()))
-            .build();
+        return TABLE_DESCRIPTION;
     }
 
     private TransformModule createTransforms(TransformModule module) {
@@ -70,7 +73,8 @@ public class RegistryBlobDb extends BaseDb {
             .put(ATTR_PART_IDS, new TypeReference<List<RegistryBlobPart>>(){}, "partIds")
             .put(ATTR_UPLOADED_BY, String.class, "uploadedBy")
             .put(ATTR_UPLOAD_ID, String.class, "uploadId")
-            .put(ATTR_MD_ENCODED_STATE, byte[].class, "mdEncodedState");
+            .put(ATTR_MD_ENCODED_STATE, byte[].class, "mdEncodedState")
+            .put(ATTR_SIZE, Long.class, "size");
         module.createTransform(RegistryBlobPart.class)
             .put("n", Integer.class, "partNum")
             .put("i", String.class, "partId")
@@ -83,20 +87,18 @@ public class RegistryBlobDb extends BaseDb {
                              ConvertMarker.Factory convertMarkerFactory) {
         _om.registerModule(createTransforms(new TransformModule()));
 
+        String[] noEncrypt = new String[] {
+            ATTR_MD_ENCODED_STATE, ATTR_MANIFEST_IDS, ATTR_SIZE
+        };
         _main = indexFactory.create(RegistryBlob.class)
-            .withTableName(TABLE_NAME)
-            .withNoEncrypt(ATTR_BLOB_ID, ATTR_MD_ENCODED_STATE, ATTR_DIGEST, ATTR_MANIFEST_IDS)
-            .withHashKeyName(ATTR_BLOB_ID)
+            .withTableDescription(TABLE_DESCRIPTION)
+            .withNoEncrypt(noEncrypt)
             .withConvertValue(_om::convertValue)
-            .withConvertMarker(convertMarkerFactory.create(ATTR_BLOB_ID))
             .build();
         _byDigest = indexFactory.create(RegistryBlob.class)
-            .withTableName(TABLE_NAME)
-            .withNoEncrypt(ATTR_BLOB_ID, ATTR_MD_ENCODED_STATE, ATTR_DIGEST, ATTR_MANIFEST_IDS)
-            .withHashKeyName(ATTR_DIGEST)
-            .withRangeKeyName(ATTR_BLOB_ID)
+            .withTableDescription(TABLE_DESCRIPTION, ATTR_DIGEST+"-index")
+            .withNoEncrypt(noEncrypt)
             .withConvertValue(_om::convertValue)
-            .withConvertMarker(convertMarkerFactory.create(ATTR_DIGEST, ATTR_BLOB_ID))
             .build();
     }
 
