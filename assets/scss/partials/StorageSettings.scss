@@ -1,0 +1,22 @@
+.StorageSettings {
+    position: relative;
+    width: 635px;
+    margin: 2rem auto 1rem;
+    background-color: white;
+    height: auto;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+
+    .Title {
+        color: $teal;
+        font-size: 1.4rem;
+        font-weight: 300;
+        flex: 1;
+    }
+
+
+    .InputRow {
+    	margin-bottom: 0.5rem;
+    }
+}

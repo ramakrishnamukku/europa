@@ -10,15 +10,18 @@ import Pipelines from './pages/Pipelines'
 import NewPipeline from './pages/NewPipeline'
 import Pipeline from './pages/Pipeline'
 import Settings from './pages/Settings'
+import StorageSettings from './components/StorageSettings'
 import NotFound from './pages/NotFound'
 
 export default class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      ...PAGE_PROPS
+    };
   }
   render() {
-    return (
+    let europa = (
       <Router history={browserHistory}>
         <Route component={Layout}>
           <Route component={LandingPage} path="/" />
@@ -33,6 +36,18 @@ export default class App extends Component {
         </Route>
       </Router>
     );
+
+    let storageApp = (
+      <Router history={browserHistory}>
+        <Route component={Layout}>
+          <Route component={StorageSettings} path="/" />
+          <Route component={NotFound} path="*" />
+        </Route>
+      </Router>
+    );
+
+    return (this.state.storage) ? europa : storageApp;
+    // return europa;
   }
 }
 

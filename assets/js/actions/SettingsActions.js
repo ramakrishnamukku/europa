@@ -15,7 +15,8 @@ import NPECheck from './../util/NPECheck'
 export function settingsState() {
   return {
     section: 'CREDENTIALS',
-    tokens: tokensState.call(this)
+    tokens: tokensState.call(this),
+    storage: storageState.call(this)
   }
 }
 
@@ -32,6 +33,7 @@ export function setSettingsSection(section) {
     })
   });
 }
+
 
 // *************************************************
 // API Token Actions
@@ -269,5 +271,149 @@ export function toggleTokenForDelete(tokenString = null) {
         selectedTokenForDelete: (tokenString == NPECheck(this.state, 'settings/tokens/selectedTokenForDelete', null)) ? null : tokenString
       }
     })
+  });
+}
+
+// *************************************************
+// API Token Actions
+// *************************************************
+
+export function storageState() {
+  return {
+    saveStorageXHR: false,
+    error: '',
+    regionDropDownIsOpen: false,
+    regions: [],
+    regionsError: '',
+    storageCreds: storageCredsState.call(this)
+  };
+}
+
+export function storageCredsState() {
+  return {
+    osType: 'S3',
+    osBucket: '',
+    osEndpoint: '',
+    osCredKey: '',
+    osCredSecret: '',
+    osPathPrefix: '',
+    osDiskRoot: ''
+  };
+}
+
+export function resetStorageState() {
+  this.setState({
+    settings: GA.modifyProperty(this.state.settings, {
+      storage: storageState.call(this)
+    })
+  });
+}
+
+export function clearStorageError() {
+  this.setState({
+    settings: {
+      ...this.state.settings,
+      storage: {
+        ...this.state.settings.storage,
+        error: ''
+      }
+    }
+  })
+}
+
+export function updateStorageCreds(prop, e, eIsValue = false) {
+  let value = (eIsValue) ? e : e.target.value;
+  let additionalState = {};
+  if (prop == 'osEndpoint') value = `s3://${value}`;
+  if (prop == 'osType') {
+    additionalState = storageCredsState.call(this);
+  }
+
+
+  this.setState({
+    settings: {
+      ...this.state.settings,
+      storage: Reducers(this.state.settings.storage, {
+        type: 'UPDATE_STORAGE_CREDS',
+        data: {
+          ...additionalState,
+          [prop]: value
+        }
+      })
+    }
+  });
+}
+
+export function toggleSelectRegionForStorageCredentialsDropDown() {
+  this.setState({
+    settings: {
+      ...this.state.settings,
+      storage: GA.modifyProperty(this.state.settings.storage, {
+        regionDropDownIsOpen: !NPECheck(this.state, 'settings/storage/regionDropDownIsOpen', true)
+      })
+    }
+  });
+}
+
+export function listRegionsForStorageCredentials() {
+  return new Promise((resolve, reject) => {
+    RAjax.GET.call(this, 'GetRegionsForProvider', {
+        provider: 'ECR'
+      })
+      .then((res) => {
+        this.setState({
+          settings: {
+            ...this.state.settings,
+            storage: GA.modifyProperty(this.state.settings.storage, {
+              regions: res
+            })
+          }
+        }, () => resolve())
+      })
+      .catch((err) => {
+        console.error(err);
+        reject();
+      })
+  });
+}
+
+export function saveStorageSettings() {
+  return new Promise((resolve, reject) => {
+    let storageSettings = NPECheck(this.state, 'settings/storage/storageCreds', {});
+
+    this.setState({
+      settings: {
+        ...this.state.settings,
+        storage: GA.modifyProperty(this.state.settings.storage, {
+          saveStorageXHR: true
+        })
+      }
+    }, () => {
+      RAjax.POST.call(this, 'SaveStorageSettings', storageSettings)
+        .then((res) => {
+          this.setState({
+            settings: {
+              ...this.state.settings,
+              storage: GA.modifyProperty(this.state.settings.storage, {
+                saveStorageXHR: false
+              })
+            }
+          }, () => resolve());
+        })
+        .catch((err) => {
+          console.error(err);
+          let error = NPECheck(err, 'error/message', 'There was an error saving your credentials.');
+          this.setState({
+            settings: {
+              ...this.state.settings,
+              storage: GA.modifyProperty(this.state.settings.storage, {
+                saveStorageXHR: false,
+                error: error
+              })
+            }
+          }, () => reject());
+        });
+    });
+
   });
 }
