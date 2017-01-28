@@ -35,7 +35,7 @@ export default class Dropdown extends Component {
 				<input className={this.props.inputClassName}
 					   onClick={ () => this.props.toggleOpen() }
 					   placeholder={this.props.inputPlaceholder}
-					   onChange={this.props.inputOnChange}
+					   onChange={(this.props.inputOnChange) ? this.props.inputOnChange : () => {}}
 					   value={(this.props.isOpen) ? undefined : this.props.inputValue} 
 					   {...readOnly} />
 			);

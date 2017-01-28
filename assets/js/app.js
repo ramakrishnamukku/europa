@@ -46,8 +46,7 @@ export default class App extends Component {
       </Router>
     );
 
-    return (this.state.storage) ? europa : storageApp;
-    // return europa;
+    return (this.state.storage || this.state.storage == undefined) ? europa : storageApp;
   }
 }
 

@@ -398,7 +398,10 @@ export function saveStorageSettings() {
                 saveStorageXHR: false
               })
             }
-          }, () => resolve());
+          }, () => {
+             resolve()
+             window.location = '/';
+          });
         })
         .catch((err) => {
           console.error(err);
