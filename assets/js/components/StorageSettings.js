@@ -3,8 +3,11 @@ import RadioButton from './../components/RadioButton'
 import Dropdown from './../components/Dropdown'
 import Btn from './../components/Btn'
 import Loader from './../components/Loader'
-import NPECheck from './../util/NPECheck'
 import Msg from './../components/Msg'
+import AWSRegions from './../util/AWSRegions'
+import NPECheck from './../util/NPECheck'
+
+
 
 const typeKey = 'osType';
 const bucketKey = 'osBucket';
@@ -18,9 +21,6 @@ export default class StorageSettings extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
-	}
-	componentDidMount() {
-		this.context.actions.listRegionsForStorageCredentials();
 	}
 	renderChooseStorageType(){
 		return (
@@ -122,12 +122,7 @@ export default class StorageSettings extends Component {
 	}
 	renderSelectRegion(inputConfig){		
 		let regionValue = NPECheck(this.props, `settings/storage/storageCreds/${endpointKey}`);
-		let providerRegions = NPECheck(this.props, 'settings/storage/regions', []);
-		let regions = [];
-
-		if(providerRegions.length) {
-			regions = providerRegions;
-		}
+		let regions = AWSRegions;
 
 		return (
 			<div>
