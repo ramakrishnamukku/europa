@@ -88,7 +88,7 @@ public class RegistryBlobDb extends BaseDb {
         _om.registerModule(createTransforms(new TransformModule()));
 
         String[] noEncrypt = new String[] {
-            ATTR_MD_ENCODED_STATE, ATTR_MANIFEST_IDS, ATTR_SIZE
+            ATTR_MD_ENCODED_STATE, ATTR_MANIFEST_IDS, ATTR_PART_IDS
         };
         _main = indexFactory.create(RegistryBlob.class)
             .withTableDescription(TABLE_DESCRIPTION)
@@ -162,13 +162,14 @@ public class RegistryBlobDb extends BaseDb {
         }
     }
 
-    public void finishUpload(String blobId, byte[] currentMDState, String digest) {
+    public void finishUpload(String blobId, byte[] currentMDState, String digest, long size) {
         try {
             _main.updateItem(blobId, null)
                 .remove(ATTR_PART_IDS)
                 .remove(ATTR_MD_ENCODED_STATE)
                 .remove(ATTR_UPLOAD_ID)
                 .set(ATTR_DIGEST, digest.toLowerCase())
+                .set(ATTR_SIZE, size)
                 .when((expr) -> expr.eq(ATTR_MD_ENCODED_STATE, currentMDState));
         } catch ( RollbackException ex ) {
             throw new ConcurrentModificationException(
@@ -176,25 +177,25 @@ public class RegistryBlobDb extends BaseDb {
         }
     }
 
-    // Returns false if digest does not exist.
-    public boolean addReference(String digest, String manifestId) {
+    // Returns the size of the digest, or null.
+    public Long addReference(String digest, String manifestId) {
         digest = digest.toLowerCase();
         for ( int retry=0;;retry++ ) {
             RegistryBlob blob = getRegistryBlobByDigest(digest);
-            if ( null == blob ) return false;
+            if ( null == blob ) return null;
             try {
-                _main.updateItem(blob.getBlobId(), null)
+                return _main.updateItem(blob.getBlobId(), null)
                     .setAdd(ATTR_MANIFEST_IDS, AttrType.STR, manifestId)
-                    .when((expr) -> expr.exists(ATTR_BLOB_ID));
+                    .returnAllNew()
+                    .when((expr) -> expr.exists(ATTR_BLOB_ID))
+                    .getSize();
             } catch ( RollbackException ex ) {
                 log.info(ex.getMessage(), ex);
                 // Give up!
-                if ( retry > 10 ) return false;
+                if ( retry > 10 ) return null;
                 continue;
             }
-            break;
         }
-        return true;
     }
 
     public void removeReference(String digest, String manifestId) {

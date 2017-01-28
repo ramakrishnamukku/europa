@@ -60,7 +60,7 @@ public class RegistryLayerUploadFinish extends RegistryLayerUploadChunk {
 
         ObjectStore objectStore = _objectStoreProvider.get();
         objectStore.completePut(partKey, toObjectPartIds(blob.getPartIds()));
-        _blobDb.finishUpload(blobId, blob.getMdEncodedState(), digest);
+        _blobDb.finishUpload(blobId, blob.getMdEncodedState(), digest, getTotalSize(blob.getPartIds()));
         WebResponse response = new WebResponse(201);
         response.setResponseHeader("Location", joinWithSlash("/v2", ownerUsername, name, "blobs", digest));
         response.setResponseHeader("Docker-Content-Digest", digest);
@@ -76,6 +76,11 @@ public class RegistryLayerUploadFinish extends RegistryLayerUploadChunk {
                         .build());
         }
         return partIds;
+    }
+
+    private long getTotalSize(List<RegistryBlobPart> partIds) {
+        if ( null == partIds ) return 0;
+        return partIds.stream().mapToLong((part) -> part.getChunkSize()).sum();
     }
 
     private void validateDigest(String digest, byte[] encodedState) {

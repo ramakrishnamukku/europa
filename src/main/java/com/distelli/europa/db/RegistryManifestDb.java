@@ -142,11 +142,16 @@ public class RegistryManifestDb extends BaseDb {
         Set<String> digests = manifest.getDigests();
         if ( null == digests ) digests = Collections.emptySet();
         Set<String> unknownDigests = new HashSet<>();
+        long totalSize = 0;
         for ( String digest : digests ) {
-            if ( ! _blobDb.addReference(digest, manifestId) ) {
+            Long size = _blobDb.addReference(digest, manifestId);
+            if ( null == size ) {
                 unknownDigests.add(digest);
+            } else {
+                totalSize += size;
             }
         }
+        manifest.setVirtualSize(totalSize);
         if ( ! unknownDigests.isEmpty() ) {
             for ( String digest : digests ) {
                 if ( ! unknownDigests.contains(digest) ) {

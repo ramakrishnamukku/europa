@@ -138,6 +138,7 @@ public class RegistryManifestPush extends RegistryBase {
             .containerRepoId(repo.getId())
             .tag(reference)
             .digests(digests)
+            .pushTime(System.currentTimeMillis())
             .build();
 
         try {
