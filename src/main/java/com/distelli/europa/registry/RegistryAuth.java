@@ -1,17 +1,20 @@
 package com.distelli.europa.registry;
 
-import com.distelli.webserver.RequestContext;
-import java.util.Collections;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Base64;
 import java.net.URI;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
-import lombok.extern.log4j.Log4j;
+import javax.inject.Inject;
+
 import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.db.TokenAuthDb;
 import com.distelli.europa.models.TokenAuth;
-import javax.inject.Inject;
+import com.distelli.europa.models.TokenAuthStatus;
+import com.distelli.webserver.RequestContext;
+
+import lombok.extern.log4j.Log4j;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Log4j
@@ -64,7 +67,7 @@ public class RegistryAuth {
         String passwd = new String(token, colon+1, token.length-colon-1, UTF_8);
         if ( "TOKEN".equals(user) ) {
             TokenAuth tokenAuth = _tokenAuthDb.getToken(passwd);
-            if ( null != tokenAuth ) {
+            if(tokenAuth != null && tokenAuth.getStatus() == TokenAuthStatus.ACTIVE) {
                 context.setRemoteUser(tokenAuth.getDomain());
                 context.setRequesterDomain(tokenAuth.getDomain());
                 return;
