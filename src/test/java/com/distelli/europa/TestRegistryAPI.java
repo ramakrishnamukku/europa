@@ -1,28 +1,5 @@
 package com.distelli.europa;
 
-import com.distelli.europa.EuropaRequestContext;
-import com.distelli.europa.EuropaConfiguration;
-import com.distelli.europa.db.TokenAuthDb;
-import com.distelli.europa.guice.EuropaInjectorModule;
-import com.distelli.europa.handlers.RegistryBase;
-import com.distelli.europa.handlers.RegistryVersionCheck;
-import com.distelli.europa.models.TokenAuth;
-import com.distelli.europa.filters.RegistryAuthFilter;
-import com.distelli.utils.Log4JConfigurator;
-import com.distelli.persistence.impl.PersistenceModule;
-import com.distelli.objectStore.impl.ObjectStoreModule;
-import com.distelli.webserver.HTTPMethod;
-import com.distelli.webserver.RequestContext;
-import com.distelli.webserver.RequestContextFactory;
-import com.distelli.webserver.RequestHandlerFactory;
-import com.distelli.webserver.WebResponse;
-import com.distelli.webserver.RequestHandler;
-import com.distelli.webserver.WebServlet;
-import com.distelli.webserver.MatchedRoute;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Arrays;
@@ -33,9 +10,35 @@ import javax.persistence.EntityExistsException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import com.distelli.europa.EuropaConfiguration;
+import com.distelli.europa.EuropaRequestContext;
+import com.distelli.europa.db.TokenAuthDb;
+import com.distelli.europa.filters.RegistryAuthFilter;
+import com.distelli.europa.guice.EuropaInjectorModule;
+import com.distelli.europa.handlers.RegistryBase;
+import com.distelli.europa.handlers.RegistryVersionCheck;
+import com.distelli.europa.models.TokenAuth;
+import com.distelli.europa.models.TokenAuthStatus;
+import com.distelli.objectStore.impl.ObjectStoreModule;
+import com.distelli.persistence.impl.PersistenceModule;
+import com.distelli.utils.Log4JConfigurator;
+import com.distelli.webserver.HTTPMethod;
+import com.distelli.webserver.MatchedRoute;
+import com.distelli.webserver.RequestContext;
+import com.distelli.webserver.RequestContextFactory;
+import com.distelli.webserver.RequestHandler;
+import com.distelli.webserver.RequestHandlerFactory;
+import com.distelli.webserver.WebResponse;
+import com.distelli.webserver.WebServlet;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -77,8 +80,9 @@ public class TestRegistryAPI {
         try {
             tokenAuthDb.save(
                 TokenAuth.builder()
-                .domain("TEST")
+                .domain(Constants.DOMAIN_ZERO)
                 .token("tiger")
+                .status(TokenAuthStatus.ACTIVE)
                 .build());
         } catch ( EntityExistsException ex ) {}
     }
