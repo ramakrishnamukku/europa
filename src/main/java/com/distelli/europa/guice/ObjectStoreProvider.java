@@ -43,16 +43,21 @@ public class ObjectStoreProvider implements Provider<ObjectStore>
     {
         if(_objectStore != null)
             return _objectStore;
-        ObjectStore.Factory objectStoreFactory = getObjectStoreFactory();
+        final StorageSettings storageSettings = _storageSettingsProvider.get();
+        if(storageSettings == null)
+            throw(new ObjectStoreNotInitialized("Object Store is not initialized"));
+        ObjectStore.Factory objectStoreFactory = getObjectStoreFactory(storageSettings);
         if(objectStoreFactory == null)
             throw(new ObjectStoreNotInitialized("Object Store is not initialized"));
         _objectStore = objectStoreFactory.create().build();
+        ObjectStoreType osType = storageSettings.getOsType();
+        if(osType == ObjectStoreType.DISK)
+            _objectStore.createBucket(storageSettings.getOsBucket());
         return _objectStore;
     }
 
-    private ObjectStore.Factory getObjectStoreFactory()
+    private ObjectStore.Factory getObjectStoreFactory(final StorageSettings storageSettings)
     {
-        final StorageSettings storageSettings = _storageSettingsProvider.get();
         if(storageSettings == null)
             return null;
 

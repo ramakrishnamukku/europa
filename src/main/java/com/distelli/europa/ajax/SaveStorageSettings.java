@@ -11,6 +11,7 @@ package com.distelli.europa.ajax;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import com.distelli.europa.EuropaRequestContext;
@@ -26,7 +27,6 @@ import com.distelli.webserver.HTTPMethod;
 import com.distelli.webserver.JsonError;
 import com.distelli.webserver.JsonSuccess;
 
-import javax.inject.Provider;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
@@ -54,6 +54,7 @@ public class SaveStorageSettings extends AjaxHelper<EuropaRequestContext>
         List<EuropaSetting> europaSettings = storageSettings.toEuropaSettings();
         for(EuropaSetting setting : europaSettings)
             _settingsDb.save(setting);
+
         return JsonSuccess.Success;
     }
 }

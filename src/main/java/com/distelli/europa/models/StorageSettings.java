@@ -91,19 +91,19 @@ public class StorageSettings
         switch(this.osType)
         {
         case S3:
-            if(this.osBucket == null)
+            if(this.osBucket == null || this.osBucket.trim().isEmpty())
                 throw(new AjaxClientException("Invalid or Missing field: osBucket in content"));
-            if(this.osEndpoint == null)
+            if(this.osEndpoint == null || this.osEndpoint.trim().isEmpty())
                 throw(new AjaxClientException("Invalid or Missing field: osEndpoint in content"));
-            if(this.osCredKey == null)
+            if(this.osCredKey == null || this.osCredKey.trim().isEmpty())
                 throw(new AjaxClientException("Invalid or Missing field: osCredKey in content"));
-            if(this.osCredSecret == null)
+            if(this.osCredSecret == null || this.osCredSecret.trim().isEmpty())
                 throw(new AjaxClientException("Invalid or Missing field: osCredSecret in content"));
             break;
         case DISK:
-            if(this.osDiskRoot == null)
+            if(this.osDiskRoot == null || this.osDiskRoot.trim().isEmpty())
                 throw(new AjaxClientException("Invalid or Missing field: osDiskRoot in content"));
-            if(this.osBucket == null)
+            if(this.osBucket == null || this.osBucket.trim().isEmpty())
                 this.osBucket = DEFAULT_DISK_BUCKET;
             break;
         }
@@ -124,7 +124,7 @@ public class StorageSettings
             break;
         case DISK:
             settingsList.add(toSetting(SETTING_OS_DISK_STORAGE_ROOT, this.osDiskRoot));
-            if(this.osBucket == null)
+            if(this.osBucket == null || this.osBucket.trim().isEmpty())
                 this.osBucket = DEFAULT_DISK_BUCKET;
             settingsList.add(toSetting(SETTING_OS_BUCKET, this.osBucket));
             break;

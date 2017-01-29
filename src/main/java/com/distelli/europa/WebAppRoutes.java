@@ -31,6 +31,7 @@ public class WebAppRoutes
         //Ajax Routes
         ROUTES.add("GET", "/ajax", AjaxRequestHandler.class);
         ROUTES.add("POST", "/ajax", AjaxRequestHandler.class);
+        ROUTES.add("POST", "/storage", AjaxRequestHandler.class);
 
         ROUTES.setDefaultRequestHandler(DefaultRequestHandler.class);
     }

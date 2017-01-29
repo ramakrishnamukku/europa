@@ -34,7 +34,7 @@ public class StorageSettingsProvider implements Provider<StorageSettings>
 
     }
 
-    public StorageSettings get()
+    public synchronized StorageSettings get()
     {
         if(_storageSettings != null)
             return _storageSettings;
