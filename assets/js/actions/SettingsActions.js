@@ -337,7 +337,7 @@ export function getStorageSettings() {
       })
     }, () => {
 
-      RAjax.GET.call(this, 'GetStorageSettings')
+      RAjax.GET.call(this, 'GetStorageSettings', {}, '/storage-settings')
         .then((res) => {
           this.setState({
             settings: GA.modifyProperty(this.state.settings, {
@@ -437,7 +437,14 @@ export function saveStorageSettings() {
         })
       }
     }, () => {
-      RAjax.POST.call(this, 'SaveStorageSettings', storageSettings)
+
+      let op = 'UpdateStorageCreds';
+
+      if(this.state.hasOwnProperty('storage') && this.state.storage == false) {
+        op = 'SaveStorageSettings';
+      } 
+
+      RAjax.POST.call(this, op, storageSettings, {}, '/storage-creds')
         .then((res) => {
           this.setState({
             settings: {
@@ -459,7 +466,8 @@ export function saveStorageSettings() {
               ...this.state.settings,
               storage: GA.modifyProperty(this.state.settings.storage, {
                 saveStorageXHR: false,
-                error: error
+                error: error,
+                saveStorageSuccess: false
               })
             }
           }, () => reject());

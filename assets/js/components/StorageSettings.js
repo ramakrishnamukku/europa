@@ -7,8 +7,6 @@ import Msg from './../components/Msg'
 import AWSRegions from './../util/AWSRegions'
 import NPECheck from './../util/NPECheck'
 
-
-
 const typeKey = 'osType';
 const bucketKey = 'osBucket';
 const endpointKey = 'osEndpoint';
@@ -30,7 +28,10 @@ export default class StorageSettings extends Component {
 		}
 	}
 	componentWillUnmount() {
-		this.context.actions.resetStorageState();
+		// Avoid race conditions
+		setTimeout(() => {
+			this.context.actions.resetStorageState();
+		});
 	}
 	saveStorageSettings(){
 		this.context.actions.saveStorageSettings()
@@ -229,6 +230,15 @@ export default class StorageSettings extends Component {
 				 style={{width: '200px', margin: '28px auto'}}/>
 		);
 	}
+	renderSuccess(){
+		if(NPECheck(this.props, 'settings/storage/saveStorageSuccess', false)) {
+			return (
+				<Msg text="Successfully updated storage credentials" 
+				 	 style={{margin: '1rem 0 0'}}
+					 isSuccess={true}/>
+			);
+		}
+	}
 	render(){
 		let className = "StorageSettings";
 
@@ -252,6 +262,7 @@ export default class StorageSettings extends Component {
 				{this.renderChooseStorageType()}
 				{this.renderStorageSettings()}
 				{this.renderError()}
+				{this.renderSuccess()}
 				{this.renderSaveButton()}
 			</div>
 		);
