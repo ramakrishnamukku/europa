@@ -38,7 +38,7 @@ public class StorageInitFilter implements RequestFilter<EuropaRequestContext>
     public WebResponse filter(EuropaRequestContext requestContext, RequestFilterChain next)
     {
         String path = requestContext.getPath();
-        if(path.endsWith("/ajax"))
+        if(path.endsWith("/ajax") || path.equalsIgnoreCase("/storage"))
             return next.filter(requestContext);
         StorageSettings storageSettings = _storageSettingsProvider.get();
         if(storageSettings != null)
