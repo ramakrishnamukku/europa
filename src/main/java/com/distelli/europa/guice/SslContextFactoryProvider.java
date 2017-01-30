@@ -59,8 +59,10 @@ public class SslContextFactoryProvider implements Provider<SslContextFactory> {
         SslSettings settings = _sslSettings.get();
         if ( null == settings ) return ctxFactory;
 
+        char[] passwd = generatePassword();
         ctxFactory.setTrustStore(getTrustStore(settings.getAuthorityCertificate()));
-        ctxFactory.setKeyStore(getKeyStore(settings.getServerPrivateKey(), settings.getServerCertificate()));
+        ctxFactory.setKeyStore(getKeyStore(passwd, settings.getServerPrivateKey(), settings.getServerCertificate()));
+        ctxFactory.setKeyStorePassword(new String(passwd));
 
         return ctxFactory;
     }
@@ -74,17 +76,20 @@ public class SslContextFactoryProvider implements Provider<SslContextFactory> {
         return trustStore;
     }
 
-    private static KeyStore getKeyStore(String serverPrivateKey, String serverCertificate) throws Exception {
-        PrivateKey key = pemToPrivateKey(serverPrivateKey);
-        X509Certificate cert = toX509Certificate(serverCertificate);
-        if ( null == key || null == cert ) return null;
-
+    private static char[] generatePassword() {
         // Use random password for KeyStore:
         SecureRandom rand = new SecureRandom();
         char[] passwd = new char[8];
         for ( int i=0; i < passwd.length; i++ ) {
             passwd[i] = (char)rand.nextInt(Character.MAX_VALUE);
         }
+        return passwd;
+    }
+
+    private static KeyStore getKeyStore(char[] passwd, String serverPrivateKey, String serverCertificate) throws Exception {
+        PrivateKey key = pemToPrivateKey(serverPrivateKey);
+        X509Certificate cert = toX509Certificate(serverCertificate);
+        if ( null == key || null == cert ) return null;
         KeyStore keyStore = KeyStore.getInstance("JKS");
         keyStore.load(null);
         keyStore.setCertificateEntry("cert-alias", cert);
