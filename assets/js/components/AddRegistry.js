@@ -19,8 +19,8 @@ let keyName = 'name';
 let region = 'region';
 let key = 'key';
 let secret = 'secret';
-let username = 'username';
-let password = 'password';
+let username = 'key';
+let password = 'secret';
 let endpoint = 'endpoint';
 
 export default class AddRegistry extends Component {

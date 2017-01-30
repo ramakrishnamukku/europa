@@ -130,8 +130,6 @@ export function newRegistryState() {
     region: '',
     key: '',
     secret: '',
-    username: '',
-    password: '',
     endpoint: ''
   };
 }
@@ -345,6 +343,7 @@ function isAddRegistryValid(validateOnInput, skipSetState) {
   let key = 'Public Key';
   let secret = 'Secret Key';
   let name = 'Key Name';
+  let endpoint = 'Endpoint';
 
   let required = {
     provider,
@@ -353,6 +352,50 @@ function isAddRegistryValid(validateOnInput, skipSetState) {
     secret,
     name,
   };
+
+  let currentProvider = NPECheck(this.state, 'addRegistry/newRegistry/provider', '');
+
+  switch(currentProvider) {
+    case 'ECR':
+      required = {
+        provider,
+        region,
+        key,
+        secret,
+        name,
+      };
+    break;
+
+    case 'GCR':
+      required = {
+        provider,
+        region,
+        name,
+      };
+
+    case 'DOCKERHUB':
+
+      required = {
+        provider,
+        key,
+        secret, 
+        name,
+      };
+
+    break;
+
+    case 'PRIVATE':
+
+      required = {
+        provider,
+        key,
+        secret, 
+        name,
+        endpoint
+      };
+
+    break;
+  }
 
   if (this.state.addRegistry.credentialType == 'SERVICE_CREDENTIAL') {
     required = {

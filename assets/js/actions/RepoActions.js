@@ -127,8 +127,9 @@ export function listReposForRegistry() {
   let credId = NPECheck(this.state.addRepo, 'newRepo/repo/credId', null);
   let registry = (this.state.addRepo.newRepoCredsType == 'EXISTING') ? this.state.registriesMap[credId] : this.state.addRegistry.newRegistry
 
+  let registriesWithRepos = ['GCR', 'ECR'];
 
-  if (registry) {
+  if (registriesWithRepos.includes(registry)) {
     this.setState({
       addRepo: GA.modifyProperty(this.state.addRepo, {
         reposInRegistryXHR: true,
@@ -476,7 +477,7 @@ export function listRepoManifests(repoId) {
         })
         .then((res) => {
           // console.log(res);
-          
+
           this.setState({
             repoDetails: GA.modifyProperty(this.state.repoDetails, {
               manifests: res,

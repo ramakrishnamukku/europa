@@ -52,6 +52,13 @@ export default class AddRepository extends Component {
 				<label  style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
 					Select Repository
 				</label>
+				{this.renderDockerRepositoryInput()}
+			</div>
+		);
+	}
+	renderDockerRepositoryInput(){
+		if(NPECheck(this.props, 'addRegistry/providerRegions/length', false)) {
+			return (
 				<Dropdown isOpen={this.props.addRepo.selectRepoDropdown}
 						  toggleOpen={() => this.context.actions.toggleSelectRepoDropdown()}
 						  listItems={this.props.addRepo.reposInRegistry} 
@@ -63,8 +70,14 @@ export default class AddRepository extends Component {
 						  inputValue={NPECheck(this.props, 'addRepo/newRepo/repo/name', '')} 
 						  noItemsMessage="No Repositories Found"
 						  XHR={NPECheck(this.props, 'addRepo/reposInRegistryXHR', true)}/>
-			</div>
-		);
+			);
+		} else {
+			return (
+				<input className={this.inputClassName(dockerRepoNameKey)} 
+				       onChange={(e) => this.context.actions.updateNewRepoField(dockerRepoNameKey, e)}
+				       placeholder="Search or enter repository name"/>
+			);
+		}
 	}
 	renderRepoInRegistryListItem(repo, index){
 		let className = "ListItem";
