@@ -130,7 +130,7 @@ public class StorageSettings
             break;
         }
 
-        if(osPathPrefix != null)
+        if(osPathPrefix != null && !osPathPrefix.trim().isEmpty())
             settingsList.add(toSetting(SETTING_OS_PATH_PREFIX, this.osPathPrefix));
         return settingsList;
     }

@@ -48,7 +48,7 @@ public class ObjectKeyFactory
     public ObjectKey forWebhookRecord(NotificationId notificationId)
     {
         String key = null;
-        if(_pathPrefix != null)
+        if(_pathPrefix != null && !_pathPrefix.trim().isEmpty())
             key = String.format("%s/%s/%s",
                                 _pathPrefix,
                                 WEBHOOKS_STORAGE_PREFIX,
@@ -66,7 +66,7 @@ public class ObjectKeyFactory
     public ObjectKey forRegistryBlobId(String blobId)
     {
         String key = null;
-        if(_pathPrefix != null)
+        if(_pathPrefix != null && !_pathPrefix.trim().isEmpty())
             key = String.format("%s/%s/%s",
                                 _pathPrefix,
                                 BLOBS_PREFIX,
@@ -84,7 +84,7 @@ public class ObjectKeyFactory
     public ObjectKey forRegistryManifest(String manifestId)
     {
         String key = null;
-        if(_pathPrefix != null)
+        if(_pathPrefix != null && !_pathPrefix.trim().isEmpty())
             key = String.format("%s/%s/%s",
                                 _pathPrefix,
                                 MANIFESTS_PREFIX,
