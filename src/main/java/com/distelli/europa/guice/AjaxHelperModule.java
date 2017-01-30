@@ -57,6 +57,7 @@ public class AjaxHelperModule extends AbstractModule
 
         //Container CRUD helpers
         addBinding(SaveContainerRepo.class);
+        addBinding(CreateLocalRepo.class);
         addBinding(GetContainerRepo.class);
         addBinding(ListContainerRepos.class);
         addBinding(DeleteContainerRepo.class);

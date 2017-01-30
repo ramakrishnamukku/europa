@@ -10,6 +10,7 @@ package com.distelli.europa.ajax;
 public class AjaxErrors
 {
     public static final class Codes {
+        public static final String RepoAlreadyExists = "RepoAlreadyExists";
         public static final String RepoAlreadyConnected = "RepoAlreadyConnected";
         public static final String TokenIsActive = "TokenIsActive";
     }
