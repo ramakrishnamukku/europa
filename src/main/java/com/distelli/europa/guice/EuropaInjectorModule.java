@@ -27,6 +27,7 @@ import com.distelli.europa.db.SequenceDb;
 import com.distelli.europa.db.SettingsDb;
 import com.distelli.europa.db.TokenAuthDb;
 import com.distelli.europa.models.StorageSettings;
+import com.distelli.europa.models.SslSettings;
 import com.distelli.europa.monitor.*;
 import com.distelli.europa.util.ObjectKeyFactory;
 import com.distelli.objectStore.*;
@@ -39,6 +40,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.Multibinder;
 
 import lombok.extern.log4j.Log4j;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 @Log4j
 public class EuropaInjectorModule extends AbstractModule
@@ -89,6 +91,8 @@ public class EuropaInjectorModule extends AbstractModule
         configureEuropaConfiguration();
         bind(ObjectStore.class).toProvider(new ObjectStoreProvider());
         bind(StorageSettings.class).toProvider(new StorageSettingsProvider());
+        bind(SslSettings.class).toProvider(new SslSettingsProvider());
+        bind(SslContextFactory.class).toProvider(new SslContextFactoryProvider());
         bind(ObjectKeyFactory.class).toProvider(new ObjectKeyFactoryProvider());
         bind(MysqlDataSource.class).toInstance(new MysqlDataSource() {
                 public int getMaximumPoolSize()
