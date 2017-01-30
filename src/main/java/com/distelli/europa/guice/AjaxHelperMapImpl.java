@@ -41,8 +41,13 @@ public class AjaxHelperMapImpl implements AjaxHelperMap<EuropaRequestContext>
         Set<String> pathRestrictions = _pathRestrictions.get(operationName);
         if(pathRestrictions != null)
         {
-            if(!pathRestrictions.contains(path))
+            if(!pathRestrictions.contains(path)) {
+                if(log.isDebugEnabled())
+                    log.debug("Operation: "+operationName+". Path "+
+                              path+" not found in Path Restriction Set: "+pathRestrictions+
+                              " RequestContext: "+requestContext);
                 return null;
+            }
         }
 
         return _ajaxHelperMap.get(operationName);

@@ -83,7 +83,7 @@ public class AjaxHelperModule extends AbstractModule
     }
 
     protected void addBinding(Class<? extends AjaxHelper> clazz, String... paths) {
-        addBinding(clazz.getSimpleName(), clazz);
+        addBinding(clazz.getSimpleName(), clazz, paths);
     }
 
     protected void addBinding(String operationName, Class<? extends AjaxHelper> clazz, String... paths)
@@ -99,7 +99,7 @@ public class AjaxHelperModule extends AbstractModule
             Set<String> pathSet = new HashSet<String>();
             for(String path : paths)
                 pathSet.add(path);
-            pathRestrictionBinder.addBinding(clazz.getSimpleName()).toInstance(pathSet);
+            pathRestrictionBinder.addBinding(operationName).toInstance(pathSet);
         }
     }
 }
