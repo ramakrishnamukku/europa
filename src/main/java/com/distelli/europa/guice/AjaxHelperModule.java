@@ -8,10 +8,15 @@
 */
 package com.distelli.europa.guice;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.multibindings.MapBinder;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.distelli.europa.ajax.*;
 import com.distelli.webserver.*;
+import com.google.inject.TypeLiteral;
+import com.google.inject.AbstractModule;
+import com.google.inject.multibindings.MapBinder;
+
 import lombok.extern.log4j.Log4j;
 
 @Log4j
@@ -79,7 +84,23 @@ public class AjaxHelperModule extends AbstractModule
 
     protected void addBinding(Class<? extends AjaxHelper> clazz)
     {
+        addBinding(clazz, null);
+    }
+
+    protected void addBinding(Class<? extends AjaxHelper> clazz, String... paths)
+    {
         MapBinder<String, AjaxHelper> mapbinder = MapBinder.newMapBinder(binder(), String.class, AjaxHelper.class);
         mapbinder.addBinding(clazz.getSimpleName()).to(clazz);
+
+        MapBinder<String, Set<String>> pathRestrictionBinder = MapBinder.newMapBinder(binder(),
+                                                                                      new TypeLiteral<String>(){},
+                                                                                      new TypeLiteral<Set<String>>(){});
+        if(paths != null)
+        {
+            Set<String> pathSet = new HashSet<String>();
+            for(String path : paths)
+                pathSet.add(path);
+            pathRestrictionBinder.addBinding(clazz.getSimpleName()).toInstance(pathSet);
+        }
     }
 }
