@@ -82,10 +82,14 @@ public class AjaxHelperModule extends AbstractModule
         addBinding(clazz, null);
     }
 
-    protected void addBinding(Class<? extends AjaxHelper> clazz, String... paths)
+    protected void addBinding(Class<? extends AjaxHelper> clazz, String... paths) {
+        addBinding(clazz.getSimpleName(), clazz);
+    }
+
+    protected void addBinding(String operationName, Class<? extends AjaxHelper> clazz, String... paths)
     {
         MapBinder<String, AjaxHelper> mapbinder = MapBinder.newMapBinder(binder(), String.class, AjaxHelper.class);
-        mapbinder.addBinding(clazz.getSimpleName()).to(clazz);
+        mapbinder.addBinding(operationName).to(clazz);
 
         MapBinder<String, Set<String>> pathRestrictionBinder = MapBinder.newMapBinder(binder(),
                                                                                       new TypeLiteral<String>(){},

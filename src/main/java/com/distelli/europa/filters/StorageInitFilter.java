@@ -44,6 +44,11 @@ public class StorageInitFilter implements RequestFilter<EuropaRequestContext>
         if(storageSettings != null)
             return next.filter(requestContext);
 
+        return renderPage(requestContext);
+    }
+
+    public WebResponse renderPage(EuropaRequestContext requestContext)
+    {
         JSXProperties jsxProps = new JSXProperties(requestContext) {
                 public boolean getStorage() {
                     return false;
