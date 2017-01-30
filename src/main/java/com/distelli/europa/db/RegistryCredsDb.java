@@ -78,6 +78,7 @@ public class RegistryCredsDb extends BaseDb
         .put("region", String.class, "region")
         .put("desc", String.class, "description")
         .put("name", String.class, "name")
+        .put("endpt", String.class, "endpoint")
         .put("rp", RegistryProvider.class, "provider");
         return module;
     }

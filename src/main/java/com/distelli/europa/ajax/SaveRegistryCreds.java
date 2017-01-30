@@ -79,6 +79,15 @@ public class SaveRegistryCreds extends AjaxHelper<EuropaRequestContext>
         case GCR:
             validateGcrCreds(cred);
             break;
+        case PRIVATE:
+            //Private Registry creds need an endpoint
+            String endpoint = cred.getEndpoint();
+            if(endpoint == null || endpoint.trim().isEmpty())
+                throw(new AjaxClientException("Missing Endpoint in Private Registry Credentials", JsonError.Codes.BadContent, 400));
+            break;
+        case DOCKERHUB:
+            //There is no validation for DOCKERHUB Creds
+            break;
         default:
             throw(new AjaxClientException("Unsupported Container Registry: "+provider, JsonError.Codes.BadContent, 400));
         }

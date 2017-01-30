@@ -20,4 +20,5 @@ public class RegistryCred
     protected RegistryProvider provider = null;
     protected String region = null;
     protected String secret = null;
+    protected String endpoint = null;
 }
