@@ -5,6 +5,11 @@
 import React, {Component, PropTypes} from 'react'
 import Registries from './../components/Registries'
 import APITokens from './../components/APITokens'
+import StorageSettings from './../components/StorageSettings'
+
+let credKey = 'CREDENTIALS';
+let apiTokensKey = "API_TOKENS";
+let storageKey = "STORAGE";
 
 export default class Settings extends Component {
 	constructor(props) {
@@ -19,10 +24,6 @@ export default class Settings extends Component {
 		this.context.actions.resetSettingsState();
 	}
 	renderSideBar(){
-		let credKey = 'CREDENTIALS';
-		let apiTokensKey = "API_TOKENS";
-		let settingsKey = "SETTINGS"
-
 		return (
 			<div className="SideBarContainer">
 				<div className={this.getSideBarItemClassName(credKey)} 
@@ -32,6 +33,10 @@ export default class Settings extends Component {
 				<div className={this.getSideBarItemClassName(apiTokensKey)} 
 					 onClick={() => this.context.actions.setSettingsSection(apiTokensKey)}>
 					API Tokens
+				</div>
+				<div className={this.getSideBarItemClassName(storageKey)} 
+					 onClick={() => this.context.actions.setSettingsSection(storageKey)}>
+					Storage
 				</div>
 			</div>
 		);
@@ -46,6 +51,11 @@ export default class Settings extends Component {
 			<APITokens {...this.props}/>
 		);
 	}
+	renderStorage(){
+		return (
+			<StorageSettings {...this.props} />
+		);
+	}
 	renderContent(){
 		let section = this.props.settings.section;
 		switch(section) {
@@ -54,6 +64,10 @@ export default class Settings extends Component {
 			break;
 			case 'API_TOKENS':
 				return this.renderAPITokens();
+			break;
+
+			case 'STORAGE':
+				return this.renderStorage();
 			break;
 
 			default:

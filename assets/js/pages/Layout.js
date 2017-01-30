@@ -28,6 +28,7 @@ export default class Layout extends Component {
 	}
 	getBaseState() {
 		return {
+			storage: PAGE_PROPS.storage,
 			registries: [],
 			registriesMap: {},
 			repos: [],

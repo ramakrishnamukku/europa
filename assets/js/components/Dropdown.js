@@ -27,7 +27,8 @@ export default class Dropdown extends Component {
 
 			if(this.props.inputReadOnly) {
 				readOnly = {
-					readOnly: 'readOnly'
+					readOnly: 'readOnly',
+					disabled: 'disabled'
 				};
 			}
 

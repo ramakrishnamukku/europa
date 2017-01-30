@@ -280,12 +280,15 @@ export function toggleTokenForDelete(tokenString = null) {
 
 export function storageState() {
   return {
+    storageCreds: storageCredsState.call(this),
+    saveStorageSuccess: false,
+    getXHR: false,
+    getError: '',
     saveStorageXHR: false,
     error: '',
     regionDropDownIsOpen: false,
     regions: [],
     regionsError: '',
-    storageCreds: storageCredsState.call(this)
   };
 }
 
@@ -315,10 +318,55 @@ export function clearStorageError() {
       ...this.state.settings,
       storage: {
         ...this.state.settings.storage,
-        error: ''
+        error: '',
+        getError: ''
       }
     }
   })
+}
+
+export function getStorageSettings() {
+  return new Promise((resolve, reject) => {
+    this.setState({
+      settings: GA.modifyProperty(this.state.settings, {
+        ...this.state.settings,
+        storage: {
+          ...this.state.settings.storage,
+          getXHR: true
+        }
+      })
+    }, () => {
+
+      RAjax.GET.call(this, 'GetStorageSettings')
+        .then((res) => {
+          this.setState({
+            settings: GA.modifyProperty(this.state.settings, {
+              ...this.state.settings,
+              storage: {
+                ...this.state.settings.storage,
+                getXHR: false,
+                storageCreds: res
+              }
+            })
+          });
+        })
+        .catch((err) => {
+        console.error(err);
+        let errorMsg = NPECheck(err, 'error/message', 'Please try again or contact support');
+        let error = `There was an error retrieving your storage settings: ${errorMsg}`
+          this.setState({
+            settings: GA.modifyProperty(this.state.settings, {
+              ...this.state.settings,
+              storage: {
+                ...this.state.settings.storage,
+                getXHR: false,
+                getError: error
+              }
+            })
+          });
+        })
+    });
+  });
 }
 
 export function updateStorageCreds(prop, e, eIsValue = false) {
@@ -395,12 +443,12 @@ export function saveStorageSettings() {
             settings: {
               ...this.state.settings,
               storage: GA.modifyProperty(this.state.settings.storage, {
-                saveStorageXHR: false
+                saveStorageXHR: false,
+                saveStorageSuccess: true
               })
             }
           }, () => {
-             resolve()
-             window.location = '/';
+            resolve();
           });
         })
         .catch((err) => {

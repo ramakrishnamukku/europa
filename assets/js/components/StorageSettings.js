@@ -20,7 +20,25 @@ const diskRootKey = 'osDiskRoot';
 export default class StorageSettings extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			isEdit: !(this.props.hasOwnProperty('storage') && this.props.storage == false)
+		};
+	}
+	componentDidMount() {
+		if(this.state.isEdit) {
+			this.context.actions.getStorageSettings();
+		}
+	}
+	componentWillUnmount() {
+		this.context.actions.resetStorageState();
+	}
+	saveStorageSettings(){
+		this.context.actions.saveStorageSettings()
+		.then(() => {
+			if(!this.state.isEdit) {
+				window.location = '/';
+			}
+		});
 	}
 	renderChooseStorageType(){
 		return (
@@ -47,31 +65,36 @@ export default class StorageSettings extends Component {
 				key: bucketKey,
 				type: 'text',
 				placeholder: 'Enter Bucket Name',
+				editableOnceSet: false
 			},
 			{
 				label: 'Region',
 				key: endpointKey,
 				type: 'text',
 				placeholder: 'Select Region',
-				render: this.renderSelectRegion
+				render: this.renderSelectRegion,
+				editableOnceSet: false
 			},
 			{
 				label: 'AWS Access Key',
 				key: accessKey,
 				type: 'text',
-				placeholder: 'Enter Access Key'
+				placeholder: 'Enter Access Key',
+				editableOnceSet: true
 			},
 			{
 				label: 'AWS Secret Key',
 				key: secretKey,
 				type: 'password',
-				placeholder: 'Enter Secret Key'
+				placeholder: 'Enter Secret Key',
+				editableOnceSet: true
 			},
 			{
 				label: 'Path Prefix',
 				key: prefixKey,
 				type: 'text',
-				placeholder: 'Enter Bucket Prefix'
+				placeholder: 'Enter Bucket Prefix',
+				editableOnceSet: false
 			}
 		];
 
@@ -109,31 +132,65 @@ export default class StorageSettings extends Component {
 				</div>
 			);
 		}
+
+		let readOnly = {};
+		let label = inputConfig.label;
+		let className = "BlueBorder FullWidth";
+
+		if(this.state.isEdit) {
+			className += ' White';
+
+			if(!inputConfig.editableOnceSet) {
+
+				readOnly = {
+					readOnly: 'readOnly',
+					disabled: 'disabled'
+				};
+
+				label += ' (Read Only)';
+			}
+		}
+
 		return (
 			<div key={index} className="InputRow">
-				<label>{inputConfig.label}</label>
-				<input className="BlueBorder FullWidth" 
+				<label>{label}</label>
+				<input className={className}
 				       value={NPECheck(this.props, `settings/storage/storageCreds/${inputConfig.key}`, '')}
 				       onChange={(e) => this.context.actions.updateStorageCreds(inputConfig.key, e)} 
 				       placeholder={inputConfig.placeholder}
-				       type={inputConfig.type} />
+				       type={inputConfig.type} 
+				       {...readOnly} />
 			 </div>
 		);
 	}
 	renderSelectRegion(inputConfig){		
 		let regionValue = NPECheck(this.props, `settings/storage/storageCreds/${endpointKey}`);
 		let regions = AWSRegions;
+		
+		let readOnly = false
+		let label = inputConfig.label;
+		let className = "BlueBorder FullWidth";
+
+		if(this.state.isEdit) {
+			className += ' White';
+
+			if(!inputConfig.editableOnceSet) {
+				readOnly = true;
+				label += ' (Read Only)';
+			}
+		}
 
 		return (
 			<div>
-				<label>{inputConfig.label}</label>
+				<label>{label}</label>
 				<Dropdown isOpen={NPECheck(this.props, 'settings/storage/regionDropDownIsOpen', false)}
 						  toggleOpen={() => this.context.actions.toggleSelectRegionForStorageCredentialsDropDown()}
 						  listItems={regions} 
 						  renderItem={(region, index) => this.renderRegionItem(region, index)}
 						  inputPlaceholder={inputConfig.placeholder}
-						  inputClassName="BlueBorder FullWidth"
+						  inputClassName={className}
 						  inputValue={regionValue || 's3://'} 
+						  inputReadOnly={readOnly}
 						  noItemsMessage="No Regions Found."/>
 			</div>
 		);
@@ -148,10 +205,11 @@ export default class StorageSettings extends Component {
 	}
 	renderError(){
 		let error = NPECheck(this.props, 'settings/storage/error', false);
+		let error2 = NPECheck(this.props, 'settings/storage/getError', false);
 
-		if(error) {
+		if(error || error2) {
 			return (
-				<Msg text={error} 
+				<Msg text={error || error2} 
    				 	 style={{margin: '1rem 0 0'}}
    				 	 close={() => this.context.actions.clearStorageError()}/>
 			);
@@ -165,15 +223,29 @@ export default class StorageSettings extends Component {
 		}
 
 		return (
-			<Btn onClick={() => this.context.actions.saveStorageSettings()}
+			<Btn onClick={() => this.saveStorageSettings()}
 				 text="Save" 
 				 canClick={true} 
 				 style={{width: '200px', margin: '28px auto'}}/>
 		);
 	}
 	render(){
+		let className = "StorageSettings";
+
+		if(this.state.isEdit) {
+			className += ' Edit';
+		}
+
+		if(NPECheck(this.props, 'settings/storage/getXHR', false)) {
+			return (
+				<div className="PageLoader">
+					<Loader />
+				</div>
+			);
+		}
+
 		return (
-			<div className="StorageSettings">
+			<div className={className}>
 				<div className="Title">
 					Configure Storage
 				</div>
