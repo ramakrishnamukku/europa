@@ -30,17 +30,6 @@ public class AjaxHelperModule extends AbstractModule
     protected void configure()
     {
         // Add ajax bindings here
-        bindStandardOperations();
-        bindExtraOperations();
-        bind(AjaxHelperMap.class).to(AjaxHelperMapImpl.class);
-    }
-
-    protected void bindExtraOperations() {
-        addBinding(SaveStorageSettings.class);
-        addBinding(GetStorageSettings.class);
-    }
-
-    protected void bindStandardOperations() {
         addBinding(ListPipelines.class);
         addBinding(GetPipeline.class);
         addBinding(SetPipelineContainerRepoId.class);
@@ -80,6 +69,12 @@ public class AjaxHelperModule extends AbstractModule
         addBinding(CreateAuthToken.class);
         addBinding(SetAuthTokenStatus.class);
         addBinding(DeleteAuthToken.class);
+
+        addBinding(SaveStorageSettings.class);
+        addBinding(GetStorageSettings.class);
+        addBinding(UpdateStorageCreds.class);
+
+        bind(AjaxHelperMap.class).to(AjaxHelperMapImpl.class);
     }
 
     protected void addBinding(Class<? extends AjaxHelper> clazz)
