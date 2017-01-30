@@ -113,9 +113,24 @@ public class SaveContainerRepo extends AjaxHelper<EuropaRequestContext>
         case GCR:
             validateGcrRepo(repo, cred);
             break;
+        case DOCKERHUB:
+            validateDockerHubRepo(repo, cred);
+            break;
+        case PRIVATE:
+            validatePrivateRepo(repo, cred);
         default:
             throw(new AjaxClientException("Unsupported Container Registry: "+provider, JsonError.Codes.BadContent, 400));
         }
+    }
+
+    private void validateDockerHubRepo(ContainerRepo repo, RegistryCred cred)
+    {
+        //TODO: Add validation
+    }
+
+    private void validatePrivateRepo(ContainerRepo repo, RegistryCred cred)
+    {
+        //TODO: Add Validation
     }
 
     private void validateGcrRepo(ContainerRepo repo, RegistryCred cred)
