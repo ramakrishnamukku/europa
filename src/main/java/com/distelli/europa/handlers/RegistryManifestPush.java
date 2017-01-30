@@ -167,7 +167,7 @@ public class RegistryManifestPush extends RegistryBase {
                 .eventType(RepoEventType.PUSH)
                 .eventTime(System.currentTimeMillis())
                 .imageTags(Collections.singletonList(reference))
-                .imageSha(getImageId(manifestJson))
+                .imageSha(finalDigest)
                 .build();
             _eventDb.save(event);
             _repoDb.setLastEvent(repo.getDomain(), repo.getId(), event);
