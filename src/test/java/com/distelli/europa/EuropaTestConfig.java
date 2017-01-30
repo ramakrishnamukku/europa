@@ -42,7 +42,7 @@ public class EuropaTestConfig
             throw(new IllegalStateException("Missing Env Variable: EUROPA_TEST_AWS_SECRET_KEY"));
         String awsRegion = System.getenv("EUROPA_TEST_AWS_REGION");
         if(awsRegion == null)
-            throw(new IllegalStateException("Missing Env Variable: EUROPA_TEST_AWS_REGION_KEY"));
+            throw(new IllegalStateException("Missing Env Variable: EUROPA_TEST_AWS_REGION"));
         EuropaTestConfig testConfig = new EuropaTestConfig();
         testConfig.setAwsAccessKey(awsAccessKey);
         testConfig.setAwsSecretKey(awsSecretKey);
