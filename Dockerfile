@@ -1,12 +1,12 @@
 FROM openjdk:8
 
-ADD target/dependency/*.jar target/*.jar /europa/lib/
-ADD run /europa/run
-ADD public /europa/public
+ADD target/dependency/*.jar target/*.jar /europa-85fac6ec/lib/
+ADD run /europa-85fac6ec/run
+ADD public /europa-85fac6ec/public
 
 EXPOSE 80
 EXPOSE 443
-WORKDIR /europa
+WORKDIR /europa-85fac6ec
 
 # Add tini:
 ENV TINI_VERSION v0.13.2
