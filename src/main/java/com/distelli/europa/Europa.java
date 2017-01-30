@@ -49,6 +49,7 @@ import com.google.inject.Stage;
 import java.util.Arrays;
 import lombok.extern.log4j.Log4j;
 import java.util.List;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 @Log4j
 public class Europa
@@ -59,7 +60,10 @@ public class Europa
     protected List<RequestFilter<EuropaRequestContext>> _webappFilters = null;
     protected StaticContentErrorHandler _staticContentErrorHandler = null;
     protected int _port = 8080;
+    protected int _sslPort = 8443;
 
+    @Inject
+    protected SslContextFactory _sslContextFactory;
     @Inject
     protected MonitorQueue _monitorQueue;
     protected Thread _monitorThread;
@@ -98,6 +102,16 @@ public class Europa
                 _port = Integer.parseInt(portStr);
             } catch(NumberFormatException nfe) {
                 log.fatal("Invalid value for --port "+portStr);
+                System.exit(1);
+            }
+        }
+        portStr = _cmdLineArgs.getOption("ssl-port");
+        if(portStr != null)
+        {
+            try {
+                _sslPort = Integer.parseInt(portStr);
+            } catch(NumberFormatException nfe) {
+                log.fatal("Invalid value for --ssl-port "+portStr);
                 System.exit(1);
             }
         }
@@ -164,7 +178,8 @@ public class Europa
         servlet.setRequestContextFactory(_requestContextFactory);
         if(_webappFilters != null)
             servlet.setRequestFilters(_webappFilters);
-        WebServer webServer = new WebServer(_port, servlet, "/");
+
+        WebServer webServer = new WebServer(_port, servlet, "/", _sslPort, _sslContextFactory);
 
         ServletHolder staticHolder = new ServletHolder(DefaultServlet.class);
         staticHolder.setInitParameter("resourceBase", "./public");
