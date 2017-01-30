@@ -69,8 +69,12 @@ public class IndexFactoryProvider implements Provider<Index.Factory>
     public synchronized Index.Factory get() {
             if ( ! _init)
                 initSchema();
-            if ( null != _initFailure )
-                throw new RuntimeException(_initFailure);
+            if(_initFailure != null)
+            {
+                log.error("Failed to initialize Database Connection: "+_initFailure.getMessage());
+                System.exit(1);
+            }
+
         return _indexFactory;
     }
 
