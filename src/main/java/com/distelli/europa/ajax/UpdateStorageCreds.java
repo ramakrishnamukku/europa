@@ -48,7 +48,7 @@ public class UpdateStorageCreds extends AjaxHelper<EuropaRequestContext>
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         StorageSettings storageSettings = _storageSettingsProvider.get();
-        if(storageSettings != null)
+        if(storageSettings == null)
             throw(new AjaxClientException(StorageNotInitialized));
 
         if(storageSettings.getOsType() != ObjectStoreType.S3)
