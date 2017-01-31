@@ -121,7 +121,7 @@ public class RegistryLayerUploadChunk extends RegistryBase {
         }
         WebResponse response = new WebResponse(201);
         response.setContentType("text/plain");
-        response.setResponseHeader("Range", "0-"+(totalSize+contentLength));
+        response.setResponseHeader("Range", "0-"+(totalSize+contentLength-1));
         response.setResponseHeader("Docker-Upload-UUID", blobId);
         response.setResponseHeader("Location", joinWithSlash("/v2", ownerUsername, name, "blobs/uploads", blobId));
         return response;
@@ -156,7 +156,7 @@ public class RegistryLayerUploadChunk extends RegistryBase {
             public Map<String, String> getResponseHeaders() {
                 return new HashMap<String, String>() {{
                     put("Location", joinWithSlash("/v2", ownerUsername, name, "blobs/uploads", blobId));
-                    put("Range", "0-"+totalSize);
+                    put("Range", "0-"+(totalSize-1));
                     put("Docker-Upload-UUID", blobId);
                 }};
             }

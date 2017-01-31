@@ -36,38 +36,77 @@ import javax.xml.bind.DatatypeConverter;
 import sun.security.util.DerInputStream;
 import sun.security.util.DerValue;
 import javax.inject.Inject;
+import java.net.InetSocketAddress;
+import javax.net.ssl.SSLEngine;
 
+import lombok.extern.log4j.Log4j;
+
+@Log4j
 public class SslContextFactoryProvider implements Provider<SslContextFactory> {
     @Inject
     private Provider<SslSettings> _sslSettings;
 
     @Override
     public SslContextFactory get() {
-        try {
-            return getThrows();
-        } catch ( RuntimeException ex ) {
-            throw ex;
-        } catch ( Exception ex ) {
-            throw new RuntimeException(ex);
+        return new SettingsSslContextFactory();
+    }
+
+    private class SettingsSslContextFactory extends SslContextFactory {
+        private SslSettings _currentSettings = null;
+        private boolean _initializing = false;
+
+        public SettingsSslContextFactory() {
+            setValidatePeerCerts(false);
+        }
+
+        @Override
+        public SSLEngine newSSLEngine(InetSocketAddress address) {
+            initializeFromSettings(_sslSettings.get());
+            return super.newSSLEngine(address);
+        }
+
+        @Override
+        public SSLEngine newSSLEngine(String host, int port) {
+            initializeFromSettings(_sslSettings.get());
+            return super.newSSLEngine(host, port);
+        }
+
+        @Override
+        public SSLEngine newSSLEngine() {
+            initializeFromSettings(_sslSettings.get());
+            return super.newSSLEngine();
+        }
+
+        private synchronized void initializeFromSettings(SslSettings newSettings) {
+            if ( _initializing || _currentSettings == newSettings ||
+                 (null != _currentSettings && _currentSettings.equals(newSettings)) )
+            {
+                return;
+            }
+            try {
+                _initializing = true;
+                initializeFromSettingsThrows(newSettings);
+                _currentSettings = newSettings;
+            } catch ( RuntimeException ex ) {
+                throw ex;
+            } catch ( Exception ex ) {
+                throw new RuntimeException(ex);
+            } finally {
+                _initializing = false;
+            }
+        }
+
+        private void initializeFromSettingsThrows(SslSettings settings) throws Exception {
+            this.stop();
+            char[] passwd = generatePassword();
+            this.setTrustStore(_getTrustStore(settings.getAuthorityCertificate()));
+            this.setKeyStore(_getKeyStore(passwd, settings.getServerPrivateKey(), settings.getServerCertificate()));
+            this.setKeyStorePassword(new String(passwd));
+            this.start();
         }
     }
 
-    public SslContextFactory getThrows() throws Exception {
-        SslContextFactory ctxFactory = new SslContextFactory();
-        ctxFactory.setValidatePeerCerts(false);
-
-        SslSettings settings = _sslSettings.get();
-        if ( null == settings ) return ctxFactory;
-
-        char[] passwd = generatePassword();
-        ctxFactory.setTrustStore(getTrustStore(settings.getAuthorityCertificate()));
-        ctxFactory.setKeyStore(getKeyStore(passwd, settings.getServerPrivateKey(), settings.getServerCertificate()));
-        ctxFactory.setKeyStorePassword(new String(passwd));
-
-        return ctxFactory;
-    }
-
-    private static KeyStore getTrustStore(String authorityCertificate) throws Exception {
+    private static KeyStore _getTrustStore(String authorityCertificate) throws Exception {
         X509Certificate caCert = toX509Certificate(authorityCertificate);
         if ( null == caCert ) return null;
         KeyStore trustStore = KeyStore.getInstance("JKS");
@@ -86,7 +125,7 @@ public class SslContextFactoryProvider implements Provider<SslContextFactory> {
         return passwd;
     }
 
-    private static KeyStore getKeyStore(char[] passwd, String serverPrivateKey, String serverCertificate) throws Exception {
+    private static KeyStore _getKeyStore(char[] passwd, String serverPrivateKey, String serverCertificate) throws Exception {
         PrivateKey key = pemToPrivateKey(serverPrivateKey);
         X509Certificate cert = toX509Certificate(serverCertificate);
         if ( null == key || null == cert ) return null;
