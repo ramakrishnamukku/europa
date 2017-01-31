@@ -46,10 +46,14 @@ public class SaveRegistryCreds extends AjaxHelper<EuropaRequestContext>
         RegistryCred cred = ajaxRequest.convertContent(RegistryCred.class,
                                                        true); //throw if null
         //Validate that the fields we want are non-null
-        FieldValidator.validateNonNull(cred, "provider", "region", "key", "secret");
+        FieldValidator.validateNonNull(cred, "provider", "key", "secret");
         FieldValidator.validateMatch(cred, "name", Constants.REGISTRY_CRED_NAME_PATTERN);
         validateRegistryCreds(cred);
         cred.setCreated(System.currentTimeMillis());
+        //Here we set the region to an empty string if its null. Thats
+        //because DockerHub and Private repos have no region
+        if(cred.getRegion() == null)
+            cred.setRegion("");
         String credDomain = requestContext.getOwnerDomain();
         cred.setDomain(credDomain);
         String id = cred.getId();
@@ -74,9 +78,11 @@ public class SaveRegistryCreds extends AjaxHelper<EuropaRequestContext>
         switch(provider)
         {
         case ECR:
+            FieldValidator.validateNonNull(cred, "region");
             validateEcrCreds(cred);
             break;
         case GCR:
+            FieldValidator.validateNonNull(cred, "region");
             validateGcrCreds(cred);
             break;
         case PRIVATE:
