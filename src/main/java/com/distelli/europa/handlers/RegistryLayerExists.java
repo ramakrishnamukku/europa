@@ -49,14 +49,23 @@ public class RegistryLayerExists extends RegistryBase {
         ObjectKeyFactory objectKeyFactory = _objectKeyFactoryProvider.get();
         ObjectKey objKey = objectKeyFactory.forRegistryBlobId(blob.getBlobId());
         ObjectStore objectStore = _objectStoreProvider.get();
+        // Check that object store is consistent with DB:
         ObjectMetadata meta = objectStore.head(objKey);
         if ( null == meta ) {
             throw new RegistryError("Invalid :digest parameter (object key missing "+objKey+")",
                                     RegistryErrorCode.BLOB_UNKNOWN);
         }
         WebResponse response = new WebResponse(200);
-        response.setResponseHeader("Content-Length", ""+meta.getContentLength());
-        response.setContentType("application/vnd.docker.container.image.rootfs.diff+x-gtar");
+        response.setResponseHeader("Content-Length", ""+blob.getSize());
+        String mediaType = blob.getMediaType();
+        if ( null != mediaType ) {
+            response.setContentType(mediaType);
+        } else {
+            // Assume a v1 manifest due to this bug:
+            // https://github.com/docker/distribution/issues/2084
+            response.setContentType("application/vnd.docker.container.image.v1+json");
+        }
+        response.setCharacterEncoding(null);
         response.setResponseHeader("Docker-Content-Digest", digest);
         return response;
     }

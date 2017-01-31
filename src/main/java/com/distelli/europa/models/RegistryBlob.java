@@ -42,4 +42,7 @@ public class RegistryBlob
     /* The size of the blob uploaded.
      */
     private Long size;
+    /* The Content-Type set when it was uploaded.
+     */
+    private String mediaType;
 }

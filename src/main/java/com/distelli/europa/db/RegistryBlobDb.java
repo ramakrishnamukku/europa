@@ -8,6 +8,7 @@ import com.distelli.persistence.ConvertMarker;
 import com.distelli.persistence.Index;
 import com.distelli.persistence.IndexDescription;
 import com.distelli.persistence.IndexType;
+import com.distelli.persistence.UpdateItemBuilder;
 import com.distelli.persistence.PageIterator;
 import com.distelli.persistence.TableDescription;
 import com.distelli.utils.CompactUUID;
@@ -36,6 +37,7 @@ public class RegistryBlobDb extends BaseDb {
     private static final String ATTR_MD_ENCODED_STATE = "mdx";
     private static final String ATTR_MANIFEST_IDS = "mids";
     private static final String ATTR_SIZE = "sz";
+    private static final String ATTR_MEDIA_TYPE = "ty";
 
     private Index<RegistryBlob> _main;
     private Index<RegistryBlob> _byDigest;
@@ -74,7 +76,8 @@ public class RegistryBlobDb extends BaseDb {
             .put(ATTR_UPLOADED_BY, String.class, "uploadedBy")
             .put(ATTR_UPLOAD_ID, String.class, "uploadId")
             .put(ATTR_MD_ENCODED_STATE, byte[].class, "mdEncodedState")
-            .put(ATTR_SIZE, Long.class, "size");
+            .put(ATTR_SIZE, Long.class, "size")
+            .put(ATTR_MEDIA_TYPE, String.class, "mediaType");
         module.createTransform(RegistryBlobPart.class)
             .put("n", Integer.class, "partNum")
             .put("i", String.class, "partId")
@@ -162,15 +165,18 @@ public class RegistryBlobDb extends BaseDb {
         }
     }
 
-    public void finishUpload(String blobId, byte[] currentMDState, String digest, long size) {
+    public void finishUpload(String blobId, byte[] currentMDState, String digest, long size, String mediaType) {
         try {
-            _main.updateItem(blobId, null)
+            UpdateItemBuilder<RegistryBlob> builder = _main.updateItem(blobId, null)
                 .remove(ATTR_PART_IDS)
                 .remove(ATTR_MD_ENCODED_STATE)
                 .remove(ATTR_UPLOAD_ID)
                 .set(ATTR_DIGEST, digest.toLowerCase())
-                .set(ATTR_SIZE, size)
-                .when((expr) -> expr.eq(ATTR_MD_ENCODED_STATE, currentMDState));
+                .set(ATTR_SIZE, size);
+            if ( null != mediaType ) {
+                builder.set(ATTR_MEDIA_TYPE, mediaType);
+            }
+            builder.when((expr) -> expr.eq(ATTR_MD_ENCODED_STATE, currentMDState));
         } catch ( RollbackException ex ) {
             throw new ConcurrentModificationException(
                 "attempt to finish upload, but the digest state did not match");
