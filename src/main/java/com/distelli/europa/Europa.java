@@ -193,7 +193,15 @@ public class Europa
         WebServlet<EuropaRequestContext> registryApiServlet =
             new WebServlet<EuropaRequestContext>(_registryApiRouteMatcher, _requestHandlerFactory);
         servlet.setRequestContextFactory(_requestContextFactory);
-        registryApiServlet.setRequestContextFactory(_requestContextFactory);
+
+        //Registry API Servlet uses the same request context (and
+        //similar factory) as the main webapp servlet with the only
+        //difference being that unmarshallJson is set to false
+        registryApiServlet.setRequestContextFactory(new RequestContextFactory() {
+                public RequestContext getRequestContext(HTTPMethod method, HttpServletRequest request) {
+                    return new EuropaRequestContext(method, request, false);
+                }
+            });
         registryApiServlet.setRequestFilters(_registryApiFilters);
         webServer.addWebServlet("/v2/*", registryApiServlet);
         webServer.addWebServlet("/v1/*", registryApiServlet);
