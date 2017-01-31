@@ -62,10 +62,10 @@ public class GcrMonitorTask extends RepoMonitorTask
                           .build());
         }
 
-        // Transform into DockerImage objects, and save them:
+        List<DockerImage> dockerImages = toDockerImages(imageTags.values());
+
         saveNewEvents(
-            saveManifestChanges(
-                toDockerImages(imageTags.values())));
+            saveManifestChanges(dockerImages));
     }
 
     private List<DockerImage> toDockerImages(Collection<GcrImageTag> imageTags) {
@@ -107,7 +107,7 @@ public class GcrMonitorTask extends RepoMonitorTask
 
     private Map<String, GcrImageTag> listImageTags()
     {
-        Map<String, GcrImageTag> images = new HashMap<>();
+        Map<String, GcrImageTag> images = new LinkedHashMap<>();
         if(_gcrClient == null)
             return images;
 
@@ -119,7 +119,6 @@ public class GcrMonitorTask extends RepoMonitorTask
                 List<GcrImageTag> imageTags = _gcrClient.listImageTags(_repo.getName(), iter);
                 for(GcrImageTag imgTag : imageTags)
                 {
-                    // toDockerImage(
                     images.put(imgTag.getTag(), imgTag);
                 }
             } catch(Throwable t) {

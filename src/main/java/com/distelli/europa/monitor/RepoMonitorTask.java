@@ -100,7 +100,7 @@ public abstract class RepoMonitorTask extends MonitorTask
             RepoEvent repoEvent = RepoEvent.builder()
                 .domain(_repo.getDomain())
                 .repoId(_repo.getId())
-                .eventType((null == image.getImageSha()) ? RepoEventType.PUSH : RepoEventType.DELETE)
+                .eventType((null == image.getImageSha()) ? RepoEventType.DELETE : RepoEventType.PUSH)
                 .eventTime(image.getPushTime())
                 .imageSize(image.getImageSize())
                 .imageTags(image.getImageTags())
