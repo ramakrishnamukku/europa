@@ -91,6 +91,7 @@ public class ContainerRepoDb extends BaseDb
         .put("pr", Boolean.class, "publicRepo")
         .put("oid", String.class, "overviewId")
         .put("lr", Boolean.class, "local")
+        .put("lst", Long.class, "lastSyncTime")
         .put("levent", RepoEvent.class, "lastEvent");
         return module;
     }
@@ -347,6 +348,14 @@ public class ContainerRepoDb extends BaseDb
         _main.updateItem(getHashKey(domain),
                          id.toLowerCase())
         .set("pr", false)
+        .when((expr) -> expr.eq("id", id.toLowerCase()));
+    }
+
+    public void setLastSyncTime(String domain, String id, long lastSyncTime)
+    {
+        _main.updateItem(getHashKey(domain),
+                         id.toLowerCase())
+        .set("lst", lastSyncTime)
         .when((expr) -> expr.eq("id", id.toLowerCase()));
     }
 

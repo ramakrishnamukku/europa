@@ -26,4 +26,5 @@ public class ContainerRepo
     protected boolean local = true;
     //The ID of the object in the ObjectStore that holds the readme
     protected String overviewId;
+    protected long lastSyncTime;
 }

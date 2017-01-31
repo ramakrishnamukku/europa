@@ -120,6 +120,9 @@ public abstract class RepoMonitorTask extends MonitorTask
 
         if(lastEventSaved != null)
             _containerRepoDb.setLastEvent(_repo.getDomain(), _repo.getId(), lastEventSaved);
+        //before we return lets set the last sync time on the container repo
+        _repo.setLastSyncTime(System.currentTimeMillis());
+        _containerRepoDb.setLastSyncTime(_repo.getDomain(), _repo.getId(), _repo.getLastSyncTime());
         return images;
     }
 
