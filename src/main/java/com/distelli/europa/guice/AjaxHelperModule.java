@@ -73,6 +73,9 @@ public class AjaxHelperModule extends AbstractModule
         addBinding(SaveStorageSettings.class);
         addBinding(GetStorageSettings.class);
         addBinding(UpdateStorageCreds.class);
+        addBinding(GetRepoOverview.class);
+        addBinding(SaveRepoOverview.class);
+        addBinding(SetRepoPublic.class);
 
         bind(AjaxHelperMap.class).to(AjaxHelperMapImpl.class);
     }

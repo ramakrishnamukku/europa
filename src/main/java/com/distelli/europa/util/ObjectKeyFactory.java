@@ -27,6 +27,7 @@ public class ObjectKeyFactory
     public static final String WEBHOOKS_STORAGE_PREFIX = "webhooks";
     public static final String BLOBS_PREFIX = "blobs";
     public static final String MANIFESTS_PREFIX = "manifests";
+    public static final String OVERVIEW_PREFIX = "overview";
 
     @Inject
     public ObjectKeyFactory(StorageSettings storageSettings)
@@ -93,6 +94,24 @@ public class ObjectKeyFactory
             key = String.format("%s/%s",
                                 MANIFESTS_PREFIX,
                                 manifestId);
+        return ObjectKey.builder()
+            .bucket(_defaultBucket)
+            .key(key)
+            .build();
+    }
+
+    public ObjectKey forRepoOverview(String overviewId)
+    {
+        String key = null;
+        if(_pathPrefix != null && !_pathPrefix.trim().isEmpty())
+            key = String.format("%s/%s/%s",
+                                _pathPrefix,
+                                OVERVIEW_PREFIX,
+                                overviewId);
+        else
+            key = String.format("%s/%s",
+                                OVERVIEW_PREFIX,
+                                overviewId);
         return ObjectKey.builder()
             .bucket(_defaultBucket)
             .key(key)

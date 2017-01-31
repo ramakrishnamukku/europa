@@ -9,6 +9,7 @@
 package com.distelli.europa.ajax;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.db.ContainerRepoDb;
@@ -24,6 +25,7 @@ import com.distelli.webserver.JsonSuccess;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
+@Singleton
 public class CreateLocalRepo extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
