@@ -88,6 +88,9 @@ public class ContainerRepoDb extends BaseDb
         .put("name", String.class, "name")
         .put("rid", String.class, "registryId")
         .put("cid", String.class, "credId")
+        .put("pr", Boolean.class, "publicRepo")
+        .put("oid", String.class, "overviewId")
+        .put("lr", Boolean.class, "local")
         .put("levent", RepoEvent.class, "lastEvent");
         return module;
     }
@@ -290,6 +293,25 @@ public class ContainerRepoDb extends BaseDb
         return repos.get(0);
     }
 
+    public ContainerRepo getLocalRepo(String domain,
+                                      String name)
+    {
+        for(PageIterator iter : new PageIterator().pageSize(1000))
+        {
+            List<ContainerRepo> repos = _secondaryIndex.queryItems(getHashKey(domain), iter)
+            .eq(getSecondaryKey(RegistryProvider.EUROPA, "", name))
+            .list();
+
+            for(ContainerRepo repo : repos)
+            {
+                if(repo.isLocal())
+                    return repo;
+            }
+        }
+
+        return null;
+    }
+
     public boolean repoExists(String domain,
                               RegistryProvider provider,
                               String region,
@@ -309,6 +331,22 @@ public class ContainerRepoDb extends BaseDb
         _main.updateItem(getHashKey(domain),
                          id.toLowerCase())
         .set("levent", lastEvent)
+        .when((expr) -> expr.eq("id", id.toLowerCase()));
+    }
+
+    public void setRepoPublic(String domain, String id)
+    {
+        _main.updateItem(getHashKey(domain),
+                         id.toLowerCase())
+        .set("pr", true)
+        .when((expr) -> expr.eq("id", id.toLowerCase()));
+    }
+
+    public void setRepoPrivate(String domain, String id)
+    {
+        _main.updateItem(getHashKey(domain),
+                         id.toLowerCase())
+        .set("pr", false)
         .when((expr) -> expr.eq("id", id.toLowerCase()));
     }
 

@@ -64,6 +64,9 @@ public class SaveContainerRepo extends AjaxHelper<EuropaRequestContext>
         repo.setProvider(cred.getProvider());
         repo.setRegion(cred.getRegion());
         repo.setId(CompactUUID.randomUUID().toString());
+        repo.setOverviewId(CompactUUID.randomUUID().toString());
+        repo.setLocal(false);
+        repo.setPublicRepo(false);
         repo.setDomain(repoDomain);
         validateContainerRepo(repo, cred);
         //before we save the repo in the db lets check that the repo

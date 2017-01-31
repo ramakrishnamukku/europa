@@ -48,8 +48,11 @@ public class CreateLocalRepo extends AjaxHelper<EuropaRequestContext>
             .name(repoName)
             .region("")
             .provider(RegistryProvider.EUROPA)
+            .local(true)
+            .publicRepo(false)
             .build();
 
+        repo.setOverviewId(CompactUUID.randomUUID().toString());
         repo.setId(CompactUUID.randomUUID().toString());
         _repoDb.save(repo);
         return JsonSuccess.Success;

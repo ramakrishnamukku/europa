@@ -97,7 +97,7 @@ public abstract class RegistryBase extends RequestHandler<EuropaRequestContext>
     }
 
     protected ContainerRepo getContainerRepo(String domain, String repoName) {
-        return _repoDb.getRepo(domain, RegistryProvider.EUROPA, "", repoName);
+        return _repoDb.getLocalRepo(domain, repoName);
     }
 
     protected ContainerRepo getOrCreateContainerRepo(String domain, String repoName) {
@@ -108,8 +108,11 @@ public abstract class RegistryBase extends RequestHandler<EuropaRequestContext>
             .name(repoName)
             .region("")
             .provider(RegistryProvider.EUROPA)
+            .local(true)
+            .publicRepo(false)
             .build();
 
+        repo.setOverviewId(CompactUUID.randomUUID().toString());
         repo.setId(CompactUUID.randomUUID().toString());
         _repoDb.save(repo);
         // Re-fetch to avoid race condition:

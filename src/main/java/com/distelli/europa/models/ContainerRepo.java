@@ -22,4 +22,8 @@ public class ContainerRepo
     //This is the repoUri that can be used for docker push / pull operations
     protected String repoUri = null;
     protected RepoEvent lastEvent = null;
+    protected boolean publicRepo = false;
+    protected boolean local = true;
+    //The ID of the object in the ObjectStore that holds the readme
+    protected String overviewId;
 }
