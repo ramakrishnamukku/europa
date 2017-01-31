@@ -196,6 +196,7 @@ public class Europa
         registryApiServlet.setRequestContextFactory(_requestContextFactory);
         registryApiServlet.setRequestFilters(_registryApiFilters);
         webServer.addWebServlet("/v2/*", registryApiServlet);
+        webServer.addWebServlet("/v1/*", registryApiServlet);
 
         webServer.setErrorHandler(_staticContentErrorHandler);
         webServer.start();
