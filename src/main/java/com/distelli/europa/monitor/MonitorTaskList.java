@@ -9,7 +9,6 @@
 package com.distelli.europa.monitor;
 
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 import lombok.Data;
 import lombok.Builder;
@@ -25,5 +24,4 @@ public class MonitorTaskList
 {
     @Singular
     protected List<MonitorTask> tasks;
-    protected CountDownLatch countDownLatch;
 }

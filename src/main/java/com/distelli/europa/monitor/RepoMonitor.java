@@ -62,6 +62,7 @@ public class RepoMonitor implements Runnable
                 Thread.sleep(60000);
             } catch(InterruptedException ie) {
                 Thread.currentThread().interrupt();
+                return;
             }
         }
     }
@@ -73,10 +74,14 @@ public class RepoMonitor implements Runnable
         if(taskList == null)
             return;
         List<MonitorTask> tasks = taskList.getTasks();
-        CountDownLatch latch = taskList.getCountDownLatch();
-        for(MonitorTask task : tasks)
-            _threadPool.submit(task);
-
+        CountDownLatch latch = new CountDownLatch(tasks.size());
+        for(MonitorTask task : tasks) {
+            _threadPool.submit(() -> {try {
+                        task.run();
+                    } finally {
+                        latch.countDown();
+                    }});
+        }
         latch.await();
     }
 

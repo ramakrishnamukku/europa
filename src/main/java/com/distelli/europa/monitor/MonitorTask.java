@@ -8,34 +8,28 @@
 */
 package com.distelli.europa.monitor;
 
-import java.util.concurrent.CountDownLatch;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
 public abstract class MonitorTask implements Runnable
 {
-    protected CountDownLatch _latch;
 
-    public MonitorTask(CountDownLatch latch)
+    public MonitorTask()
     {
-        _latch = latch;
     }
 
     public void run()
     {
         try {
             if(log.isDebugEnabled())
-                log.debug("Starting MonitorTask: "+this.getClass().getName());
+                log.debug("Starting MonitorTask: "+this);
             monitor();
         } catch(Throwable t) {
             log.error(t.getMessage(), t);
         }
-        if(_latch != null)
-            _latch.countDown();
-
         if(log.isDebugEnabled())
-            log.debug("Finished MonitorTask: "+this.getClass().getName());
+            log.debug("Finished MonitorTask: "+this);
     }
 
-    public abstract void monitor();
+    public abstract void monitor() throws Exception;
 }

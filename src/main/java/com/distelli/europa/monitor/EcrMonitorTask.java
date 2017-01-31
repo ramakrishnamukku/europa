@@ -14,7 +14,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 import javax.inject.Inject;
 
 import com.distelli.europa.clients.*;
@@ -27,17 +26,15 @@ import lombok.extern.log4j.Log4j;
 public class EcrMonitorTask extends RepoMonitorTask
 {
     public interface Factory {
-        public EcrMonitorTask create(ContainerRepo repo,
-                                     CountDownLatch latch);
+        public EcrMonitorTask create(ContainerRepo repo);
     }
 
     private ECRClient _ecrClient;
 
     @Inject
-    public EcrMonitorTask(@Assisted ContainerRepo repo,
-                          @Assisted CountDownLatch latch)
+    public EcrMonitorTask(@Assisted ContainerRepo repo)
     {
-        super(repo, latch);
+        super(repo);
     }
 
     public void monitor()

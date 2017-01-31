@@ -8,7 +8,6 @@
 */
 package com.distelli.europa.monitor;
 
-import java.util.concurrent.CountDownLatch;
 import com.distelli.europa.models.*;
 import javax.inject.Inject;
 
@@ -19,14 +18,13 @@ public class MonitorTaskFactory
     @Inject
     private GcrMonitorTask.Factory _gcrMonitorTaskFactory;
 
-    public MonitorTask createMonitorTask(ContainerRepo repo,
-                                         CountDownLatch latch)
+    public MonitorTask createMonitorTask(ContainerRepo repo)
     {
         RegistryProvider provider = repo.getProvider();
         if(provider == RegistryProvider.ECR)
-            return _ecrMonitorTaskFactory.create(repo, latch);
+            return _ecrMonitorTaskFactory.create(repo);
         else if(provider == RegistryProvider.GCR)
-            return _gcrMonitorTaskFactory.create(repo, latch);
+            return _gcrMonitorTaskFactory.create(repo);
         else
             return null;
     }

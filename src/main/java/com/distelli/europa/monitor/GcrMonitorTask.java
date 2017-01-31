@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Collection;
-import java.util.concurrent.CountDownLatch;
 import javax.inject.Inject;
 
 import com.distelli.europa.models.*;
@@ -32,15 +31,13 @@ public class GcrMonitorTask extends RepoMonitorTask
     private GcrClient _gcrClient = null;
 
     public interface Factory {
-        public GcrMonitorTask create(ContainerRepo repo,
-                                     CountDownLatch latch);
+        public GcrMonitorTask create(ContainerRepo repo);
     }
 
     @Inject
-    public GcrMonitorTask(@Assisted ContainerRepo repo,
-                          @Assisted CountDownLatch latch)
+    public GcrMonitorTask(@Assisted ContainerRepo repo)
     {
-        super(repo, latch);
+        super(repo);
     }
 
     public void monitor()

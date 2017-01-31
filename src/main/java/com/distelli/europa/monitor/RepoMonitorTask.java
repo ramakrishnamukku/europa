@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 import javax.inject.Inject;
 
 import com.distelli.europa.db.*;
@@ -42,9 +41,8 @@ public abstract class RepoMonitorTask extends MonitorTask
     protected ContainerRepoDb _containerRepoDb;
 
     protected ContainerRepo _repo;
-    public RepoMonitorTask(ContainerRepo repo, CountDownLatch latch)
+    public RepoMonitorTask(ContainerRepo repo)
     {
-        super(latch);
         _repo = repo;
     }
 
@@ -144,5 +142,11 @@ public abstract class RepoMonitorTask extends MonitorTask
         }
         _repoEventsDb.setNotifications(event.getDomain(), event.getRepoId(), event.getId(), nfIdList);
         event.setNotifications(nfIdList);
+    }
+
+
+    @Override
+    public String toString() {
+        return getClass().getName() + ": "+_repo;
     }
 }

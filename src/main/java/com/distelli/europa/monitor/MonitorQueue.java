@@ -11,7 +11,6 @@ package com.distelli.europa.monitor;
 import javax.inject.Provider;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -73,11 +72,9 @@ public class MonitorQueue
 
         List<MonitorTask> tasks = new ArrayList<MonitorTask>();
         MonitorTaskList taskList = new MonitorTaskList();
-        CountDownLatch latch = new CountDownLatch(_reposToMonitor.size());
-        taskList.setCountDownLatch(latch);
         for(ContainerRepo repo : _reposToMonitor)
         {
-            MonitorTask task = _monitorTaskFactory.createMonitorTask(repo, latch);
+            MonitorTask task = _monitorTaskFactory.createMonitorTask(repo);
             if(task != null)
                 tasks.add(task);
         }
