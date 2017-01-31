@@ -129,7 +129,7 @@ export function listReposForRegistry() {
 
   let registriesWithRepos = ['GCR', 'ECR'];
 
-  if (registriesWithRepos.includes(registry)) {
+  if (registriesWithRepos.includes(registry.provider)) {
     this.setState({
       addRepo: GA.modifyProperty(this.state.addRepo, {
         reposInRegistryXHR: true,
@@ -156,6 +156,12 @@ export function listReposForRegistry() {
             })
           });
         });
+    });
+  } else {
+    this.setState({
+      addRepo: GA.modifyProperty(this.state.addRepo, {
+        reposInRegistry: [],
+      })
     });
   }
 }

@@ -30,7 +30,7 @@ export default class Registries extends Component {
 		return (
 			<div className="RegistryListLegend">
 				<span>Provider</span>
-				<span>Key Name</span>
+				<span>Friendly Name</span>
 				<span className="Flex2">Access Key</span>
 				<span>Region</span>
 				<span className="AddCred" 
@@ -112,7 +112,7 @@ export default class Registries extends Component {
 				return (
 					<div className="AddEditRegistryLegend">
 						<span style={{paddingLeft: '0'}}>Provider</span>
-						<span>Key Name</span>
+						<span>Friendly Name</span>
 						<span >Access Key</span>
 						<span>Private Key</span>
 						<span style={{paddingRight: '5px'}}>Region</span>
@@ -125,7 +125,7 @@ export default class Registries extends Component {
 				return (
 					<div className="AddEditRegistryLegend">
 						<span style={{paddingLeft: '0'}}>Provider</span>
-						<span>Key Name</span>
+						<span>Friendly Name</span>
 						<span style={{paddingRight: '5px'}}>Region</span>
 						{this.renderAddEditRegistryLegendClose()}
 					</div>
@@ -136,7 +136,7 @@ export default class Registries extends Component {
 				return (
 					<div className="AddEditRegistryLegend">
 						<span style={{paddingLeft: '0'}}>Provider</span>
-						<span>Key Name</span>
+						<span>Friendly Name</span>
 						<span >Username</span>
 						<span style={{paddingRight: '5px'}}>Password</span>
 						{this.renderAddEditRegistryLegendClose()}
@@ -148,7 +148,7 @@ export default class Registries extends Component {
 				return (
 					<div className="AddEditRegistryLegend">
 						<span style={{paddingLeft: '0'}}>Provider</span>
-						<span>Key Name</span>
+						<span>Friendly Name</span>
 						<span >Username</span>
 						<span >Password</span>
 						<span style={{paddingRight: '5px'}}>Endpoint</span>

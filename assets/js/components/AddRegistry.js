@@ -221,11 +221,11 @@ export default class AddRegistry extends Component {
 		return (
 			<div className="Flex1">
 				<label className="small FlexColumn" style={(this.props.standaloneMode) ? {display: 'none'} : {}}>
-					Key Name
+					Friendly Name
 				</label>
 				<input className={this.inputClassName(keyName)}
 					   value={keyNameValue}
-				       placeholder="Enter Key Name.."
+				       placeholder="Enter Friendly Name.."
 					   onChange={(e) => this.context.actions.updateNewRegistryField(keyName, e)} 
 					   {...readOnly}/>
 			</div>

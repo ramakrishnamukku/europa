@@ -79,7 +79,7 @@ export default class RepoEventTimeline extends Component {
 			break;
 
 			case 'TAGS':
-				if(noEvents) return this.renderNoEvents();
+				if(noEvents) return this.renderNoTags();
 				return (
 					<div className="TagsContainer">
 						{this.renderRepoEventTags()}
@@ -129,6 +129,20 @@ export default class RepoEventTimeline extends Component {
 			</div>
 		);
 	}
+	renderNoTags(){
+		return (
+			<div className="TimelineContainer">
+				<div className="Timeline">
+					<div className="NoContent">
+						<h3>
+							No Tags Found
+						</h3>
+						<p> If you just added this repository, it may take a second to populate historical data for this repository.</p>
+					</div>
+				</div>
+			</div>
+		);
+	}
 	renderNoEvents(){
 		return (
 			<div className="TimelineContainer">
@@ -137,7 +151,7 @@ export default class RepoEventTimeline extends Component {
 						<h3>
 							No Events Found
 						</h3>
-						<p> If you just added this repository, it may take a second to populate historical events.</p>
+						<p> If you just added this repository, it may take a second to populate historical data for this repository.</p>
 					</div>
 				</div>
 			</div>

@@ -57,7 +57,7 @@ export default class AddRepository extends Component {
 		);
 	}
 	renderDockerRepositoryInput(){
-		if(NPECheck(this.props, 'addRegistry/providerRegions/length', false)) {
+		if(NPECheck(this.props, 'addRepo/reposInRegistry/length', false) || NPECheck(this.props, 'addRepo/reposInRegistryXHR', false)) {
 			return (
 				<Dropdown isOpen={this.props.addRepo.selectRepoDropdown}
 						  toggleOpen={() => this.context.actions.toggleSelectRepoDropdown()}
