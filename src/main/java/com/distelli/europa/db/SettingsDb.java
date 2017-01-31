@@ -36,7 +36,6 @@ import lombok.extern.log4j.Log4j;
 public class SettingsDb extends BaseDb
 {
     private Index<EuropaSetting> _main;
-    private Index<EuropaSetting> _byType;
 
     private final ObjectMapper _om = new ObjectMapper();
     public static TableDescription getTableDescription() {
@@ -44,16 +43,8 @@ public class SettingsDb extends BaseDb
         .tableName("settings")
         .indexes(Arrays.asList(IndexDescription.builder()
                                .hashKey(attr("dom", AttrType.STR))
-                               .rangeKey(attr("key", AttrType.STR))
+                               .rangeKey(attr("rk", AttrType.STR))
                                .indexType(IndexType.MAIN_INDEX)
-                               .readCapacity(1L)
-                               .writeCapacity(1L)
-                               .build(),
-                               IndexDescription.builder()
-                               .indexName("dom-type-index")
-                               .hashKey(attr("dom", AttrType.STR))
-                               .rangeKey(attr("type", AttrType.STR))
-                               .indexType(IndexType.GLOBAL_SECONDARY_INDEX)
                                .readCapacity(1L)
                                .writeCapacity(1L)
                                .build()))
@@ -62,11 +53,24 @@ public class SettingsDb extends BaseDb
 
     private TransformModule createTransforms(TransformModule module) {
         module.createTransform(EuropaSetting.class)
-        .put("dom", String.class, "domain")
+        .put("dom", String.class,
+             (setting) -> setting.getDomain().toLowerCase(),
+             (setting, dom) -> setting.setDomain(dom))
+        .put("rk", String.class,
+             (setting) -> toRK(setting))
         .put("key", String.class, "key")
         .put("val", String.class, "value")
         .put("type", EuropaSettingType.class, "type");
         return module;
+    }
+
+    private static String toRK(EuropaSetting setting) {
+        return toRK(setting.getType(), setting.getValue());
+    }
+
+    private static String toRK(EuropaSettingType type, String value) {
+        if ( null == value ) return type + ":";
+        return type + ":" + value;
     }
 
     @Inject
@@ -79,15 +83,23 @@ public class SettingsDb extends BaseDb
         .withTableDescription(getTableDescription())
         .withConvertValue(_om::convertValue)
         .build();
-
-        _byType = indexFactory.create(EuropaSetting.class)
-        .withTableDescription(getTableDescription(), "dom-type-index")
-        .withConvertValue(_om::convertValue)
-        .build();
     }
 
     public void save(EuropaSetting europaSetting) {
+        if ( null == europaSetting.getDomain() ) {
+            throw new IllegalArgumentException("domain must be non-null");
+        }
+        if ( null == europaSetting.getType() ) {
+            throw new IllegalArgumentException("type must be non-null");
+        }
+        if ( null == europaSetting.getKey() ) {
+            throw new IllegalArgumentException("key must be non-null");
+        }
         _main.putItem(europaSetting);
+    }
+
+    public void delete(String domain, EuropaSettingType type, String key) {
+        _main.deleteItem(domain, toRK(type, key));
     }
 
     public List<EuropaSetting> listRootSettingsByType(EuropaSettingType type) {
@@ -95,8 +107,8 @@ public class SettingsDb extends BaseDb
     }
 
     public List<EuropaSetting> listSettingsByType(String domain, EuropaSettingType type) {
-        return _byType.queryItems(domain.toLowerCase(), new PageIterator().pageSize(1000))
-        .eq(type.toString())
-        .list();
+        return _main.queryItems(domain.toLowerCase(), new PageIterator().pageSize(1000))
+            .beginsWith(toRK(type, null))
+            .list();
     }
 }
