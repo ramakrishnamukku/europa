@@ -10,7 +10,8 @@ package com.distelli.europa.models;
 
 public enum EuropaSettingType
 {
-    STORAGE, 
+    STORAGE,
     SSL,
-    SAML;
+    SAML,
+    DNS;
 }
