@@ -231,6 +231,12 @@
     </dependency>
 
     <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>3.5.0</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.distelli.objectStore</groupId>
       <artifactId>object-store-api</artifactId>
       <version>${distelli-common.version}</version>

@@ -22,6 +22,11 @@ public class EuropaTestConfig
     @Getter @Setter
     private String awsRegion;
 
+    @Getter @Setter
+    private String dockerHubUsername;
+    @Getter @Setter
+    private String dockerHubPassword;
+
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     static {
         OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -32,21 +37,20 @@ public class EuropaTestConfig
 
     }
 
+    private static String getenv(String var) {
+        String val = System.getenv(var);
+        if ( null == val ) throw new IllegalStateException("Missing Env Variable: "+var);
+        return val;
+    }
+
     public static final EuropaTestConfig fromEnvironment()
     {
-        String awsAccessKey = System.getenv("EUROPA_TEST_AWS_ACCESS_KEY");
-        if(awsAccessKey == null)
-            throw(new IllegalStateException("Missing Env Variable: EUROPA_TEST_AWS_ACCESS_KEY"));
-        String awsSecretKey = System.getenv("EUROPA_TEST_AWS_SECRET_KEY");
-        if(awsSecretKey == null)
-            throw(new IllegalStateException("Missing Env Variable: EUROPA_TEST_AWS_SECRET_KEY"));
-        String awsRegion = System.getenv("EUROPA_TEST_AWS_REGION");
-        if(awsRegion == null)
-            throw(new IllegalStateException("Missing Env Variable: EUROPA_TEST_AWS_REGION"));
         EuropaTestConfig testConfig = new EuropaTestConfig();
-        testConfig.setAwsAccessKey(awsAccessKey);
-        testConfig.setAwsSecretKey(awsSecretKey);
-        testConfig.setAwsRegion(awsRegion);
+        testConfig.setAwsAccessKey(getenv("EUROPA_TEST_AWS_ACCESS_KEY"));
+        testConfig.setAwsSecretKey(getenv("EUROPA_TEST_AWS_SECRET_KEY"));
+        testConfig.setAwsRegion(getenv("EUROPA_TEST_AWS_REGION"));
+        testConfig.setDockerHubUsername(getenv("EUROPA_TEST_DOCKER_HUB_USERNAME"));
+        testConfig.setDockerHubPassword(getenv("EUROPA_TEST_DOCKER_HUB_PASSWORD"));
         return testConfig;
     }
 
