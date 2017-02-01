@@ -13,5 +13,6 @@ public enum EuropaSettingType
     STORAGE,
     SSL,
     SAML,
-    DNS;
+    DNS,
+    SKEY;
 }

@@ -19,8 +19,7 @@ public class ContainerRepo
     protected RegistryProvider provider = null;
     //This is the AWS Account for ECR registries
     protected String registryId = null;
-    //This is the repoUri that can be used for docker push / pull operations
-    protected String repoUri = null;
+    protected String endpoint = null;
     protected RepoEvent lastEvent = null;
     protected boolean publicRepo = false;
     protected boolean local = true;
@@ -43,7 +42,11 @@ public class ContainerRepo
             //docker pull 708141427824.dkr.ecr.us-east-1.amazonaws.com/distelli:latest
             return String.format("docker pull %s.dkr.ecr.%s.amazonaws.com/%s",this.registryId, this.region, this.name);
         case DOCKERHUB:
+            return String.format("docker pull %s", this.name);
         case PRIVATE:
+            if(this.endpoint == null)
+                return null;
+            return String.format("docker pull %s/%s", this.endpoint, this.name);
         case EUROPA:
         default:
             return null;

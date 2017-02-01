@@ -60,7 +60,6 @@ public class ECRClient
         .region(_registryCred.getRegion())
         .name(ecrRepo.getRepositoryName())
         .registryId(ecrRepo.getRegistryId())
-        .repoUri(ecrRepo.getRepositoryUri())
         .build();
         return repo;
     }
@@ -87,7 +86,6 @@ public class ECRClient
             .region(_registryCred.getRegion())
             .name(ecrRepo.getRepositoryName())
             .registryId(ecrRepo.getRegistryId())
-            .repoUri(ecrRepo.getRepositoryUri())
             .build();
             containerRepos.add(repo);
         }

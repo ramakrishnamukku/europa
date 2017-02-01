@@ -90,6 +90,7 @@ public class ContainerRepoDb extends BaseDb
         .put("cid", String.class, "credId")
         .put("pr", Boolean.class, "publicRepo")
         .put("oid", String.class, "overviewId")
+        .put("endpt", String.class, "endpoint")
         .put("lr", Boolean.class, "local")
         .put("lst", Long.class, "lastSyncTime")
         .put("levent", RepoEvent.class, "lastEvent");
