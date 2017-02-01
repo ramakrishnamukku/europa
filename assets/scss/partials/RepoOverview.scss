@@ -1,0 +1,54 @@
+.RepoOverview {
+    top: 0px;
+    left: 0px;
+    position: relative;
+    min-height: 500px;
+    margin-bottom: 100px;
+
+    .ReadMe {
+        flex: 1;
+        padding: 28px;
+        background-color: $curtain-color;
+
+        h1 {
+            margin-top: 0;
+        }
+    }
+
+    .Editor {
+        position: relative;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: scroll;
+        height: 500px;
+
+        textarea {
+            background-color: $curtain-color;
+            padding: 28px;
+            font-size: 1rem;
+            border: 0px;
+            flex: 1;
+            outline: 0;
+            height: 500px;
+
+            &:focus {
+                border: 0px;
+            }
+        }
+    }
+
+    .ButtonContainer {
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        width: 100%;
+
+        .Btn {
+            margin: 5px;
+        }
+    }
+}

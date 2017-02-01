@@ -31,8 +31,9 @@
 @import "partials/RadioButton";
 @import "partials/Registries";
 @import "partials/RepoEventTimeline";
-@import "partials/RepoSettings";
 @import "partials/RepoNotifications";
+@import "partials/RepoOverview";
+@import "partials/RepoSettings";
 @import "partials/StorageSettings";
 @import "partials/UploadGCEServiceAccount";
 @import "partials/WebhookData";
@@ -55,7 +56,7 @@ body {
 a {
     color: inherit;
     text-decoration: none;
-    color: $yellow;
+    color: $light-blue;
 }
 
 div.Button {

@@ -66,7 +66,7 @@ const compiler = {
       test: [/\.scss$/, /\.css$/],
       loader: ExtractTextPlugin.extract('css!sass')
     }, {
-      test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+      test: /\.(png|woff|woff2|eot|ttf|svg|json)$/,
       loader: 'url-loader?limit=100000'
     }],
   },

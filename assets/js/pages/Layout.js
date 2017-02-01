@@ -66,18 +66,7 @@ export default class Layout extends Component {
 			}
 		}
 	}
-	componentDidMount() {
-		this.setState({
-			intervals: {
-				registriesInterval: setInterval(() => {
-					RegistryActions.listRegistries.call(this)
-				}, 30000),
-				reposInterval: setInterval(() => {
-					RepoActions.listRepos.call(this)
-				}, 30000)
-			}
-		});
-	}
+	componentDidMount() {}
 	componentDidUpdate(prevProps, prevState) {
 		ReactTooltip.hide();
 		ReactTooltip.rebuild();
@@ -96,12 +85,12 @@ export default class Layout extends Component {
 	}
 	getChildContextActions() {
 		return [
-			RegistryActions,
-      RepoActions,
-      PipelineActions,
-      NotificationActions,
-      SettingsActions
-    ];
+			  RegistryActions,
+		      RepoActions,
+		      PipelineActions,
+		      NotificationActions,
+		      SettingsActions
+		    ];
 	}
 	highlightNav(sections, root=null) {
 		let shouldHighlight = false;

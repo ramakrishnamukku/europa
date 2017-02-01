@@ -336,6 +336,11 @@ function isAddRepoValid(validateOnInput) {
 export function repoDetailsState() {
   return {
     activeRepo: {},
+    repoOverviewContent: '',
+    repoOverviewContentOriginal: '',
+    isOverviewModified: false,
+    editOverview: false,
+    repoOverviewError: '',
     pageXHR: false,
     deleteXHR: false,
     isDeleting: false,
@@ -346,7 +351,7 @@ export function repoDetailsState() {
     manifests: [],
     manifestsXHR: false,
     manifestsError: '',
-    timelineSection: 'EVENTS',
+    timelineSection: 'OVERVIEW',
     activeEventId: null,
   };
 }
@@ -360,7 +365,7 @@ export function resetRepoDetailsState() {
 export function toggleRepoDetailsPageXHR() {
   this.setState({
     repoDetails: GA.modifyProperty(this.state.repoDetails, {
-      pageXHR: !this.state.repoDetails.XHR
+      pageXHR: !this.state.repoDetails.pageXHR
     })
   });
 }
@@ -371,12 +376,110 @@ export function setActiveRepoDetails(repoId) {
 
     this.setState({
       repoDetails: GA.modifyProperty(this.state.repoDetails, {
-        activeRepo: repo,
-        pageXHR: false
+        activeRepo: repo
       })
     }, () => resolve());
   });
 }
+
+export function getRepoOverview(repoId) {
+  return new Promise((resolve, reject) => {
+    if (!repoId) repoId = NPECheck(this.state, 'repoDetails/activeRepo/id', '');
+
+    this.setState({
+      repoDetails: GA.modifyProperty(this.state.repoDetails, {})
+    }, () => {
+      RAjax.GET.call(this, 'GetRepoOverview', {
+          repoId
+        })
+        .then((res) => {
+
+          this.setState({
+            repoDetails: GA.modifyProperty(this.state.repoDetails, {
+              repoOverviewContent: res.content || '',
+              repoOverviewContentOriginal: res.content || '',
+              isOverviewModified: false
+            })
+          }, () => resolve());
+
+        })
+        .catch((err) => {
+          console.error(err);
+          reject();
+        });
+    })
+  });
+}
+
+export function updateRepoOverviewContent(e, eIsValue = false) {
+  let value = (eIsValue) ? e : e.target.value;
+  let ogValue = NPECheck(this.state, 'repoDetails/repoOverviewContentOriginal', '');
+
+  this.setState({
+    repoDetails: GA.modifyProperty(this.state.repoDetails, {
+      repoOverviewContent: value,
+      isOverviewModified: value != ogValue
+    })
+  });
+}
+
+export function toggleRepoOverviewEdit() {
+  this.setState({
+    repoDetails: GA.modifyProperty(this.state.repoDetails, {
+      editOverview: !this.state.repoDetails.editOverview
+    })
+  });
+}
+
+export function saveRepoOverview() {
+  return new Promise((resolve, reject) => {
+    this.setState({
+      repoDetails: GA.modifyProperty(this.state.repoDetails, {
+        saveRepoOverviewXHR: true
+      })
+    }, () => {
+      let content = this.state.repoDetails.repoOverviewContent;
+      let repoId = this.state.repoDetails.activeRepo.id;
+      RAjax.POST.call(this, 'SaveRepoOverview', {
+          content
+        }, {
+          repoId
+        })
+        .then((res) => {
+
+          this.setState({
+            repoDetails: GA.modifyProperty(this.state.repoDetails, {
+              saveRepoOverviewXHR: false,
+              editOverview: false
+            })
+          }, () => resolve());
+
+        })
+        .catch((err) => {
+          console.error(err);
+          let errorMsg = `There was an error saving your read me. ${NPECheck(err, 'error/message', '')}`
+          this.setState({
+            repoDetails: GA.modifyProperty(this.state.repoDetails, {
+              saveRepoOverviewXHR: false,
+              repoOverviewError: errorMsg
+            })
+          }, () => reject());
+          
+        });
+    });
+  });
+}
+
+export function discardRepoOverviewChanges() {
+  this.setState({
+    repoDetails: GA.modifyProperty(this.state.repoDetails, {
+      repoOverviewContent: this.state.repoDetails.repoOverviewContentOriginal,
+      isOverviewModified: false,
+      editOverview: false
+    })
+  });
+}
+
 
 export function toggleActiveRepoDelete() {
   this.setState({
@@ -431,33 +534,35 @@ export function setTimelineSection(section = '') {
 }
 
 export function listRepoEvents(repoId, skipXHR) {
-  this.setState({
-    repoDetails: GA.modifyProperty(this.state.repoDetails, {
-      eventsXHR: (skipXHR) ? false : true
+  return new Promise((resolve, reject) => {
+    this.setState({
+      repoDetails: GA.modifyProperty(this.state.repoDetails, {
+        eventsXHR: (skipXHR) ? false : true
+      })
+    }, () => {
+      RAjax.GET.call(this, 'ListRepoEvents', {
+          repoId
+        })
+        .then((res) => {
+          this.setState({
+            repoDetails: GA.modifyProperty(this.state.repoDetails, {
+              events: res,
+              eventsXHR: false
+            })
+          }, () => resolve());
+        })
+        .catch((err) => {
+          console.error(err);
+          let errorMsg = `There was an error retrieving your events for this repository. ${NPECheck(err, 'error/message', '')}`
+          this.setState({
+            repoDetails: GA.modifyProperty(this.state.repoDetails, {
+              eventsXHR: false,
+              eventsError: errorMsg
+            })
+          }, () => reject());
+        })
     })
-  }, () => {
-    RAjax.GET.call(this, 'ListRepoEvents', {
-        repoId
-      })
-      .then((res) => {
-        this.setState({
-          repoDetails: GA.modifyProperty(this.state.repoDetails, {
-            events: res,
-            eventsXHR: false
-          })
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-        let errorMsg = `There was an error retrieving your events for this repository. ${NPECheck(err, 'error/message', '')}`
-        this.setState({
-          repoDetails: GA.modifyProperty(this.state.repoDetails, {
-            eventsXHR: false,
-            eventsError: errorMsg
-          })
-        });
-      })
-  })
+  });
 }
 
 export function toggleEventDetails(eventId = null) {
@@ -482,8 +587,6 @@ export function listRepoManifests(repoId) {
           repoId
         })
         .then((res) => {
-          // console.log(res);
-
           this.setState({
             repoDetails: GA.modifyProperty(this.state.repoDetails, {
               manifests: res,
@@ -491,10 +594,8 @@ export function listRepoManifests(repoId) {
               manifestsError: ''
             })
           }, () => resolve())
-
         })
         .catch((err) => {
-
           console.error(err);
           let errorMsg = NPECheck(err, 'error/message', 'There was an error listing your repoistory tags.');
           this.setState({

@@ -4,6 +4,7 @@
 
 import React, {Component, PropTypes} from 'react'
 import NPECheck from './../util/NPECheck'
+import RepoOverview from './RepoOverview'
 import RepoEventItem from './../components/RepoEventItem'
 import RegistryProviderIcons from './../util/RegistryProviderIcons'
 import ConvertTimeFriendly from './../util/ConvertTimeFriendly'
@@ -44,11 +45,21 @@ export default class RepoEventTimeline extends Component {
 						);
 					})}
 				</div>
-				{this.renderLoadingIcon()}
+				{this.renderHeaderAction()}
 			</div>
 		);
 	}
-	renderLoadingIcon(){
+	renderHeaderAction(){
+		if(NPECheck(this.props, 'repoDetails/timelineSection', '') == 'OVERVIEW') {
+			let isEdit = NPECheck(this.props, 'repoDetails/editOverview', false);
+
+			return (
+				<span className="ThickBlueText" onClick={() => this.context.actions.toggleRepoOverviewEdit()}>
+					{(isEdit) ? (NPECheck(this.props, 'repoDetails/isOverviewModified')) ? 'Preview Changes' : 'Cancel' : 'Edit Read Me'}
+				</span>
+			);
+		}
+
 		if(!NPECheck(this.props, 'events/length', true)) {
 			return (
 				<i className="icon icon-dis-waiting rotating"/>
@@ -63,9 +74,7 @@ export default class RepoEventTimeline extends Component {
 
 			case 'OVERVIEW':
 				return (
-					<div>
-						This is the overview
-					</div>
+					<RepoOverview {...this.props}/>
 				);
 			break;
 
