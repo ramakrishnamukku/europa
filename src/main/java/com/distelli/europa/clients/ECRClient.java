@@ -40,6 +40,31 @@ public class ECRClient
         _awsEcrClient.setEndpoint(endpoint);
     }
 
+    public ContainerRepo getRepository(String repoName)
+    {
+        DescribeRepositoriesRequest request = new DescribeRepositoriesRequest();
+        List<String> repoNames = new ArrayList<String>();
+        repoNames.add(repoName);
+        request.setRepositoryNames(repoNames);
+        DescribeRepositoriesResult result = _awsEcrClient.describeRepositories(request);
+
+        List<Repository> ecrRepos = result.getRepositories();
+        if(ecrRepos == null || ecrRepos.size() == 0)
+            return null;
+
+        Repository ecrRepo = ecrRepos.get(0);
+        ContainerRepo repo = ContainerRepo
+        .builder()
+        .provider(RegistryProvider.ECR)
+        .credId(_registryCred.getId())
+        .region(_registryCred.getRegion())
+        .name(ecrRepo.getRepositoryName())
+        .registryId(ecrRepo.getRegistryId())
+        .repoUri(ecrRepo.getRepositoryUri())
+        .build();
+        return repo;
+    }
+
     public List<ContainerRepo> listRepositories(PageIterator pageIterator)
     {
         int pageSize = pageIterator.getPageSize();

@@ -27,4 +27,26 @@ public class ContainerRepo
     //The ID of the object in the ObjectStore that holds the readme
     protected String overviewId;
     protected long lastSyncTime;
+
+    public String getPullCommand()
+    {
+        if(this.provider == null)
+            return null;
+        switch(provider)
+        {
+        case GCR:
+            //gcr.io/distelli-alpha/api-service"
+            return String.format("gcloud docker pull %s/%s", this.region, this.name);
+        case ECR:
+            if(this.registryId == null)
+                return null;
+            //docker pull 708141427824.dkr.ecr.us-east-1.amazonaws.com/distelli:latest
+            return String.format("docker pull %s.dkr.ecr.%s.amazonaws.com/%s",this.registryId, this.region, this.name);
+        case DOCKERHUB:
+        case PRIVATE:
+        case EUROPA:
+        default:
+            return null;
+        }
+    }
 }

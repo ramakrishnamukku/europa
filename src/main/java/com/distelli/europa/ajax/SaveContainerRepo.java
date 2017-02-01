@@ -105,13 +105,18 @@ public class SaveContainerRepo extends AjaxHelper<EuropaRequestContext>
         return retVal;
     }
 
+    /**
+       Validates the repo. if its an ecr repo it sets the registry Id
+       as well after validation
+     */
     private void validateContainerRepo(ContainerRepo repo, RegistryCred cred)
     {
         RegistryProvider provider = cred.getProvider();
         switch(provider)
         {
         case ECR:
-            validateEcrRepo(repo, cred);
+            String registryId = validateEcrRepo(repo, cred);
+            repo.setRegistryId(registryId);
             break;
         case GCR:
             validateGcrRepo(repo, cred);
@@ -150,14 +155,14 @@ public class SaveContainerRepo extends AjaxHelper<EuropaRequestContext>
         }
    }
 
-    private void validateEcrRepo(ContainerRepo repo, RegistryCred cred)
+    //Validates the ECR repo and returns the AWS RegistryId if the
+    //repo is valid
+    private String validateEcrRepo(ContainerRepo repo, RegistryCred cred)
     {
         ECRClient ecrClient = new ECRClient(cred);
-        PageIterator iter = new PageIterator().pageSize(1);
-        try {
-            List<DockerImageId> images = ecrClient.listImages(repo, iter);
-        } catch(Throwable t) {
-            throw(new AjaxClientException("Invalid Container Repository or Credentials: "+t.getMessage(), JsonError.Codes.BadContent, 400));
-        }
+        ContainerRepo ecrRepo = ecrClient.getRepository(repo.getName());
+        if(ecrRepo == null)
+            throw(new AjaxClientException("Invalid Container Repository or Credentials", JsonError.Codes.BadContent, 400));
+        return ecrRepo.getRegistryId();
     }
 }

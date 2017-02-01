@@ -117,6 +117,17 @@ public class TestECRClient
                 System.out.println("DockerImage: "+imageId);
                 assertThat(imageId.getSha(), is(not(nullValue())));
             }
+
+            //Test the get repository method
+            ContainerRepo singleRepo = ecrClient.getRepository(repo.getName());
+            assertThat(singleRepo, is(not(nullValue())));
+            assertThat(singleRepo.getName(), equalTo(repo.getName()));
+            assertThat(singleRepo.getRegion(), equalTo(repo.getRegion()));
+            assertThat(singleRepo.getProvider(), equalTo(repo.getProvider()));
+            assertThat(singleRepo.getRegistryId(), equalTo(repo.getRegistryId()));
+            assertThat(singleRepo.getCredId(), equalTo(repo.getCredId()));
+            assertThat(singleRepo.getCredId(), equalTo(repo.getCredId()));
+            assertThat(singleRepo.getRepoUri(), equalTo(repo.getRepoUri()));
         }
     }
 }
