@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.inject.Provider;
 
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import com.distelli.cred.CredPair;
 import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.db.ContainerRepoDb;
@@ -26,8 +27,9 @@ import com.distelli.europa.db.RepoEventsDb;
 import com.distelli.europa.db.SequenceDb;
 import com.distelli.europa.db.SettingsDb;
 import com.distelli.europa.db.TokenAuthDb;
-import com.distelli.europa.models.StorageSettings;
+import com.distelli.europa.models.DnsSettings;
 import com.distelli.europa.models.SslSettings;
+import com.distelli.europa.models.StorageSettings;
 import com.distelli.europa.monitor.*;
 import com.distelli.europa.util.ObjectKeyFactory;
 import com.distelli.objectStore.*;
@@ -40,7 +42,6 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.Multibinder;
 
 import lombok.extern.log4j.Log4j;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 @Log4j
 public class EuropaInjectorModule extends AbstractModule
@@ -90,6 +91,7 @@ public class EuropaInjectorModule extends AbstractModule
         bind(Index.Factory.class).toProvider(new IndexFactoryProvider(endpoint, creds));
         configureEuropaConfiguration();
         bind(ObjectStore.class).toProvider(new ObjectStoreProvider());
+        bind(DnsSettings.class).toProvider(new DnsSettingsProvider());
         bind(StorageSettings.class).toProvider(new StorageSettingsProvider());
         bind(SslSettings.class).toProvider(new SslSettingsProvider());
         bind(SslContextFactory.class).toProvider(new SslContextFactoryProvider());
