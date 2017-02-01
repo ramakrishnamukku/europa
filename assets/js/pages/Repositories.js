@@ -10,6 +10,7 @@ import Btn from './../components/Btn'
 import Loader from './../components/Loader'
 import BtnGroup from './../components/BtnGroup'
 import ConvertTimeFriendly from './../util/ConvertTimeFriendly'
+import ConvertTimeUTC from './../util/ConvertTimeUTC'
 
 export default class Repositories extends Component {
 	constructor(props) {
@@ -52,7 +53,7 @@ export default class Repositories extends Component {
 					</div>
 					{this.renderRepoItemDetails(repo)}
 					<div className="FlexColumn" style={{flex: '0.45', alignItems: 'flex-end', paddingRight: '7px', justifyContent: 'center'}}>
-						<span className="LastWebhookStatus">Success</span>
+						<span className="LastWebhookStatus"></span>
 					</div>
 				</div>
 			</div>
@@ -61,7 +62,9 @@ export default class Repositories extends Component {
 	}
 	renderRepoItemDetails(repo){
 		let lastEvent = repo.lastEvent
-		if(!lastEvent) {
+		let lastSynced = repo.lastSyncTime;
+
+		if(!lastSynced) {
 			return (
 				<div className="Flex2 FlexColumn UnknownDetails">
 					Retrieving repository details..
@@ -69,10 +72,18 @@ export default class Repositories extends Component {
 			);
 		}
 
+		if(!lastEvent) {
+			return (
+				<div className="Flex2 FlexColumn UnknownDetails">
+					No events found. Last synced at {ConvertTimeUTC(new Date(lastSynced))}
+				</div>	
+			);
+		}
+
 		let friendlyTime = (lastEvent.eventTime) ? ConvertTimeFriendly(lastEvent.eventTime) : 'Unknown';
 		return (
-			<div className="Flex2 FlexColumn">
-				<div className="FlexRow AlignCenter">
+			<div className="Flex2 FlexColumn JustifyCenter">
+				<div className="FlexRow">
 					<span className="LastPushed">Pushed image <span className="LightBlueColor">{repo.name}</span></span>
 					<span className="Label">&nbsp;&ndash;&nbsp;{friendlyTime}</span>
 				</div>
@@ -97,9 +108,8 @@ export default class Repositories extends Component {
 	renderLegend(){
 		return (
 			<div className="ReposLegend">
-				<div style={{flex: '1.105'}}>Repository</div>
+				<div style={{flex: '0.91'}}>Repository</div>
 				<div className="Flex2">Last event</div>
-				<div>Last webhook status</div>
 			</div>
 		);
 	}
@@ -131,14 +141,41 @@ export default class Repositories extends Component {
 	renderNoRepositories(){
 		return (
 			<div className="ContentContainer">
-				<div className="NoContent">
+				<div className="NoRepositories">
 					<h3>
 						You have no repositories to monitor
 					</h3>
-					<Btn className="LargeBlueButton"
-						 onClick={() => this.toAddRepo()}
-						 text="Add Repository"
-						 canClick={true} />
+					<div className="FlexRow">
+						<div className="Flex1" style={{margin: '0 10px'}}>
+							<p><strong>Local Repositories</strong> are dolor sit amet, cectetuer adipiscing elit, sed diam nonumy nibh euismod tincidunt ut laoreet dolore magna aliquam erat.</p>
+							<Btn className="LargeBlueButton"
+								 style={{width:'100%', maxWidth: '100%'}}
+							     onClick={() => this.toAddRepo()}
+							 	 text="Add Repository"
+							 	 canClick={true} >
+							 	 <i className="icon icon-dis-cloud" />
+							 	 Create a Local Repository
+							 </Btn>
+						</div>
+						<div className="Flex1" style={{margin: '0 10px'}}>
+							<p><strong>Remote Repositories</strong> are dolor sit amet, cectetuer adipiscing elit, sed diam nonumy nibh euismod tincidunt ut laoreet dolore magna aliquam erat.</p>
+							<Btn className="LargeBlueButton"
+								 style={{width:'100%', maxWidth: '100%'}}
+							     onClick={() => this.toAddRepo()}
+							 	 canClick={true} >
+						 	 	<i className="icon icon-dis-cloud" />
+						 	 	Connect a Remote Repository
+							 </Btn>
+						</div>
+					</div>
+					<div className="FlexColumn Commands">
+						<div>or</div>
+						<div>Push a Docker image to a local repository</div>
+						<p><strong>Command</strong> description dolor sit amet, cectetuer adipiscing elit, sed diam nonumy nibh euismod tincidunt ut laoreet dolore magna aliquam erat.</p>
+						<div className="Code">
+							 $ command --install=-f
+						</div>
+					</div>
 				</div>
 			</div>
 		);

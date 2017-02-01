@@ -32,7 +32,7 @@ export default class Btn extends Component {
 	renderButton(){
 		return (
 			<div style={this.props.style || {}} className={this.getClassName()} onClick={() => this.onClick()}>
-				{this.props.text}
+				{this.props.children ? this.props.children : this.props.text}
 			</div>
 		);
 	}
@@ -52,7 +52,7 @@ export default class Btn extends Component {
 }
 
 Btn.propTypes = {
-	text: PropTypes.string.isRequired,
+	text: PropTypes.string,
 	onClick: PropTypes.func.isRequired,
 	color: PropTypes.string,
 	canClick: PropTypes.bool,
