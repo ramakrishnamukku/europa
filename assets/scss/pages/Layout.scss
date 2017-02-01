@@ -291,30 +291,30 @@ nav {
         color: $black;
         margin-top: 0;
     }
+}
 
-    .Commands {
-        div {
-            color: $teal;
-            font-size: 1.2rem;
-            margin-top: 14px;
-            text-align: center;
-            justify-content: center;
-            align-items: center;
-        }
+.NewRepoCommands {
+    div {
+        color: $teal;
+        font-size: 1.2rem;
+        margin-top: 14px;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+    }
 
-        p {
-            margin: 21px 0 0;
-            font-size: 0.875rem;
-            color: $black;
-        }
+    p {
+        margin: 21px 0 0;
+        font-size: 0.875rem;
+        color: $black;
+    }
 
-        .Code {
-            background-color: $curtain-color;
-            text-align: left;
-            color: $black;
-            padding: 11px;
-            font-size: 1rem;
-        }
+    .Code {
+        background-color: $curtain-color;
+        text-align: left;
+        color: $black;
+        padding: 11px;
+        font-size: 1rem;
     }
 }
 

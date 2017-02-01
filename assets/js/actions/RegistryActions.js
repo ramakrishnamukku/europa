@@ -355,7 +355,7 @@ function isAddRegistryValid(validateOnInput, skipSetState) {
 
   let currentProvider = NPECheck(this.state, 'addRegistry/newRegistry/provider', '');
 
-  switch(currentProvider) {
+  switch (currentProvider) {
     case 'ECR':
       required = {
         provider,
@@ -364,7 +364,7 @@ function isAddRegistryValid(validateOnInput, skipSetState) {
         secret,
         name,
       };
-    break;
+      break;
 
     case 'GCR':
       required = {
@@ -373,44 +373,30 @@ function isAddRegistryValid(validateOnInput, skipSetState) {
         name,
       };
 
+    break;
+
     case 'DOCKERHUB':
 
       required = {
         provider,
         key,
-        secret, 
+        secret,
         name,
       };
 
-    break;
+      break;
 
     case 'PRIVATE':
 
       required = {
         provider,
         key,
-        secret, 
+        secret,
         name,
         endpoint
       };
 
-    break;
-  }
-
-  if (this.state.addRegistry.credentialType == 'SERVICE_CREDENTIAL') {
-    required = {
-      provider,
-      region,
-      name,
-    };
-  }
-
-  if (this.state.addRegistry.isEdit) {
-    required = {
-      provider,
-      region,
-      name,
-    };
+      break;
   }
 
   let errorFields = Validate.call(this, this.state.addRegistry.newRegistry, required);

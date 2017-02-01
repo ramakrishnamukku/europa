@@ -194,7 +194,7 @@ export function listReposForRegistry() {
 
   let registriesWithRepos = ['GCR', 'ECR'];
 
-  if (registriesWithRepos.includes(registry.provider)) {
+  if (registry && registriesWithRepos.includes(registry.provider)) {
     this.setState({
       addRepo: GA.modifyProperty(this.state.addRepo, {
         reposInRegistryXHR: true,

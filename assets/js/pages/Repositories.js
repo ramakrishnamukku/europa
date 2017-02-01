@@ -176,12 +176,12 @@ export default class Repositories extends Component {
 							 </Btn>
 						</div>
 					</div>
-					<div className="FlexColumn Commands">
+					<div className="FlexColumn NewRepoCommands">
 						<div>or</div>
 						<div>Push a Docker image to a local repository</div>
 						<p><strong>Command</strong> description dolor sit amet, cectetuer adipiscing elit, sed diam nonumy nibh euismod tincidunt ut laoreet dolore magna aliquam erat.</p>
 						<div className="Code">
-							 $ docker push {this.props.dnsName}
+							 $ docker push {this.props.dnsName}/YOUR_NEW_REPO_NAME[:YOUR_IMAGE_TAG]
 						</div>
 					</div>
 				</div>

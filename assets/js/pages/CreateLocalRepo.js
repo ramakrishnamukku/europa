@@ -19,6 +19,9 @@ export default class CreateLocalRepo extends Component {
 	componentDidMount() {
 		this.refs['name'].focus();
 	}
+	componentWillUnmount() {
+		this.context.actions.resetAddRepoState();
+	}
 	createLocalRepo(){
 		this.context.actions.createLocalRepo()
 		.then(() => {
@@ -63,6 +66,18 @@ export default class CreateLocalRepo extends Component {
 			);
 		}
 	}
+	renderCommands(){
+		return (
+			<div className="FlexColumn NewRepoCommands">
+				<div>or</div>
+				<div>Push a Docker image to a local repository</div>
+				<p><strong>Command</strong> description dolor sit amet, cectetuer adipiscing elit, sed diam nonumy nibh euismod tincidunt ut laoreet dolore magna aliquam erat.</p>
+				<div className="Code">
+					 $ docker push {this.props.dnsName}/YOUR_NEW_REPO_NAME[:YOUR_IMAGE_TAG]
+				</div>
+			</div>
+		);
+	}
 	render() {
 		return (
 			<div className="ContentContainer">
@@ -75,6 +90,7 @@ export default class CreateLocalRepo extends Component {
 				</div>
 				<div>
 					{this.renderRepoNameInput()}
+					{this.renderCommands()}
 				</div>
 			</div>
 		);

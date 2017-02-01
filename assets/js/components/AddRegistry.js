@@ -287,6 +287,7 @@ export default class AddRegistry extends Component {
 					   value={this.props.addRegistry.newRegistry[password]}
 					   type="password"
 					   placeholder="Enter Password.."
+					   defaultValue={(this.props.isEdit) ? '******************' : '' }
 					   onChange={(e) => this.context.actions.updateNewRegistryField(password, e)} />
 			</div>
 		);
