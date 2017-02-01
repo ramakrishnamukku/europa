@@ -107,7 +107,6 @@ public class TestECRClient
             assertThat(repo.getRegistryId(), is(not(nullValue())));
             assertThat(repo.getCredId(), is(not(nullValue())));
             assertThat(repo.getCredId(), equalTo(credId));
-            assertThat(repo.getRepoUri(), is(not(nullValue())));
 
             PageIterator imageIter = new PageIterator().pageSize(5).marker(null);
             List<DockerImageId> images = ecrClient.listImages(repo, imageIter);
@@ -127,7 +126,6 @@ public class TestECRClient
             assertThat(singleRepo.getRegistryId(), equalTo(repo.getRegistryId()));
             assertThat(singleRepo.getCredId(), equalTo(repo.getCredId()));
             assertThat(singleRepo.getCredId(), equalTo(repo.getCredId()));
-            assertThat(singleRepo.getRepoUri(), equalTo(repo.getRepoUri()));
         }
     }
 }
