@@ -18,18 +18,30 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import java.io.IOException;
 import com.distelli.europa.models.HttpError;
 import com.distelli.europa.models.DockerHubRepository;
+import com.distelli.europa.models.DockerHubRepoTag;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.distelli.jackson.transform.TransformModule;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 @Log4j
 public class DockerHubClient {
+    private static long NANO_TO_SEC = 1000000000;
     private static final ObjectMapper OM = new ObjectMapper();
+    private static final MediaType JSON_MEDIA_TYPE = MediaType.parse("application/json");
     private OkHttpClient _client;
     private URI _endpoint;
     private String _username;
     private String _password;
+
+    // Used in getToken() and refreshToken():
+    private String _token;
+    private long _lastRefresh;
+    private ReadWriteLock _tokenLock = new ReentrantReadWriteLock();
 
     static {
         OM.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -74,7 +86,7 @@ public class DockerHubClient {
     private DockerHubClient(Builder builder) {
         _client = builder._clientBuilder.build();
         _endpoint = builder._endpoint;
-        if ( null == _endpoint ) _endpoint = URI.create("https://index.docker.io/");
+        if ( null == _endpoint ) _endpoint = URI.create("https://hub.docker.com/");
         _username = builder._username;
         _password = builder._password;
         if ( isEmpty(_username) || isEmpty(_password) ) {
@@ -93,17 +105,18 @@ public class DockerHubClient {
         return _client.connectionPool();
     }
 
-    public List<DockerHubRepository> listRepositories(PageIterator iter) throws IOException {
-        // Use the v1 API :(. Note that the search is NOT a prefix search... so we have to do post-filtering.
+    // GET TOKEN:
+    // curl -s -H "Content-Type: application/json" -X POST -d '{"username": "...", "password": "..."}' https://hub.docker.com/v2/users/login/ | jq -r .token
 
-        int page = ( null == iter.getMarker() ) ? 1 : Integer.parseInt(iter.getMarker());
-
-        String query = _username + "/";
-        Request req = addBasicAuth(new Request.Builder())
+    // curl -s -H "Authorization: JWT ${TOKEN}" https://hub.docker.com/v2/repositories/distelli/?page_size=10
+    public List<DockerHubRepository> listRepositories(String orgName, PageIterator iter) throws IOException {
+        if ( null == orgName ) orgName = _username;
+        Request req = addTokenAuth(new Request.Builder())
             .get()
             .url(addPageIterator(endpoint(), iter)
-                 .addPathSegments("v1/search")
-                 .addQueryParameter("q", query)
+                 .addPathSegments("v2/repositories")
+                 .addPathSegment(orgName)
+                 .addPathSegment("")
                  .build())
             .build();
         try ( Response res = _client.newCall(req).execute() ) {
@@ -111,20 +124,47 @@ public class DockerHubClient {
                 throw new HttpError(res.code(), res.body().string());
             }
             JsonNode json = OM.readTree(res.body().byteStream());
-            if ( json.at("/num_pages").asInt(0) <= page ) {
+            HttpUrl next = HttpUrl.parse(json.at("/next").asText());
+            if ( null == next ) {
                 // no more pages left:
                 iter.setMarker(null);
             } else {
-                iter.setMarker(""+(page+1));
+                iter.setMarker(next.queryParameter("page"));
             }
             List<DockerHubRepository> results = new ArrayList<>();
             for ( JsonNode result : json.at("/results") ) {
-                if ( ! result.at("/name").asText().startsWith(query) ) continue;
                 results.add(OM.convertValue(result, DockerHubRepository.class));
             }
             return results;
         }
     }
+
+    // curl -s -H "Authorization: JWT ${TOKEN}" 'https://hub.docker.com/v2/repositories/brimworks/test/tags/?page_size=3' | jq
+    public List<DockerHubRepoTag> listRepoTags(DockerHubRepository repo, PageIterator iter) throws IOException {
+        Request req = addTokenAuth(new Request.Builder())
+            .get()
+            .url(addPageIterator(endpoint(), iter)
+                 .addPathSegments("v2/repositories")
+                 .addPathSegment(repo.getNamespace())
+                 .addPathSegment(repo.getName())
+                 .addPathSegments("tags/")
+                 .build())
+            .build();
+        try ( Response res = _client.newCall(req).execute() ) {
+            if ( res.code() / 100 != 2 ) {
+                throw new HttpError(res.code(), res.body().string());
+            }
+            JsonNode json = OM.readTree(res.body().byteStream());
+            HttpUrl next = HttpUrl.parse(json.at("/next").asText());
+            iter.setMarker(null == next ? null : next.queryParameter("page"));
+            List<DockerHubRepoTag> results = new ArrayList<>();
+            for ( JsonNode result : json.at("/results") ) {
+                results.add(OM.convertValue(result, DockerHubRepoTag.class));
+            }
+            return results;
+        }
+    }
+
 
     private static boolean isEmpty(String str) {
         return null == str || str.isEmpty();
@@ -133,7 +173,7 @@ public class DockerHubClient {
     private static HttpUrl.Builder addPageIterator(HttpUrl.Builder url, PageIterator iter) {
         if ( null == iter ) return url;
         if ( Integer.MAX_VALUE != iter.getPageSize() ) {
-            url.addQueryParameter("n", ""+iter.getPageSize());
+            url.addQueryParameter("page_size", ""+iter.getPageSize());
         }
         if ( null != iter.getMarker() ) {
             url.addQueryParameter("page", iter.getMarker());
@@ -143,21 +183,64 @@ public class DockerHubClient {
 
     private static TransformModule createTransforms(TransformModule module) {
         module.createTransform(DockerHubRepository.class)
-            .put("is_automated", Boolean.class, "isAutomated")
             .put("name", String.class, "name")
-            .put("is_trusted", Boolean.class, "isTrusted")
-            .put("is_official", Boolean.class, "isOfficial")
-            .put("star_count", Integer.class, "starCount")
+            .put("namespace", String.class, "namespace")
             .put("description", String.class, "description");
+        module.createTransform(DockerHubRepoTag.class)
+            .put("name", String.class, "name");
         return module;
     }
 
-    private Request.Builder addBasicAuth(Request.Builder req) {
-        req.header("Authorization",
-                   "Basic " +
-                   Base64.getEncoder()
-                   .encodeToString((_username + ":" + _password).getBytes(UTF_8)));
-        return req;
+    private String getToken() throws IOException {
+        Lock readLock = _tokenLock.readLock();
+        readLock.lock();
+        try {
+            if ( null != _token ) return _token;
+        } finally {
+            readLock.unlock();
+        }
+        refreshToken();
+        // Try again:
+        readLock.lock();
+        try {
+            return _token;
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    private void refreshToken() throws IOException {
+        Lock writeLock = _tokenLock.writeLock();
+        writeLock.lock();
+        try {
+            if ( null != _token && System.nanoTime() - _lastRefresh - 5*NANO_TO_SEC > 0 ) {
+                return;
+            }
+            JsonNodeFactory jnf = OM.getNodeFactory();
+            JsonNode body = jnf.objectNode()
+                .put("username", _username)
+                .put("password", _password);
+            Request req = new Request.Builder()
+                .post(RequestBody.create(JSON_MEDIA_TYPE, OM.writeValueAsString(body)))
+                .url(endpoint()
+                     .addPathSegments("/v2/users/login/")
+                     .build())
+                .build();
+            try ( Response res = _client.newCall(req).execute() ) {
+                if ( res.code() / 100 != 2 ) {
+                    throw new HttpError(res.code(), res.body().string());
+                }
+                JsonNode json = OM.readTree(res.body().byteStream());
+                _token = json.at("/token").asText();
+                _lastRefresh = System.nanoTime();
+            }
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    private Request.Builder addTokenAuth(Request.Builder req) throws IOException {
+        return req.header("Authorization", "JWT " + getToken());
     }
 
     private HttpUrl.Builder endpoint() {

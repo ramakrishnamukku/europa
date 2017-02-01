@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DockerHubRepository {
-    private String namespace;
+public class DockerHubRepoTag {
+    // Tag name:
     private String name;
-    private String description;
+    // TODO: at a minimum, we need the sha!
 }
