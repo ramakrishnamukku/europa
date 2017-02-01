@@ -5,6 +5,7 @@ import Layout from './pages/Layout'
 import LandingPage from './pages/LandingPage'
 import Repositories from './pages/Repositories'
 import RepoDetailsPage from './pages/RepoDetailsPage'
+import CreateLocalRepo from './pages/CreateLocalRepo'
 import AddRepo from './pages/AddRepo'
 import Pipelines from './pages/Pipelines'
 import NewPipeline from './pages/NewPipeline'
@@ -28,6 +29,7 @@ export default class App extends Component {
           <Route component={Repositories} path="/repositories" />
           <Route component={RepoDetailsPage} path="/repository/:repoId" />
           <Route component={AddRepo} path="/new-repository" />
+          <Route component={CreateLocalRepo} path="/create-repository" />
           <Route component={NewPipeline} path="/new-pipeline" />
           <Route component={Pipelines} path="/pipelines" />
           <Route component={Pipeline} path="/pipelines/:pipelineId" />

@@ -11,7 +11,8 @@ export default class NotFound extends Component {
 		this.state = {};
 	}
 	toHome(){
-		this.context.router.push('/repositories');
+		let redirect = (this.props.hasOwnProperty('storage') && this.props.storage == false) ? '/' : '/repositories';
+		this.context.router.push(redirect);
 	}
 	render() {
 		return (

@@ -29,6 +29,7 @@ export default class Layout extends Component {
 	getBaseState() {
 		return {
 			storage: PAGE_PROPS.storage,
+			dnsName: PAGE_PROPS.dnsName,
 			registries: [],
 			registriesMap: {},
 			repos: [],
@@ -129,7 +130,7 @@ export default class Layout extends Component {
 						</Link>
 						<Link to="/repositories"
 							    className="MainNavLink"
-							    style={this.highlightNav(["repository", "new-repository", "repositories"], true) }>
+							    style={this.highlightNav(["repository", "new-repository", "repositories", "create-repository"], true) }>
 							<span>Repositories</span>
 						</Link>
 						<Link to="/pipelines"

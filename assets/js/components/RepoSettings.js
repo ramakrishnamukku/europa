@@ -21,6 +21,7 @@ export default class RepoSettings extends Component {
 	}
 	renderCredentials() {
 		let creds = this.props.registriesMap[this.props.activeRepo.credId]
+		if(!creds) return;
 		return (
 			<div className="FlexColumn">
 				<div className="FlexRow SpaceBetween">
@@ -74,7 +75,8 @@ export default class RepoSettings extends Component {
 		let rows = [{
 			columns: [{
                 icon:'icon icon-dis-credential',
-                renderBody: this.renderCredentials.bind(this)
+                renderBody: this.renderCredentials.bind(this),
+                condition: !!this.props.registriesMap[this.props.activeRepo.credId]
             }]
 		}, {
 			columns: [{

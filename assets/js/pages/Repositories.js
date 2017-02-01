@@ -23,6 +23,9 @@ export default class Repositories extends Component {
 	toAddRepo(){
 		this.context.router.push('/new-repository');
 	}
+	toCreateRepo(){
+		this.context.router.push('/create-repository');
+	}
 	renderRepos(){
 		let filteredRepos = this.props.repos.filter((repo) => {
 			if(!this.props.reposFilterQuery) return true;
@@ -124,8 +127,13 @@ export default class Repositories extends Component {
 					</h2>
 					<div className="FlexRow">
 						<div className="Flex1">
+							<Link to="/create-repository">
+								<BtnGroup buttons={[{icon: 'icon icon-dis-add', toolTip: 'Create Local Repository'}]} />
+							</Link>
+						</div>
+						<div className="Flex1">
 							<Link to="/new-repository">
-								<BtnGroup buttons={[{icon: 'icon icon-dis-repo', toolTip: 'Add Repository'}]} />
+								<BtnGroup buttons={[{icon: 'icon icon-dis-repo', toolTip: 'Add Remote Repository', leftMargin: true}]} />
 							</Link>
 						</div>
 					</div>
@@ -143,24 +151,24 @@ export default class Repositories extends Component {
 			<div className="ContentContainer">
 				<div className="NoRepositories">
 					<h3>
-						You have no repositories to monitor
+						You have no container repositories
 					</h3>
 					<div className="FlexRow">
 						<div className="Flex1" style={{margin: '0 10px'}}>
 							<p><strong>Local Repositories</strong> are dolor sit amet, cectetuer adipiscing elit, sed diam nonumy nibh euismod tincidunt ut laoreet dolore magna aliquam erat.</p>
 							<Btn className="LargeBlueButton"
-								 style={{width:'100%', maxWidth: '100%'}}
-							     onClick={() => this.toAddRepo()}
+								 style={{width:'100%', maxWidth: '100%', fontSize: '1.15rem'}}
+							     onClick={() => this.toCreateRepo()}
 							 	 text="Add Repository"
 							 	 canClick={true} >
-							 	 <i className="icon icon-dis-cloud" />
+							 	 <i className="icon icon-dis-local" />
 							 	 Create a Local Repository
 							 </Btn>
 						</div>
 						<div className="Flex1" style={{margin: '0 10px'}}>
 							<p><strong>Remote Repositories</strong> are dolor sit amet, cectetuer adipiscing elit, sed diam nonumy nibh euismod tincidunt ut laoreet dolore magna aliquam erat.</p>
 							<Btn className="LargeBlueButton"
-								 style={{width:'100%', maxWidth: '100%'}}
+								 style={{width:'100%', maxWidth: '100%', fontSize: '1.15rem'}}
 							     onClick={() => this.toAddRepo()}
 							 	 canClick={true} >
 						 	 	<i className="icon icon-dis-cloud" />
@@ -173,7 +181,7 @@ export default class Repositories extends Component {
 						<div>Push a Docker image to a local repository</div>
 						<p><strong>Command</strong> description dolor sit amet, cectetuer adipiscing elit, sed diam nonumy nibh euismod tincidunt ut laoreet dolore magna aliquam erat.</p>
 						<div className="Code">
-							 $ command --install=-f
+							 $ docker push {this.props.dnsName}
 						</div>
 					</div>
 				</div>

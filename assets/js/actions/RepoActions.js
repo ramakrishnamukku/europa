@@ -79,13 +79,78 @@ export function addRepoState() {
         credId: '',
         name: ''
       }
-    }
+    },
+    createLocalName: '',
+    createLocalXHR: false,
+    createLocalError: ''
   };
 }
 
 export function resetAddRepoState() {
   this.setState({
     addRepo: GA.modifyProperty(this.state.addRepo, addRepoState.call(this))
+  });
+}
+
+export function updateNewLocalRepoName(e, eIsValue = false) {
+  let value = (eIsValue) ? e : e.target.value;
+  this.setState({
+    addRepo: GA.modifyProperty(this.state.addRepo, {
+      createLocalName: value,
+      createLocalError: ''
+    })
+  });
+}
+
+export function clearCreateLocalRepoErrors() {
+  this.setState({
+    addRepo: GA.modifyProperty(this.state.addRepo, {
+      createLocalError: ''
+    })
+  });
+}
+
+export function createLocalRepo() {
+  return new Promise((resolve, reject) => {
+
+    let repoName = NPECheck(this.state, 'addRepo/createLocalName', '');
+
+    if (!repoName) {
+      this.setState({
+        addRepo: GA.modifyProperty(this.state.addRepo, {
+          createLocalError: 'Invalid repository name.'
+        })
+      }, () => reject());
+      return;
+    }
+
+    this.setState({
+      addRepo: GA.modifyProperty(this.state.addRepo, {
+        createLocalXHR: true
+      })
+    }, () => {
+
+      RAjax.POST.call(this, 'CreateLocalRepo', {}, {
+          repoName
+        })
+        .then((res) => {
+          this.setState({
+            addRepo: GA.modifyProperty(this.state.addRepo, {
+              createLocalXHR: false
+            })
+          }, () => resolve());
+        })
+        .catch((err) => {
+          console.error(err);
+          let errorMsg = `There was an error creating your repository: ${err.error.message}`
+          this.setState({
+            addRepo: GA.modifyProperty(this.state.addRepo, {
+              createLocalXHR: false,
+              createLocalError: errorMsg
+            })
+          }, () => reject());
+        });
+    });
   });
 }
 
@@ -464,7 +529,7 @@ export function saveRepoOverview() {
               repoOverviewError: errorMsg
             })
           }, () => reject());
-          
+
         });
     });
   });

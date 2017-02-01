@@ -24,6 +24,33 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-dis-pull:before {
+  content: "\e993";
+}
+.icon-dis-local:before {
+  content: "\e994";
+}
+.icon-dis-namespace:before {
+  content: "\e990";
+}
+.icon-dis-podscale:before {
+  content: "\e992";
+}
+.icon-dis-add:before {
+  content: "\e98f";
+}
+.icon-dis-secret:before {
+  content: "\e991";
+}
+.icon-dis-provider-ecr:before {
+  content: "\e98d";
+}
+.icon-dis-provider-gcr:before {
+  content: "\e98e";
+}
+.icon-dis-docs:before {
+  content: "\e98c";
+}
 .icon-dis-active:before {
   content: "\e98a";
 }
