@@ -11,7 +11,12 @@ export default class Dropdown extends Component {
 		this.state = {}
 	}
 	componentDidMount() {
-		document.body.addEventListener('click', () => {
+		document.body.addEventListener('click', (e) => {
+			let ignoreClassName = 'ListItem';
+			let className = e.target.className;
+
+			if(this.props.ignoreClick && className.indexOf(ignoreClassName) >= 0) return;
+
 			if(this.props.isOpen) {
 				this.props.toggleOpen();
 			}
@@ -109,5 +114,6 @@ Dropdown.propTypes = {
 	inputClassName: PropTypes.string,
 	inputReadOnly: PropTypes.bool,
 	noItemsMessage: PropTypes.string,
-	XHR: PropTypes.bool
+	XHR: PropTypes.bool,
+	ignoreClick: PropTypes.bool
 };
