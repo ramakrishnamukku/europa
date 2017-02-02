@@ -14,6 +14,7 @@ import com.distelli.europa.models.DockerHubRepoTag;
 public class TestDockerHubClient {
     @Inject
     private EuropaTestConfig testConfig;
+
     @Inject
     private Provider<DockerHubClient.Builder> _dhClientBuilderProvider;
 

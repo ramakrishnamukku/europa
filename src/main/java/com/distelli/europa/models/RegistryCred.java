@@ -15,10 +15,12 @@ public class RegistryCred
     protected String id = null;
     protected Long created = null;
     protected String description = null;
+    protected String username = null;
     protected String key = null;
     protected String name = null;
     protected RegistryProvider provider = null;
     protected String region = null;
+    protected String password = null;
     protected String secret = null;
     protected String endpoint = null;
 }

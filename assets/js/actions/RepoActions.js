@@ -192,7 +192,7 @@ export function listReposForRegistry() {
   let credId = NPECheck(this.state.addRepo, 'newRepo/repo/credId', null);
   let registry = (this.state.addRepo.newRepoCredsType == 'EXISTING') ? this.state.registriesMap[credId] : this.state.addRegistry.newRegistry
 
-  let registriesWithRepos = ['GCR', 'ECR'];
+  let registriesWithRepos = ['GCR', 'ECR', 'DOCKERHUB'];
 
   if (registry && registriesWithRepos.includes(registry.provider)) {
     this.setState({

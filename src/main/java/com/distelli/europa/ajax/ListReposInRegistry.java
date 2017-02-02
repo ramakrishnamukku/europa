@@ -10,6 +10,9 @@ package com.distelli.europa.ajax;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import javax.inject.Inject;
 
 import com.distelli.europa.clients.*;
@@ -26,6 +29,7 @@ import lombok.extern.log4j.Log4j;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import com.distelli.europa.EuropaRequestContext;
+import java.util.stream.Collectors;
 
 @Log4j
 @Singleton
@@ -37,6 +41,9 @@ public class ListReposInRegistry extends AjaxHelper<EuropaRequestContext>
     @Inject
     private Provider<GcrClient.Builder> _gcrClientBuilderProvider;
 
+    @Inject
+    private Provider<DockerHubClient.Builder> _dhClientBuilderProvider;
+
     public ListReposInRegistry()
     {
         this.supportedHttpMethods.add(HTTPMethod.POST);
@@ -46,48 +53,70 @@ public class ListReposInRegistry extends AjaxHelper<EuropaRequestContext>
     {
         String credId = ajaxRequest.getParam("credId");
         String credDomain = requestContext.getOwnerDomain();
-        RegistryProvider provider = null;
-        String secret = null;
-        String region = null;
-        String key = null;
+        RegistryCred cred = null;
         if(credId != null)
         {
-            RegistryCred cred = _credsDb.getCred(credDomain, credId);
+            cred = _credsDb.getCred(credDomain, credId);
             if(cred == null)
                 throw(new AjaxClientException("Invalid CredId: "+credId, JsonError.Codes.BadParam, 400));
-            provider = cred.getProvider();
-            key = cred.getKey();
-            secret = cred.getSecret();
-            region = cred.getRegion();
         }
         else
         {
-            provider = ajaxRequest.getParamAsEnum("provider", RegistryProvider.class, true);
-            secret = ajaxRequest.getParam("secret", true);
-            region = ajaxRequest.getParam("region", true);
+            RegistryProvider provider = ajaxRequest.getParamAsEnum("provider", RegistryProvider.class, true);
+            cred = RegistryCred.builder()
+                .domain(credDomain)
+                .provider(provider)
+                .username(getParam(ajaxRequest, provider, "username"))
+                .password(getParam(ajaxRequest, provider, "password"))
+                .secret(getParam(ajaxRequest, provider, "secret"))
+                .key(getParam(ajaxRequest, provider, "key"))
+                .region(getParam(ajaxRequest, provider, "region"))
+                .endpoint(getParam(ajaxRequest, provider, "endpoint"))
+                .build();
         }
 
-        switch(provider)
+        switch(cred.getProvider())
         {
         case ECR:
-            if(key == null)
-                key = ajaxRequest.getParam("key", true);
-            return listEcrRepos(key, secret, region);
+            return listEcrRepos(cred);
         case GCR:
-            return listGcrRepos(secret, region);
+            return listGcrRepos(cred);
+        case DOCKERHUB:
+            return listDockerHubRepos(cred);
         }
         return null;
     }
 
-    private List<String> listEcrRepos(String key, String secret, String region)
-    {
-        RegistryCred registryCred = RegistryCred
-        .builder()
-        .key(key)
-        .secret(secret)
-        .region(region)
-        .build();
+    private static Set<String> asSet(String... strs) {
+        return new HashSet<>(Arrays.asList(strs));
+    }
 
+    private static String getParam(AjaxRequest ajaxRequest, RegistryProvider provider, String paramName) {
+        boolean isRequired = false;
+        Set<String> required = null;
+        switch ( provider ) {
+        case DOCKERHUB:
+            required = asSet("username", "password", "endpoint");
+            break;
+        case PRIVATE:
+            required = asSet("username", "password");
+            break;
+        case ECR:
+            required = asSet("key", "secret", "region");
+            break;
+        case GCR:
+            required = asSet("secret", "region");
+            break;
+        }
+        if ( null == required ) return null;
+        if ( required.contains(paramName) ) {
+            return ajaxRequest.getParam(paramName, true);
+        }
+        return null;
+    }
+
+    private List<String> listEcrRepos(RegistryCred registryCred)
+    {
         ECRClient ecrClient = new ECRClient(registryCred);
         PageIterator pageIterator = new PageIterator().pageSize(100);
         List<String> repoNames = new ArrayList<String>();
@@ -99,12 +128,12 @@ public class ListReposInRegistry extends AjaxHelper<EuropaRequestContext>
         return repoNames;
     }
 
-    private List<String> listGcrRepos(String secret, String region)
+    private List<String> listGcrRepos(RegistryCred registryCred)
     {
         try {
             GcrClient gcrClient = _gcrClientBuilderProvider.get()
-                .gcrCredentials(new GcrServiceAccountCredentials(secret))
-                .gcrRegion(GcrRegion.getRegion(region))
+                .gcrCredentials(new GcrServiceAccountCredentials(registryCred.getSecret()))
+                .gcrRegion(GcrRegion.getRegion(registryCred.getRegion()))
                 .build();
             GcrIterator iter = GcrIterator
             .builder()
@@ -123,5 +152,22 @@ public class ListReposInRegistry extends AjaxHelper<EuropaRequestContext>
             log.error(t.getMessage(), t);
             return null;
         }
+    }
+
+    private List<String> listDockerHubRepos(RegistryCred registryCred) {
+        DockerHubClient client = _dhClientBuilderProvider.get()
+            .credentials(registryCred.getUsername(), registryCred.getPassword())
+            .build();
+        List<String> repoNames = new ArrayList<>();
+        try {
+            for ( PageIterator iter : new PageIterator().pageSize(100) ) {
+                repoNames.addAll(client.listRepositories(registryCred.getUsername(), iter).stream()
+                                 .map((repo) -> repo.getNamespace() + "/" + repo.getName())
+                                 .collect(Collectors.toList()));
+            }
+        } catch ( IOException ex ) {
+            throw new RuntimeException(ex);
+        }
+        return repoNames;
     }
 }
