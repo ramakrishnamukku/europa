@@ -40,6 +40,9 @@ public class SaveRegistryCreds extends AjaxHelper<EuropaRequestContext>
     @Inject
     private Provider<GcrClient.Builder> _gcrClientBuilderProvider;
 
+    @Inject
+    private Provider<DockerHubClient.Builder> _dhClientBuilderProvider;
+
     public SaveRegistryCreds()
     {
         this.supportedHttpMethods.add(HTTPMethod.POST);
@@ -50,7 +53,7 @@ public class SaveRegistryCreds extends AjaxHelper<EuropaRequestContext>
         RegistryCred cred = ajaxRequest.convertContent(RegistryCred.class,
                                                        true); //throw if null
         //Validate that the fields we want are non-null
-        FieldValidator.validateNonNull(cred, "provider", "key", "secret");
+        FieldValidator.validateNonNull(cred, "provider");
         FieldValidator.validateMatch(cred, "name", Constants.REGISTRY_CRED_NAME_PATTERN);
         validateRegistryCreds(cred);
         cred.setCreated(System.currentTimeMillis());
@@ -82,24 +85,35 @@ public class SaveRegistryCreds extends AjaxHelper<EuropaRequestContext>
         switch(provider)
         {
         case ECR:
-            FieldValidator.validateNonNull(cred, "region");
+            FieldValidator.validateNonNull(cred, "key", "secret", "region");
             validateEcrCreds(cred);
             break;
         case GCR:
-            FieldValidator.validateNonNull(cred, "region");
+            FieldValidator.validateNonNull(cred, "secret", "region");
             validateGcrCreds(cred);
             break;
         case PRIVATE:
-            //Private Registry creds need an endpoint
-            String endpoint = cred.getEndpoint();
-            if(endpoint == null || endpoint.trim().isEmpty())
-                throw(new AjaxClientException("Missing Endpoint in Private Registry Credentials", JsonError.Codes.BadContent, 400));
+            FieldValidator.validateNonNull(cred, "username", "password", "endpoint");
+            // TODO...
             break;
         case DOCKERHUB:
-            //There is no validation for DOCKERHUB Creds
+            FieldValidator.validateNonNull(cred, "username", "password");
+            validateDockerHubCreds(cred);
             break;
         default:
             throw(new AjaxClientException("Unsupported Container Registry: "+provider, JsonError.Codes.BadContent, 400));
+        }
+    }
+
+    private void validateDockerHubCreds(RegistryCred cred) {
+        DockerHubClient client = _dhClientBuilderProvider.get()
+            .credentials(cred.getUsername(), cred.getPassword())
+            .build();
+
+        try {
+            client.listRepositories(cred.getUsername(), new PageIterator().pageSize(1));
+        } catch(Throwable t) {
+            throw(new AjaxClientException("Invalid Credentials: "+t.getMessage(), JsonError.Codes.BadContent, 400));
         }
     }
 

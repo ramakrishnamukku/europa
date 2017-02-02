@@ -198,9 +198,12 @@ public class DockerHubClient {
         }
     }
 
-    // curl -s -H "Authorization: JWT ${TOKEN}" 'https://hub.docker.com/v2/repositories/brimworks/test/tags/?page_size=3' | jq
     public List<DockerHubRepoTag> listRepoTags(DockerHubRepository repo, PageIterator iter) throws IOException {
-        String repoName = repo.getNamespace() + "/" + repo.getName();
+        return listRepoTags(repo.getNamespace() + "/" + repo.getName(), iter);
+    }
+
+    // curl -s -H "Authorization: JWT ${TOKEN}" 'https://hub.docker.com/v2/repositories/brimworks/test/tags/?page_size=3' | jq
+    public List<DockerHubRepoTag> listRepoTags(String repoName, PageIterator iter) throws IOException {
         Request req = addHubTokenAuth(new Request.Builder())
             .get()
             .url(addPageIterator(hubEndpoint(), iter)

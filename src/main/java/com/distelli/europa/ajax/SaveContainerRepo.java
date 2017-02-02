@@ -47,6 +47,9 @@ public class SaveContainerRepo extends AjaxHelper<EuropaRequestContext>
     private MonitorQueue _monitorQueue;
     @Inject
     private Provider<GcrClient.Builder> _gcrClientBuilderProvider;
+    @Inject
+    private Provider<DockerHubClient.Builder> _dhClientBuilderProvider;
+
 
     public SaveContainerRepo()
     {
@@ -136,7 +139,15 @@ public class SaveContainerRepo extends AjaxHelper<EuropaRequestContext>
 
     private void validateDockerHubRepo(ContainerRepo repo, RegistryCred cred)
     {
-        //TODO: Add validation
+        DockerHubClient client = _dhClientBuilderProvider.get()
+            .credentials(cred.getUsername(), cred.getPassword())
+            .build();
+        try {
+            client.listRepoTags(repo.getName(), new PageIterator().pageSize(1));
+        } catch ( Throwable ex ) {
+            throw new AjaxClientException("Invalid Container Repository or Credentials: "+ex.getMessage(),
+                                          JsonError.Codes.BadContent, 400);
+        }
     }
 
     private void validatePrivateRepo(ContainerRepo repo, RegistryCred cred)
