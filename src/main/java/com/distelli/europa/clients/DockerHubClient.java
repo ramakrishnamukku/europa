@@ -58,7 +58,7 @@ public class DockerHubClient {
         OM.registerModule(createTransforms(new TransformModule()));
     }
 
-    protected static class Builder<Self extends Builder> {
+    public static class Builder {
         private OkHttpClient.Builder _clientBuilder = new OkHttpClient.Builder();
         private URI _hubEndpoint;
         private URI _registryEndpoint;
@@ -66,43 +66,35 @@ public class DockerHubClient {
         private String _username;
         private String _password;
 
-        public Self hubEndpoint(URI endpoint) {
+        public Builder hubEndpoint(URI endpoint) {
             _hubEndpoint = endpoint;
-            return self();
+            return this;
         }
 
-        public Self registryEndpoint(URI endpoint) {
+        public Builder registryEndpoint(URI endpoint) {
             _registryEndpoint = endpoint;
-            return self();
+            return this;
         }
 
-        public Self registryAuthEndpoint(URI endpoint) {
+        public Builder registryAuthEndpoint(URI endpoint) {
             _registryAuthEndpoint = endpoint;
-            return self();
+            return this;
         }
 
-        public Self connectionPool(ConnectionPool pool) {
+        public Builder connectionPool(ConnectionPool pool) {
             _clientBuilder.connectionPool(pool);
-            return self();
+            return this;
         }
 
-        public Self credentials(String username, String password) {
+        public Builder credentials(String username, String password) {
             _username = username;
             _password = password;
-            return self();
+            return this;
         }
 
         public DockerHubClient build() {
             return new DockerHubClient(this);
         }
-
-        protected Self self() {
-            return (Self)this;
-        }
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 
     private DockerHubClient(Builder builder) {

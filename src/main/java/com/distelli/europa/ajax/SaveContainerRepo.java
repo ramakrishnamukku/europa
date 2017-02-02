@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -44,6 +45,8 @@ public class SaveContainerRepo extends AjaxHelper<EuropaRequestContext>
     private NotificationsDb _notificationDb;
     @Inject
     private MonitorQueue _monitorQueue;
+    @Inject
+    private Provider<GcrClient.Builder> _gcrClientBuilderProvider;
 
     public SaveContainerRepo()
     {
@@ -143,9 +146,10 @@ public class SaveContainerRepo extends AjaxHelper<EuropaRequestContext>
 
     private void validateGcrRepo(ContainerRepo repo, RegistryCred cred)
     {
-        GcrCredentials gcrCreds = new GcrServiceAccountCredentials(cred.getSecret());
-        GcrRegion gcrRegion = GcrRegion.getRegion(cred.getRegion());
-        GcrClient gcrClient = new GcrClient(gcrCreds, gcrRegion);
+        GcrClient gcrClient = _gcrClientBuilderProvider.get()
+            .gcrCredentials(new GcrServiceAccountCredentials(cred.getSecret()))
+            .gcrRegion(GcrRegion.getRegion(cred.getRegion()))
+            .build();
 
         GcrIterator iter = GcrIterator.builder().pageSize(1).build();
         try {

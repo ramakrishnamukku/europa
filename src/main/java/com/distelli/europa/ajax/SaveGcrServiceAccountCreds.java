@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.*;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.distelli.utils.CompactUUID;
 import com.distelli.europa.Constants;
@@ -34,6 +35,9 @@ public class SaveGcrServiceAccountCreds extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private RegistryCredsDb _db;
+
+    @Inject
+    private Provider<GcrClient.Builder> _gcrClientBuilderProvider;
 
     public SaveGcrServiceAccountCreds()
     {
@@ -71,9 +75,10 @@ public class SaveGcrServiceAccountCreds extends AjaxHelper<EuropaRequestContext>
     }
 
     private void validateRegistryCreds(RegistryCred cred) {
-        GcrCredentials gcrCreds = new GcrServiceAccountCredentials(cred.getSecret());
-        GcrRegion gcrRegion = GcrRegion.getRegion(cred.getRegion());
-        GcrClient gcrClient = new GcrClient(gcrCreds, gcrRegion);
+        GcrClient gcrClient = _gcrClientBuilderProvider.get()
+            .gcrCredentials(new GcrServiceAccountCredentials(cred.getSecret()))
+            .gcrRegion(GcrRegion.getRegion(cred.getRegion()))
+            .build();
 
         GcrIterator iter = GcrIterator.builder().pageSize(1).build();
         try {

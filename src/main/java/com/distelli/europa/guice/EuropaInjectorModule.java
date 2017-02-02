@@ -31,6 +31,7 @@ import com.distelli.europa.models.DnsSettings;
 import com.distelli.europa.models.SslSettings;
 import com.distelli.europa.models.StorageSettings;
 import com.distelli.europa.monitor.*;
+import com.distelli.europa.clients.DockerHubClient;
 import com.distelli.europa.util.ObjectKeyFactory;
 import com.distelli.objectStore.*;
 import com.distelli.persistence.Index;
@@ -40,8 +41,10 @@ import com.distelli.webserver.AjaxHelperMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.Multibinder;
-
+import okhttp3.ConnectionPool;
 import lombok.extern.log4j.Log4j;
+import java.util.concurrent.TimeUnit;
+import com.distelli.gcr.GcrClient;
 
 @Log4j
 public class EuropaInjectorModule extends AbstractModule
@@ -88,6 +91,13 @@ public class EuropaInjectorModule extends AbstractModule
         .withKeyId(_europaConfiguration.getDbUser())
         .withSecret(_europaConfiguration.getDbPass());
 
+        ConnectionPool sharedPool = new ConnectionPool(20, 5, TimeUnit.MINUTES);
+        bind(ConnectionPool.class)
+            .toInstance(sharedPool);
+        bind(GcrClient.Builder.class)
+            .toProvider(() -> new GcrClient.Builder().connectionPool(sharedPool));
+        bind(DockerHubClient.Builder.class)
+            .toProvider(() -> new DockerHubClient.Builder().connectionPool(sharedPool));
         bind(Index.Factory.class).toProvider(new IndexFactoryProvider(endpoint, creds));
         configureEuropaConfiguration();
         bind(ObjectStore.class).toProvider(new ObjectStoreProvider());

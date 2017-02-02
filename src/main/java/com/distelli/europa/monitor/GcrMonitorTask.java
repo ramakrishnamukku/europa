@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Collection;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.distelli.europa.models.*;
 import com.distelli.gcr.*;
@@ -29,6 +30,9 @@ import lombok.extern.log4j.Log4j;
 public class GcrMonitorTask extends RepoMonitorTask
 {
     private GcrClient _gcrClient = null;
+
+    @Inject
+    private Provider<GcrClient.Builder> _gcrClientBuilderProvider;
 
     public interface Factory {
         public GcrMonitorTask create(ContainerRepo repo);
@@ -97,9 +101,10 @@ public class GcrMonitorTask extends RepoMonitorTask
             return;
         }
 
-        GcrCredentials gcrCreds = new GcrServiceAccountCredentials(registryCred.getSecret());
-        GcrRegion gcrRegion = GcrRegion.getRegion(registryCred.getRegion());
-        _gcrClient = new GcrClient(gcrCreds, gcrRegion);
+        _gcrClient = _gcrClientBuilderProvider.get()
+            .gcrCredentials(new GcrServiceAccountCredentials(registryCred.getSecret()))
+            .gcrRegion(GcrRegion.getRegion(registryCred.getRegion()))
+            .build();
     }
 
     private Map<String, GcrImageTag> listImageTags()

@@ -3,6 +3,7 @@ package com.distelli.europa.clients;
 import org.junit.Test;
 import org.junit.Before;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import com.google.inject.Guice;
 import com.distelli.europa.EuropaTestModule;
 import com.distelli.europa.EuropaTestConfig;
@@ -13,6 +14,8 @@ import com.distelli.europa.models.DockerHubRepoTag;
 public class TestDockerHubClient {
     @Inject
     private EuropaTestConfig testConfig;
+    @Inject
+    private Provider<DockerHubClient.Builder> _dhClientBuilderProvider;
 
     @Before
     public void before() {
@@ -21,7 +24,7 @@ public class TestDockerHubClient {
     }
     @Test
     public void testListRepositories() throws Exception {
-        DockerHubClient client = DockerHubClient.builder()
+        DockerHubClient client = _dhClientBuilderProvider.get()
             .credentials(
                 testConfig.getDockerHubUsername(),
                 testConfig.getDockerHubPassword())

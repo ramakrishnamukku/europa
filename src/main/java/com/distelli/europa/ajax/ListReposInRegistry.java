@@ -24,6 +24,7 @@ import com.google.inject.Singleton;
 import org.eclipse.jetty.http.HttpMethod;
 import lombok.extern.log4j.Log4j;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import com.distelli.europa.EuropaRequestContext;
 
 @Log4j
@@ -32,6 +33,9 @@ public class ListReposInRegistry extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private RegistryCredsDb _credsDb;
+
+    @Inject
+    private Provider<GcrClient.Builder> _gcrClientBuilderProvider;
 
     public ListReposInRegistry()
     {
@@ -98,9 +102,10 @@ public class ListReposInRegistry extends AjaxHelper<EuropaRequestContext>
     private List<String> listGcrRepos(String secret, String region)
     {
         try {
-            GcrCredentials gcrCreds = new GcrServiceAccountCredentials(secret);
-            GcrRegion gcrRegion = GcrRegion.getRegion(region);
-            GcrClient gcrClient = new GcrClient(gcrCreds, gcrRegion);
+            GcrClient gcrClient = _gcrClientBuilderProvider.get()
+                .gcrCredentials(new GcrServiceAccountCredentials(secret))
+                .gcrRegion(GcrRegion.getRegion(region))
+                .build();
             GcrIterator iter = GcrIterator
             .builder()
             .pageSize(100)
