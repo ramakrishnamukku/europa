@@ -121,6 +121,10 @@ public class EuropaInjectorModule extends AbstractModule
                 .implement(MonitorTask.class, GcrMonitorTask.class)
                 .build(GcrMonitorTask.Factory.class));
 
+        install(new FactoryModuleBuilder()
+                .implement(MonitorTask.class, DockerHubMonitorTask.class)
+                .build(DockerHubMonitorTask.Factory.class));
+
         Multibinder<TableDescription> tableBinder =
             Multibinder.newSetBinder(binder(), TableDescription.class);
         for ( Provider<TableDescription> tableProvider : _tables ) {

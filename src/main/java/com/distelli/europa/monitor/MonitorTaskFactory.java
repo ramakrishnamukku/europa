@@ -8,7 +8,7 @@
 */
 package com.distelli.europa.monitor;
 
-import com.distelli.europa.models.*;
+import com.distelli.europa.models.ContainerRepo;
 import javax.inject.Inject;
 
 public class MonitorTaskFactory
@@ -17,15 +17,16 @@ public class MonitorTaskFactory
     private EcrMonitorTask.Factory _ecrMonitorTaskFactory;
     @Inject
     private GcrMonitorTask.Factory _gcrMonitorTaskFactory;
+    @Inject
+    private DockerHubMonitorTask.Factory _dockerHubMonitorTaskFactory;
 
     public MonitorTask createMonitorTask(ContainerRepo repo)
     {
-        RegistryProvider provider = repo.getProvider();
-        if(provider == RegistryProvider.ECR)
-            return _ecrMonitorTaskFactory.create(repo);
-        else if(provider == RegistryProvider.GCR)
-            return _gcrMonitorTaskFactory.create(repo);
-        else
-            return null;
+        switch ( repo.getProvider() ) {
+        case ECR: return _ecrMonitorTaskFactory.create(repo);
+        case GCR: return _gcrMonitorTaskFactory.create(repo);
+        case DOCKERHUB: return _dockerHubMonitorTaskFactory.create(repo);
+        }
+        return null;
     }
 }
