@@ -96,10 +96,10 @@ public class ListReposInRegistry extends AjaxHelper<EuropaRequestContext>
         Set<String> required = null;
         switch ( provider ) {
         case DOCKERHUB:
-            required = asSet("username", "password", "endpoint");
+            required = asSet("username", "password");
             break;
         case PRIVATE:
-            required = asSet("username", "password");
+            required = asSet("username", "password", "endpoint");
             break;
         case ECR:
             required = asSet("key", "secret", "region");
