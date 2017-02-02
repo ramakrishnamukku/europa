@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DockerHubRepoTag {
     // Tag name:
-    private String name;
-    // TODO: at a minimum, we need the sha!
+    private String tag;
+    private String digest;
+    private Long pushTime;
+    private Long size;
 }
