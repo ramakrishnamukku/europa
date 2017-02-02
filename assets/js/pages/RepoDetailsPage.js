@@ -20,7 +20,7 @@ export default class RepoDetailsPage extends Component {
 			pollEventsInterval: null
 		};
 	}
-	componentWillMount() {
+	componentDidMount() {
 		this.context.actions.toggleRepoDetailsPageXHR();
 		this.context.actions.listRegistries();
 		this.context.actions.listRepos()
@@ -28,10 +28,8 @@ export default class RepoDetailsPage extends Component {
 		.then(this.context.actions.listRepoEvents.bind(this, this.state.repoId))
 		.then(this.context.actions.listRepoManifests.bind(this, this.state.repoId))
 		.then(this.context.actions.getRepoOverview.bind(this, this.state.repoId))
-		.then(this.context.actions.toggleRepoDetailsPageXHR)
+		.then(this.context.actions.toggleRepoDetailsPageXHR);
 
-	}
-	componentDidMount() {
 		this.setState({
 			pollEventsInterval: setInterval(() => {
 				this.context.actions.listRepoEvents(this.state.repoId, true);

@@ -14,6 +14,11 @@ export default class RepoOverview extends Component {
 		super(props);
 		this.state = {};
 	}
+	componentDidUpdate(prevProps, prevState) {
+		if(this.refs['readMeTextArea']) {
+			this.refs['readMeTextArea'].focus();
+		}
+	}
 	saveRepoOverview(){
 		this.context.actions.saveRepoOverview()
 		.then(this.context.actions.getRepoOverview);
@@ -44,7 +49,7 @@ export default class RepoOverview extends Component {
 		return (
 			<div>
 				<div className="Editor">
-					<textarea value={value} onChange={(e) => this.context.actions.updateRepoOverviewContent(e)}>
+					<textarea ref="readMeTextArea" value={value} onChange={(e) => this.context.actions.updateRepoOverviewContent(e)}>
 					</textarea>
 				</div>
 				{this.renderError()}
