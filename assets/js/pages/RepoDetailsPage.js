@@ -23,7 +23,7 @@ export default class RepoDetailsPage extends Component {
 	componentDidMount() {
 		this.context.actions.resetRepoDetailsState();
 		this.context.actions.listRegistries();
-		this.context.actions.toggleRepoDetailsPageXHR();
+		this.context.actions.toggleRepoDetailsPageXHR(true);
 		this.context.actions.listRepos()
 		.then(() => {
 			let repoDeps = [
@@ -33,7 +33,7 @@ export default class RepoDetailsPage extends Component {
 				this.context.actions.getRepoOverview(this.state.repoId)
 			];
 			Promise.all(repoDeps)
-			.then(this.context.actions.toggleRepoDetailsPageXHR);
+			.then(this.context.actions.toggleRepoDetailsPageXHR.bind(this, false));
 		});
 	
 		this.setState({

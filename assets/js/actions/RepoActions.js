@@ -427,10 +427,10 @@ export function resetRepoDetailsState() {
   });
 }
 
-export function toggleRepoDetailsPageXHR() {
+export function toggleRepoDetailsPageXHR(loading) {
   this.setState({
     repoDetails: GA.modifyProperty(this.state.repoDetails, {
-      pageXHR: !this.state.repoDetails.pageXHR
+      pageXHR: loading
     })
   });
 }
