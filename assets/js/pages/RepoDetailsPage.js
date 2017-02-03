@@ -21,15 +21,21 @@ export default class RepoDetailsPage extends Component {
 		};
 	}
 	componentDidMount() {
-		this.context.actions.toggleRepoDetailsPageXHR();
+		this.context.actions.resetRepoDetailsState();
 		this.context.actions.listRegistries();
+		this.context.actions.toggleRepoDetailsPageXHR();
 		this.context.actions.listRepos()
-		.then(this.context.actions.setActiveRepoDetails.bind(this, this.state.repoId))
-		.then(this.context.actions.listRepoEvents.bind(this, this.state.repoId))
-		.then(this.context.actions.listRepoManifests.bind(this, this.state.repoId))
-		.then(this.context.actions.getRepoOverview.bind(this, this.state.repoId))
-		.then(this.context.actions.toggleRepoDetailsPageXHR);
-
+		.then(() => {
+			let repoDeps = [
+				this.context.actions.setActiveRepoDetails(this.state.repoId),
+				this.context.actions.listRepoEvents(this.state.repoId),
+				this.context.actions.listRepoManifests(this.state.repoId),
+				this.context.actions.getRepoOverview(this.state.repoId)
+			];
+			Promise.all(repoDeps)
+			.then(this.context.actions.toggleRepoDetailsPageXHR);
+		});
+	
 		this.setState({
 			pollEventsInterval: setInterval(() => {
 				this.context.actions.listRepoEvents(this.state.repoId, true);
