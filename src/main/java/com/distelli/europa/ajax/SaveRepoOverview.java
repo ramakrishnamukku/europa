@@ -26,7 +26,7 @@ import com.distelli.webserver.AjaxHelper;
 import com.distelli.webserver.AjaxRequest;
 import com.distelli.webserver.HTTPMethod;
 import com.distelli.webserver.JsonSuccess;
-
+import com.distelli.europa.util.PermissionCheck;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
@@ -39,6 +39,8 @@ public class SaveRepoOverview extends AjaxHelper<EuropaRequestContext>
     protected Provider<ObjectStore> _objectStoreProvider;
     @Inject
     protected Provider<ObjectKeyFactory> _objectKeyFactoryProvider;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public SaveRepoOverview()
     {
@@ -56,6 +58,9 @@ public class SaveRepoOverview extends AjaxHelper<EuropaRequestContext>
         if(repo == null)
             throw(new AjaxClientException("The specified Repository was not found",
                                           AjaxErrors.Codes.RepoNotFound, 400));
+
+        _permissionCheck.check(ajaxRequest, requestContext, repo);
+
         String overviewId = repo.getOverviewId();
         ObjectKeyFactory objectKeyFactory = _objectKeyFactoryProvider.get();
         ObjectKey objectKey = objectKeyFactory.forRepoOverview(overviewId);
