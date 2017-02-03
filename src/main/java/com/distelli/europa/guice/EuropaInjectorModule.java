@@ -34,6 +34,7 @@ import com.distelli.europa.models.StorageSettings;
 import com.distelli.europa.monitor.*;
 import com.distelli.europa.clients.DockerHubClient;
 import com.distelli.europa.util.ObjectKeyFactory;
+import com.distelli.europa.util.PermissionCheck;
 import com.distelli.objectStore.*;
 import com.distelli.persistence.Index;
 import com.distelli.persistence.TableDescription;
@@ -53,6 +54,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
+import com.google.inject.multibindings.OptionalBinder;
 
 @Log4j
 public class EuropaInjectorModule extends AbstractModule
@@ -129,6 +131,8 @@ public class EuropaInjectorModule extends AbstractModule
         .withKeyId(_europaConfiguration.getDbUser())
         .withSecret(_europaConfiguration.getDbPass());
 
+        OptionalBinder.newOptionalBinder(binder(), PermissionCheck.class)
+            .setDefault().to(PermissionCheck.Default.class);
         ConnectionPool sharedPool = new ConnectionPool(20, 5, TimeUnit.MINUTES);
         bind(ConnectionPool.class)
             .toInstance(sharedPool);

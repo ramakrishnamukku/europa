@@ -87,9 +87,9 @@ public class Europa
         else
             Log4JConfigurator.configure(logsDir, "Europa");
         Log4JConfigurator.setLogLevel("INFO");
-        Log4JConfigurator.setLogLevel("com.distelli.europa", "DEBUG");
-        Log4JConfigurator.setLogLevel("com.distelli.webserver", "ERROR");
-        Log4JConfigurator.setLogLevel("com.distelli.gcr", "ERROR");
+        //Log4JConfigurator.setLogLevel("com.distelli.europa", "DEBUG");
+        //Log4JConfigurator.setLogLevel("com.distelli.webserver", "ERROR");
+        //Log4JConfigurator.setLogLevel("com.distelli.gcr", "ERROR");
         //Log4JConfigurator.setLogLevel("com.distelli.europa.monitor", "DEBUG");
         //Log4JConfigurator.setLogLevel("com.distelli.webserver", "DEBUG");
         //Log4JConfigurator.setLogLevel("com.distelli.persistence", "DEBUG");

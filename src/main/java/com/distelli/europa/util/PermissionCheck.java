@@ -13,8 +13,9 @@ import com.distelli.webserver.AjaxRequest;
 
 public interface PermissionCheck
 {
-    public default void check(AjaxRequest ajaxRequest, EuropaRequestContext requestContext, Object... params)
-    {
-
+    public void check(AjaxRequest ajaxRequest, EuropaRequestContext requestContext, Object... params);
+    public static class Default implements PermissionCheck {
+        @Override
+        public void check(AjaxRequest ajaxRequest, EuropaRequestContext requestContext, Object... params) {}
     }
 }
