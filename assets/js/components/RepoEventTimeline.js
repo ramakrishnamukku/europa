@@ -68,7 +68,8 @@ export default class RepoEventTimeline extends Component {
 	}
 	renderRepoContent(){
 		let activeSection = NPECheck(this.props, 'repoDetails/timelineSection', '');
-		let noEvents = (!NPECheck(this.props, 'events/length', true));
+		let noEvents = !NPECheck(this.props, 'events/length', true);
+		let noTags = !NPECheck(this.props, 'manifests/length', true);
 
 		switch(activeSection) {
 
@@ -88,7 +89,7 @@ export default class RepoEventTimeline extends Component {
 			break;
 
 			case 'TAGS':
-				if(noEvents) return this.renderNoTags();
+				if(noTags) return this.renderNoTags();
 				return (
 					<div className="TagsContainer">
 						{this.renderRepoEventTags()}
@@ -111,25 +112,38 @@ export default class RepoEventTimeline extends Component {
 	renderRepoEventTags(){
 		let activeRepo = NPECheck(this.props, 'repoDetails/activeRepo', {});
 
-		return this.props.events.sort((firstEvent, secondEvent) => (firstEvent.eventTime >= secondEvent.eventTime) ? -1 : 1 )
-								.map((event, index) => this.renderRepoEventTagItem(event, index, activeRepo))
+		return this.props.manifests.sort((firstTag, secondTag) => (firstTag.pushTime >= secondTag.pushTime) ? -1 : 1 )
+								.map((tag, index) => this.renderRepoEventTagItem(tag, index, activeRepo))
 	}
-	renderRepoEventTagItem(event, index, activeRepo){
-		let time = event.eventTime;
+	renderRepoEventTagItem(tag, index, activeRepo){
+		let time = tag.pushTime;
 		let friendlyTime = ConvertTimeFriendly(time);
+		let shortManifestId = tag.manifestId.substring(0, 20) + '...';
+		let icon = 'icon icon-dis-box-uncheck';
+
+		if(NPECheck(this.props, 'repoDetails/selectedManifests', []).includes(tag)) {
+			icon = 'icon icon-dis-box-check';
+		}
 
 		return (
 			<div key={index} className="RepoTagItem">
-				<img className="ProviderIcon" src={RegistryProviderIcons(activeRepo.provider)}/>
-				<span className="ImageSha">
-					{event.imageSha}
+				<i className={icon} 
+				   data-tip="View Pull Commands For This Tag" 
+				   data-for="ToolTipTop" 
+				   onClick={() => this.context.actions.toggleSelectedManifest(tag)}/>
+				<span className="ImageSha" data-tip={tag.manifestId}>	
+					{shortManifestId}
 				</span>
 				<span className="Tags">
-					{event.imageTags.map((tag, index) => {
+					{tag.digests.map((tag, index) => {
 						return (
 							<span className="Tag" key={index}>{tag}</span>
 						);
 					})}
+				</span>
+				<span className="Size">
+					<span className="Label">Virtual Size:&nbsp;</span>
+					<span className="Value">{tag.virtualSize}</span>
 				</span>
 				<span className="Pushed">
 					<span className="Label">Pushed:&nbsp;</span>
@@ -179,7 +193,8 @@ export default class RepoEventTimeline extends Component {
 }
 
 RepoEventTimeline.propTypes = {
-	events: PropTypes.array.isRequired,
+	events: PropTypes.array,
+	manifests: PropTypes.array,
 	
 };
 

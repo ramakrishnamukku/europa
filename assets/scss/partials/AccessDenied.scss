@@ -1,0 +1,17 @@
+.AccessDenied {
+	position: relative;
+	height: 600px;
+	display: flex;
+	flex-direction: column;
+	color: $red;
+	font-size: 2.125rem;
+	font-weight: 300;
+	align-items: center;
+	justify-content: center;
+
+	i {
+		color: $red;
+		font-size: 2.5rem;
+	}
+
+}

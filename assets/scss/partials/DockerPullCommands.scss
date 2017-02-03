@@ -1,20 +1,77 @@
 .DockerPullCommands {
-	display: flex;
-	flex-direction: column;
-	margin-right: 42px;	
+    display: flex;
+    flex-direction: column;
+    margin-right: 42px;
 
-	i.icon-dis-tag {
-		color: $purple;
-		margin-right: 2px;
-	}
+    i.icon-dis-tag {
+        color: $purple;
+        margin-right: 2px;
+    }
 
-	.More {
-		color: $light-blue;
-		transition: all 0.3s;
+    .Commands {
+        // font-family: 'Source Code Pro';
+        font-size: 0.875rem;
+    }
 
-		&:hover {
-			cursor: pointer;
-			color: darken($light-blue, 10%);
-		}
-	}
+    .More {
+        font-size: 0.875rem;
+        color: $light-blue;
+        transition: all 0.3s;
+
+        &:hover {
+            cursor: pointer;
+            color: darken($light-blue, 10%);
+        }
+    }
+
+    .PullCommandsDropDown {
+        position: absolute;
+        width: 600px;
+        top: 75px;
+        margin-left: -266px;
+        background-color: #FFFFFF;
+        z-index: 20000;
+        border: 1px solid #CFD1D2;
+        border-radius: 3px;
+        -moz-box-shadow: 0 1px 20px 0 #C7C7C7;
+        -webkit-box-shadow: 0 1px 20px 0 #C7C7C7;
+        box-shadow: 0 1px 20px 0 #C7C7C7;
+
+        div.Arrow {
+            transform: rotate(45deg);
+            width: 14px;
+            height: 14px;
+            background-color: #D3EFFA;
+            position: absolute;
+            top: -8px;
+            left: calc((100% - 14px)/2);
+            border-top: 1px solid #CFD1D2;
+            border-left: 1px solid #CFD1D2;
+        }
+
+        .LargePullCommand {
+            background-color: #D3EFFA;
+            padding: 10px;
+            font-size: 0.875rem;
+
+            div {
+                word-wrap: break-word;
+                max-width: 530px;
+            }
+
+            i {
+                position: absolute;
+                right: 10px;
+                top: 35px;
+                font-size: 1.2rem;
+                color: $light-blue;
+                transition: all 0.2s;
+
+                &:hover {
+                    cursor: pointer;
+                    color: darken($light-blue, 10%);
+                }
+            }
+        }
+    }
 }

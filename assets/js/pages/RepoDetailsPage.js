@@ -14,6 +14,8 @@ import RepoEventTimeline from './../components/RepoEventTimeline'
 import BtnGroup from './../components/BtnGroup'
 import Msg from './../components/Msg'
 
+import AccessDenied from './../components/AccessDenied';
+
 export default class RepoDetailsPage extends Component {
 	constructor(props) {
 		super(props);
@@ -30,10 +32,9 @@ export default class RepoDetailsPage extends Component {
 		.then(() => {
 			let repoDeps = [
 				this.context.actions.setActiveRepoDetails(this.state.repoId),
-				this.context.actions.listRepoEvents(this.state.repoId),
-				this.context.actions.listRepoManifests(this.state.repoId),
 				this.context.actions.getRepoOverview(this.state.repoId)
 			];
+
 			Promise.all(repoDeps)
 			.then(this.context.actions.toggleRepoDetailsPageXHR.bind(this, false))
 			.catch(() => {
@@ -154,9 +155,7 @@ export default class RepoDetailsPage extends Component {
 
 		if(isBlocked) {
 			return (
-				<div className="PageBlocked">
-					Blocked
-				</div>
+				<AccessDenied />
 			);
 		}
 

@@ -411,14 +411,20 @@ export function repoDetailsState() {
     deleteXHR: false,
     isDeleting: false,
     showSettings: false,
+
+    timelineSection: 'OVERVIEW',
+
     events: [],
     eventsXHR: false,
     eventsError: '',
+    activeEventId: null,
+
     manifests: [],
     manifestsXHR: false,
     manifestsError: '',
-    timelineSection: 'OVERVIEW',
-    activeEventId: null,
+    selectedManifests: [],
+    showPullCommands: false
+    
   };
 }
 
@@ -613,6 +619,10 @@ export function setTimelineSection(section = '') {
     repoDetails: GA.modifyProperty(this.state.repoDetails, {
       timelineSection: section
     })
+  }, () => {
+    let repoId = NPECheck(this.state, 'repoDetails/activeRepo/id');
+    if(section == 'EVENTS' && !NPECheck(this.state, 'repoDetails/events/length', true))  listRepoEvents.call(this, repoId);
+    if(section == 'TAGS') listRepoManifests.call(this, repoId);
   });
 }
 
@@ -667,6 +677,10 @@ export function toggleEventDetails(eventId = null) {
   });
 }
 
+// *************************************************
+// Tag Actions
+// *************************************************
+
 // Read Permissions
 export function listRepoManifests(repoId) {
   return new Promise((resolve, reject) => {
@@ -707,5 +721,31 @@ export function listRepoManifests(repoId) {
 
         });
     });
+  });
+}
+
+export function toggleSelectedManifest(manifest = null) {
+  let selectedManifests = [...NPECheck(this.state, 'repoDetails/selectedManifests', [])];
+
+  if(selectedManifests.includes(manifest)) {
+    selectedManifests = selectedManifests.filter((manifestTest) => manifestTest.manifestId != manifest.manifestId);
+  } else {
+    selectedManifests = [...selectedManifests, manifest];
+  }
+
+  this.setState({
+    repoDetails: GA.modifyProperty(this.state.repoDetails, {
+      selectedManifests
+    })
+  });
+}
+
+export function toggleShowPullCommands(){
+  return new Promise((resolve) => {
+    this.setState({
+      repoDetails: GA.modifyProperty(this.state.repoDetails, {
+        showPullCommands: !this.state.repoDetails.showPullCommands
+      })
+    }, () => resolve());
   });
 }

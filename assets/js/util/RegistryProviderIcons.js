@@ -15,7 +15,7 @@ export default function RegistryProviderIcons(provider){
   let icon = icons[provider];
 
   if(!icon) {
-  	console.error(`No Icon for Provider ${provider}`);
+  	// Error
   }
 
   return icon;

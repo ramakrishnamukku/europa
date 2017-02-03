@@ -3,6 +3,7 @@
 
 // Fonts
 @import "vendor/css/open-sans.css";
+@import "vendor/css/source-code-pro.css";
 
 // Global Colors
 @import "global/colors.scss";
@@ -15,6 +16,7 @@
 @import "pages/Settings";
 
 // Partials
+@import "partials/AccessDenied";
 @import "partials/APITokens";
 @import "partials/BlueBorderInput";
 @import "partials/Btn";
