@@ -12,10 +12,10 @@ export default class Dropdown extends Component {
 	}
 	componentDidMount() {
 		document.body.addEventListener('click', (e) => {
-			let ignoreClassName = 'ListItem';
+			let ignoreClassNames = ['ListItem', 'icon icon-dis-box-check', 'icon icon-dis-box-uncheck'];
 			let className = e.target.className;
 
-			if(this.props.ignoreClick && className.indexOf(ignoreClassName) >= 0) return;
+			if(this.props.ignoreClick && ignoreClassNames.includes(className)) return;
 
 			if(this.props.isOpen) {
 				this.props.toggleOpen();
