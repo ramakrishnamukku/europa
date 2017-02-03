@@ -400,6 +400,7 @@ function isAddRepoValid(validateOnInput) {
 
 export function repoDetailsState() {
   return {
+    isBlocked: false,
     activeRepo: {},
     repoOverviewContent: '',
     repoOverviewContentOriginal: '',
@@ -447,6 +448,7 @@ export function setActiveRepoDetails(repoId) {
   });
 }
 
+// Read Permissions
 export function getRepoOverview(repoId) {
   return new Promise((resolve, reject) => {
     if (!repoId) repoId = NPECheck(this.state, 'repoDetails/activeRepo/id', '');
@@ -470,7 +472,23 @@ export function getRepoOverview(repoId) {
         })
         .catch((err) => {
           console.error(err);
-          reject();
+          let errorMsg = `${NPECheck(err, 'error/message', '')}`
+
+          if (errorMsg == 'You do not have access to this operation') {
+            this.setState({
+              repoDetails: GA.modifyProperty(this.state.repoDetails, {
+                isBlocked: true
+              })
+            }, () => reject());
+          } else {
+            this.setState({
+              repoDetails: GA.modifyProperty(this.state.repoDetails, {
+                saveRepoOverviewXHR: false,
+                repoOverviewError: errorMsg
+              })
+            }, () => reject());
+          }
+
         });
     })
   });
@@ -598,6 +616,7 @@ export function setTimelineSection(section = '') {
   });
 }
 
+// Read Permissions
 export function listRepoEvents(repoId, skipXHR) {
   return new Promise((resolve, reject) => {
     this.setState({
@@ -618,13 +637,21 @@ export function listRepoEvents(repoId, skipXHR) {
         })
         .catch((err) => {
           console.error(err);
-          let errorMsg = `There was an error retrieving your events for this repository. ${NPECheck(err, 'error/message', '')}`
-          this.setState({
-            repoDetails: GA.modifyProperty(this.state.repoDetails, {
-              eventsXHR: false,
-              eventsError: errorMsg
-            })
-          }, () => reject());
+          let errorMsg = `${NPECheck(err, 'error/message', '')}`
+          if (errorMsg == 'You do not have access to this operation') {
+            this.setState({
+              repoDetails: GA.modifyProperty(this.state.repoDetails, {
+                isBlocked: true
+              })
+            }, () => reject());
+          } else {
+            this.setState({
+              repoDetails: GA.modifyProperty(this.state.repoDetails, {
+                eventsXHR: false,
+                eventsError: errorMsg
+              })
+            }, () => reject());
+          }
         })
     })
   });
@@ -640,7 +667,7 @@ export function toggleEventDetails(eventId = null) {
   });
 }
 
-
+// Read Permissions
 export function listRepoManifests(repoId) {
   return new Promise((resolve, reject) => {
     this.setState({
@@ -662,13 +689,21 @@ export function listRepoManifests(repoId) {
         })
         .catch((err) => {
           console.error(err);
-          let errorMsg = NPECheck(err, 'error/message', 'There was an error listing your repoistory tags.');
-          this.setState({
-            repoDetails: GA.modifyProperty(this.state.repoDetails, {
-              manifestsXHR: false,
-              manifestsError: errorMsg
-            })
-          }, () => reject())
+          let errorMsg = NPECheck(err, 'error/message', '');
+          if (errorMsg == 'You do not have access to this operation') {
+            this.setState({
+              repoDetails: GA.modifyProperty(this.state.repoDetails, {
+                isBlocked: true
+              })
+            }, () => reject());
+          } else {
+            this.setState({
+              repoDetails: GA.modifyProperty(this.state.repoDetails, {
+                manifestsXHR: false,
+                manifestsError: errorMsg
+              })
+            }, () => reject())
+          }
 
         });
     });

@@ -35,11 +35,12 @@ export default class RepoDetailsPage extends Component {
 				this.context.actions.getRepoOverview(this.state.repoId)
 			];
 			Promise.all(repoDeps)
-			.then(this.context.actions.toggleRepoDetailsPageXHR.bind(this, false));
+			.then(this.context.actions.toggleRepoDetailsPageXHR.bind(this, false))
+			.catch(() => {
+				this.context.actions.toggleRepoDetailsPageXHR(false);
+			})
 		})
-		.catch(() => {
-			this.context.actions.toggleRepoDetailsPageXHR.bind(this, false);
-		})
+		
 	
 		this.setState({
 			pollEventsInterval: setInterval(() => {
@@ -149,6 +150,16 @@ export default class RepoDetailsPage extends Component {
 		);
 	}
 	render() {	
+		let isBlocked = NPECheck(this.props, 'repoDetails/isBlocked', false);
+
+		if(isBlocked) {
+			return (
+				<div className="PageBlocked">
+					Blocked
+				</div>
+			);
+		}
+
 		let errorMsg = NPECheck(this.props, 'repoDetails/eventsError', false);
 
 		if(errorMsg) {
