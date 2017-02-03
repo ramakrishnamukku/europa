@@ -16,7 +16,6 @@ import javax.inject.Inject;
 import com.distelli.europa.clients.*;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
-import com.distelli.europa.monitor.*;
 import com.distelli.europa.util.*;
 import com.distelli.webserver.*;
 import com.distelli.gcr.*;
@@ -39,8 +38,6 @@ public class SaveRepoNotification extends AjaxHelper<EuropaRequestContext>
     private ContainerRepoDb _repoDb;
     @Inject
     private NotificationsDb _notificationDb;
-    @Inject
-    private MonitorQueue _monitorQueue;
 
     public SaveRepoNotification()
     {
@@ -70,7 +67,6 @@ public class SaveRepoNotification extends AjaxHelper<EuropaRequestContext>
         notification.setRegion(repo.getRegion());
         notification.setRepoName(repo.getName());
         _notificationDb.save(notification);
-        _monitorQueue.setReload(true);
         HashMap<String, String> retVal = new HashMap<String, String>();
         retVal.put("id", notification.getId());
         return retVal;

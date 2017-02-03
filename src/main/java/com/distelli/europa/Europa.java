@@ -28,7 +28,7 @@ import com.distelli.europa.filters.StorageInitFilter;
 import com.distelli.europa.filters.RegistryAuthFilter;
 import com.distelli.europa.guice.*;
 import com.distelli.europa.handlers.StaticContentErrorHandler;
-import com.distelli.europa.monitor.*;
+import com.distelli.europa.monitor.DispatchRepoMonitorTasks;
 import com.distelli.europa.util.*;
 import com.distelli.objectStore.impl.ObjectStoreModule;
 import com.distelli.persistence.impl.PersistenceModule;
@@ -65,8 +65,7 @@ public class Europa
     @Inject
     protected SslContextFactory _sslContextFactory;
     @Inject
-    protected MonitorQueue _monitorQueue;
-    protected Thread _monitorThread;
+    protected DispatchRepoMonitorTasks _dispatchRepoMonitorTasks;
 
     protected RouteMatcher _webappRouteMatcher = null;
     protected RouteMatcher _registryApiRouteMatcher = null;
@@ -91,7 +90,7 @@ public class Europa
         Log4JConfigurator.setLogLevel("com.distelli.europa", "DEBUG");
         Log4JConfigurator.setLogLevel("com.distelli.webserver", "ERROR");
         Log4JConfigurator.setLogLevel("com.distelli.gcr", "ERROR");
-        Log4JConfigurator.setLogLevel("com.distelli.europa.monitor", "ERROR");
+        //Log4JConfigurator.setLogLevel("com.distelli.europa.monitor", "DEBUG");
         //Log4JConfigurator.setLogLevel("com.distelli.webserver", "DEBUG");
         //Log4JConfigurator.setLogLevel("com.distelli.persistence", "DEBUG");
         _configFilePath = _cmdLineArgs.getOption("config");
@@ -169,9 +168,7 @@ public class Europa
 
     public void start()
     {
-        RepoMonitor monitor = new RepoMonitor(_monitorQueue);
-        _monitorThread = new Thread(monitor);
-        _monitorThread.start();
+        _dispatchRepoMonitorTasks.schedule();
 
         WebServlet<EuropaRequestContext> servlet =
             new WebServlet<EuropaRequestContext>(_webappRouteMatcher, _requestHandlerFactory);

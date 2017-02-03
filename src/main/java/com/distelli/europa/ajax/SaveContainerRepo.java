@@ -21,7 +21,6 @@ import com.distelli.utils.CompactUUID;
 import com.distelli.europa.clients.*;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
-import com.distelli.europa.monitor.*;
 import com.distelli.europa.util.*;
 import com.distelli.webserver.*;
 import com.distelli.gcr.*;
@@ -43,8 +42,6 @@ public class SaveContainerRepo extends AjaxHelper<EuropaRequestContext>
     private ContainerRepoDb _reposDb;
     @Inject
     private NotificationsDb _notificationDb;
-    @Inject
-    private MonitorQueue _monitorQueue;
     @Inject
     private Provider<GcrClient.Builder> _gcrClientBuilderProvider;
     @Inject
@@ -105,7 +102,6 @@ public class SaveContainerRepo extends AjaxHelper<EuropaRequestContext>
         if(notification != null)
             _notificationDb.save(notification);
 
-        _monitorQueue.setReload(true);
         HashMap<String, String> retVal = new HashMap<String, String>();
         retVal.put("id", repo.getId());
         return retVal;

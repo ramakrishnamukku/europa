@@ -46,6 +46,25 @@ public abstract class RepoMonitorTask extends MonitorTask
         _repo = repo;
     }
 
+    @Override
+    public void run()
+    {
+        try {
+            if ( ! _containerRepoDb.incrementSyncCount(
+                     _repo.getDomain(),
+                     _repo.getId(),
+                     _repo.getSyncCount()) )
+            {
+                log.debug("Failed to acquire lock for syncCount="+_repo.getSyncCount()+" repo="+_repo.getId());
+                return;
+            }
+        } catch(Throwable t) {
+            log.error(t.getMessage(), t);
+            return;
+        }
+        super.run();
+    }
+
     // Returns a list of tags that were removed:
     protected <T> List<String> findChanges(Map<String, T> tagToSha, Function<T, String> getSha) {
         List<String> removed = new ArrayList<>();

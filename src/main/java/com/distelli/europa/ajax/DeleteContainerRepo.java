@@ -10,7 +10,6 @@ package com.distelli.europa.ajax;
 
 import com.distelli.europa.models.*;
 import com.distelli.europa.db.*;
-import com.distelli.europa.monitor.*;
 import com.distelli.webserver.*;
 import javax.inject.Inject;
 import com.google.inject.Singleton;
@@ -24,8 +23,6 @@ public class DeleteContainerRepo extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private ContainerRepoDb _db;
-    @Inject
-    private MonitorQueue _monitorQueue;
 
     public DeleteContainerRepo()
     {
@@ -42,7 +39,6 @@ public class DeleteContainerRepo extends AjaxHelper<EuropaRequestContext>
                                          true); //throw if missing
         String domain = requestContext.getOwnerDomain();
         _db.deleteRepo(domain, id);
-        _monitorQueue.setReload(true);
         return JsonSuccess.Success;
     }
 }

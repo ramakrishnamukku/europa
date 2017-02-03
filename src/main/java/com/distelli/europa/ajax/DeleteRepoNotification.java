@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import com.distelli.europa.clients.*;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
-import com.distelli.europa.monitor.*;
 import com.distelli.europa.util.*;
 import com.distelli.webserver.*;
 import com.distelli.gcr.*;
@@ -33,8 +32,6 @@ public class DeleteRepoNotification extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private NotificationsDb _notificationDb;
-    @Inject
-    private MonitorQueue _monitorQueue;
 
     public DeleteRepoNotification()
     {
@@ -46,7 +43,6 @@ public class DeleteRepoNotification extends AjaxHelper<EuropaRequestContext>
         String notificationId = ajaxRequest.getParam("notificationId", true);
         String domain = requestContext.getOwnerDomain();
         _notificationDb.deleteNotification(domain, notificationId);
-        _monitorQueue.setReload(true);
         return JsonSuccess.Success;
     }
 }

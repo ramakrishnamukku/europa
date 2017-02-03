@@ -20,7 +20,7 @@ public class MonitorTaskFactory
     @Inject
     private DockerHubMonitorTask.Factory _dockerHubMonitorTaskFactory;
 
-    public MonitorTask createMonitorTask(ContainerRepo repo)
+    public Runnable createMonitorTask(ContainerRepo repo)
     {
         switch ( repo.getProvider() ) {
         case ECR: return _ecrMonitorTaskFactory.create(repo);

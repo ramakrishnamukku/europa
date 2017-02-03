@@ -31,6 +31,7 @@ import com.google.inject.Singleton;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import java.util.Map;
 import lombok.extern.log4j.Log4j;
+import javax.persistence.RollbackException;
 
 @Log4j
 @Singleton
@@ -93,6 +94,7 @@ public class ContainerRepoDb extends BaseDb
         .put("endpt", String.class, "endpoint")
         .put("lr", Boolean.class, "local")
         .put("lst", Long.class, "lastSyncTime")
+        .put("syc", Long.class, "syncCount")
         .put("levent", RepoEvent.class, "lastEvent");
         return module;
     }
@@ -127,7 +129,7 @@ public class ContainerRepoDb extends BaseDb
         _om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         _main = indexFactory.create(ContainerRepo.class)
         .withTableName("repos")
-        .withNoEncrypt("hk", "id", "sidx", "cid")
+            .withNoEncrypt("hk", "id", "sidx", "cid", "syc")
         .withHashKeyName("hk")
         .withRangeKeyName("id")
         .withConvertValue(_om::convertValue)
@@ -366,5 +368,24 @@ public class ContainerRepoDb extends BaseDb
                                     pageIterator)
         .eq(credId.toLowerCase())
         .list();
+    }
+
+    // Returns true if count was incremented.
+    public boolean incrementSyncCount(String domain, String id, long currentCount) {
+        try {
+            _main.updateItem(getHashKey(domain), id.toLowerCase())
+                .set("syc", currentCount+1)
+                .when((expr) -> {
+                        if ( 0 == currentCount ) {
+                            return expr.or(expr.eq("syc", 0),
+                                    expr.and(expr.exists("id"), expr.not(expr.exists("syc"))));
+                        } else {
+                            return expr.eq("syc", currentCount);
+                        }
+                    });
+            return true;
+        } catch ( RollbackException ex ) {
+            return false;
+        }
     }
 }

@@ -26,6 +26,7 @@ public class ContainerRepo
     //The ID of the object in the ObjectStore that holds the readme
     protected String overviewId;
     protected long lastSyncTime;
+    protected long syncCount; // Incremented at the beginning of each sync.
 
     public String getPullCommand()
     {

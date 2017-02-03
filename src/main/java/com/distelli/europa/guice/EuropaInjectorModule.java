@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.inject.Provider;
+import javax.inject.Singleton;
 
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import com.distelli.cred.CredPair;
@@ -39,12 +40,19 @@ import com.distelli.persistence.TableDescription;
 import com.distelli.persistence.impl.mysql.MysqlDataSource;
 import com.distelli.webserver.AjaxHelperMap;
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.Multibinder;
 import okhttp3.ConnectionPool;
 import lombok.extern.log4j.Log4j;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ThreadFactory;
 import com.distelli.gcr.GcrClient;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Log4j
 public class EuropaInjectorModule extends AbstractModule
@@ -77,6 +85,36 @@ public class EuropaInjectorModule extends AbstractModule
                     return tableDescription;
                 }
             });
+    }
+
+    @Provides @Singleton
+    protected ScheduledExecutorService getScheduledExecutorService() {
+
+        AtomicInteger threadCounter = new AtomicInteger();
+        ThreadFactory threadFactory = (runnable) -> {
+            Thread thread = Executors.defaultThreadFactory().newThread(runnable);
+            int threadCount = threadCounter.incrementAndGet();
+            thread.setName(String.format("ScheduledExecutorService-%d", threadCount));
+            return thread;
+        };
+
+
+        ScheduledThreadPoolExecutor threadPool =
+            new ScheduledThreadPoolExecutor(10, threadFactory);
+        threadPool.setKeepAliveTime(60, TimeUnit.SECONDS);
+        threadPool.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        threadPool.shutdownNow();
+                        threadPool.awaitTermination(30, TimeUnit.SECONDS);
+                    } catch ( Throwable ex ) {
+                        log.error(ex.getMessage(), ex);
+                    }
+                }
+            });
+        return threadPool;
     }
 
     protected void configureEuropaConfiguration()
