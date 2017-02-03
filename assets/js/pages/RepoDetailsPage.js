@@ -10,7 +10,7 @@ import CenteredConfirm from './../components/CenteredConfirm'
 import RegistryProviderIcons from './../util/RegistryProviderIcons'
 import DockerPullCommands from './../components/DockerPullCommands'
 import NPECheck from './../util/NPECheck'
-import RepoEventTimeline from './../components/RepoEventTimeline'
+import RepoDetailsContent from './../components/RepoDetailsContent'
 import BtnGroup from './../components/BtnGroup'
 import Msg from './../components/Msg'
 
@@ -20,15 +20,13 @@ export default class RepoDetailsPage extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			repoId: this.props.params.repoId,
-			pollEventsInterval: null
+			repoId: this.props.params.repoId
 		};
 	}
 	componentDidMount() {
 		this.context.actions.resetRepoDetailsState();
-		this.context.actions.listRegistries();
 		this.context.actions.toggleRepoDetailsPageXHR(true);
-		this.context.actions.listRepos()
+		this.context.actions.listRepos(this.state.repoId)
 		.then(() => {
 			let repoDeps = [
 				this.context.actions.setActiveRepoDetails(this.state.repoId),
@@ -40,19 +38,11 @@ export default class RepoDetailsPage extends Component {
 			.catch(() => {
 				this.context.actions.toggleRepoDetailsPageXHR(false);
 			})
-		})
-		
-	
-		this.setState({
-			pollEventsInterval: setInterval(() => {
-				this.context.actions.listRepoEvents(this.state.repoId, true);
-			}, 10000)
-		})
+		});
 	}
 	componentWillUnmount() {
 		this.context.actions.resetRepoDetailsState();
 		this.context.actions.resetNotifState();
-		clearInterval(this.state.pollEventsInterval);
 	}
 	toRepoList(){
 		this.context.router.push('/repositories');
@@ -89,7 +79,7 @@ export default class RepoDetailsPage extends Component {
 		let manifests = this.props.repoDetails.manifests;
 
 		return (
-			<RepoEventTimeline 
+			<RepoDetailsContent 
 				{...this.props}
 				events={events}
 				manifests={manifests}
@@ -165,7 +155,7 @@ export default class RepoDetailsPage extends Component {
 			return this.renderError(errorMsg);
 		}
 
-		if(this.props.repoDetails.pageXHR || this.props.repoDetails.eventsXHR) {
+		if(this.props.repoDetails.pageXHR) {
 			return this.renderPageLoader()
 		}
 

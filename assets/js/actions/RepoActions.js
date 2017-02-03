@@ -20,13 +20,26 @@ import {
 // General Repo Actions
 // *************************************************
 
-export function listRepos() {
+export function listRepos(repoId) {
   return new Promise((resolve, reject) => {
     this.setState({
-      reposXHR: (this.state.repos.length) ? false : true
+      reposXHR: (this.state.repos.length > 1) ? false : true
     }, () => {
-      RAjax.GET.call(this, 'ListContainerRepos', {})
+
+      let params = {};
+      let op = 'ListContainerRepos';
+
+      if(repoId) {
+        params.id = repoId;
+        op = 'GetContainerRepo'
+      }
+
+      RAjax.GET.call(this, op, params)
         .then((res) => {
+
+          if(!Array.isArray(res)) {
+            res = [res];
+          }
 
           let reposMap = res.reduce((cur, repo) => {
             cur[repo.id] = repo
@@ -40,6 +53,7 @@ export function listRepos() {
           }, () => resolve());
         })
         .catch((err) => {
+          console.error(err);
           this.setState({
             reposXHR: false
           }, () => reject());
@@ -619,10 +633,6 @@ export function setTimelineSection(section = '') {
     repoDetails: GA.modifyProperty(this.state.repoDetails, {
       timelineSection: section
     })
-  }, () => {
-    let repoId = NPECheck(this.state, 'repoDetails/activeRepo/id');
-    if(section == 'EVENTS' && !NPECheck(this.state, 'repoDetails/events/length', true))  listRepoEvents.call(this, repoId);
-    if(section == 'TAGS') listRepoManifests.call(this, repoId);
   });
 }
 
@@ -682,11 +692,11 @@ export function toggleEventDetails(eventId = null) {
 // *************************************************
 
 // Read Permissions
-export function listRepoManifests(repoId) {
+export function listRepoManifests(repoId, skipXHR) {
   return new Promise((resolve, reject) => {
     this.setState({
       repoDetails: GA.modifyProperty(this.state.repoDetails, {
-        manifestsXHR: true
+        manifestsXHR: (skipXHR) ? false : true
       })
     }, () => {
       RAjax.GET.call(this, 'ListRepoManifests', {

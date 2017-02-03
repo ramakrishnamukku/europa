@@ -161,12 +161,6 @@ export default class RepoNotifications extends Component {
 		};
 	}
 	render() {	
-		if(NPECheck(this.props, 'notif/notifsXHR', false)) {
-			return (
-				<Loader />
-			);
-		}
-
 		return (
 			<div className="RepoNotifications">
 				<div className="FlexRow">

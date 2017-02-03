@@ -8,99 +8,30 @@ import RepoOverview from './RepoOverview'
 import RepoEventItem from './../components/RepoEventItem'
 import RegistryProviderIcons from './../util/RegistryProviderIcons'
 import ConvertTimeFriendly from './../util/ConvertTimeFriendly'
+import Loader from './../components/Loader'
 
 export default class RepoEventTimeline extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			pollEventsInterval: null
+		};
 	}
-	renderLegend(){
+	componentDidMount() {
+		let repoId = NPECheck(this.props, 'repoDetails/activeRepo/id', '');
 
-		let navItems = [
-			{
-				text: 'Overview',
-				key: 'OVERVIEW',
-			},
-			{
-				text: 'Tags',
-				key: 'TAGS',
-			},
-			{
-				text: 'Events',
-				key: 'EVENTS',
-			}
-		];
-
-		return (
-			<div className="TimelineLegend">
-				<div className="TimelineNavigation">
-					{navItems.map((item) => {
-						let activeSection = NPECheck(this.props, 'repoDetails/timelineSection', '');
-						return (
-							<div key={item.key} 
-								 className={(activeSection == item.key) ? 'Active' : ''}
-								 onClick={() => this.context.actions.setTimelineSection(item.key)}>
-								{item.text}
-							</div>
-						);
-					})}
-				</div>
-				{this.renderHeaderAction()}
-			</div>
-		);
-	}
-	renderHeaderAction(){
-		if(NPECheck(this.props, 'repoDetails/timelineSection', '') == 'OVERVIEW') {
-			let isEdit = NPECheck(this.props, 'repoDetails/editOverview', false);
-
-			return (
-				<span className="ThickBlueText" onClick={() => this.context.actions.toggleRepoOverviewEdit()}>
-					{(isEdit) ? (NPECheck(this.props, 'repoDetails/isOverviewModified')) ? 'Preview Changes' : 'Cancel' : 'Edit Read Me'}
-				</span>
-			);
+		if(!NPECheck(this.props, 'repoDetails/events/length', true)) {
+			 this.context.actions.listRepoEvents(repoId);
 		}
 
-		if(!NPECheck(this.props, 'events/length', true)) {
-			return (
-				<i className="icon icon-dis-waiting rotating"/>
-			);
-		}
+		this.setState({
+			pollEventsInterval: setInterval(() => {
+				this.context.actions.listRepoEvents(repoId, true);
+			}, 15000)
+		});
 	}
-	renderRepoContent(){
-		let activeSection = NPECheck(this.props, 'repoDetails/timelineSection', '');
-		let noEvents = !NPECheck(this.props, 'events/length', true);
-		let noTags = !NPECheck(this.props, 'manifests/length', true);
-
-		switch(activeSection) {
-
-			case 'OVERVIEW':
-				return (
-					<RepoOverview {...this.props}/>
-				);
-			break;
-
-			case 'EVENTS':
-				if(noEvents) return this.renderNoEvents();
-				return (
-					<div className="TimelineContainer">
-						{this.renderEventTimeline()}
-					</div>	
-				);
-			break;
-
-			case 'TAGS':
-				if(noTags) return this.renderNoTags();
-				return (
-					<div className="TagsContainer">
-						{this.renderRepoEventTags()}
-					</div>
-				);
-			break;
-		}
-	}
-	renderEventTimeline(){
-		return this.props.events.sort((firstEvent, secondEvent) => (firstEvent.eventTime >= secondEvent.eventTime) ? -1 : 1 )
-								.map((event, index) => this.renderRepoEventItem(event, index))
+	componentWillUnmount() {
+		clearInterval(this.state.pollEventsInterval);
 	}
 	renderRepoEventItem(event, index){
 		return (
@@ -109,84 +40,39 @@ export default class RepoEventTimeline extends Component {
 						   event={event} />
 		);
 	}
-	renderRepoEventTags(){
-		let activeRepo = NPECheck(this.props, 'repoDetails/activeRepo', {});
+	renderNoEvents(overrideContent){
+		let content = [
+			<h3 key={1}>
+				No Events Found
+			</h3>,
+			<p key={2}> If you just added this repository, it may take a second to populate historical data for this repository.</p>
+		];
 
-		return this.props.manifests.sort((firstTag, secondTag) => (firstTag.pushTime >= secondTag.pushTime) ? -1 : 1 )
-								.map((tag, index) => this.renderRepoEventTagItem(tag, index, activeRepo))
-	}
-	renderRepoEventTagItem(tag, index, activeRepo){
-		let time = tag.pushTime;
-		let friendlyTime = ConvertTimeFriendly(time);
-		let shortManifestId = tag.manifestId.substring(0, 20) + '...';
-		let icon = 'icon icon-dis-box-uncheck';
-
-		if(NPECheck(this.props, 'repoDetails/selectedManifests', []).includes(tag)) {
-			icon = 'icon icon-dis-box-check';
-		}
+		if(overrideContent) content = overrideContent;
 
 		return (
-			<div key={index} className="RepoTagItem">
-				<i className={icon} 
-				   data-tip="View Pull Commands For This Tag" 
-				   data-for="ToolTipTop" 
-				   onClick={() => this.context.actions.toggleSelectedManifest(tag)}/>
-				<span className="ImageSha" data-tip={tag.manifestId}>	
-					{shortManifestId}
-				</span>
-				<span className="Tags">
-					{tag.digests.map((tag, index) => {
-						return (
-							<span className="Tag" key={index}>{tag}</span>
-						);
-					})}
-				</span>
-				<span className="Size">
-					<span className="Label">Virtual Size:&nbsp;</span>
-					<span className="Value">{tag.virtualSize}</span>
-				</span>
-				<span className="Pushed">
-					<span className="Label">Pushed:&nbsp;</span>
-					<span className="Value">{friendlyTime}</span>
-				</span>
-			</div>
-		);
-	}
-	renderNoTags(){
-		return (
-			<div className="TimelineContainer">
-				<div className="Timeline">
-					<div className="NoContent">
-						<h3>
-							No Tags Found
-						</h3>
-						<p> If you just added this repository, it may take a second to populate historical data for this repository.</p>
-					</div>
-				</div>
-			</div>
-		);
-	}
-	renderNoEvents(){
-		return (
-			<div className="TimelineContainer">
-				<div className="Timeline">
-					<div className="NoContent">
-						<h3>
-							No Events Found
-						</h3>
-						<p> If you just added this repository, it may take a second to populate historical data for this repository.</p>
-					</div>
+			<div className="Timeline">
+				<div className="NoContent">
+					{content}
 				</div>
 			</div>
 		);
 	}
 	render() {
+		let content = this.props.events.sort((firstEvent, secondEvent) => (firstEvent.eventTime >= secondEvent.eventTime) ? -1 : 1 )
+								 .map((event, index) => this.renderRepoEventItem(event, index));
+
+		if(!this.props.events || !this.props.events.length) {
+			content = this.renderNoEvents();
+		}
+
+		if(this.props.repoDetails.eventsXHR) {
+			content =  this.renderNoEvents(<Loader />);
+		}
+
 		return (
-			<div className="RepoEventTimeline">
-				<div className="Timeline">
-					{this.renderLegend()}
-					{this.renderRepoContent()}
-				</div>
+			<div className="TimelineContainer">
+				{content}
 			</div>
 		);
 	}	

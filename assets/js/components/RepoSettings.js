@@ -5,7 +5,10 @@
 import React, {Component, PropTypes} from 'react'
 import ContentRow from './../components/ContentRow'
 import RepoNotifications from './../components/RepoNotifications'
+import Loader from './../components/Loader'
+import NPECheck from './../util/NPECheck'
 import isEmpty from './../util/IsEmpty'
+
 
 export default class RepoSettings extends Component {
 	constructor(props) {
@@ -14,6 +17,7 @@ export default class RepoSettings extends Component {
 	}
 	componentDidMount() {
 		let repoId = this.props.repoDetails.activeRepo.id;
+		this.context.actions.listRegistries();
 		this.context.actions.listRepoNotifications(repoId);
 	}
 	componentWillUnmount() {
@@ -94,9 +98,22 @@ export default class RepoSettings extends Component {
 		);
 	}
 	render() {	
+
+		let content = this.renderSettings();
+
+		if(NPECheck(this.props, 'notif/notifsXHR', false) || NPECheck(this.props, 'registriesXHR', false)) {
+			content = (
+				<div className="PageLoader" style={{height: '300px'}}>
+					<div style={{marginTop: '150px'}}>
+						<Loader />
+					</div>
+				</div>
+			);
+		}
+
 		return (
 			<div className="RepoSettingsContainer">
-				{this.renderSettings()}
+				{content}
 			</div>
 		);
 	}
