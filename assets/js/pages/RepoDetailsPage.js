@@ -7,6 +7,8 @@ import Loader from './../components/Loader'
 import RegistryNames from './../util/RegistryNames'
 import RepoSettings from './../components/RepoSettings'
 import CenteredConfirm from './../components/CenteredConfirm'
+import RegistryProviderIcons from './../util/RegistryProviderIcons'
+import DockerPullCommands from './../components/DockerPullCommands'
 import NPECheck from './../util/NPECheck'
 import RepoEventTimeline from './../components/RepoEventTimeline'
 import BtnGroup from './../components/BtnGroup'
@@ -34,7 +36,10 @@ export default class RepoDetailsPage extends Component {
 			];
 			Promise.all(repoDeps)
 			.then(this.context.actions.toggleRepoDetailsPageXHR.bind(this, false));
-		});
+		})
+		.catch(() => {
+			this.context.actions.toggleRepoDetailsPageXHR.bind(this, false);
+		})
 	
 		this.setState({
 			pollEventsInterval: setInterval(() => {
@@ -79,11 +84,13 @@ export default class RepoDetailsPage extends Component {
 	}
 	renderEventTimeline(){
 		let events = this.props.repoDetails.events;
+		let manifests = this.props.repoDetails.manifests;
 
 		return (
 			<RepoEventTimeline 
 				{...this.props}
 				events={events}
+				manifests={manifests}
 			/>
 		);
 	}
@@ -103,13 +110,22 @@ export default class RepoDetailsPage extends Component {
 		return (
 			<div className="SmallHeader FlexRow SpaceBetween">
 				<div className="FlexColumn Flex1">
-					<h3>{activeRepo.name}</h3>
+					<div className="FlexRow">
+						<img src={RegistryProviderIcons(activeRepo.provider)} />
+						<h3>{activeRepo.name}</h3>
+					</div>
 					<span>{RegistryNames(true)[activeRepo.provider]}</span>
 				</div>
-				<div>
+				<div className="FlexRow">
+					{this.renderRepoPullCommands()}
 					{this.renderActions()}
 				</div>
 			</div>
+		);
+	}
+	renderRepoPullCommands(){
+		return (
+			<DockerPullCommands {...this.props} />
 		);
 	}
 	renderActions(){

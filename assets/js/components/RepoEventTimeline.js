@@ -179,7 +179,8 @@ export default class RepoEventTimeline extends Component {
 }
 
 RepoEventTimeline.propTypes = {
-	events: PropTypes.array.isRequired
+	events: PropTypes.array.isRequired,
+	
 };
 
 RepoEventTimeline.childContextTypes = {

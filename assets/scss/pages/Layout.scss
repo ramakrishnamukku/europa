@@ -172,6 +172,11 @@ nav {
                 align-items: center;
                 margin: 0 0 14px;
                 padding: 16px 0 0;
+    
+                img {
+                    height: 30px;
+                    margin: 2px 5px 0 0;
+                }
 
                 h3 {
                     color: $light-blue;
@@ -184,6 +189,7 @@ nav {
                     font-size: 0.75rem;
                     font-weight: 400;
                     color: $grey;
+                    margin-left: 36px;
                 }
             }
         }
