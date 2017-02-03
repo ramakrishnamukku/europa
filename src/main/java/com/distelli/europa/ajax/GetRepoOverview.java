@@ -17,6 +17,7 @@ import javax.persistence.EntityNotFoundException;
 
 import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.db.ContainerRepoDb;
+import com.distelli.europa.util.PermissionCheck;
 import com.distelli.europa.models.ContainerRepo;
 import com.distelli.europa.models.RepoOverviewContent;
 import com.distelli.europa.util.ObjectKeyFactory;
@@ -34,11 +35,13 @@ import lombok.extern.log4j.Log4j;
 public class GetRepoOverview extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
-    private ContainerRepoDb _repoDb;
+    protected ContainerRepoDb _repoDb;
     @Inject
     protected Provider<ObjectStore> _objectStoreProvider;
     @Inject
     protected Provider<ObjectKeyFactory> _objectKeyFactoryProvider;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public GetRepoOverview()
     {
@@ -53,6 +56,8 @@ public class GetRepoOverview extends AjaxHelper<EuropaRequestContext>
         if(repo == null)
             throw(new AjaxClientException("The specified Repository was not found",
                                           AjaxErrors.Codes.RepoNotFound, 400));
+        _permissionCheck.check(ajaxRequest, requestContext, repo);
+
         String overviewId = repo.getOverviewId();
         ObjectKeyFactory objectKeyFactory = _objectKeyFactoryProvider.get();
         ObjectKey objectKey = objectKeyFactory.forRepoOverview(overviewId);
