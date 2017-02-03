@@ -18,6 +18,7 @@ import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
 import org.eclipse.jetty.http.HttpMethod;
 import com.distelli.europa.EuropaRequestContext;
+import com.distelli.europa.util.PermissionCheck;
 
 @Log4j
 @Singleton
@@ -25,6 +26,8 @@ public class GetContainerRepo extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private ContainerRepoDb _db;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public GetContainerRepo()
     {
@@ -40,6 +43,11 @@ public class GetContainerRepo extends AjaxHelper<EuropaRequestContext>
         String id = ajaxRequest.getParam("id",
                                          true); //throw if missing
         String domain = requestContext.getOwnerDomain();
-        return _db.getRepo(domain, id);
+        ContainerRepo repo = _db.getRepo(domain, id);
+        if(repo == null)
+            throw(new AjaxClientException("The specified Repository was not found",
+                                          AjaxErrors.Codes.RepoNotFound, 400));
+        _permissionCheck.check(ajaxRequest, requestContext, repo);
+        return repo;
     }
 }
