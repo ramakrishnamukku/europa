@@ -49,6 +49,9 @@ public class ContainerRepo
                 return null;
             return String.format("docker pull %s/%s", this.endpoint, this.name);
         case EUROPA:
+            if(this.endpoint == null)
+                return null;
+            return String.format("docker pull %s/%s", this.endpoint, this.name);
         default:
             return null;
         }

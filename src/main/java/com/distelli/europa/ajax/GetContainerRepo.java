@@ -14,6 +14,7 @@ import com.distelli.webserver.*;
 import com.distelli.europa.util.*;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
 import org.eclipse.jetty.http.HttpMethod;
@@ -28,6 +29,8 @@ public class GetContainerRepo extends AjaxHelper<EuropaRequestContext>
     private ContainerRepoDb _db;
     @Inject
     protected PermissionCheck _permissionCheck;
+    @Inject
+    private Provider<DnsSettings> _dnsSettingsProvider;
 
     public GetContainerRepo()
     {
@@ -48,6 +51,13 @@ public class GetContainerRepo extends AjaxHelper<EuropaRequestContext>
             throw(new AjaxClientException("The specified Repository was not found",
                                           AjaxErrors.Codes.RepoNotFound, 400));
         _permissionCheck.check(ajaxRequest, requestContext, repo);
+
+        if(repo.isLocal())
+        {
+            DnsSettings dnsSettings = _dnsSettingsProvider.get();
+            repo.setEndpoint(dnsSettings.getDnsName());
+        }
+
         return repo;
     }
 }
