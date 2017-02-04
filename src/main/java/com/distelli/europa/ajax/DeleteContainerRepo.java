@@ -23,7 +23,7 @@ import com.distelli.europa.util.PermissionCheck;
 public class DeleteContainerRepo extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
-    private ContainerRepoDb _repoDb;
+    protected ContainerRepoDb _repoDb;
     @Inject
     protected PermissionCheck _permissionCheck;
 
