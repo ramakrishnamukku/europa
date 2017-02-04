@@ -25,6 +25,8 @@ public class JSXProperties
 
     public String getDnsName()
     {
+        if(_dnsSettings == null)
+            return null;
         return _dnsSettings.getDnsName();
     }
 }
