@@ -40,6 +40,7 @@ public class ListRepoManifests extends AjaxHelper<EuropaRequestContext>
         int pageSize = ajaxRequest.getParamAsInt("pageSize", 100);
         String marker = ajaxRequest.getParam("marker");
         String domain = requestContext.getOwnerDomain();
+
         ContainerRepo repo = _repoDb.getRepo(domain, repoId);
         if(repo == null)
             throw(new AjaxClientException("The specified Repository was not found",

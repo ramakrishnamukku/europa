@@ -45,6 +45,23 @@ public class FieldValidator
         }
     }
 
+    public static void validateNonNullOrEmpty(Object obj, String... fields)
+    {
+        for(String field : fields)
+        {
+            Object value = getValueForField(obj, field);
+            if(value == null)
+                throw(new AjaxClientException("Missing Field '"+field+"' in content",
+                                              JsonError.Codes.BadContent,
+                                              400));
+            String strVal = (String)value;
+            if(strVal.trim().isEmpty())
+                throw(new AjaxClientException("Missing Field '"+field+"' in content",
+                                              JsonError.Codes.BadContent,
+                                              400));
+        }
+    }
+
     public static void validateMatch(Object obj, String field, Pattern pattern)
     {
         Object value = getValueForField(obj, field);

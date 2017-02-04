@@ -52,6 +52,7 @@ public class GetRepoOverview extends AjaxHelper<EuropaRequestContext>
     {
         String ownerDomain = requestContext.getOwnerDomain();
         String repoId = ajaxRequest.getParam("repoId", true);
+
         ContainerRepo repo = _repoDb.getRepo(ownerDomain, repoId);
         if(repo == null)
             throw(new AjaxClientException("The specified Repository was not found",

@@ -16,13 +16,16 @@ import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
 import org.eclipse.jetty.http.HttpMethod;
 import com.distelli.europa.EuropaRequestContext;
+import com.distelli.europa.util.PermissionCheck;
 
 @Log4j
 @Singleton
 public class DeleteContainerRepo extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
-    private ContainerRepoDb _db;
+    private ContainerRepoDb _repoDb;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public DeleteContainerRepo()
     {
@@ -35,10 +38,15 @@ public class DeleteContainerRepo extends AjaxHelper<EuropaRequestContext>
     */
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
-        String id = ajaxRequest.getParam("id",
+        String repoId = ajaxRequest.getParam("id",
                                          true); //throw if missing
         String domain = requestContext.getOwnerDomain();
-        _db.deleteRepo(domain, id);
+        ContainerRepo repo = _repoDb.getRepo(domain, repoId);
+        if(repo == null)
+            throw(new AjaxClientException("The specified Repository was not found",
+                                          AjaxErrors.Codes.RepoNotFound, 400));
+        _permissionCheck.check(ajaxRequest, requestContext, repo);
+        _repoDb.deleteRepo(domain, repoId);
         return JsonSuccess.Success;
     }
 }
