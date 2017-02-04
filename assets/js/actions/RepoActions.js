@@ -20,6 +20,8 @@ import {
 // General Repo Actions
 // *************************************************
 
+
+// Read Permissions
 export function listRepos(repoId) {
   return new Promise((resolve, reject) => {
     this.setState({
@@ -29,7 +31,7 @@ export function listRepos(repoId) {
       let params = {};
       let op = 'ListContainerRepos';
 
-      if(repoId) {
+      if (repoId) {
         params.id = repoId;
         op = 'GetContainerRepo'
       }
@@ -37,7 +39,7 @@ export function listRepos(repoId) {
       RAjax.GET.call(this, op, params)
         .then((res) => {
 
-          if(!Array.isArray(res)) {
+          if (!Array.isArray(res)) {
             res = [res];
           }
 
@@ -54,9 +56,21 @@ export function listRepos(repoId) {
         })
         .catch((err) => {
           console.error(err);
-          this.setState({
-            reposXHR: false
-          }, () => reject());
+          let errorMsg = `${err.error.message}`;
+
+          if (errorMsg == 'You do not have access to this operation') {
+            this.setState({
+              reposXHR: false,
+              repoDetails: GA.modifyProperty(this.state.repoDetails, {
+                isBlocked: true
+              })
+            }, () => reject());
+          } else {
+            this.setState({
+              reposXHR: false
+            }, () => reject());
+          }
+
         });
     });
   });
@@ -438,7 +452,7 @@ export function repoDetailsState() {
     manifestsError: '',
     selectedManifests: [],
     showPullCommands: false
-    
+
   };
 }
 
@@ -497,7 +511,8 @@ export function getRepoOverview(repoId) {
           if (errorMsg == 'You do not have access to this operation') {
             this.setState({
               repoDetails: GA.modifyProperty(this.state.repoDetails, {
-                isBlocked: true
+                isBlocked: true,
+                saveRepoOverviewXHR: false,
               })
             }, () => reject());
           } else {
@@ -661,7 +676,8 @@ export function listRepoEvents(repoId, skipXHR) {
           if (errorMsg == 'You do not have access to this operation') {
             this.setState({
               repoDetails: GA.modifyProperty(this.state.repoDetails, {
-                isBlocked: true
+                isBlocked: true,
+                eventsXHR: false
               })
             }, () => reject());
           } else {
@@ -717,7 +733,8 @@ export function listRepoManifests(repoId, skipXHR) {
           if (errorMsg == 'You do not have access to this operation') {
             this.setState({
               repoDetails: GA.modifyProperty(this.state.repoDetails, {
-                isBlocked: true
+                isBlocked: true,
+                manifestsXHR: false,
               })
             }, () => reject());
           } else {
@@ -737,7 +754,7 @@ export function listRepoManifests(repoId, skipXHR) {
 export function toggleSelectedManifest(manifest = null) {
   let selectedManifests = [...NPECheck(this.state, 'repoDetails/selectedManifests', [])];
 
-  if(selectedManifests.includes(manifest)) {
+  if (selectedManifests.includes(manifest)) {
     selectedManifests = selectedManifests.filter((manifestTest) => manifestTest.manifestId != manifest.manifestId);
   } else {
     selectedManifests = [...selectedManifests, manifest];
@@ -750,7 +767,7 @@ export function toggleSelectedManifest(manifest = null) {
   });
 }
 
-export function toggleShowPullCommands(){
+export function toggleShowPullCommands() {
   return new Promise((resolve) => {
     this.setState({
       repoDetails: GA.modifyProperty(this.state.repoDetails, {

@@ -33,11 +33,11 @@ export default class RepoDetailsPage extends Component {
 				this.context.actions.getRepoOverview(this.state.repoId)
 			];
 
-			Promise.all(repoDeps)
-			.then(this.context.actions.toggleRepoDetailsPageXHR.bind(this, false))
-			.catch(() => {
-				this.context.actions.toggleRepoDetailsPageXHR(false);
-			})
+			return Promise.all(repoDeps);
+		})
+		.then(this.context.actions.toggleRepoDetailsPageXHR.bind(this, false))
+		.catch(() => {
+			this.context.actions.toggleRepoDetailsPageXHR(false);
 		});
 	}
 	componentWillUnmount() {
