@@ -25,15 +25,6 @@ public class JSXProperties
 
     public String getDnsName()
     {
-        if(_dnsSettings == null)
-        {
-            try {
-                return InetAddress.getLocalHost().getHostAddress();
-            } catch(Throwable t) {
-                log.error(t.getMessage(), t);
-                return null;
-            }
-        }
         return _dnsSettings.getDnsName();
     }
 }

@@ -55,6 +55,8 @@ public class GetContainerRepo extends AjaxHelper<EuropaRequestContext>
         if(repo.isLocal())
         {
             DnsSettings dnsSettings = _dnsSettingsProvider.get();
+            if(dnsSettings == null)
+                dnsSettings = DnsSettings.fromHostHeader(requestContext);
             repo.setEndpoint(dnsSettings.getDnsName());
         }
 
