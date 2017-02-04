@@ -8,6 +8,8 @@
 */
 package com.distelli.europa.ajax;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -15,6 +17,7 @@ import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.db.ContainerRepoDb;
 import com.distelli.europa.models.ContainerRepo;
 import com.distelli.europa.models.RegistryProvider;
+import com.distelli.europa.util.PermissionCheck;
 import com.distelli.utils.CompactUUID;
 import com.distelli.webserver.AjaxClientException;
 import com.distelli.webserver.AjaxHelper;
@@ -30,6 +33,10 @@ public class CreateLocalRepo extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     protected ContainerRepoDb _repoDb;
+    @Inject
+    protected PermissionCheck _permissionCheck;
+
+    private final Pattern repoNamePattern = Pattern.compile("[a-zA-Z0-9_\\.-]+");
 
     public CreateLocalRepo()
     {
@@ -45,6 +52,14 @@ public class CreateLocalRepo extends AjaxHelper<EuropaRequestContext>
             throw(new AjaxClientException("The specified Repository already exists",
                                           AjaxErrors.Codes.RepoAlreadyExists,
                                           400));
+        Matcher m = repoNamePattern.matcher(repoName);
+        if(!m.matches())
+            throw(new AjaxClientException("The Repo Name is invalid. It must match regex [a-zA-Z_.-]",
+                                          AjaxErrors.Codes.BadRepoName,
+                                          400));
+
+        _permissionCheck.check(ajaxRequest, requestContext);
+
         repo = ContainerRepo.builder()
             .domain(ownerDomain)
             .name(repoName)

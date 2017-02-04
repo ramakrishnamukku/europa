@@ -14,6 +14,6 @@ public class AjaxErrors
         public static final String RepoAlreadyConnected = "RepoAlreadyConnected";
         public static final String TokenIsActive = "TokenIsActive";
         public static final String RepoNotFound = "RepoNotFound";
-        public static final String RepoNo = "RepoNotFound";
+        public static final String BadRepoName = "BadRepoName";
     }
 }
