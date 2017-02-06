@@ -189,6 +189,7 @@ export function listRepoNotifications(repoId, skipXHR) {
   });
 }
 
+// Modify Permissions
 export function redeliverNotification(recordId) {
   return new Promise((resolve, reject) => {
     let repoId = NPECheck(this.state, 'repoDetails/activeRepo/id', '');
@@ -250,6 +251,7 @@ export function updateNewNotificationField(prop, e, eIsValue) {
   });
 }
 
+// Modify Permissions
 export function addRepoNotification(skipXHR) {
   return new Promise((resolve, reject) => {
 
@@ -333,6 +335,7 @@ export function toggleRepoNotificationForDelete(notifId = null) {
   });
 }
 
+// Modify Permissions
 export function deleteNotification(skipXHR) {
   return new Promise((resolve, reject) => {
     this.setState({

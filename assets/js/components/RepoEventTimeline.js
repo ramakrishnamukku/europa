@@ -20,7 +20,7 @@ export default class RepoEventTimeline extends Component {
 	componentDidMount() {
 		let repoId = NPECheck(this.props, 'repoDetails/activeRepo/id', '');
 
-		if(!NPECheck(this.props, 'repoDetails/events/length', true)) {
+		if(!NPECheck(this.props, 'repoDetails/hasRetrievedEvents', true)) {
 			 this.context.actions.listRepoEvents(repoId);
 		}
 

@@ -138,6 +138,7 @@ export function clearCreateLocalRepoErrors() {
   });
 }
 
+// Create Permissions
 export function createLocalRepo() {
   return new Promise((resolve, reject) => {
 
@@ -311,6 +312,7 @@ export function toggleSelectExistingCredsDropdown() {
   });
 }
 
+// Create Permissions
 export function addRepoRequest(afterAddCb) {
   if (!isAddRepoValid.call(this, true)) return;
 
@@ -445,11 +447,13 @@ export function repoDetailsState() {
     events: [],
     eventsXHR: false,
     eventsError: '',
+    hasRetrievedEvents: false,
     activeEventId: null,
 
     manifests: [],
     manifestsXHR: false,
     manifestsError: '',
+    hasRetrievedManifests: false,
     selectedManifests: [],
     showPullCommands: false
 
@@ -549,6 +553,7 @@ export function toggleRepoOverviewEdit() {
   });
 }
 
+// Modify Permissions
 export function saveRepoOverview() {
   return new Promise((resolve, reject) => {
     this.setState({
@@ -607,6 +612,8 @@ export function toggleActiveRepoDelete() {
   })
 }
 
+
+// Delete Permissions
 export function deleteActiveRepo(afterDeleteCb) {
   this.setState({
     repoDetails: GA.modifyProperty(this.state.repoDetails, {
@@ -666,7 +673,8 @@ export function listRepoEvents(repoId, skipXHR) {
           this.setState({
             repoDetails: GA.modifyProperty(this.state.repoDetails, {
               events: res,
-              eventsXHR: false
+              eventsXHR: false,
+              hasRetrievedEvents: true
             })
           }, () => resolve());
         })
@@ -723,7 +731,8 @@ export function listRepoManifests(repoId, skipXHR) {
             repoDetails: GA.modifyProperty(this.state.repoDetails, {
               manifests: res,
               manifestsXHR: false,
-              manifestsError: ''
+              manifestsError: '',
+              hasRetrievedManifests: true
             })
           }, () => resolve())
         })

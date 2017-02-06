@@ -20,7 +20,7 @@ export default class RepoTags extends Component {
 	componentDidMount() {
 		let repoId = NPECheck(this.props, 'repoDetails/activeRepo/id', '');
 
-		if(!NPECheck(this.props, 'repoDetails/manifests/length', true)) {
+		if(!NPECheck(this.props, 'repoDetails/hasRetrievedManifests', true)) {
 			 this.context.actions.listRepoManifests(repoId);
 		}
 
