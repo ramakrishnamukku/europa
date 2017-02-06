@@ -277,9 +277,14 @@ export function removePipeline() {
 }
 
 export function addPipelineComponent() {
+  // TODO: require this extra information!
   const postData = {
+    type: "CopyToRepository",
+    pipelineId: this.state.pipelineStore.pipeline.id,
+  }
+  const content = {
+    destinationContainerRepoDomain: this.state.pipelineStore.repoConnectTemplate.domain,
     destinationContainerRepoId: this.state.pipelineStore.repoConnectTemplate.id,
-    pipelineId: this.state.pipelineStore.pipeline.id
   }
 
   return new Promise((resolve, reject) => {
@@ -288,7 +293,7 @@ export function addPipelineComponent() {
         addPipelineComponentXHR: true,
       })
     }, () => {
-      RAjax.POST.call(this, 'AddPipelineComponent', {}, postData)
+      RAjax.POST.call(this, 'AddPipelineComponent', content, postData)
       .then(res => {
         this.setState({
           pipelineStore: GR.modifyProperty(this.state.pipelineStore, {

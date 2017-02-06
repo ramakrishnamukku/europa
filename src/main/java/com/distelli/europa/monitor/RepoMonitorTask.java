@@ -23,6 +23,7 @@ import com.distelli.europa.models.*;
 import com.distelli.europa.notifiers.*;
 import com.distelli.persistence.PageIterator;
 import lombok.extern.log4j.Log4j;
+import com.distelli.europa.pipeline.RunPipeline;
 
 @Log4j
 public abstract class RepoMonitorTask extends MonitorTask
@@ -39,6 +40,10 @@ public abstract class RepoMonitorTask extends MonitorTask
     protected Notifier _notifier = null;
     @Inject
     protected ContainerRepoDb _containerRepoDb;
+    @Inject
+    private RunPipeline _runPipeline;
+    @Inject
+    private PipelineDb _pipelineDb;
 
     protected ContainerRepo _repo;
     public RepoMonitorTask(ContainerRepo repo)
@@ -46,6 +51,10 @@ public abstract class RepoMonitorTask extends MonitorTask
         _repo = repo;
     }
 
+    /**
+     * Do NOT run this task unless the syncCount matches. We do this so that tasks
+     * can be evenly distributed over multiple servers.
+     */
     @Override
     public void run()
     {
@@ -65,7 +74,19 @@ public abstract class RepoMonitorTask extends MonitorTask
         super.run();
     }
 
-    // Returns a list of tags that were removed:
+    /**
+     * Called by subclasses to find changes.
+     *
+     * PostCondition: tagToSha elements are removed if there was no changes, returns
+     *   a list of tag names NOT in tagToSha that were apparently removed (since they
+     *   are in the DB, but not in the tagToSha map).
+     *
+     * @param tagToSha is a map of tag names to objects that contain a "sha" (manifest digest)
+     *
+     * @param getSha is a function used get the "sha" from the object.
+     *
+     * @return a list of tag names that were removed.
+     */
     protected <T> List<String> findChanges(Map<String, T> tagToSha, Function<T, String> getSha) {
         List<String> removed = new ArrayList<>();
         for ( PageIterator iter : new PageIterator() ) {
@@ -87,8 +108,17 @@ public abstract class RepoMonitorTask extends MonitorTask
         return removed;
     }
 
-    protected List<DockerImage> saveManifestChanges(List<DockerImage> images) {
+    /**
+     * Called by subclasses to save information about DockerImage's that changed.
+     */
+    protected void saveChanges(List<DockerImage> images) {
         Collections.sort(images, new DockerImageComparator());
+        saveManifests(images);
+        saveEvents(images);
+        executePipeline(images);
+    }
+
+    private void saveManifests(List<DockerImage> images) {
         for ( DockerImage image : images ) {
             for ( String tag : image.getImageTags() ) {
                 if ( null == image.getImageSha() ) {
@@ -108,10 +138,9 @@ public abstract class RepoMonitorTask extends MonitorTask
                 }
             }
         }
-        return images;
     }
 
-    protected List<DockerImage> saveNewEvents(List<DockerImage> images) {
+    private void saveEvents(List<DockerImage> images) {
         RepoEvent lastEventSaved = null;
         for ( DockerImage image: images ) {
             RepoEvent repoEvent = RepoEvent.builder()
@@ -140,10 +169,9 @@ public abstract class RepoMonitorTask extends MonitorTask
         //before we return lets set the last sync time on the container repo
         _repo.setLastSyncTime(System.currentTimeMillis());
         _containerRepoDb.setLastSyncTime(_repo.getDomain(), _repo.getId(), _repo.getLastSyncTime());
-        return images;
     }
 
-    protected void notify(DockerImage image, RepoEvent event)
+    private void notify(DockerImage image, RepoEvent event)
     {
         //first get the list of notifications.
         //for each notification call the notifier
@@ -163,6 +191,24 @@ public abstract class RepoMonitorTask extends MonitorTask
         event.setNotifications(nfIdList);
     }
 
+    private void executePipeline(List<DockerImage> images) {
+        for ( DockerImage image : images ) {
+            for ( String tag : image.getImageTags() ) {
+                executePipeline(tag, image.getImageSha());
+            }
+        }
+    }
+
+    private void executePipeline(String tag, String sha) {
+        String domain = _repo.getDomain();
+        String repoId = _repo.getId();
+        for ( PageIterator it : new PageIterator() ) {
+            for ( Pipeline pipeline : _pipelineDb.listByContainerRepoId(domain, repoId, it) ) {
+                pipeline = _pipelineDb.getPipeline(pipeline.getId());
+                _runPipeline.runPipeline(pipeline, _repo, tag, sha);
+            }
+        }
+    }
 
     @Override
     public String toString() {

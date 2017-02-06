@@ -69,9 +69,7 @@ public class DockerHubMonitorTask extends RepoMonitorTask
         }
 
         // Transform into DockerImage objects, and save them:
-        saveNewEvents(
-            saveManifestChanges(
-                toDockerImages(imageTags.values())));
+        saveChanges(toDockerImages(imageTags.values()));
     }
 
     private Map<String, DockerHubRepoTag> listImageTags(DockerHubClient client) throws Exception

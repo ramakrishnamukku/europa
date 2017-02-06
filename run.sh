@@ -4,6 +4,7 @@ if [ -z "$EUROPA_CONFIG" ]; then
     EUROPA_CONFIG=EuropaConfig.json
 fi
 
+export STAGE=beta
 DEPS_CLASSPATH=`cat target/.classpath`
 CLASSPATH=target/classes/:$DEPS_CLASSPATH
 JVM_ARGS="-Duser.timezone=UTC -Xmx2000M -Xms2000M"

@@ -54,6 +54,7 @@ import com.distelli.utils.CompactUUID;
 import com.google.inject.Injector;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
 import javax.inject.Provider;
+import com.distelli.europa.pipeline.RunPipeline;
 
 @Log4j
 @Singleton
@@ -85,7 +86,7 @@ public class RegistryManifestPush extends RegistryBase {
     @Inject
     private PipelineDb _pipelineDb;
     @Inject
-    private Injector _injector;
+    private RunPipeline _runPipeline;
 
     public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
         try {
@@ -172,9 +173,7 @@ public class RegistryManifestPush extends RegistryBase {
             _eventDb.save(event);
             _repoDb.setLastEvent(repo.getDomain(), repo.getId(), event);
 
-            if ( null == oldManifest || ! finalDigest.equals(oldManifest.getManifestId()) ) {
-                executePipeline(repo, reference, manifest);
-            }
+            executePipeline(repo, reference, finalDigest);
         } catch ( Throwable ex ) {
             log.error(ex.getMessage(), ex);
         }
@@ -186,19 +185,16 @@ public class RegistryManifestPush extends RegistryBase {
         return response;
     }
 
-    private void executePipeline(ContainerRepo repo, String tag, RegistryManifest manifest) {
+    private void executePipeline(ContainerRepo repo, String tag, String digest) {
+        String domain = repo.getDomain();
+        String repoId = repo.getId();
+        log.debug("Finding pipelines to execute for domain="+domain+" repoId="+repoId);
         for ( PageIterator it : new PageIterator() ) {
-            for ( Pipeline pipeline : _pipelineDb.listByContainerRepoId(repo.getDomain(), repo.getId(), it) ) {
-                executePipeline(_pipelineDb.getPipeline(pipeline.getId()), repo, tag, manifest);
+            for ( Pipeline pipeline : _pipelineDb.listByContainerRepoId(domain, repoId, it) ) {
+                // Get the full pipeline:
+                pipeline = _pipelineDb.getPipeline(pipeline.getId());
+                _runPipeline.runPipeline(pipeline, repo, tag, digest);
             }
-        }
-    }
-
-    private void executePipeline(Pipeline pipeline, ContainerRepo repo, String tag, RegistryManifest manifest) {
-        for ( PipelineComponent component : pipeline.getComponents() ) {
-            // TODO: Find a cleaner way to inject...
-            _injector.injectMembers(component);
-            if ( ! component.execute(repo, tag, manifest) ) break;
         }
     }
 

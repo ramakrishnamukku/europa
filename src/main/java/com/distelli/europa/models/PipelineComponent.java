@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Singular;
+import com.distelli.webserver.AjaxClientException;
 
 @Data
 @NoArgsConstructor
@@ -12,8 +13,14 @@ import lombok.Singular;
 public class PipelineComponent {
     private String id;
 
-    public boolean execute(ContainerRepo repo, String tag, RegistryManifest manifest) {
+    // Used by RunPipeline:
+    public boolean execute(ContainerRepo repo, String tag, String manifestDigestSha) {
         return true;
+    }
+
+    // Used by AddPipelineComponent AJAX handler:
+    // key is the location within the JSON
+    public void validate(String key) throws AjaxClientException {
     }
 
     public static class Builder<T extends Builder<T>> {

@@ -65,8 +65,7 @@ public class GcrMonitorTask extends RepoMonitorTask
 
         List<DockerImage> dockerImages = toDockerImages(imageTags.values());
 
-        saveNewEvents(
-            saveManifestChanges(dockerImages));
+        saveChanges(dockerImages);
     }
 
     private List<DockerImage> toDockerImages(Collection<GcrImageTag> imageTags) {

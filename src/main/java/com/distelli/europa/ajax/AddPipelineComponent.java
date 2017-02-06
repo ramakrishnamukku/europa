@@ -20,11 +20,18 @@ import org.eclipse.jetty.http.HttpMethod;
 import lombok.extern.log4j.Log4j;
 import javax.inject.Inject;
 import com.distelli.europa.EuropaRequestContext;
+import java.util.Map;
+import java.util.HashMap;
 
 @Log4j
 @Singleton
 public class AddPipelineComponent extends AjaxHelper<EuropaRequestContext>
 {
+    private static final Map<String, Class<? extends PipelineComponent>> TYPES = new HashMap<>();
+    static {
+        TYPES.put("CopyToRepository", PCCopyToRepository.class);
+    }
+
     @Inject
     private PipelineDb _db;
 
@@ -35,14 +42,18 @@ public class AddPipelineComponent extends AjaxHelper<EuropaRequestContext>
 
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
+        String typeName = ajaxRequest.getParam("type", true);
         String pipelineId = ajaxRequest.getParam("pipelineId", true);
-        String destinationContainerRepoId = ajaxRequest.getParam("destinationContainerRepoId", true);
 
-        PipelineComponent component = PCCopyToRepository.builder()
-            .destinationContainerRepoId(destinationContainerRepoId)
-            .build();
+        Class<? extends PipelineComponent> type = TYPES.get(typeName);
+            
+        PipelineComponent component = ajaxRequest.convertContent(type, true);
+        component.validate("content@"+typeName);
 
-        _db.addPipelineComponent(pipelineId, component, null);
+        _db.addPipelineComponent(
+            pipelineId,
+            component,
+            ajaxRequest.getParam("beforeComponentId"));
 
         return _db.getPipeline(pipelineId);
     }

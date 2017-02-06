@@ -61,9 +61,7 @@ public class EcrMonitorTask extends RepoMonitorTask
         }
 
         // Transform into DockerImage objects, and save them:
-        saveNewEvents(
-            saveManifestChanges(
-                toDockerImages(imageTags.values())));
+        saveChanges(toDockerImages(imageTags.values()));
     }
 
     private void initEcrClient()
