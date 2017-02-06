@@ -8,6 +8,7 @@
 */
 package com.distelli.europa.ajax;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -16,6 +17,7 @@ import org.eclipse.jetty.http.HttpMethod;
 import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
+import com.distelli.europa.util.PermissionCheck;
 import com.distelli.persistence.PageIterator;
 import com.distelli.webserver.*;
 import com.google.inject.Singleton;
@@ -30,6 +32,8 @@ public class ListContainerRepos extends AjaxHelper<EuropaRequestContext>
     private ContainerRepoDb _db;
     @Inject
     private Provider<DnsSettings> _dnsSettingsProvider;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public ListContainerRepos()
     {
@@ -69,15 +73,44 @@ public class ListContainerRepos extends AjaxHelper<EuropaRequestContext>
         List<ContainerRepo> repoList = _db.listRepos(domain, pageIterator);
         if(repoList == null || repoList.size() == 0)
             return repoList;
+        boolean localRepoListAllowed = true;
+        boolean remoteRepoListAllowed = true;
+        try {
+            _permissionCheck.check(ajaxRequest, requestContext, Boolean.TRUE);
+        } catch(AjaxClientException ace) {
+            JsonError je = ace.getJsonError();
+            if(je == null || je.getHttpStatusCode() != 403)
+                throw(ace);
+            localRepoListAllowed = false;
+        }
+        try {
+            _permissionCheck.check(ajaxRequest, requestContext, Boolean.FALSE);
+        } catch(AjaxClientException ace) {
+            JsonError je = ace.getJsonError();
+            if(je == null || je.getHttpStatusCode() != 403)
+                throw(ace);
+            remoteRepoListAllowed = false;
+        }
+
+        List<ContainerRepo> retval = new ArrayList<ContainerRepo>();
         for(ContainerRepo repo : repoList)
         {
             if(repo.isLocal())
             {
                 DnsSettings dnsSettings = _dnsSettingsProvider.get();
                 repo.setEndpoint(dnsSettings.getDnsName());
+                if(!localRepoListAllowed)
+                    continue;
+                retval.add(repo);
+            }
+            else
+            {
+                if(!remoteRepoListAllowed)
+                    continue;
+                retval.add(repo);
             }
         }
 
-        return repoList;
+        return retval;
     }
 }

@@ -46,7 +46,8 @@ public class SaveContainerRepo extends AjaxHelper<EuropaRequestContext>
     private Provider<GcrClient.Builder> _gcrClientBuilderProvider;
     @Inject
     private Provider<DockerHubClient.Builder> _dhClientBuilderProvider;
-
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public SaveContainerRepo()
     {
@@ -55,6 +56,7 @@ public class SaveContainerRepo extends AjaxHelper<EuropaRequestContext>
 
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
+        _permissionCheck.check(ajaxRequest, requestContext);
         ContainerRepo repo = ajaxRequest.convertContent("/repo", ContainerRepo.class,
                                                        true); //throw if null
         //Validate that the fields we want are non-null
