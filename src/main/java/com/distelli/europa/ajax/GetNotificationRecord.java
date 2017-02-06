@@ -47,7 +47,7 @@ public class GetNotificationRecord extends AjaxHelper<EuropaRequestContext>
                                          true); //throw if missing
         String repoId = ajaxRequest.getParam("repoId", true);
         String domain = requestContext.getOwnerDomain();
-        _permissionCheck.check(ajaxRequest, requestContext, domain, repoId);
+        _permissionCheck.check(ajaxRequest, requestContext, repoId);
 
         NotificationId notificationId = NotificationId.fromCanonicalId(id);
         NotificationType type = notificationId.getType();

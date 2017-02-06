@@ -39,7 +39,7 @@ public class ListRepoNotifications extends AjaxHelper<EuropaRequestContext>
         String marker = ajaxRequest.getParam("marker");
         String domain = requestContext.getOwnerDomain();
 
-        _permissionCheck.check(ajaxRequest, requestContext, domain, repoId);
+        _permissionCheck.check(ajaxRequest, requestContext, repoId);
 
         PageIterator pageIterator = new PageIterator()
         .pageSize(pageSize)
