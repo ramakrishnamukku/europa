@@ -83,6 +83,7 @@ export default class RepoOverview extends Component {
 		if(error) {
 			return (
 				<Msg text={error} 
+					 close={() => this.context.actions.clearRepoDetailsErrors()}
 	    		     style={{padding: '1rem 0'}}/>
     		)	
 		}

@@ -435,13 +435,15 @@ export function repoDetailsState() {
     repoOverviewContent: '',
     repoOverviewContentOriginal: '',
     isOverviewModified: false,
+    saveRepoOverviewXHR: false,
+
     editOverview: false,
     repoOverviewError: '',
+
     pageXHR: false,
     deleteXHR: false,
     isDeleting: false,
     showSettings: false,
-
     timelineSection: 'OVERVIEW',
 
     events: [],
@@ -462,8 +464,18 @@ export function repoDetailsState() {
 
 export function resetRepoDetailsState() {
   this.setState({
-    repoDetails: GA.modifyProperty(this.state.addRepo, repoDetailsState.call(this))
+    repoDetails: GA.modifyProperty(this.state.repoDetails, repoDetailsState.call(this))
   });
+}
+
+export function clearRepoDetailsErrors(){
+ this.setState({
+    repoDetails: GA.modifyProperty(this.state.repoDetails, {
+      repoOverviewError: '',
+      eventsError: '',
+      manifestsError: '',
+    })
+  }); 
 }
 
 export function toggleRepoDetailsPageXHR(loading) {
@@ -580,7 +592,7 @@ export function saveRepoOverview() {
         })
         .catch((err) => {
           console.error(err);
-          let errorMsg = `There was an error saving your read me. ${NPECheck(err, 'error/message', '')}`
+          let errorMsg = `${NPECheck(err, 'error/message', '')}`
           this.setState({
             repoDetails: GA.modifyProperty(this.state.repoDetails, {
               saveRepoOverviewXHR: false,

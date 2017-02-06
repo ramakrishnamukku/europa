@@ -157,6 +157,7 @@ export function toggleShowNotificationTestResults() {
   });
 }
 
+// Read Permissions
 export function listRepoNotifications(repoId, skipXHR) {
   return new Promise((resolve, reject) => {
     this.setState({
@@ -177,13 +178,22 @@ export function listRepoNotifications(repoId, skipXHR) {
         })
         .catch((err) => {
           console.error(err);
-          let errorMsg = `There was an error retrieving your notifications. ${NPECheck(err, 'error/message', '')}`
-          this.setState({
-            notif: GA.modifyProperty(this.state.notif, {
-              notifError: errorMsg,
-              notifsXHR: false
-            })
-          }, () => reject());
+          let errorMsg = `${NPECheck(err, 'error/message', '')}`
+          if (errorMsg == 'You do not have access to this operation') {
+            this.setState({
+              reposXHR: false,
+              repoDetails: GA.modifyProperty(this.state.repoDetails, {
+                isBlocked: true
+              })
+            }, () => reject());
+          } else {
+            this.setState({
+              notif: GA.modifyProperty(this.state.notif, {
+                notifError: errorMsg,
+                notifsXHR: false
+              })
+            }, () => reject());
+          }
         });
     });
   });
@@ -214,7 +224,7 @@ export function redeliverNotification(recordId) {
         })
         .catch((err) => {
           console.error(err);
-          let errorMsg = `There was an error redelivering your webhook. ${NPECheck(err, 'error/message', '')}`
+          let errorMsg = `${NPECheck(err, 'error/message', '')}`
           this.setState({
             notif: GA.modifyProperty(this.state.notif, {
               redeliverError: errorMsg
