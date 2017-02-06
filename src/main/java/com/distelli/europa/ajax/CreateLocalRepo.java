@@ -57,7 +57,6 @@ public class CreateLocalRepo extends AjaxHelper<EuropaRequestContext>
             throw(new AjaxClientException("The Repo Name is invalid. It must match regex [a-zA-Z_.-]",
                                           AjaxErrors.Codes.BadRepoName,
                                           400));
-
         _permissionCheck.check(ajaxRequest, requestContext);
 
         repo = ContainerRepo.builder()

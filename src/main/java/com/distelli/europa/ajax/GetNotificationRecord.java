@@ -11,6 +11,7 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
 
+import com.distelli.europa.util.PermissionCheck;
 import com.distelli.europa.models.*;
 import com.distelli.europa.notifiers.*;
 import com.distelli.europa.util.*;
@@ -32,6 +33,8 @@ public class GetNotificationRecord extends AjaxHelper<EuropaRequestContext>
     protected Provider<ObjectStore> _objectStoreProvider;
     @Inject
     protected Provider<ObjectKeyFactory> _objectKeyFactoryProvider;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public GetNotificationRecord()
     {
@@ -42,6 +45,10 @@ public class GetNotificationRecord extends AjaxHelper<EuropaRequestContext>
     {
         String id = ajaxRequest.getParam("notificationId",
                                          true); //throw if missing
+        String repoId = ajaxRequest.getParam("repoId", true);
+        String domain = requestContext.getOwnerDomain();
+        _permissionCheck.check(ajaxRequest, requestContext, domain, repoId);
+
         NotificationId notificationId = NotificationId.fromCanonicalId(id);
         NotificationType type = notificationId.getType();
         switch(type)

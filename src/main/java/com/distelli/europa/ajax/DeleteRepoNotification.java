@@ -25,6 +25,7 @@ import org.eclipse.jetty.http.HttpMethod;
 import lombok.extern.log4j.Log4j;
 import javax.inject.Inject;
 import com.distelli.europa.EuropaRequestContext;
+import com.distelli.europa.util.PermissionCheck;
 
 @Log4j
 @Singleton
@@ -32,6 +33,8 @@ public class DeleteRepoNotification extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private NotificationsDb _notificationDb;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public DeleteRepoNotification()
     {
@@ -41,7 +44,10 @@ public class DeleteRepoNotification extends AjaxHelper<EuropaRequestContext>
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         String notificationId = ajaxRequest.getParam("notificationId", true);
+        String repoId = ajaxRequest.getParam("repoId", true);
         String domain = requestContext.getOwnerDomain();
+        _permissionCheck.check(ajaxRequest, requestContext, domain, repoId);
+
         _notificationDb.deleteNotification(domain, notificationId);
         return JsonSuccess.Success;
     }

@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.HashMap;
 import javax.inject.Inject;
 
+import com.distelli.europa.util.PermissionCheck;
 import com.distelli.europa.clients.*;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
@@ -38,6 +39,8 @@ public class SaveRepoNotification extends AjaxHelper<EuropaRequestContext>
     private ContainerRepoDb _repoDb;
     @Inject
     private NotificationsDb _notificationDb;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public SaveRepoNotification()
     {
@@ -51,6 +54,9 @@ public class SaveRepoNotification extends AjaxHelper<EuropaRequestContext>
         ContainerRepo repo = _repoDb.getRepo(repoDomain, repoId);
         if(repo == null)
             throw(new AjaxClientException("Invalid RepoId: "+repoId, JsonError.Codes.BadParam, 400));
+
+        _permissionCheck.check(ajaxRequest, requestContext, repo);
+
         Notification notification = ajaxRequest.convertContent("/notification", Notification.class,
                                                                true);
         FieldValidator.validateNonNull(notification, "type", "target");

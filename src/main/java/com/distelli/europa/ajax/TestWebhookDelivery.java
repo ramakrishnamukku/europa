@@ -24,7 +24,7 @@ import com.distelli.webserver.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.distelli.europa.EuropaRequestContext;
 import com.google.inject.Singleton;
-
+import com.distelli.europa.util.PermissionCheck;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
@@ -33,6 +33,8 @@ public class TestWebhookDelivery extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     protected WebhookClient _webhookClient;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public TestWebhookDelivery()
     {
@@ -45,6 +47,13 @@ public class TestWebhookDelivery extends AjaxHelper<EuropaRequestContext>
                                                                true);
         FieldValidator.validateNonNull(notification, "type", "target");
         FieldValidator.validateEquals(notification, "type", NotificationType.WEBHOOK);
+
+        String repoId = ajaxRequest.getParam("repoId", true);
+        String domain = requestContext.getOwnerDomain();
+        if(repoId != null)
+            _permissionCheck.check(ajaxRequest, requestContext, domain, repoId);
+        else
+            _permissionCheck.check(ajaxRequest, requestContext);
 
         Webhook webhook = null;
         ImagePushWebhookContent content = new ImagePushWebhookContent();

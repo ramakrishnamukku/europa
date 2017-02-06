@@ -25,8 +25,6 @@ public class ListRepoEvents extends AjaxHelper<EuropaRequestContext>
     @Inject
     protected RepoEventsDb _db;
     @Inject
-    protected ContainerRepoDb _repoDb;
-    @Inject
     protected PermissionCheck _permissionCheck;
 
     public ListRepoEvents()
@@ -41,11 +39,7 @@ public class ListRepoEvents extends AjaxHelper<EuropaRequestContext>
         String marker = ajaxRequest.getParam("marker");
         String domain = requestContext.getOwnerDomain();
 
-        ContainerRepo repo = _repoDb.getRepo(domain, repoId);
-        if(repo == null)
-            throw(new AjaxClientException("The specified Repository was not found",
-                                          AjaxErrors.Codes.RepoNotFound, 400));
-        _permissionCheck.check(ajaxRequest, requestContext, repo);
+        _permissionCheck.check(ajaxRequest, requestContext, domain, repoId);
 
         PageIterator pageIterator = new PageIterator()
         .pageSize(pageSize)

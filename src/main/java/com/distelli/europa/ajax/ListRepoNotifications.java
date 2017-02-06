@@ -9,6 +9,7 @@ package com.distelli.europa.ajax;
 
 import com.distelli.persistence.PageIterator;
 
+import com.distelli.europa.util.PermissionCheck;
 import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
@@ -23,6 +24,8 @@ public class ListRepoNotifications extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private NotificationsDb _db;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public ListRepoNotifications()
     {
@@ -35,6 +38,8 @@ public class ListRepoNotifications extends AjaxHelper<EuropaRequestContext>
         int pageSize = ajaxRequest.getParamAsInt("pageSize", 100);
         String marker = ajaxRequest.getParam("marker");
         String domain = requestContext.getOwnerDomain();
+
+        _permissionCheck.check(ajaxRequest, requestContext, domain, repoId);
 
         PageIterator pageIterator = new PageIterator()
         .pageSize(pageSize)

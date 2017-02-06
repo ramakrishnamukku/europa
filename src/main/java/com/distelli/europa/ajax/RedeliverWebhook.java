@@ -29,6 +29,7 @@ import com.distelli.webserver.RequestContext;
 import com.distelli.europa.EuropaRequestContext;
 import lombok.extern.log4j.Log4j;
 import javax.inject.Provider;
+import com.distelli.europa.util.PermissionCheck;
 
 @Log4j
 @Singleton
@@ -42,6 +43,8 @@ public class RedeliverWebhook extends AjaxHelper<EuropaRequestContext>
     private Provider<ObjectStore> _objectStoreProvider;
     @Inject
     private RepoEventsDb _repoEventsDb;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public RedeliverWebhook()
     {
@@ -61,6 +64,8 @@ public class RedeliverWebhook extends AjaxHelper<EuropaRequestContext>
         NotificationType type = notificationId.getType();
         if(type != NotificationType.WEBHOOK)
             throw(new AjaxClientException("Invalid WebhookId: "+id, JsonError.Codes.BadContent, 400));
+
+        _permissionCheck.check(ajaxRequest, requestContext, domain, repoId);
 
         //now get the event
         RepoEvent event = _repoEventsDb.getEventById(domain, repoId, eventId);
