@@ -15,6 +15,7 @@ import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.db.ContainerRepoDb;
 import com.distelli.europa.models.ContainerRepo;
 import com.distelli.europa.models.RegistryProvider;
+import com.distelli.europa.util.PermissionCheck;
 import com.distelli.webserver.AjaxClientException;
 import com.distelli.webserver.AjaxHelper;
 import com.distelli.webserver.AjaxRequest;
@@ -30,6 +31,8 @@ public class SetRepoPublic extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private ContainerRepoDb _repoDb;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public SetRepoPublic()
     {
@@ -44,6 +47,8 @@ public class SetRepoPublic extends AjaxHelper<EuropaRequestContext>
         if(repo == null)
             throw(new AjaxClientException("The specified Repository was not found",
                                           AjaxErrors.Codes.RepoNotFound, 400));
+        _permissionCheck.check(ajaxRequest, requestContext, repo);
+
         if(!repo.isLocal())
             throw(new AjaxClientException("Cannot change public / private setting for Remote Repository",
                                           JsonError.Codes.UnsupportedOperation, 400));
