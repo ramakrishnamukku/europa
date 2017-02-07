@@ -20,6 +20,7 @@ import org.eclipse.jetty.http.HttpMethod;
 import lombok.extern.log4j.Log4j;
 import javax.inject.Inject;
 import com.distelli.europa.EuropaRequestContext;
+import com.distelli.europa.util.PermissionCheck;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -34,6 +35,8 @@ public class AddPipelineComponent extends AjaxHelper<EuropaRequestContext>
 
     @Inject
     private PipelineDb _db;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public AddPipelineComponent()
     {
@@ -44,9 +47,10 @@ public class AddPipelineComponent extends AjaxHelper<EuropaRequestContext>
     {
         String typeName = ajaxRequest.getParam("type", true);
         String pipelineId = ajaxRequest.getParam("pipelineId", true);
+        _permissionCheck.check(ajaxRequest, requestContext, pipelineId);
 
         Class<? extends PipelineComponent> type = TYPES.get(typeName);
-            
+
         PipelineComponent component = ajaxRequest.convertContent(type, true);
         component.validate("content@"+typeName);
 

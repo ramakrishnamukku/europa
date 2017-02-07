@@ -18,6 +18,7 @@ import org.eclipse.jetty.http.HttpMethod;
 import lombok.extern.log4j.Log4j;
 import javax.inject.Inject;
 import com.distelli.europa.EuropaRequestContext;
+import com.distelli.europa.util.PermissionCheck;
 
 @Log4j
 @Singleton
@@ -25,6 +26,8 @@ public class RemovePipelineComponent extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private PipelineDb _db;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public RemovePipelineComponent()
     {
@@ -35,6 +38,7 @@ public class RemovePipelineComponent extends AjaxHelper<EuropaRequestContext>
     {
         String pipelineId = ajaxRequest.getParam("pipelineId", true);
         String pipelineComponentId = ajaxRequest.getParam("pipelineComponentId", true);
+        _permissionCheck.check(ajaxRequest, requestContext, pipelineId);
 
         _db.removePipelineComponent(pipelineId, pipelineComponentId);
 

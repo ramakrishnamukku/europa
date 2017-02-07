@@ -45,6 +45,8 @@ public class CreateLocalRepo extends AjaxHelper<EuropaRequestContext>
 
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
+        _permissionCheck.check(ajaxRequest, requestContext);
+
         String ownerDomain = requestContext.getOwnerDomain();
         String repoName = ajaxRequest.getParam("repoName", true);
         ContainerRepo repo = _repoDb.getRepo(ownerDomain, RegistryProvider.EUROPA, "", repoName);
@@ -57,7 +59,6 @@ public class CreateLocalRepo extends AjaxHelper<EuropaRequestContext>
             throw(new AjaxClientException("The Repo Name is invalid. It must match regex [a-zA-Z_.-]",
                                           AjaxErrors.Codes.BadRepoName,
                                           400));
-        _permissionCheck.check(ajaxRequest, requestContext);
 
         repo = ContainerRepo.builder()
             .domain(ownerDomain)

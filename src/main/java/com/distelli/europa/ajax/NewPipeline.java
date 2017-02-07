@@ -17,6 +17,7 @@ import com.google.inject.Singleton;
 import org.eclipse.jetty.http.HttpMethod;
 import lombok.extern.log4j.Log4j;
 import javax.inject.Inject;
+import com.distelli.europa.util.PermissionCheck;
 import com.distelli.europa.EuropaRequestContext;
 
 @Log4j
@@ -25,6 +26,8 @@ public class NewPipeline extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private PipelineDb _db;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public NewPipeline()
     {
@@ -33,6 +36,8 @@ public class NewPipeline extends AjaxHelper<EuropaRequestContext>
 
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
+        _permissionCheck.check(ajaxRequest, requestContext);
+
         String domain = requestContext.getOwnerDomain();
         String name = ajaxRequest.getParam("name", true);
         PageIterator pageIterator = new PageIterator().pageSize(100);
