@@ -8,6 +8,7 @@ import ControlRoom from './../components/ControlRoom'
 import Dropdown from './../components/Dropdown'
 import CenteredConfirm from './../components/CenteredConfirm'
 import RegistryProviderIcons from './../util/RegistryProviderIcons'
+import Msg from './../components/Msg'
 
 export default class PipelineConnectRepository extends Component {
   constructor(props) {
@@ -25,15 +26,34 @@ export default class PipelineConnectRepository extends Component {
         </div>
       );
     }
+
     return (
-      <CenteredConfirm confirmButtonText="Connect"
-                       noMessage={true}
-                       confirmButtonStyle={{}}
-                       onConfirm={ this.props.initialConnect
-                                   ? this.context.actions.setContainerRepo
-                                   : this.context.actions.addPipelineComponent }
-                       onCancel={ () => this.context.actions.setPipelinePageSection(null) } />
+      <div>
+        {this.renderErrorMsg()}
+        <CenteredConfirm confirmButtonText="Connect"
+                         noMessage={true}
+                         confirmButtonStyle={{}}
+                         onConfirm={ this.props.initialConnect
+                                     ? this.context.actions.setContainerRepo
+                                     : this.context.actions.addPipelineComponent }
+                         onCancel={ () => this.context.actions.setPipelinePageSection(null) } />
+      </div>
     );
+  }
+  renderErrorMsg() {
+    if (this.props.pipelineStore.setContainerRepoXHRError) {
+      return (
+        <Msg text={this.props.pipelineStore.setContainerRepoXHRError}
+           close={() => this.context.actions.clearPipelineXHRErrors()} />
+      );
+    }
+
+    if (this.props.pipelineStore.addPipelineComponentXHRError) {
+      return (
+        <Msg text={this.props.pipelineStore.addPipelineComponentXHRError}
+           close={() => this.context.actions.clearPipelineXHRErrors()} />
+      );
+    }
   }
   renderRepoItem(repo, index) {
     return (
@@ -46,6 +66,7 @@ export default class PipelineConnectRepository extends Component {
     );
   }
   render() {
+    console.log(this.props.pipelineStore)
     return (
       <div>
         <div className="CR_Header">

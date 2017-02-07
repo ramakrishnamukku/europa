@@ -145,18 +145,41 @@ export default class Pipeline extends Component {
         </div>
         <div className="CR_BodyContent">
           <div className="Flex1">
-            <CenteredConfirm confirmButtonText="Remove"
-                             message="Are you sure you want to remove this Pipeline?"
-                             confirmButtonStyle={{}}
-                             onConfirm={ this.context.actions.removePipeline }
-                             onCancel={ () => this.context.actions.setPipelinePageSection(null) } />
+            {this.renderConfirmDeletePipeline()}
           </div>
         </div>
       </div>
     );
   }
+  renderConfirmDeletePipeline() {
+    if (this.props.pipelinesStore.removePipelineXHR) {
+      return (
+        <div className="PageLoader">
+          <Loader />
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        {this.renderRemovePipelineErrorMsg()}
+        <CenteredConfirm confirmButtonText="Remove"
+                         message="Are you sure you want to remove this Pipeline?"
+                         confirmButtonStyle={{}}
+                         onConfirm={ this.context.actions.removePipeline }
+                         onCancel={ () => this.context.actions.setPipelinePageSection(null) } />
+      </div>
+    );
+  }
+  renderRemovePipelineErrorMsg() {
+    if (this.props.pipelineStore.removePipelineXHRError) {
+      return (
+        <Msg text={this.props.pipelinesStore.removePipelineXHRError}
+           close={() => this.context.actions.clearPipelinesXHRErrors()} />
+      );
+    }
+  }
   render() {
-    console.log(this.state)
     let pipeline = this.props.pipelineStore.pipeline;
 
     if (this.state.loading) {

@@ -81,6 +81,18 @@ export default class PipelineStageItem extends Component {
     }
   }
   renderInterior(repo) {
+    if (!this.props.firstStage
+        && this.props.pipelineStore.removePipelineComponentXHR
+        && this.props.pipelineStore.removePipelineComponentXHR == this.state.pipelineComponent.id) {
+      return (
+        <div className="stage-destination">
+          <div style={ {margin: "15px 0 0"} }>
+            <Loader />
+          </div>
+        </div>
+      );
+    }
+
     if (this.state.deleteToggled) {
       return (
         <div className="stage-destination">
@@ -90,18 +102,6 @@ export default class PipelineStageItem extends Component {
                            confirmButtonText="Remove"
                            messageStyle={ {fontSize: ".75rem", margin: "7px 0 4px"} }
                            message="Are you sure you want to remove this stage?" />
-        </div>
-      );
-    }
-
-    if (!this.props.firstStage
-        && this.props.pipelineStore.removePipelineComponentXHR
-        && this.props.pipelineStore.removePipelineComponentXHR == this.state.pipelineComponent.id) {
-      return (
-        <div className="stage-destination">
-          <div className="PageLoader">
-            <Loader />
-          </div>
         </div>
       );
     }

@@ -25,6 +25,9 @@ export function pipelinesState() {
     pipelinesXHR: false,
     newPipelineXHR: false,
     removePipelineXHR: false,
+
+    // XHR Error
+    newPipelineXHRError: null,
   }
 }
 
@@ -40,7 +43,33 @@ export function singlePipelineState() {
     addPipelineComponentXHR: false,
     movePipelineComponentXHR: false,
     removePipelineComponentXHR: false,
+
+    // XHR Error
+    setContainerRepoXHRError: null,
+    addPipelineComponentXHRError: null,
+    movePipelineComponentXHRError: null,
+    removePipelineComponentXHRError: null,
   }
+}
+
+export function clearPipelinesXHRErrors() {
+  this.setState({
+    pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
+      newPipelineXHRError: null,
+    })
+  })
+}
+
+export function clearPipelineXHRErrors() {
+  this.setState({
+    pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
+      newPipelineXHRError: null,
+      setContainerRepoXHRError: null,
+      addPipelineComponentXHRError: null,
+      movePipelineComponentXHRError: null,
+      removePipelineComponentXHRError: null,
+    })
+  })
 }
 
 export function resetSinglePipelineState() {
@@ -171,14 +200,15 @@ export function getPipeline(pipelineId) {
 
 export function setContainerRepo() {
   const postData = {
-    pipelineId: this.state.pipelineStore.pipeline.id,
-    containerRepoId: this.state.pipelineStore.repoConnectTemplate.id
+    pipelineId: NPECheck(this.state.pipelineStore, 'pipeline/id', null),
+    containerRepoId: NPECheck(this.state.pipelineStore, 'repoConnectTemplate/id', null)
   }
 
   return new Promise((resolve, reject) => {
     this.setState({
-      pipelinesStore: GR.modifyProperty(this.state.pipelineStore, {
+      pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
         setContainerRepoXHR: true,
+        setContainerRepoXHRError: false,
       })
     }, () => {
       RAjax.POST.call(this, 'SetPipelineContainerRepoId', {}, postData)
@@ -187,6 +217,7 @@ export function setContainerRepo() {
           pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
             pipeline: res,
             setContainerRepoXHR: false,
+            setContainerRepoXHRError: false,
             repoConnectTemplate: null,
             section: null
           })
@@ -196,6 +227,7 @@ export function setContainerRepo() {
         this.setState({
           pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
             setContainerRepoXHR: false,
+            setContainerRepoXHRError: NPECheck(err, 'error/message', "")
           })
         }, () => reject() );
       });
@@ -205,11 +237,6 @@ export function setContainerRepo() {
 
 export function createPipeline() {
   let newPipeline = { ...this.state.pipelinesStore.newPipelineTemplate }
-
-  if (!newPipeline.name) {
-    updateNewPipelineTemplate.apply(this, ["errorFields", ["name"] ]);
-    return;
-  }
 
   // Remove validation if clean
   delete newPipeline["errorFields"];
@@ -226,6 +253,7 @@ export function createPipeline() {
           pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
             pipelines: res,
             newPipelineXHR: false,
+            newPipelineXHRError: false,
             newPipelineTemplate: pipelinesState()["newPipelineTemplate"],
             initNewPipeline: false
           })
@@ -235,8 +263,9 @@ export function createPipeline() {
         this.setState({
           pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
             newPipelineXHR: false,
+            newPipelineXHRError: NPECheck(err, 'error/message', "")
           })
-        }, () => reject() );
+        });
       });
     });
   });
@@ -258,6 +287,7 @@ export function removePipeline() {
         this.setState({
           pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
             pipelines: res,
+            removePipelineXHRError: false,
             removePipelineXHR: false,
           })
         }, () => {
@@ -269,6 +299,7 @@ export function removePipeline() {
         this.setState({
           pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
             removePipelineXHR: false,
+            removePipelineXHRError: NPECheck(err, 'error/message', "")
           })
         }, () => reject() );
       });
@@ -283,13 +314,13 @@ export function addPipelineComponent() {
     pipelineId: this.state.pipelineStore.pipeline.id,
   }
   const content = {
-    destinationContainerRepoDomain: this.state.pipelineStore.repoConnectTemplate.domain,
-    destinationContainerRepoId: this.state.pipelineStore.repoConnectTemplate.id,
+    destinationContainerRepoDomain: NPECheck(this.state.pipelineStore, 'repoConnectTemplate/domain', null),
+    destinationContainerRepoId: NPECheck(this.state.pipelineStore, 'repoConnectTemplate/id', null),
   }
 
   return new Promise((resolve, reject) => {
     this.setState({
-      pipelinesStore: GR.modifyProperty(this.state.pipelineStore, {
+      pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
         addPipelineComponentXHR: true,
       })
     }, () => {
@@ -299,16 +330,18 @@ export function addPipelineComponent() {
           pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
             pipeline: res,
             addPipelineComponentXHR: false,
+            addPipelineComponentXHRError: false,
             section: null,
           })
         }, () => resolve(res) );
       })
       .catch(err => {
         this.setState({
-          pipelinesStore: GR.modifyProperty(this.state.pipelineStore, {
+          pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
             addPipelineComponentXHR: false,
+            addPipelineComponentXHRError: NPECheck(err, 'error/message', "")
           })
-        }, () => reject() );
+        });
       });
     });
   });

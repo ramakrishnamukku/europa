@@ -7,6 +7,7 @@ import BtnGroup from './../components/BtnGroup'
 import ControlRoom from './../components/ControlRoom'
 import PipelineStageItem from './../components/PipelineStageItem'
 import CenteredConfirm from './../components/CenteredConfirm'
+import Msg from './../components/Msg'
 
 export default class Pipelines extends Component {
   constructor(props) {
@@ -100,12 +101,23 @@ export default class Pipelines extends Component {
     }
 
     return (
-      <CenteredConfirm confirmButtonText="Create"
-                       noMessage={true}
-                       confirmButtonStyle={{}}
-                       onConfirm={ this.context.actions.createPipeline }
-                       onCancel={this.context.actions.toggleInitNewPipeline } />
+      <div>
+        {this.renderNewPipelineXHRError()}
+        <CenteredConfirm confirmButtonText="Create"
+                         noMessage={true}
+                         confirmButtonStyle={{}}
+                         onConfirm={ this.context.actions.createPipeline }
+                         onCancel={this.context.actions.toggleInitNewPipeline } />
+      </div>
     );
+  }
+  renderNewPipelineXHRError() {
+    if (this.props.pipelinesStore.newPipelineXHRError) {
+      return (
+        <Msg text={this.props.pipelinesStore.newPipelineXHRError}
+             close={() => this.context.actions.clearPipelinesXHRErrors()} />
+      );
+    }
   }
   renderPipelineList() {
     if (this.props.pipelinesStore.initNewPipeline) return;
