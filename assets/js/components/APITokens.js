@@ -38,6 +38,9 @@ export default class APITokens extends Component{
 			 		API Tokens
 			 	</span>
 			 	<span className="Flex1">
+			 		Owner
+			 	</span>
+			 	<span className="Flex1">
 			 		Created
 			 	</span>
 			 	<span className="Flex1">
@@ -72,10 +75,13 @@ export default class APITokens extends Component{
 					 let dateCreated = new Date(token.created);
 					 let dateCreatedUTC = ConvertTimeUTC(dateCreated);
 
+					 console.log(token);
+
 					return (
 						<div className="TokenItem" key={i}>
 							<div className="TokenDetails">
 								{this.renderTokenString(token.token)}
+								<span className="Flex1">USER_NAME_HERE</span>
 								<span className="Flex1">{dateCreatedUTC}</span>
 								<span className={statusClassName}>{token.status}</span>
 								{this.renderIcons(token)}
