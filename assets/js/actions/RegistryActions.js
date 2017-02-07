@@ -19,7 +19,9 @@ import {
 
 export function registryState() {
   return {
+    isBlocked: false,
     registrySelectedForDelete: null,
+    registriesError: '',
     deleteRegistryXHR: false,
     deleteRegistryErrorMsg: ''
   }
@@ -46,13 +48,35 @@ export function listRegistries() {
         this.setState({
           registries: res,
           registriesMap: registriesMap,
-          registriesXHR: false
-        })
+          registriesXHR: false,
+          registry: GA.modifyProperty(this.state.registry, {
+            isBlocked: false,
+            registriesError: ''
+          })
+        });
+
       })
       .catch((err) => {
-        this.setState({
-          registriesXHR: false
-        });
+        let errorMsg = `${err.error.message}`;
+        if (errorMsg == 'You do not have access to this operation') {
+          this.setState({
+            registries: [],
+            registriesMap: {},
+            registriesXHR: false,
+            registry: GA.modifyProperty(this.state.registry, {
+              isBlocked: true,
+              registriesError: 'You are not allowed to list registry credentials.'
+            })
+          });
+        } else {
+          this.setState({
+            registriesXHR: false,
+            registry: GA.modifyProperty(this.state.registry, {
+              isBlocked: false,
+              registriesError: errorMsg
+            })
+          });
+        }
       });
   });
 };
@@ -83,7 +107,6 @@ export function deleteRegistry() {
         });
       })
       .catch((err) => {
-
         let errorMsg = `Failed to delete registry credentials: ${err.error.message}`;
         this.setState({
           registry: GA.modifyProperty(this.state.registry, {
@@ -91,7 +114,6 @@ export function deleteRegistry() {
             deleteRegistryErrorMsg: errorMsg
           })
         });
-
       });
   })
 }
@@ -375,7 +397,7 @@ function isAddRegistryValid(validateOnInput, skipSetState) {
         name,
       };
 
-    break;
+      break;
 
     case 'DOCKERHUB':
 

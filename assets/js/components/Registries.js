@@ -9,6 +9,7 @@ import Msg from './../components/Msg'
 import Loader from './../components/Loader'
 import ControlRoom from './../components/ControlRoom'
 import AddRegistry from './../components/AddRegistry'
+import AccessDenied from './../components/AccessDenied'
 import Btn from './../components/Btn'
 import NPECheck from './../util/NPECheck'
 
@@ -19,9 +20,6 @@ export default class Registries extends Component {
 	}
 	componentDidMount() {
 		this.context.actions.listRegistries();
-	}
-	componentWillUnmount() {
-		this.context.actions.resetRegistryState();	
 	}
 	setRegistryForEdit(reg){
 		this.context.actions.setRegistryForEdit(reg)
@@ -184,10 +182,6 @@ export default class Registries extends Component {
 			return this.renderAddEditRegistry();
 		}
 
-		if(!registries.length) {
-			return this.renderNoRegistries();
-		}
-
 		if(this.props.registriesXHR) {
 			return (
 				<div className="PageLoader">
@@ -196,12 +190,24 @@ export default class Registries extends Component {
 			);
 		}
 
+		if(!registries.length) {
+			return this.renderNoRegistries();
+		}
+
 		return (
 			<ControlRoom renderHeaderContent={() => this.renderLegend()}
 					     renderBodyContent={() => registries.map(this.renderRegistryItem.bind(this))}/>				
 		);
 	}
 	render() {
+		let isBlocked = NPECheck(this.props, 'registry/isBlocked', false);
+
+		if(isBlocked) {
+			return (
+				<AccessDenied />
+			);
+		}
+
 		return (
 			<div className="RegistryList FlexColumn">
 				{this.renderPageContent()}

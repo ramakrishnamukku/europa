@@ -13,6 +13,7 @@ import UploadGCEServiceAccount from './../components/UploadGCEServiceAccount'
 import RegistryNames from './../util/RegistryNames'
 import RegistryProviderIcons from './../util/RegistryProviderIcons'
 import NPECheck from './../util/NPECheck'
+import AccessDenied from './../components/AccessDenied'
 
 let provider = 'provider';
 let keyName = 'name';
@@ -523,6 +524,16 @@ export default class AddRegistry extends Component {
 		);
 	}
 	render() {
+
+		let isBlocked = NPECheck(this.props, 'registry/isBlocked', false);
+
+		if(isBlocked) {
+			return (
+				<Msg text={this.props.registry.registriesError}/>
+			);
+		}
+
+
 		return (
 			<div className="ContentContainer">
 				<div>
