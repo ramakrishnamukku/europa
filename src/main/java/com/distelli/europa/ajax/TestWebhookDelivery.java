@@ -48,7 +48,7 @@ public class TestWebhookDelivery extends AjaxHelper<EuropaRequestContext>
         FieldValidator.validateNonNull(notification, "type", "target");
         FieldValidator.validateEquals(notification, "type", NotificationType.WEBHOOK);
 
-        String repoId = ajaxRequest.getParam("repoId", true);
+        String repoId = ajaxRequest.getParam("repoId");
         String domain = requestContext.getOwnerDomain();
         if(repoId != null)
             _permissionCheck.check(ajaxRequest, requestContext, repoId);
