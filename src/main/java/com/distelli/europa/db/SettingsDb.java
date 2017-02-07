@@ -69,7 +69,7 @@ public class SettingsDb extends BaseDb
     }
 
     private static String toRK(EuropaSettingType type, String key) {
-        return String.format("%s:%s",type, key);
+        return String.format("%s:%s",type.toString(), key);
     }
 
     @Inject
@@ -107,7 +107,7 @@ public class SettingsDb extends BaseDb
 
     public List<EuropaSetting> listSettingsByType(String domain, EuropaSettingType type) {
         return _main.queryItems(domain.toLowerCase(), new PageIterator().pageSize(1000))
-            .beginsWith(toRK(type, null))
-            .list();
+        .beginsWith(String.format("%s:", type.toString()))
+        .list();
     }
 }
