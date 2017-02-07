@@ -464,8 +464,12 @@ export function repoDetailsState() {
     manifestsError: '',
     hasRetrievedManifests: false,
     selectedManifests: [],
-    showPullCommands: false
+    showPullCommands: false,
 
+    publicStatusChange: '',
+    publicConfirm: false,
+    publicXHR: false,
+    publicError: '',
   };
 }
 
@@ -482,6 +486,7 @@ export function clearRepoDetailsErrors() {
       eventsError: '',
       manifestsError: '',
       deleteRepoError: '',
+      publicError: ''
     })
   });
 }
@@ -632,6 +637,16 @@ export function toggleActiveRepoDelete() {
   })
 }
 
+export function confirmPublicStatusChange(publicStatusChange) {
+  this.setState({
+    repoDetails: GA.modifyProperty(this.state.repoDetails, {
+      publicConfirm: !NPECheck(this.state, 'repoDetails/publicConfirm', true),
+      publicStatusChange 
+    })
+  });
+}
+
+// Modify Permissions
 export function setRepoPublic(isPublic) {
   return new Promise((resolve, reject) => {
     this.setState({
@@ -643,27 +658,29 @@ export function setRepoPublic(isPublic) {
       let repoId = NPECheck(this.state, 'repoDetails/activeRepo/id', '');
 
       let params = {
-        repodId,
+        repoId,
         public: isPublic
       };
 
       RAjax.POST.call(this, 'SetRepoPublic', {}, params)
         .then((res) => {
-          console.log(res);
           this.setState({
             repoDetails: GA.modifyProperty(this.state.repoDetails, {
               publicXHR: false,
+              publicConfirm: false,
+              publicStatusChange: null
             })
           }, () => resolve());
 
         })
         .catch((err) => {
-          console.error(err);
           let errorMsg = `${NPECheck(err, 'error/message', '')}`
           this.setState({
             repoDetails: GA.modifyProperty(this.state.repoDetails, {
               publicXHR: false,
-              publicError: errorMsg
+              publicError: errorMsg,
+              publicConfirm: false,
+              publicStatusChange: null
             })
           }, () => reject());
         });

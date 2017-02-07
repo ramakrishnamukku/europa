@@ -5,6 +5,9 @@
 import React, {Component, PropTypes} from 'react'
 import ContentRow from './../components/ContentRow'
 import RepoNotifications from './../components/RepoNotifications'
+import CenteredConfirm from './../components/CenteredConfirm'
+import RadioButton from './../components/RadioButton'
+import Msg from './../components/Msg'
 import Loader from './../components/Loader'
 import NPECheck from './../util/NPECheck'
 import isEmpty from './../util/IsEmpty'
@@ -22,6 +25,11 @@ export default class RepoSettings extends Component {
 	}
 	componentWillUnmount() {
 		this.context.actions.resetNotifState();
+	}
+	setRepoPublic(isPublic){
+		this.context.actions.setRepoPublic(isPublic)
+		.then(() => this.context.actions.listRepos(this.props.activeRepo.id))
+		.then(() => this.context.actions.setActiveRepoDetails(this.props.activeRepo.id));
 	}
 	renderCredentials() {
 		let creds = this.props.registriesMap[this.props.activeRepo.credId]
@@ -78,16 +86,72 @@ export default class RepoSettings extends Component {
 	renderPublicSettings(){
 		let repo = this.props.activeRepo;
 
-		console.log(repo);
+		let error = NPECheck(this.props, 'repoDetails/publicError', false);
+
+		if(error) {
+			return (
+				<Msg text={error} 
+				 	 close={() => this.context.actions.clearRepoDetailsErrors()}
+				 	 style={{padding: '1rem 0'}}/>
+			);
+		}
+
+		let publicAction = repo.publicRepo ? () => {} : () => this.context.actions.confirmPublicStatusChange(true)
+		let privateAction = !repo.publicRepo ? () => {} : () => this.context.actions.confirmPublicStatusChange(false)
 
 		return (
-			<div>
-				Is Public: {repo.publicRepo.toString()}
+			<div className="FlexColumn">
+				<div className="FlexRow SpaceBetween">
+					<div className="FlexRow">
+						<label>Repository</label>
+					</div>
+				</div>
+				<div className="FlexColumn">
+					<div className="FlexRow">
+						<div className="Column">
+							<RadioButton onClick={publicAction} 
+										 isChecked={repo.publicRepo}
+										 label="Public" />
+						</div>
+						<div className="Column">
+							<RadioButton onClick={privateAction} 
+								  		 isChecked={!repo.publicRepo}
+										 label="Private" />
+						</div>
+					</div>
+					{this.renderPublicStatusChange()}
+				</div>
 			</div>
 		);
 	}
+	renderPublicStatusChange(){
+		if(NPECheck(this.props, 'repoDetails/publicXHR', false)) {
+			return (
+				<Loader />
+			);
+		}
+
+
+		if(NPECheck(this.props, 'repoDetails/publicConfirm', false)) {
+
+			let publicStatusChange = NPECheck(this.props, 'repoDetails/publicStatusChange', false);
+
+			return (
+				<CenteredConfirm message={`Are you sure you want make this repo ${(publicStatusChange) ? 'public' : 'private'}?`}
+							     confirmButtonText="Yes"
+							     confirmButtonStyle={{}}
+							     onConfirm={() => this.setRepoPublic(publicStatusChange)}
+							     onCancel={() => this.context.actions.confirmPublicStatusChange() }/>
+			);
+		}
+	}
 	renderSettings(){
 		let rows = [{
+			columns: [{
+                icon:'icon icon-dis-repo',
+                renderBody: this.renderPublicSettings.bind(this)
+            }]
+		}, {
 			columns: [{
                 icon:'icon icon-dis-credential',
                 renderBody: this.renderCredentials.bind(this),
@@ -97,11 +161,6 @@ export default class RepoSettings extends Component {
 			columns: [{
                 icon:'icon icon-dis-notification',
                 renderBody: this.renderRepoNotifications.bind(this)
-            }]
-		}, {
-			columns: [{
-                icon:'icon icon-dis-public',
-                renderBody: this.renderPublicSettings.bind(this)
             }]
 		}];
 
