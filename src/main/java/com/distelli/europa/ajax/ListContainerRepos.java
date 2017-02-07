@@ -10,6 +10,7 @@ package com.distelli.europa.ajax;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -60,55 +61,38 @@ public class ListContainerRepos extends AjaxHelper<EuropaRequestContext>
         .marker(marker)
         .forward();
 
+        List<ContainerRepo> repoList = null;
         if(provider == null && region == null)
-            return _db.listRepos(domain, pageIterator);
+            repoList = _db.listRepos(domain, pageIterator);
         else if(provider != null)
         {
             if(region != null)
-                return _db.listRepos(domain, provider, region, pageIterator);
+                repoList = _db.listRepos(domain, provider, region, pageIterator);
             else
-                return _db.listRepos(domain, provider, pageIterator);
+                repoList = _db.listRepos(domain, provider, pageIterator);
         }
+        else
+            repoList = _db.listRepos(domain, pageIterator);
 
-        List<ContainerRepo> repoList = _db.listRepos(domain, pageIterator);
         if(repoList == null || repoList.size() == 0)
             return repoList;
-        boolean localRepoListAllowed = true;
-        boolean remoteRepoListAllowed = true;
-        try {
-            _permissionCheck.check(ajaxRequest, requestContext, Boolean.TRUE);
-        } catch(AjaxClientException ace) {
-            JsonError je = ace.getJsonError();
-            if(je == null || je.getHttpStatusCode() != 403)
-                throw(ace);
-            localRepoListAllowed = false;
-        }
-        try {
-            _permissionCheck.check(ajaxRequest, requestContext, Boolean.FALSE);
-        } catch(AjaxClientException ace) {
-            JsonError je = ace.getJsonError();
-            if(je == null || je.getHttpStatusCode() != 403)
-                throw(ace);
-            remoteRepoListAllowed = false;
-        }
-
+        Map<ContainerRepo, Boolean> permissionResult = _permissionCheck.checkBatch(ajaxRequest,
+                                                                                   requestContext,
+                                                                                   repoList);
         List<ContainerRepo> retval = new ArrayList<ContainerRepo>();
         for(ContainerRepo repo : repoList)
         {
+            Boolean allow = permissionResult.get(repo);
+            if(allow == null || allow == Boolean.FALSE)
+                continue;
             if(repo.isLocal())
             {
                 DnsSettings dnsSettings = _dnsSettingsProvider.get();
+                if(dnsSettings == null)
+                    dnsSettings = DnsSettings.fromHostHeader(requestContext);
                 repo.setEndpoint(dnsSettings.getDnsName());
-                if(!localRepoListAllowed)
-                    continue;
-                retval.add(repo);
             }
-            else
-            {
-                if(!remoteRepoListAllowed)
-                    continue;
-                retval.add(repo);
-            }
+            retval.add(repo);
         }
 
         return retval;
