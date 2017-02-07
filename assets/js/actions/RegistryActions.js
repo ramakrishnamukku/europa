@@ -343,6 +343,8 @@ function isAddRegistryValid(validateOnInput, skipSetState) {
   let key = 'Public Key';
   let secret = 'Secret Key';
   let name = 'Key Name';
+  let username = 'Username';
+  let password = 'Password';
   let endpoint = 'Endpoint';
 
   let required = {
@@ -379,8 +381,8 @@ function isAddRegistryValid(validateOnInput, skipSetState) {
 
       required = {
         provider,
-        key,
-        secret,
+        username,
+        password,
         name,
       };
 
@@ -390,8 +392,8 @@ function isAddRegistryValid(validateOnInput, skipSetState) {
 
       required = {
         provider,
-        key,
-        secret,
+        username,
+        password,
         name,
         endpoint
       };

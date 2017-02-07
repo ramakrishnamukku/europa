@@ -7,6 +7,7 @@ import * as GA from './../reducers/GeneralReducers'
 import * as RAjax from './../util/RAjax'
 import Validate from './../util/Validate'
 import NPECheck from './../util/NPECheck'
+import Debounce from './../util/Debounce'
 import {
   notifState,
   isAddNotificationValid
@@ -217,7 +218,11 @@ export function resetCurrentRepoSearch() {
   });
 }
 
-export function listReposForRegistry() {
+export function listReposForRegistry(){
+  listReposInRegistryDebounced.call(this);
+}
+
+let listReposInRegistryDebounced = Debounce(function(){
   let credId = NPECheck(this.state.addRepo, 'newRepo/repo/credId', null);
   let registry = (this.state.addRepo.newRepoCredsType == 'EXISTING') ? this.state.registriesMap[credId] : this.state.addRegistry.newRegistry
 
@@ -237,6 +242,7 @@ export function listReposForRegistry() {
           this.setState({
             addRepo: GA.modifyProperty(this.state.addRepo, {
               reposInRegistry: res,
+              errorMsg: '',
               reposInRegistryXHR: false,
             })
           });
@@ -258,7 +264,7 @@ export function listReposForRegistry() {
       })
     });
   }
-}
+}, 1500);
 
 export function updateReposInRegisterQuery(e, eIsValue) {
   let value = (eIsValue) ? e : e.target.value;
