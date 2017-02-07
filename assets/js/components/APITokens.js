@@ -75,8 +75,6 @@ export default class APITokens extends Component{
 					 let dateCreated = new Date(token.created);
 					 let dateCreatedUTC = ConvertTimeUTC(dateCreated);
 
-					 console.log(token);
-
 					return (
 						<div className="TokenItem" key={i}>
 							<div className="TokenDetails">
