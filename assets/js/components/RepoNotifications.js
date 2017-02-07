@@ -9,6 +9,7 @@ import CopyToClipboard from './../util/CopyToClipboard'
 import CenteredConfirm from './../components/CenteredConfirm'
 import WebhookData from './../components/WebhookData'
 import AddRepoNotification from './../components/AddRepoNotification'
+import Msg from './../components/Msg'
 
 let notifTargetKey = 'target';
 let notifSecretKey= 'secret';
@@ -160,6 +161,18 @@ export default class RepoNotifications extends Component {
 			)
 		};
 	}
+	renderError(){
+		let error = NPECheck(this.props, 'notif/deleteNotificationError', false);
+
+		if(error) {
+				return (
+					<Msg
+						text={error}
+						close={() => this.context.actions.clearNotifError()}
+					/>
+				);
+			}
+	}
 	render() {	
 		return (
 			<div className="RepoNotifications">
@@ -168,6 +181,7 @@ export default class RepoNotifications extends Component {
 				</div>
 				{this.renderAddNotification()}
 				{this.renderRepoNotifications()}
+				{this.renderError()}
 			</div>	
 		);
 	}
