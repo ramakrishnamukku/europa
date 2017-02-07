@@ -45,7 +45,6 @@ public class AjaxHelperModule extends AbstractModule
         //Cred CRUD helpers
         addBinding(SaveRegistryCreds.class);
         addBinding(ListRegistryCreds.class);
-        addBinding(GetRegistryCreds.class);
         addBinding(DeleteRegistryCreds.class);
         addBinding(SaveGcrServiceAccountCreds.class);
 

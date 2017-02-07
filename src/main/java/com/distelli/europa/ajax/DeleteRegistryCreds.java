@@ -11,6 +11,7 @@ package com.distelli.europa.ajax;
 import java.util.List;
 import javax.inject.Inject;
 
+import com.distelli.europa.util.PermissionCheck;
 import org.eclipse.jetty.http.HttpMethod;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
@@ -28,6 +29,8 @@ public class DeleteRegistryCreds extends AjaxHelper<EuropaRequestContext>
     private RegistryCredsDb _db;
     @Inject
     private ContainerRepoDb _reposDb;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public DeleteRegistryCreds()
     {
@@ -41,6 +44,7 @@ public class DeleteRegistryCreds extends AjaxHelper<EuropaRequestContext>
     */
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
+        _permissionCheck.check(ajaxRequest, requestContext);
         String id = ajaxRequest.getParam("id",
                                          true); //throw if missing
         String domain = requestContext.getOwnerDomain();

@@ -29,6 +29,7 @@ import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
 import com.distelli.europa.EuropaRequestContext;
 import org.eclipse.jetty.http.HttpMethod;
+import com.distelli.europa.util.PermissionCheck;
 
 @Log4j
 @Singleton
@@ -36,12 +37,12 @@ public class SaveRegistryCreds extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private RegistryCredsDb _db;
-
     @Inject
     private Provider<GcrClient.Builder> _gcrClientBuilderProvider;
-
     @Inject
     private Provider<DockerHubClient.Builder> _dhClientBuilderProvider;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public SaveRegistryCreds()
     {
@@ -65,11 +66,13 @@ public class SaveRegistryCreds extends AjaxHelper<EuropaRequestContext>
         cred.setDomain(credDomain);
         String id = cred.getId();
         if(id != null) {
+            _permissionCheck.check(ajaxRequest, requestContext, Boolean.TRUE);
             //check that cred with that id exists
             RegistryCred existingCred = _db.getCred(credDomain, id.toLowerCase());
             if(existingCred == null)
                 throw(new AjaxClientException("Invalid Registry Cred Id: "+id, JsonError.Codes.BadContent, 400));
         } else {
+            _permissionCheck.check(ajaxRequest, requestContext, Boolean.FALSE);
             id = CompactUUID.randomUUID().toString();
             cred.setId(id);
         }

@@ -19,6 +19,7 @@ import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
 import org.eclipse.jetty.http.HttpMethod;
 import com.distelli.europa.EuropaRequestContext;
+import com.distelli.europa.util.PermissionCheck;
 
 @Log4j
 @Singleton
@@ -26,6 +27,8 @@ public class ListRegistryCreds extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
     private RegistryCredsDb _db;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public ListRegistryCreds()
     {
@@ -38,6 +41,8 @@ public class ListRegistryCreds extends AjaxHelper<EuropaRequestContext>
     */
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
+        _permissionCheck.check(ajaxRequest, requestContext);
+
         PageIterator pageIterator = new PageIterator().pageSize(1000).forward();
         RegistryProvider provider = ajaxRequest.getParamAsEnum("provider", RegistryProvider.class);
         String domain = requestContext.getOwnerDomain();
