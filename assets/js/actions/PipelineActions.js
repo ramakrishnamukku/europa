@@ -324,6 +324,7 @@ export function movePipelineComponent(postData) {
       RAjax.POST.call(this, 'MovePipelineComponent', {}, postData)
       .then(res => {
         // TODO
+        resolve();
       })
       .catch(err => {
         this.setState({

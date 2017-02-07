@@ -75,6 +75,17 @@ export default class RepoSettings extends Component {
 			<RepoNotifications {...this.props} notifs={notifs}/>
 		);
 	}
+	renderPublicSettings(){
+		let repo = this.props.activeRepo;
+
+		console.log(repo);
+
+		return (
+			<div>
+				Is Public: {repo.publicRepo.toString()}
+			</div>
+		);
+	}
 	renderSettings(){
 		let rows = [{
 			columns: [{
@@ -86,6 +97,11 @@ export default class RepoSettings extends Component {
 			columns: [{
                 icon:'icon icon-dis-notification',
                 renderBody: this.renderRepoNotifications.bind(this)
+            }]
+		}, {
+			columns: [{
+                icon:'icon icon-dis-public',
+                renderBody: this.renderPublicSettings.bind(this)
             }]
 		}];
 

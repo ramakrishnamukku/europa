@@ -218,11 +218,11 @@ export function resetCurrentRepoSearch() {
   });
 }
 
-export function listReposForRegistry(){
+export function listReposForRegistry() {
   listReposInRegistryDebounced.call(this);
 }
 
-let listReposInRegistryDebounced = Debounce(function(){
+let listReposInRegistryDebounced = Debounce(function() {
   let credId = NPECheck(this.state.addRepo, 'newRepo/repo/credId', null);
   let registry = (this.state.addRepo.newRepoCredsType == 'EXISTING') ? this.state.registriesMap[credId] : this.state.addRegistry.newRegistry
 
@@ -475,15 +475,15 @@ export function resetRepoDetailsState() {
   });
 }
 
-export function clearRepoDetailsErrors(){
- this.setState({
+export function clearRepoDetailsErrors() {
+  this.setState({
     repoDetails: GA.modifyProperty(this.state.repoDetails, {
       repoOverviewError: '',
       eventsError: '',
       manifestsError: '',
       deleteRepoError: '',
     })
-  }); 
+  });
 }
 
 export function toggleRepoDetailsPageXHR(loading) {
@@ -632,6 +632,45 @@ export function toggleActiveRepoDelete() {
   })
 }
 
+export function setRepoPublic(isPublic) {
+  return new Promise((resolve, reject) => {
+    this.setState({
+      repoDetails: GA.modifyProperty(this.state.repoDetails, {
+        publicXHR: true
+      })
+    }, () => {
+
+      let repoId = NPECheck(this.state, 'repoDetails/activeRepo/id', '');
+
+      let params = {
+        repodId,
+        public: isPublic
+      };
+
+      RAjax.POST.call(this, 'SetRepoPublic', {}, params)
+        .then((res) => {
+          console.log(res);
+          this.setState({
+            repoDetails: GA.modifyProperty(this.state.repoDetails, {
+              publicXHR: false,
+            })
+          }, () => resolve());
+
+        })
+        .catch((err) => {
+          console.error(err);
+          let errorMsg = `${NPECheck(err, 'error/message', '')}`
+          this.setState({
+            repoDetails: GA.modifyProperty(this.state.repoDetails, {
+              publicXHR: false,
+              publicError: errorMsg
+            })
+          }, () => reject());
+        });
+
+    });
+  });
+}
 
 // Delete Permissions
 export function deleteActiveRepo(afterDeleteCb) {

@@ -11,6 +11,7 @@ import RegistryProviderIcons from './../util/RegistryProviderIcons'
 import DockerPullCommands from './../components/DockerPullCommands'
 import NPECheck from './../util/NPECheck'
 import RepoDetailsContent from './../components/RepoDetailsContent'
+import ControlRoom from './../components/ControlRoom'
 import BtnGroup from './../components/BtnGroup'
 import Msg from './../components/Msg'
 
@@ -47,15 +48,31 @@ export default class RepoDetailsPage extends Component {
 	toRepoList(){
 		this.context.router.push('/repositories');
 	}
+
 	renderRepoSettings(activeRepo){
-		if(this.props.repoDetails.showSettings) {
-			return (
-				<RepoSettings 
-					{...this.props}
-					activeRepo={activeRepo}
-				/>
-			);
-		}
+		return (
+			<ControlRoom renderHeaderContent={() => this.renderRepSettingsHeader()}
+						 renderBodyContent={() => this.renderRepoSettingBody(activeRepo)} />
+		);
+	}
+	renderRepSettingsHeader(){
+		return (
+			<div className="AddEditRegistryLegend">
+				<span style={{paddingLeft: '0'}}>Settings</span>
+				<span  className="Close"
+				  	   onClick={ () => this.context.actions.toggleActiveRepoSettings() }>
+					<i className="icon icon-dis-close" />
+				</span>
+			</div>
+		);
+	}
+	renderRepoSettingBody(activeRepo){
+		return (
+			<RepoSettings 
+				{...this.props}
+				activeRepo={activeRepo}
+			/>
+		);
 	}
 	renderDeleteRepo(){
 		if(this.props.repoDetails.deleteXHR) {
@@ -176,8 +193,7 @@ export default class RepoDetailsPage extends Component {
 				{this.renderHeader(activeRepo)}
 				<div>
 				 	{this.renderDeleteRepo()}
-				    {this.renderRepoSettings(activeRepo)}
-				    {this.renderEventTimeline()}
+				    {(this.props.repoDetails.showSettings) ?  this.renderRepoSettings(activeRepo) : this.renderEventTimeline()}
 				</div>
 			</div>
 		);
