@@ -1,4 +1,4 @@
-select.BlueBorder, input.BlueBorder {
+select.BlueBorder, input.BlueBorder, textarea.BlueBorder {
     position: relative;
     background: $backgroundColor;
     font-size: 0.75rem;
@@ -18,15 +18,15 @@ select.BlueBorder, input.BlueBorder {
     }
 }
 
-select.BlueBorder, input.BlueBorder.FullWidth {
+select.BlueBorder, input.BlueBorder.FullWidth, textarea.BlueBorder.FullWidth {
     width: 100%;
 }
 
-select.BlueBorder.Error, input.BlueBorder.Error {
+select.BlueBorder.Error, input.BlueBorder.Error, textarea.BlueBorder.Error {
     border-bottom: solid 1px $red;
 }
 
-select.BlueBorder.White, input.BlueBorder.White {
+select.BlueBorder.White, input.BlueBorder.White, textarea.BlueBorder.White {
     background-color: white;
 }
 
@@ -57,14 +57,14 @@ input.BlueBorder.Search.Small {
 }
 
 
-select.BlueBorder.SuccessBg, input.BlueBorder.SuccessBg {
+select.BlueBorder.SuccessBg, input.BlueBorder.SuccessBg, textarea.BlueBorder.SuccessBg {
     background-color: $light-green;
 }
 
-select.BlueBorder.ErrorBg, input.BlueBorder.ErrorBg {
+select.BlueBorder.ErrorBg, input.BlueBorder.ErrorBg, textarea.BlueBorder.ErrorBg {
     background-color: $light-red;
 }
 
-select.BlueBorder.ErrorBg, input.BlueBorder.WarningBg {
+select.BlueBorder.ErrorBg, input.BlueBorder.WarningBg, textarea.WarningBg {
     background-color: $light-yellow;
 }
