@@ -65,12 +65,11 @@ public class SettingsDb extends BaseDb
     }
 
     private static String toRK(EuropaSetting setting) {
-        return toRK(setting.getType(), setting.getValue());
+        return toRK(setting.getType(), setting.getKey());
     }
 
-    private static String toRK(EuropaSettingType type, String value) {
-        if ( null == value ) return type + ":";
-        return type + ":" + value;
+    private static String toRK(EuropaSettingType type, String key) {
+        return String.format("%s:%s",type, key);
     }
 
     @Inject
@@ -86,14 +85,14 @@ public class SettingsDb extends BaseDb
     }
 
     public void save(EuropaSetting europaSetting) {
-        if ( null == europaSetting.getDomain() ) {
-            throw new IllegalArgumentException("domain must be non-null");
+        if ( null == europaSetting.getDomain() || europaSetting.getDomain().trim().isEmpty()) {
+            throw new IllegalArgumentException("domain must be non-null and non-empty");
         }
         if ( null == europaSetting.getType() ) {
             throw new IllegalArgumentException("type must be non-null");
         }
-        if ( null == europaSetting.getKey() ) {
-            throw new IllegalArgumentException("key must be non-null");
+        if ( null == europaSetting.getKey() || europaSetting.getKey().trim().isEmpty()) {
+            throw new IllegalArgumentException("key must be non-null and non-empty");
         }
         _main.putItem(europaSetting);
     }
