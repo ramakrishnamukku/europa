@@ -7,7 +7,8 @@
         flex-direction: column;
 
         .TimelineLegend {
-            padding: 10px;
+            padding: 0 10px;
+            height: 40px;
             border-radius: 3px 3px 0 0;
             background-color: $dark-blue;
             color: #FFFFFF;
@@ -15,6 +16,7 @@
             font-weight: 600;
             display: flex;
             flex-direction: row;
+            align-items: center;
             justify-content: space-between;
 
             .TimelineNavigation {
@@ -41,6 +43,10 @@
 
             i.icon-dis-waiting {
                 font-size: 1.2rem;
+                justify-content: center;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
             }
         }
 
@@ -75,12 +81,12 @@
         }
 
         i {
-           font-size: 1.2rem;
-           margin-right: 7px; 
+            font-size: 1.2rem;
+            margin-right: 7px;
 
-           &:hover {
-            cursor: pointer;
-           }
+            &:hover {
+                cursor: pointer;
+            }
         }
 
         i.icon-dis-box-check {
@@ -90,8 +96,6 @@
         i.icon-dis-box-uncheck {
             color: $grey;
         }
-
-
 
         .ImageSha {
             flex: 1;
