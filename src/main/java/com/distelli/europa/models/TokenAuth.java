@@ -14,4 +14,5 @@ public class TokenAuth {
     private String token;
     private TokenAuthStatus status;
     private Long created;
+    private String username;
 }

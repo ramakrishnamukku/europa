@@ -52,6 +52,7 @@ public class TokenAuthDb extends BaseDb {
         module.createTransform(TokenAuth.class)
             .put("tok", String.class, "token")
             .put("dom", String.class, "domain")
+            .put("uname", String.class, "username")
             .put("ctime", Long.class, "created")
             .put("stat", TokenAuthStatus.class, "status");
         return module;
