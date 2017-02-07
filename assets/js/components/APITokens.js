@@ -37,7 +37,7 @@ export default class APITokens extends Component{
 			 	<span className="Flex2">
 			 		API Tokens
 			 	</span>
-			 	<span className="Flex1">
+			 	<span className="Flex1" style={(this.props.isLoggedIn) ? {} : {display: 'none'}}>
 			 		Owner
 			 	</span>
 			 	<span className="Flex1">
@@ -79,7 +79,7 @@ export default class APITokens extends Component{
 						<div className="TokenItem" key={i}>
 							<div className="TokenDetails">
 								{this.renderTokenString(token.token)}
-								<span className="Flex1">USER_NAME_HERE</span>
+								<span className="Flex1" style={(token.username) ? {} : {display: 'none'}}>{token.username}</span>
 								<span className="Flex1">{dateCreatedUTC}</span>
 								<span className={statusClassName}>{token.status}</span>
 								{this.renderIcons(token)}
