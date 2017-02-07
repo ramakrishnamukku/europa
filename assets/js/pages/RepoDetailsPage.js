@@ -64,6 +64,16 @@ export default class RepoDetailsPage extends Component {
 			);
 		}
 
+		let error = this.props.repoDetails.deleteRepoError;
+
+		if(error) {
+			return (
+				<Msg text={error} 
+				 	 style={{padding: '2rem 0'}} 
+					 close={() => this.context.actions.clearRepoDetailsErrors()}/>
+			);
+		}
+
 		if(this.props.repoDetails.isDeleting) {
 			return (
 				<CenteredConfirm message="Are you sure you want to delete this repository? All data will be lost."

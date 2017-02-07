@@ -443,6 +443,7 @@ export function repoDetailsState() {
     pageXHR: false,
     deleteXHR: false,
     isDeleting: false,
+    deleteRepoError: '',
     showSettings: false,
     timelineSection: 'OVERVIEW',
 
@@ -474,6 +475,7 @@ export function clearRepoDetailsErrors(){
       repoOverviewError: '',
       eventsError: '',
       manifestsError: '',
+      deleteRepoError: '',
     })
   }); 
 }
@@ -645,9 +647,12 @@ export function deleteActiveRepo(afterDeleteCb) {
         });
       })
       .catch((err) => {
+        console.error(err);
+        let errorMsg = `${NPECheck(err, 'error/message', '')}`
         this.setState({
           repoDetails: GA.modifyProperty(this.state.repoDetails, {
-            deleteXHR: false
+            deleteXHR: false,
+            deleteRepoError: errorMsg
           })
         });
       });
