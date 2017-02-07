@@ -20,7 +20,7 @@ import lombok.extern.log4j.Log4j;
 public class CreateAuthToken extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
-    private TokenAuthDb _tokenAuthDb;
+    protected TokenAuthDb _tokenAuthDb;
 
     public CreateAuthToken()
     {
