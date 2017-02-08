@@ -95,7 +95,7 @@ export default class RepoEventItem extends Component {
 								{event.eventType}
 							</div>
 						</div>
-						<div className="Time">
+						<div className="Time" data-tip={new Date(time)} data-for="ToolTipTop">
 						    <span className="Friendly">{friendlyTime}</span>
 							<span className="UTC">{timeUTC}</span>
 						</div>

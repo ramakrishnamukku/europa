@@ -88,7 +88,7 @@ export default class Repositories extends Component {
 			<div className="Flex2 FlexColumn JustifyCenter">
 				<div className="FlexRow">
 					<span className="LastPushed">Pushed image <span className="LightBlueColor">{repo.name}</span></span>
-					<span className="Label">&nbsp;&ndash;&nbsp;{friendlyTime}</span>
+					<span className="Label">&nbsp;&mdash;&nbsp;{friendlyTime}</span>
 				</div>
 				<div className="FlexRow">
 					{lastEvent.imageTags.map((tag, index) => {
