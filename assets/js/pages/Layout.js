@@ -15,6 +15,7 @@ import * as PipelineActions from './../actions/PipelineActions'
 import * as NotificationActions from './../actions/NotificationActions'
 import * as RegistryActions from './../actions/RegistryActions'
 import * as SettingsActions from './../actions/SettingsActions'
+import * as SSLActions from './../actions/SSLActions'
 
 import Footer from './../components/Footer'
 
@@ -61,6 +62,9 @@ export default class Layout extends Component {
 			settings: {
 				...SettingsActions.settingsState()
 			},
+			ssl: {
+				...SSLActions.sslState()
+			},
 			intervals: {
 				registriesInterval: null,
 				reposInterval: null
@@ -90,7 +94,8 @@ export default class Layout extends Component {
 		      RepoActions,
 		      PipelineActions,
 		      NotificationActions,
-		      SettingsActions
+		      SettingsActions,
+		      SSLActions,
 		    ];
 	}
 	highlightNav(sections, root=null) {

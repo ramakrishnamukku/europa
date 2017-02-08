@@ -6,10 +6,12 @@ import React, {Component, PropTypes} from 'react'
 import Registries from './../components/Registries'
 import APITokens from './../components/APITokens'
 import StorageSettings from './../components/StorageSettings'
+import SSLSettings from './../components/SSLSettings'
 
 let credKey = 'CREDENTIALS';
 let apiTokensKey = "API_TOKENS";
 let storageKey = "STORAGE";
+let sslKey = "SSL";
 
 export default class Settings extends Component {
 	constructor(props) {
@@ -38,6 +40,10 @@ export default class Settings extends Component {
 					 onClick={() => this.context.actions.setSettingsSection(storageKey)}>
 					Storage
 				</div>
+				<div className={this.getSideBarItemClassName(sslKey)} 
+					 onClick={() => this.context.actions.setSettingsSection(sslKey)}>
+					SSL
+				</div>
 			</div>
 		);
 	}
@@ -56,6 +62,11 @@ export default class Settings extends Component {
 			<StorageSettings {...this.props} />
 		);
 	}
+	renderSSL(){
+		return (
+			<SSLSettings {...this.props} />
+		);
+	}
 	renderContent(){
 		let section = this.props.settings.section;
 		switch(section) {
@@ -68,6 +79,10 @@ export default class Settings extends Component {
 
 			case 'STORAGE':
 				return this.renderStorage();
+			break;
+
+			case 'SSL':
+				return this.renderSSL();
 			break;
 
 			default:

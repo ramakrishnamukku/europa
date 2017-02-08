@@ -1,0 +1,25 @@
+.SSLSettings {
+    margin: 14px 0 100px;
+
+    .FlexColumn, .FlexRow {
+        margin-bottom: 21px;
+    }
+
+    textarea {
+        height: 200px;
+    }
+
+    .UnsavedChanges {
+        font-size: 0.75rem;
+        margin-left: 262px;
+        color: $red;
+    }
+}
+
+.SSLStatus {
+    margin: 7px 0;
+
+    span {
+        font-style: italic;
+    }
+}
