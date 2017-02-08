@@ -25,6 +25,9 @@ export default class SSLSettings extends Component {
 	}
 	componentDidMount() {
 		this.context.actions.getSSLSettings();
+		if(this.refs['dnsName']) {
+			this.refs['dnsName'].focus()
+		}
 	}
 	saveSSLSettings(){
 		this.context.actions.saveSSLSettings()
@@ -74,7 +77,7 @@ export default class SSLSettings extends Component {
 			<div className="FlexColumn">
 				<div className="FlexColumn">
 					<label>DNS Name</label>
-					<input className={className} value={dnsValue} onChange={(e) => this.context.actions.updateSSLCreds(dnsNameKey, e)} />
+					<input ref="dnsName" className={className} value={dnsValue} onChange={(e) => this.context.actions.updateSSLCreds(dnsNameKey, e)} />
 				</div>
 				<div className="FlexRow">
 					<Checkbox onClick={() => this.context.actions.toggleEnableSSL()} label="SSL Enabled" isChecked={NPECheck(this.props, 'ssl/sslEnabled', false)}/>
