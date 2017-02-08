@@ -11,8 +11,11 @@
 
     .UnsavedChanges {
         font-size: 0.75rem;
-        margin-left: 262px;
         color: $red;
+        width: 154px;
+        left: 50%;
+        position: relative;
+        margin-left: -163px;
     }
 }
 

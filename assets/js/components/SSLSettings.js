@@ -35,12 +35,20 @@ export default class SSLSettings extends Component {
 	}
 	getTextareaClassName(key){
 		let hasSelector = NPECheck(this.props, 'ssl/errorFields/keys', []).includes(key);
+		let className;
 
 		if(hasSelector) {
-			return "BlueBorder FullWidth Error";
+			className =  "BlueBorder FullWidth Error";
 		} else {
-		    return "BlueBorder FullWidth";
+		    className =  "BlueBorder FullWidth";
 		}
+
+		if(this.props.isLoggedIn) {
+
+			className += " White";
+		}
+
+		return className;
 	}
 	renderSSLTextarea(config, i){
 		let value = NPECheck(this.props, `ssl/sslCreds/${config.key}`, '');
@@ -56,12 +64,17 @@ export default class SSLSettings extends Component {
 	}
 	renderSSLInputs(){
 		let dnsValue = NPECheck(this.props, `ssl/sslCreds/${dnsNameKey}`, '');
+		let className = "BlueBorder FullWidth";
+
+		if(this.props.isLoggedIn) {
+			className += " White";
+		}
 
 		return (
 			<div className="FlexColumn">
 				<div className="FlexColumn">
 					<label>DNS Name</label>
-					<input className="BlueBorder FullWidth" value={dnsValue} onChange={(e) => this.context.actions.updateSSLCreds(dnsNameKey, e)} />
+					<input className={className} value={dnsValue} onChange={(e) => this.context.actions.updateSSLCreds(dnsNameKey, e)} />
 				</div>
 				<div className="FlexRow">
 					<Checkbox onClick={() => this.context.actions.toggleEnableSSL()} label="SSL Enabled" isChecked={NPECheck(this.props, 'ssl/sslEnabled', false)}/>
