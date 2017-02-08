@@ -10,6 +10,7 @@ import Btn from './../components/Btn'
 import Loader from './../components/Loader'
 import NPECheck from './../util/NPECheck'
 import Msg from './../components/Msg'
+import CopyToClipboard from './../util/CopyToClipboard'
 
 export default class CreateLocalRepo extends Component {
 	constructor(props) {
@@ -73,7 +74,11 @@ export default class CreateLocalRepo extends Component {
 				<div>Push a Docker image to a local repository</div>
 				<p><strong>Command</strong> description dolor sit amet, cectetuer adipiscing elit, sed diam nonumy nibh euismod tincidunt ut laoreet dolore magna aliquam erat.</p>
 				<div className="Code">
-					 $ docker push {this.props.dnsName}/YOUR_NEW_REPO_NAME[:YOUR_IMAGE_TAG]
+					 <span id="copyCommands">$ docker push {this.props.dnsName}/YOUR_NEW_REPO_NAME[:YOUR_IMAGE_TAG]</span>
+					 <i className="icon icon-dis-copy" 
+					 	onClick={() => CopyToClipboard(document.getElementById('copyCommands'))}
+					 	data-tip="Click To Copy"
+					 	data-for="ToolTipTop" />
 				</div>
 			</div>
 		);
