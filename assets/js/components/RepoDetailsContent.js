@@ -53,10 +53,15 @@ export default class RepoDetailsContent extends Component {
 			case 'OVERVIEW':
 				if(NPECheck(this.props, 'repoDetails/timelineSection', '') == 'OVERVIEW') {
 					let isEdit = NPECheck(this.props, 'repoDetails/editOverview', false);
+					let actionText = (isEdit) ? (NPECheck(this.props, 'repoDetails/isOverviewModified')) ? 'Preview Changes' : 'Cancel' : 'Edit Read Me';
+
+					if(!NPECheck(this.props, 'repoDetails/repoOverviewContent/length', true) && !NPECheck(this.props, 'repoDetails/isOverviewModified', true)) {
+						actionText = 'Create Read Me'
+					}
 
 					return (
 						<span className="ThickBlueText" onClick={() => this.context.actions.toggleRepoOverviewEdit()}>
-							{(isEdit) ? (NPECheck(this.props, 'repoDetails/isOverviewModified')) ? 'Preview Changes' : 'Cancel' : 'Edit Read Me'}
+							{actionText}
 						</span>
 					);
 				}

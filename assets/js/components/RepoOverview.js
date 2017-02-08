@@ -28,12 +28,18 @@ export default class RepoOverview extends Component {
 
 		if(!markdown) {
 			return (
-				<div className="NoContent">
-					<h3>No READ ME found.</h3>
-					<Btn className="LargeBlueButton"
-					     style={{maxWidth: '100%'}}
-						 text="Create Read Me"
-						 onClick={() => this.context.actions.toggleRepoOverviewEdit()}/>
+				<div className="TimelineContainer">
+					<div className="Timeline">
+						<div className="NoContent">
+							<h3 key={1}>
+								No Read Me Found
+							</h3>
+							<Btn className="LargeBlueButton"
+							     style={{maxWidth: '100%'}}
+								 text="Create Read Me"
+								 onClick={() => this.context.actions.toggleRepoOverviewEdit()}/>
+						</div>
+					</div>
 				</div>
 			);
 		}
