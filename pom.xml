@@ -33,7 +33,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <distelli-common.version>6.2.1</distelli-common.version>
-    <distelli-persistence.version>3.0.0</distelli-persistence.version>
+    <distelli-persistence.version>3.0.1</distelli-persistence.version>
   </properties>
 
   <build>
@@ -214,7 +214,7 @@
     <dependency>
       <groupId>com.distelli.gcr</groupId>
       <artifactId>gcr-sdk-java</artifactId>
-      <version>1.1.0</version>
+      <version>2.1.0</version>
     </dependency>
 
     <dependency>

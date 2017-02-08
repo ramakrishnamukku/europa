@@ -24,8 +24,10 @@ public abstract class MonitorTask implements Runnable
             if(log.isDebugEnabled())
                 log.debug("Starting MonitorTask: "+this);
             monitor();
-        } catch(Throwable t) {
-            log.error(t.getMessage(), t);
+        } catch(Throwable ex) {
+            if ( ! (ex instanceof java.io.InterruptedIOException) ) {
+                log.error(ex.getMessage(), ex);
+            }
         }
         if(log.isDebugEnabled())
             log.debug("Finished MonitorTask: "+this);

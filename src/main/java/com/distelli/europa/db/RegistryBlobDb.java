@@ -179,7 +179,7 @@ public class RegistryBlobDb extends BaseDb {
             builder.when((expr) -> expr.eq(ATTR_MD_ENCODED_STATE, currentMDState));
         } catch ( RollbackException ex ) {
             throw new ConcurrentModificationException(
-                "attempt to finish upload, but the digest state did not match");
+                "attempt to finish upload of "+blobId+", but the digest state did not match");
         }
     }
 

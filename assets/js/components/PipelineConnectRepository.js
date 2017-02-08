@@ -86,8 +86,7 @@ export default class PipelineConnectRepository extends Component {
               </label>
               <Dropdown isOpen={this.state.repoDropdownOpen}
                         toggleOpen={() => this.setState({repoDropdownOpen: !this.state.repoDropdownOpen})}
-                        listItems={this.props.repos.filter( repo => repo.provider == "EUROPA"
-                                                                    && this.props.pipelineStore.pipeline.containerRepoId != repo.id) }
+                        listItems={this.props.repos.filter( repo => this.props.pipelineStore.pipeline.containerRepoId != repo.id) }
                         renderItem={(repo, index) => this.renderRepoItem(repo, index)}
                         inputPlaceholder="Docker Image Repository"
                         inputClassName="BlueBorder FullWidth White"

@@ -135,7 +135,7 @@ public class RegistryManifestPush extends RegistryBase {
             .uploadedBy(requestContext.getRequesterDomain())
             .contentType(requestContext.getContentType())
             .manifestId(finalDigest)
-            .domain(ownerDomain)
+            .domain(repo.getDomain())
             .containerRepoId(repo.getId())
             .tag(reference)
             .digests(digests)

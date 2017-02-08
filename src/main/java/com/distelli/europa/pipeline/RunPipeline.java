@@ -15,10 +15,15 @@ public class RunPipeline {
     private Injector _injector;
 
     public void runPipeline(Pipeline pipeline, ContainerRepo repo, String tag, String digest) {
-        log.debug("Running "+pipeline);
-        for ( PipelineComponent component : pipeline.getComponents() ) {
-            _injector.injectMembers(component);
-            if ( ! component.execute(repo, tag, digest) ) break;
+        try {
+            for ( PipelineComponent component : pipeline.getComponents() ) {
+                _injector.injectMembers(component);
+                if ( ! component.execute(repo, tag, digest) ) break;
+            }
+        } catch ( RuntimeException ex ) {
+            throw ex;
+        } catch ( Exception ex ) {
+            throw new RuntimeException(ex);
         }
     }
 }

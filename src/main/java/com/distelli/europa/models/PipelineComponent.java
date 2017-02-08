@@ -14,7 +14,7 @@ public class PipelineComponent {
     private String id;
 
     // Used by RunPipeline:
-    public boolean execute(ContainerRepo repo, String tag, String manifestDigestSha) {
+    public boolean execute(ContainerRepo repo, String tag, String manifestDigestSha) throws Exception {
         return true;
     }
 

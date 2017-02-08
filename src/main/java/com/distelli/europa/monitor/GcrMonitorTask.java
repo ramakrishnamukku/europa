@@ -45,6 +45,7 @@ public class GcrMonitorTask extends RepoMonitorTask
     }
 
     public void monitor()
+        throws IOException
     {
         if(log.isDebugEnabled())
             log.debug("Monitoring GCR repo: "+_repo);
@@ -106,8 +107,7 @@ public class GcrMonitorTask extends RepoMonitorTask
             .build();
     }
 
-    private Map<String, GcrImageTag> listImageTags()
-    {
+    private Map<String, GcrImageTag> listImageTags() throws IOException {
         Map<String, GcrImageTag> images = new LinkedHashMap<>();
         if(_gcrClient == null)
             return images;
@@ -116,14 +116,10 @@ public class GcrMonitorTask extends RepoMonitorTask
         if(log.isDebugEnabled())
             log.debug("Listing images from GCR repo: "+_repo);
         do {
-            try {
-                List<GcrImageTag> imageTags = _gcrClient.listImageTags(_repo.getName(), iter);
-                for(GcrImageTag imgTag : imageTags)
-                {
-                    images.put(imgTag.getTag(), imgTag);
-                }
-            } catch(Throwable t) {
-                throw(new RuntimeException(t));
+            List<GcrImageTag> imageTags = _gcrClient.listImageTags(_repo.getName(), iter);
+            for(GcrImageTag imgTag : imageTags)
+            {
+                images.put(imgTag.getTag(), imgTag);
             }
         } while(iter.getMarker() != null);
 

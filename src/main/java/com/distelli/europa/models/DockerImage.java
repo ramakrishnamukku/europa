@@ -31,8 +31,10 @@ public class DockerImage
 
     public void addImageTag(String imageTag)
     {
-        if(this.imageTags == null)
-            imageTags = new ArrayList<String>();
+        if ( !(imageTags instanceof ArrayList) ) {
+            imageTags = (null == imageTags) ?
+                new ArrayList<>() : new ArrayList<>(imageTags);
+        }
         imageTags.add(imageTag);
     }
 }
