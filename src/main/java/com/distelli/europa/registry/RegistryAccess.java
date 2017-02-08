@@ -15,11 +15,13 @@ import javax.inject.Inject;
 import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.db.ContainerRepoDb;
 import com.distelli.europa.models.ContainerRepo;
+import lombok.extern.log4j.Log4j;
 
 public interface RegistryAccess
 {
     public void checkAccess(String operationName, EuropaRequestContext requestContext);
 
+    @Log4j
     public static class Default implements RegistryAccess {
         @Inject
         private ContainerRepoDb _repoDb;
@@ -40,7 +42,12 @@ public interface RegistryAccess
             String requesterDomain = requestContext.getRequesterDomain();
             //Its an authenticated request with a valid token so its
             //allowed.
+            if(log.isDebugEnabled())
+                log.debug("Checking access for: "+operationName+", RequesterDomain: "+requesterDomain);
             if(requesterDomain != null)
+                return;
+            //allow access to RegistryVersionCheck even if the requesterDomain is null
+            if(operationName.equalsIgnoreCase("RegistryVersionCheck"))
                 return;
             boolean isReadOperation = READ_OPERATIONS.contains(operationName);
             //Don't allow access to non-read operations
