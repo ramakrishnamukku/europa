@@ -321,6 +321,20 @@ nav {
         color: $black;
         padding: 11px;
         font-size: 1rem;
+        display: flex;
+        justify-content: space-between;
+        font-family: 'Courier New';
+
+        i.icon-dis-copy {
+            color: $light-blue;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+
+            &:hover {
+                color: darken($light-blue, 10%);
+                cursor: pointer;
+            }
+        }
     }
 }
 

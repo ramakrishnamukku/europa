@@ -24,6 +24,9 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-dis-copy:before {
+  content: "\e995";
+}
 .icon-dis-pull:before {
   content: "\e993";
 }

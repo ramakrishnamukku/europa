@@ -125,8 +125,6 @@ export default class Layout extends Component {
 			);
 		}
 
-		console.log(this.props);
-
 		return (
 			<nav className="TopNav">
 			 	<div className="MaxWidthContainer">
