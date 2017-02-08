@@ -47,7 +47,8 @@ public abstract class RegistryBase extends RequestHandler<EuropaRequestContext>
     public WebResponse handleRequest(EuropaRequestContext requestContext) {
         try {
             String operationName = this.getClass().getSimpleName();
-            _permissionCheck.checkRegistryAccess(operationName, requestContext);
+            if(_permissionCheck != null)
+                _permissionCheck.checkRegistryAccess(operationName, requestContext);
             return handleRegistryRequest(requestContext);
         } catch ( RegistryError ex ) {
             return handleError(ex);
