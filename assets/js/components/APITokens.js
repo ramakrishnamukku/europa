@@ -10,6 +10,7 @@ import Loader from './../components/Loader'
 import Msg from './../components/Msg'
 import NPECheck from './../util/NPECheck'
 import ConvertTimeUTC from './../util/ConvertTimeUTC'
+import CopyToClipboard from './../util/CopyToClipboard'
 
 export default class APITokens extends Component{
 	constructor(props) {
@@ -139,13 +140,14 @@ export default class APITokens extends Component{
 
 		return (
 			<span className="Flex2 Token">
+				<span id={tokenString} style={{display: 'none'}}>{tokenString}</span>
 				<span className="Flex1">
 					{displayToken}
 				</span>
-				<div className="ItalicText"
-					 onClick={() => this.context.actions.toggleShowingToken(tokenString)}>
+				<div className="ItalicText">
 					 <span className="Pipe">|</span>
-					 {verb}
+					 <span onClick={() => this.context.actions.toggleShowingToken(tokenString)}>{verb}</span>&nbsp;&nbsp; 
+					 <span onClick={() => CopyToClipboard(document.getElementById(tokenString))}>Copy</span>
 				</div>
 			</span>
 		);

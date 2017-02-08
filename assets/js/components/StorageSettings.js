@@ -150,7 +150,7 @@ export default class StorageSettings extends Component {
 					disabled: 'disabled'
 				};
 
-				label += ' (Read Only)';
+				label += '  (This value cannot be changed)';
 			}
 		}
 
@@ -179,7 +179,7 @@ export default class StorageSettings extends Component {
 
 			if(!inputConfig.editableOnceSet) {
 				readOnly = true;
-				label += ' (Read Only)';
+				label += '  (This value cannot be changed)';
 			}
 		}
 

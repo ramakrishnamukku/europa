@@ -28,7 +28,7 @@ export default class RadioButton extends Component {
 
 			return (
 				<label className={className}
-				       style={{margin: '0'}}>
+				       style={{margin: '0', cursor: (this.props.disabled) ? 'initial' : ''}}>
 			 		{this.props.label}
 			 	</label>
 			);
@@ -43,7 +43,7 @@ export default class RadioButton extends Component {
 		}
 
 		return (
-			<i className={className} />
+			<i className={className} style={{cursor: (this.props.disabled) ? 'initial' : ''}}/>
 		);
 	}
 	render(){

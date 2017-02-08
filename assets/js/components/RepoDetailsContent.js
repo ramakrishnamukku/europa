@@ -65,7 +65,7 @@ export default class RepoDetailsContent extends Component {
 			case 'EVENTS':
 				if(!NPECheck(this.props, 'events/length', true)) {
 					return (
-						<i className="icon icon-dis-waiting rotating"/>
+						<i className="icon icon-dis-waiting rotating" data-tip="Polling for updates" data-for="ToolTipTop"/>
 					);
 				}
 			break;
@@ -73,7 +73,7 @@ export default class RepoDetailsContent extends Component {
 			case 'TAGS':
 				if(!NPECheck(this.props, 'manifests/length', true)) {
 					return (
-						<i className="icon icon-dis-waiting rotating"/>
+						<i className="icon icon-dis-waiting rotating" data-tip="Polling for updates" data-for="ToolTipTop"/>
 					);
 				}
 			break;
