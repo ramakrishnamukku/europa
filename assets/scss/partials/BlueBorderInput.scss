@@ -19,7 +19,7 @@ select.BlueBorder, input.BlueBorder, textarea.BlueBorder {
 }
 
 select.BlueBorder, input.BlueBorder.FullWidth, textarea.BlueBorder.FullWidth {
-    width: 100%;
+    width: 100% !important;
 }
 
 select.BlueBorder.Error, input.BlueBorder.Error, textarea.BlueBorder.Error {
@@ -27,7 +27,7 @@ select.BlueBorder.Error, input.BlueBorder.Error, textarea.BlueBorder.Error {
 }
 
 select.BlueBorder.White, input.BlueBorder.White, textarea.BlueBorder.White {
-    background-color: white;
+    background-color: white !important;
 }
 
 input.BlueBorder.Search {
@@ -54,6 +54,15 @@ input.BlueBorder.Search.Small {
     background-size: 14px 14px;
     background-position: 0px 11px;
     padding-left: 20px;
+}
+
+input.BlueBorder.Search.Tiny {
+    background-size: 14px 14px;
+    background-position: 4px 10px;
+    padding-left: 24px;
+    font-size: 0.75rem;
+    font-weight: 400;
+    margin-top: 0px;
 }
 
 
