@@ -42,13 +42,12 @@ public interface RegistryAccess
             String requesterDomain = requestContext.getRequesterDomain();
             //Its an authenticated request with a valid token so its
             //allowed.
-            if(log.isDebugEnabled())
-                log.debug("Checking access for: "+operationName+", RequesterDomain: "+requesterDomain);
             if(requesterDomain != null)
                 return;
-            //allow access to RegistryVersionCheck even if the requesterDomain is null
+            //Registry Version check should throw an Auth Error
             if(operationName.equalsIgnoreCase("RegistryVersionCheck"))
-                return;
+                RequireAuthError.throwRequireAuth("Missing Authorization header", requestContext);
+
             boolean isReadOperation = READ_OPERATIONS.contains(operationName);
             //Don't allow access to non-read operations
             if(!isReadOperation)

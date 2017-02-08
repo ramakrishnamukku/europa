@@ -19,8 +19,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Log4j
 public class RegistryAuth {
-    private static final String SERVICE_NAME = "distelli.docker-registry";
-
     @Inject
     private TokenAuthDb _tokenAuthDb;
 
@@ -41,8 +39,9 @@ public class RegistryAuth {
             basicAuth(context, tokenizer.nextToken());
             return;
         }
-        log.debug("Unsupported Authorization scheme="+scheme);
-        requireAuth("Unsupported Authorization scheme="+scheme, context);
+        if(log.isDebugEnabled())
+            log.debug("Unsupported Authorization scheme="+scheme);
+        RequireAuthError.throwRequireAuth("Unsupported Authorization scheme="+scheme, context);
     }
 
     private void basicAuth(EuropaRequestContext context, String tokenStr) {
@@ -51,7 +50,7 @@ public class RegistryAuth {
             token = Base64.getDecoder().decode(tokenStr);
         } catch ( IllegalArgumentException ex ) {
             log.debug("Illegal Basic token="+tokenStr, ex);
-            requireAuth("Illegal Basic token="+tokenStr, context);
+            RequireAuthError.throwRequireAuth("Illegal Basic token="+tokenStr, context);
             return;
         }
         int colon = 0;
@@ -66,7 +65,7 @@ public class RegistryAuth {
         }
         if ( colon < 0 ) {
             log.debug("Illegal basic token missing :");
-            requireAuth("Illegal basic token missing ':'", context);
+            RequireAuthError.throwRequireAuth("Illegal basic token missing ':'", context);
         }
         String user = new String(token, 0, colon, UTF_8);
         String passwd = new String(token, colon+1, token.length-colon-1, UTF_8);
@@ -78,39 +77,6 @@ public class RegistryAuth {
                 return;
             }
         }
-        requireAuth("Invalid username or password", context);
-    }
-
-    private static class RequireAuthError extends RegistryError {
-        private URI auth;
-        public RequireAuthError(String message, URI auth) {
-            super(message, RegistryErrorCode.UNAUTHORIZED);
-            this.auth = auth;
-        }
-        public Map<String, String> getResponseHeaders() {
-            Map<String, String> headers = new HashMap<>();
-            headers.put("Docker-Distribution-Api-Version", "registry/2.0");
-            headers.put(
-                "WWW-Authenticate",
-                String.format(
-                    "Basic realm=\"%s\",service=\"%s\"",
-                    auth.toString(),
-                    SERVICE_NAME));
-            return headers;
-        }
-    }
-
-    private void requireAuth(String message, RequestContext context) throws RegistryError {
-        String host = context.getHost(null);
-        int port = context.getPort();
-        URI self;
-        try {
-            self = new URI(context.getProto(), null, host, port, "/", null, null);
-        } catch ( RuntimeException ex ) {
-            throw ex;
-        } catch ( Exception ex ) {
-            throw new RuntimeException(ex);
-        }
-        throw new RequireAuthError(message, self);
+        RequireAuthError.throwRequireAuth("Invalid username or password", context);
     }
 }
