@@ -34,7 +34,6 @@ export default class SSLSettings extends Component {
 		});
 	}
 	getTextareaClassName(key){
-		NPECheck(this.props, 'ssl/errorFields/keys', [])
 		let hasSelector = NPECheck(this.props, 'ssl/errorFields/keys', []).includes(key);
 
 		if(hasSelector) {

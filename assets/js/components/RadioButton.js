@@ -9,6 +9,15 @@ export default class RadioButton extends Component {
 		super(props);
 		this.state = {};
 	}
+	onClick(){
+		if(this.props.hasOwnProperty('disabled')) {
+			if(!this.props.disabled) {
+				this.props.onClick();
+			}
+		} else {
+			this.props.onClick();
+		}
+	}
 	renderLabel(){
 		if(this.props.label) {
 			let className = this.props.labelClassName || '';
@@ -39,7 +48,7 @@ export default class RadioButton extends Component {
 	}
 	render(){
 		return (
-			<div className="RadioButton FlexRow" onClick={() => this.props.onClick()}>
+			<div className="RadioButton FlexRow" onClick={() => this.onClick()}>
 				{this.renderIcon()}
 				{this.renderLabel()}
 			</div>
@@ -51,6 +60,7 @@ RadioButton.propTypes = {
 	label: PropTypes.string,
 	onClick: PropTypes.func.isRequired,
 	isChecked: PropTypes.bool.isRequired,
+	disabled: PropTypes.bool,
 	iconClassName: PropTypes.string,
 	labelClassName: PropTypes.string
 };

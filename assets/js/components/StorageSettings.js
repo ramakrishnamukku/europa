@@ -47,11 +47,13 @@ export default class StorageSettings extends Component {
 				<div className="Column">
 					<RadioButton onClick={() => this.context.actions.updateStorageCreds(typeKey, 'S3', true)} 
 								 isChecked={NPECheck(this.props, `settings/storage/storageCreds/${typeKey}`, '') == 'S3'}
+								 disabled={this.state.isEdit}
 								 label="Amazon S3" />
 				</div>
 				<div className="Column">
 					<RadioButton onClick={() => this.context.actions.updateStorageCreds(typeKey, 'DISK', true)} 
 								 isChecked={NPECheck(this.props, `settings/storage/storageCreds/${typeKey}`, '') == 'DISK'}
+								 disabled={this.state.isEdit}
 								 label="File System" />
 				</div>
 			</div>
