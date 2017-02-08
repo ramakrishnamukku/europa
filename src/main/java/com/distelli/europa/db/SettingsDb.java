@@ -98,7 +98,11 @@ public class SettingsDb extends BaseDb
     }
 
     public void delete(String domain, EuropaSettingType type, String key) {
-        _main.deleteItem(domain, toRK(type, key));
+        _main.deleteItem(domain.toLowerCase(), toRK(type, key));
+    }
+
+    public EuropaSetting getSetting(String domain, EuropaSettingType type, String key) {
+        return _main.getItem(domain.toLowerCase(), toRK(type, key));
     }
 
     public List<EuropaSetting> listRootSettingsByType(EuropaSettingType type) {

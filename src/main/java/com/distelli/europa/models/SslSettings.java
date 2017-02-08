@@ -16,16 +16,18 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SslSettings {
-    private static ObjectMapper OM = new ObjectMapper();
-    private static String SERVER_PRIVATE_KEY = "serverPrivateKey";
-    private static String SERVER_CERTIFICATE = "serverCertificate";
-    private static String AUTHORITY_PRIVATE_KEY = "authorityPrivateKey";
-    private static String AUTHORITY_CERTIFICATE = "authorityCertificate";
+    public static ObjectMapper OM = new ObjectMapper();
+    public static String SERVER_PRIVATE_KEY = "serverPrivateKey";
+    public static String SERVER_CERTIFICATE = "serverCertificate";
+    public static String AUTHORITY_PRIVATE_KEY = "authorityPrivateKey";
+    public static String AUTHORITY_CERTIFICATE = "authorityCertificate";
+    public static String DNS_NAME = "dnsName";
 
     protected String serverPrivateKey;
     protected String serverCertificate;
     protected String authorityPrivateKey;
     protected String authorityCertificate;
+    protected String dnsName;
 
     public static SslSettings fromEuropaSettings(List<EuropaSetting> settings) {
         if ( settings.isEmpty() ) return null;

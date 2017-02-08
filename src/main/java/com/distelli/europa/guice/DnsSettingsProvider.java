@@ -13,10 +13,13 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import com.distelli.europa.Constants;
 import com.distelli.europa.db.SettingsDb;
+import com.distelli.europa.models.DnsSettings;
 import com.distelli.europa.models.EuropaSetting;
 import com.distelli.europa.models.EuropaSettingType;
-import com.distelli.europa.models.DnsSettings;
+import com.distelli.europa.models.SslSettings;
+
 import lombok.extern.log4j.Log4j;
 
 @Log4j
@@ -42,8 +45,8 @@ public class DnsSettingsProvider implements Provider<DnsSettings>
     {
         if(_dnsSettings != null)
             return _dnsSettings;
-        List<EuropaSetting> settings = _settingsDb.listRootSettingsByType(EuropaSettingType.DNS);
-        _dnsSettings = DnsSettings.fromEuropaSettings(settings);
+        EuropaSetting setting = _settingsDb.getSetting(Constants.DOMAIN_ZERO, EuropaSettingType.SSL, SslSettings.DNS_NAME);
+        _dnsSettings = DnsSettings.fromEuropaSetting(setting);
         return _dnsSettings;
     }
 }

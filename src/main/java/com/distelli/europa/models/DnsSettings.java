@@ -28,21 +28,19 @@ import lombok.extern.log4j.Log4j;
 @Log4j
 public class DnsSettings
 {
-    private static final String SETTING_DNS_NAME = "dnsName";
-
     protected String dnsName;
 
-    public static DnsSettings fromEuropaSettings(List<EuropaSetting> settings)
+    public static DnsSettings fromEuropaSetting(EuropaSetting setting)
     {
-        if(settings == null || settings.size() == 0)
+        if(setting == null)
             return null;
-        DnsSettings dnsSettings = new DnsSettings();
-        for(EuropaSetting setting : settings)
-        {
-            String key = setting.getKey();
-            if(key.equalsIgnoreCase(SETTING_DNS_NAME))
-                dnsSettings.setDnsName(setting.getValue());
+        DnsSettings dnsSettings = null;
+        String key = setting.getKey();
+        if(key.equalsIgnoreCase(SslSettings.DNS_NAME)) {
+            dnsSettings = new DnsSettings();
+            dnsSettings.setDnsName(setting.getValue());
         }
+
         return dnsSettings;
     }
 
@@ -74,9 +72,9 @@ public class DnsSettings
         settings.add(EuropaSetting
                      .builder()
                      .domain(Constants.DOMAIN_ZERO)
-                     .key(SETTING_DNS_NAME)
+                     .key(SslSettings.DNS_NAME)
                      .value(this.dnsName)
-                     .type(EuropaSettingType.DNS)
+                     .type(EuropaSettingType.SSL)
                      .build());
         return settings;
     }
