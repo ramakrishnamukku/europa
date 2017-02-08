@@ -111,7 +111,7 @@ export default class Layout extends Component {
 
 		if (shouldHighlight
 				|| location.length == 1 && location[0] == "/" && root) {
-			return { background: "#25a69c" }
+			return { background: "#00A79D" }
 		}
 	}
 	renderNav(){
@@ -124,6 +124,8 @@ export default class Layout extends Component {
 				</Link>
 			);
 		}
+
+		console.log(this.props);
 
 		return (
 			<nav className="TopNav">
@@ -150,7 +152,8 @@ export default class Layout extends Component {
 							<Link to="/settings"
 										data-tip="Settings"
 										data-for="ToolTipBottom">
-								<i className="icon icon-dis-settings"/>
+								<i className="icon icon-dis-settings" 
+								   style={(NPECheck(this.props, 'location/pathname', null) == '/settings' ? {color: '#EA3F67'} : {})}/>
 							</Link>
 						</div>
 					</div>

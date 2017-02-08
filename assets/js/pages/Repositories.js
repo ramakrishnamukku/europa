@@ -27,7 +27,7 @@ export default class Repositories extends Component {
 		this.context.router.push('/create-repository');
 	}
 	renderRepos(){
-		let filteredRepos = this.props.repos.filter((repo) => {
+		let filteredRepos = this.props.repos.sort((repo1, repo2) => repo1.name > repo2.name ? 1 : -1).filter((repo) => {
 			if(!this.props.reposFilterQuery) return true;
 
 			return JSON.stringify(repo).indexOf(this.props.reposFilterQuery) > -1

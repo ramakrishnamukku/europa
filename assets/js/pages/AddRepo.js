@@ -61,7 +61,7 @@ export default class AddRepository extends Component {
 			return (
 				<Dropdown isOpen={this.props.addRepo.selectRepoDropdown}
 						  toggleOpen={() => this.context.actions.toggleSelectRepoDropdown()}
-						  listItems={this.props.addRepo.reposInRegistry} 
+						  listItems={this.props.addRepo.reposInRegistry.sort((repo1, repo2) => repo1 > repo2 ? 1 : -1)} 
 						  renderItem={(repo, index) => this.renderRepoInRegistryListItem(repo, index)}
 						  filterFn={(item) => item.indexOf(this.props.addRepo.reposInRegistryQuery) > -1}
 						  inputOnChange={(e) => this.context.actions.updateReposInRegisterQuery(e, false)}

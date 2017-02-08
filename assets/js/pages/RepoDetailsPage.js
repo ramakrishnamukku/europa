@@ -74,7 +74,7 @@ export default class RepoDetailsPage extends Component {
 			/>
 		);
 	}
-	renderDeleteRepo(){
+	renderDeleteRepo(activeRepo){
 		if(this.props.repoDetails.deleteXHR) {
 			return (
 				<Loader />
@@ -91,10 +91,19 @@ export default class RepoDetailsPage extends Component {
 			);
 		}
 
+		let message = "Are you sure you want to disconnect this repository? All data will be lost.";
+		let confirmText = "Disonnect";
+
+		if(activeRepo.local) {
+			message = "Are you sure you want to delete this repository? All data will be lost.";
+			confirmText = "Delete";
+		}
+
+
 		if(this.props.repoDetails.isDeleting) {
 			return (
-				<CenteredConfirm message="Are you sure you want to delete this repository? All data will be lost."
-							     confirmButtonText="Delete"
+				<CenteredConfirm message={message}
+							     confirmButtonText={confirmText}
 							     confirmButtonStyle={{}}
 							     onConfirm={() => this.context.actions.deleteActiveRepo(this.toRepoList.bind(this))}
 							     onCancel={() => this.context.actions.toggleActiveRepoDelete()}/>
@@ -137,7 +146,7 @@ export default class RepoDetailsPage extends Component {
 				</div>
 				<div className="FlexRow">
 					{this.renderRepoPullCommands()}
-					{this.renderActions()}
+					{this.renderActions(activeRepo)}
 				</div>
 			</div>
 		);
@@ -147,13 +156,13 @@ export default class RepoDetailsPage extends Component {
 			<DockerPullCommands {...this.props} />
 		);
 	}
-	renderActions(){
+	renderActions(activeRepo){
 		let buttons = [
 			{
-				icon: 'icon icon-dis-terminate',
+				icon: (activeRepo.local) ? 'icon icon-dis-trash' : 'icon icon-dis-terminate',
 			    onClick: () => this.context.actions.toggleActiveRepoDelete(),
 				isActive: this.props.repoDetails.isDeleting,
-				toolTip: 'Disconnect'
+				toolTip: (activeRepo.local) ? 'Delete Repository' : 'Disconnect'
 			},
 			{
 				icon: 'icon icon-dis-configure',
@@ -192,7 +201,7 @@ export default class RepoDetailsPage extends Component {
 			<div className="ContentContainer">
 				{this.renderHeader(activeRepo)}
 				<div>
-				 	{this.renderDeleteRepo()}
+				 	{this.renderDeleteRepo(activeRepo)}
 				    {(this.props.repoDetails.showSettings) ?  this.renderRepoSettings(activeRepo) : this.renderEventTimeline()}
 				</div>
 			</div>
