@@ -156,10 +156,10 @@ export default class RepoDetailsPage extends Component {
 				toolTip: 'Disconnect'
 			},
 			{
-				icon: 'icon icon-dis-settings',
+				icon: 'icon icon-dis-configure',
 			    onClick: () => this.context.actions.toggleActiveRepoSettings(),
 				isActive: this.props.repoDetails.showSettings,
-				toolTip: 'Settings'
+				toolTip: 'Repository Settings'
 			}
 		];
 
