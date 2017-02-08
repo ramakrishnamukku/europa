@@ -27,8 +27,13 @@ public class RegistryAuth {
     public void authenticate(EuropaRequestContext context) throws RegistryError {
         String authorization = context.getHeaderValue("Authorization");
         if ( null == authorization ) {
-            log.debug("Missing authorization header");
-            requireAuth("Missing Authorization header", context);
+            //If the authorization header is missing that means its an
+            //anonymous request. Don't do the auth check and let the
+            //request pass. The RegistryAccess class will check if the
+            //request should be allowed
+            context.setRemoteUser(null);
+            context.setRequesterDomain(null);
+            return;
         }
         StringTokenizer tokenizer = new StringTokenizer(authorization);
         String scheme = tokenizer.hasMoreTokens() ? tokenizer.nextToken().toLowerCase() : null;

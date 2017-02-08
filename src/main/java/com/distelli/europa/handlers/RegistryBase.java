@@ -1,10 +1,5 @@
 package com.distelli.europa.handlers;
 
-import com.distelli.utils.CompactUUID;
-import com.distelli.europa.db.ContainerRepoDb;
-import com.distelli.europa.models.ContainerRepo;
-import com.distelli.europa.models.RegistryProvider;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,10 +11,16 @@ import javax.inject.Singleton;
 
 import org.eclipse.jetty.http.HttpMethod;
 import com.distelli.europa.EuropaRequestContext;
+import com.distelli.europa.db.ContainerRepoDb;
 import com.distelli.europa.guice.ObjectStoreNotInitialized;
+import com.distelli.europa.models.ContainerRepo;
+import com.distelli.europa.models.RegistryProvider;
 import com.distelli.europa.registry.RegistryAuth;
 import com.distelli.europa.registry.RegistryError;
 import com.distelli.europa.registry.RegistryErrorCode;
+import com.distelli.europa.util.PermissionCheck;
+import com.distelli.utils.CompactUUID;
+import com.distelli.webserver.AjaxClientException;
 import com.distelli.webserver.RequestContext;
 import com.distelli.webserver.RequestHandler;
 import com.distelli.webserver.WebResponse;
@@ -40,9 +41,13 @@ public abstract class RegistryBase extends RequestHandler<EuropaRequestContext>
 
     @Inject
     private ContainerRepoDb _repoDb;
+    @Inject
+    protected PermissionCheck _permissionCheck;
 
     public WebResponse handleRequest(EuropaRequestContext requestContext) {
         try {
+            String operationName = this.getClass().getSimpleName();
+            _permissionCheck.checkRegistryAccess(operationName, requestContext);
             return handleRegistryRequest(requestContext);
         } catch ( RegistryError ex ) {
             return handleError(ex);

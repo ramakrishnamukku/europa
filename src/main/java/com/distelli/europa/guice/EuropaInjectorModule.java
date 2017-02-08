@@ -31,6 +31,7 @@ import com.distelli.europa.db.TokenAuthDb;
 import com.distelli.europa.models.DnsSettings;
 import com.distelli.europa.models.SslSettings;
 import com.distelli.europa.models.StorageSettings;
+import com.distelli.europa.registry.RegistryAccess;
 import com.distelli.europa.monitor.*;
 import com.distelli.europa.clients.DockerHubClient;
 import com.distelli.europa.util.ObjectKeyFactory;
@@ -133,6 +134,8 @@ public class EuropaInjectorModule extends AbstractModule
 
         OptionalBinder.newOptionalBinder(binder(), PermissionCheck.class)
             .setDefault().to(PermissionCheck.Default.class);
+        OptionalBinder.newOptionalBinder(binder(), RegistryAccess.class)
+            .setDefault().to(RegistryAccess.Default.class);
         ConnectionPool sharedPool = new ConnectionPool(20, 5, TimeUnit.MINUTES);
         bind(ConnectionPool.class)
             .toInstance(sharedPool);
