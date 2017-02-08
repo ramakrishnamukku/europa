@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react'
+import { Link } from 'react-router'
 import ConvertTimeFriendly from './../util/ConvertTimeFriendly'
 import CenteredConfirm from './../components/CenteredConfirm'
 import Loader from './../components/Loader'
@@ -118,7 +119,9 @@ export default class PipelineStageItem extends Component {
           <div className="stage-dest-details">
             <div style={ {position: "relative", top: "2px"} }>
               <span style={{color: "#1DAFE9", fontSize: ".75rem", fontWeight: "900"}}>
-                {repo.name}
+                <Link to={`/repository/${repo.id}`}>
+                  {repo.name}
+                </Link>
               </span>
             </div>
             <div>
