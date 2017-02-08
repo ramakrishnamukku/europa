@@ -14,6 +14,7 @@ import {
 
 export function pipelinesState() {
   return {
+    isBlocked: false,
     initNewPipeline: false,
     newPipelineTemplate: {
       name: null,
@@ -33,6 +34,7 @@ export function pipelinesState() {
 
 export function singlePipelineState() {
   return {
+    isBlocked: false,
     pipeline: null,
     repoConnectTemplate: null,
     section: null,
@@ -144,6 +146,7 @@ export function filterPipelines(filterString) {
   })
 }
 
+// Read Permissions
 export function listPipelines() {
   return new Promise((resolve, reject) => {
     this.setState({
@@ -152,21 +155,33 @@ export function listPipelines() {
       })
     }, () => {
       RAjax.GET.call(this, 'ListPipelines')
-      .then(res => {
-        this.setState({
-          pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
-            pipelines: res,
-            pipelinesXHR: false,
-          })
-        }, () => resolve() );
-      })
-      .catch(err => {
-        this.setState({
-          pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
-            pipelinesXHR: false,
-          })
-        }, () => reject() );
-      });
+        .then(res => {
+          this.setState({
+            pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
+              isBlocked: false,
+              pipelines: res,
+              pipelinesXHR: false,
+            })
+          }, () => resolve());
+        })
+        .catch(err => {
+          let errorMsg = NPEChceck(err, 'error/message', 'There was an error loading your pipelines');
+          if (errorMsg == 'You do not have access to this operation') {
+            this.setState({
+              pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
+                isBlocked: true,
+                pipelinesXHR: false,
+              })
+            }, () => reject());
+          } else {
+            this.setState({
+              pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
+                isBlocked: false,
+                pipelinesXHR: false,
+              })
+            }, () => reject());
+          }
+        });
     });
   });
 }
@@ -178,22 +193,36 @@ export function getPipeline(pipelineId) {
         getPipelineXHR: true,
       })
     }, () => {
-      RAjax.GET.call(this, 'GetPipeline', { pipelineId } )
-      .then(res => {
-        this.setState({
-          pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
-            pipeline: res,
-            getPipelineXHR: false,
-          })
-        }, () => resolve(res) );
-      })
-      .catch(err => {
-        this.setState({
-          pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
-            getPipelineXHR: false,
-          })
-        }, () => reject() );
-      });
+      RAjax.GET.call(this, 'GetPipeline', {
+          pipelineId
+        })
+        .then(res => {
+          this.setState({
+            pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
+              isBlocked: false,
+              pipeline: res,
+              getPipelineXHR: false,
+            })
+          }, () => resolve(res));
+        })
+        .catch(err => {
+          let errorMsg = NPEChceck(err, 'error/message', 'There was an error loading your pipeline');
+          if (errorMsg == 'You do not have access to this operation') {
+            this.setState({
+              pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
+                isBlocked: true,
+                getPipelineXHR: false,
+              })
+            }, () => reject());
+          } else {
+            this.setState({
+              pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
+                isBlocked: false,
+                getPipelineXHR: false,
+              })
+            }, () => reject());
+          }
+        });
     });
   });
 }
@@ -212,31 +241,32 @@ export function setContainerRepo() {
       })
     }, () => {
       RAjax.POST.call(this, 'SetPipelineContainerRepoId', {}, postData)
-      .then(res => {
-        this.setState({
-          pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
-            pipeline: res,
-            setContainerRepoXHR: false,
-            setContainerRepoXHRError: false,
-            repoConnectTemplate: null,
-            section: null
-          })
-        }, () => resolve() );
-      })
-      .catch(err => {
-        this.setState({
-          pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
-            setContainerRepoXHR: false,
-            setContainerRepoXHRError: NPECheck(err, 'error/message', "")
-          })
-        }, () => reject() );
-      });
+        .then(res => {
+          this.setState({
+            pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
+              pipeline: res,
+              setContainerRepoXHR: false,
+              setContainerRepoXHRError: false,
+              repoConnectTemplate: null,
+              section: null
+            })
+          }, () => resolve());
+        })
+        .catch(err => {
+          this.setState({
+            pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
+              setContainerRepoXHR: false,
+              setContainerRepoXHRError: NPECheck(err, 'error/message', "")
+            })
+          }, () => reject());
+        });
     });
   });
 }
 
 export function createPipeline() {
-  let newPipeline = { ...this.state.pipelinesStore.newPipelineTemplate }
+  let newPipeline = {...this.state.pipelinesStore.newPipelineTemplate
+  }
 
   // Remove validation if clean
   delete newPipeline["errorFields"];
@@ -248,25 +278,25 @@ export function createPipeline() {
       })
     }, () => {
       RAjax.POST.call(this, 'NewPipeline', {}, newPipeline)
-      .then(res => {
-        this.setState({
-          pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
-            pipelines: res,
-            newPipelineXHR: false,
-            newPipelineXHRError: false,
-            newPipelineTemplate: pipelinesState()["newPipelineTemplate"],
-            initNewPipeline: false
-          })
-        }, () => resolve() );
-      })
-      .catch(err => {
-        this.setState({
-          pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
-            newPipelineXHR: false,
-            newPipelineXHRError: NPECheck(err, 'error/message', "")
-          })
+        .then(res => {
+          this.setState({
+            pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
+              pipelines: res,
+              newPipelineXHR: false,
+              newPipelineXHRError: false,
+              newPipelineTemplate: pipelinesState()["newPipelineTemplate"],
+              initNewPipeline: false
+            })
+          }, () => resolve());
+        })
+        .catch(err => {
+          this.setState({
+            pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
+              newPipelineXHR: false,
+              newPipelineXHRError: NPECheck(err, 'error/message', "")
+            })
+          });
         });
-      });
     });
   });
 }
@@ -283,26 +313,26 @@ export function removePipeline() {
       })
     }, () => {
       RAjax.POST.call(this, 'RemovePipeline', {}, postData)
-      .then(res => {
-        this.setState({
-          pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
-            pipelines: res,
-            removePipelineXHRError: false,
-            removePipelineXHR: false,
-          })
-        }, () => {
-          this.context.router.push('/pipelines')
-          resetSinglePipelineState.call(this)
+        .then(res => {
+          this.setState({
+            pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
+              pipelines: res,
+              removePipelineXHRError: false,
+              removePipelineXHR: false,
+            })
+          }, () => {
+            this.context.router.push('/pipelines')
+            resetSinglePipelineState.call(this)
+          });
+        })
+        .catch(err => {
+          this.setState({
+            pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
+              removePipelineXHR: false,
+              removePipelineXHRError: NPECheck(err, 'error/message', "")
+            })
+          }, () => reject());
         });
-      })
-      .catch(err => {
-        this.setState({
-          pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
-            removePipelineXHR: false,
-            removePipelineXHRError: NPECheck(err, 'error/message', "")
-          })
-        }, () => reject() );
-      });
     });
   });
 }
@@ -325,24 +355,24 @@ export function addPipelineComponent() {
       })
     }, () => {
       RAjax.POST.call(this, 'AddPipelineComponent', content, postData)
-      .then(res => {
-        this.setState({
-          pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
-            pipeline: res,
-            addPipelineComponentXHR: false,
-            addPipelineComponentXHRError: false,
-            section: null,
-          })
-        }, () => resolve(res) );
-      })
-      .catch(err => {
-        this.setState({
-          pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
-            addPipelineComponentXHR: false,
-            addPipelineComponentXHRError: NPECheck(err, 'error/message', "")
-          })
+        .then(res => {
+          this.setState({
+            pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
+              pipeline: res,
+              addPipelineComponentXHR: false,
+              addPipelineComponentXHRError: false,
+              section: null,
+            })
+          }, () => resolve(res));
+        })
+        .catch(err => {
+          this.setState({
+            pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
+              addPipelineComponentXHR: false,
+              addPipelineComponentXHRError: NPECheck(err, 'error/message', "")
+            })
+          });
         });
-      });
     });
   });
 }
@@ -355,17 +385,17 @@ export function movePipelineComponent(postData) {
       })
     }, () => {
       RAjax.POST.call(this, 'MovePipelineComponent', {}, postData)
-      .then(res => {
-        // TODO
-        resolve();
-      })
-      .catch(err => {
-        this.setState({
-          pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
-            movePipelineComponentXHR: false,
-          })
-        }, () => reject() );
-      });
+        .then(res => {
+          // TODO
+          resolve();
+        })
+        .catch(err => {
+          this.setState({
+            pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
+              movePipelineComponentXHR: false,
+            })
+          }, () => reject());
+        });
     });
   });
 }
@@ -383,21 +413,21 @@ export function removePipelineComponent(pipelineComponentId) {
       })
     }, () => {
       RAjax.POST.call(this, 'RemovePipelineComponent', {}, postData)
-      .then(res => {
-        this.setState({
-          pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
-            pipeline: res,
-            removePipelineComponentXHR: false,
-          })
-        }, () => resolve(res) );
-      })
-      .catch(err => {
-        this.setState({
-          pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
-            removePipelineComponentXHR: false,
-          })
-        }, () => reject() );
-      });
+        .then(res => {
+          this.setState({
+            pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
+              pipeline: res,
+              removePipelineComponentXHR: false,
+            })
+          }, () => resolve(res));
+        })
+        .catch(err => {
+          this.setState({
+            pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
+              removePipelineComponentXHR: false,
+            })
+          }, () => reject());
+        });
     });
   });
 }

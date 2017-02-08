@@ -4,6 +4,7 @@ import NPECheck from './../util/NPECheck'
 import Btn from './../components/Btn'
 import Loader from './../components/Loader'
 import BtnGroup from './../components/BtnGroup'
+import AccessDenied from './../components/AccessDenied'
 import ControlRoom from './../components/ControlRoom'
 import PipelineStageItem from './../components/PipelineStageItem'
 import CenteredConfirm from './../components/CenteredConfirm'
@@ -112,9 +113,11 @@ export default class Pipelines extends Component {
     );
   }
   renderNewPipelineXHRError() {
-    if (this.props.pipelinesStore.newPipelineXHRError) {
+    let error = NPECheck(this.props, 'pipelinesStore/newPipelineXHRError', false);
+    
+    if (error) {
       return (
-        <Msg text={this.props.pipelinesStore.newPipelineXHRError}
+        <Msg text={error}
              close={() => this.context.actions.clearPipelinesXHRErrors()} />
       );
     }
@@ -171,6 +174,13 @@ export default class Pipelines extends Component {
         <div className="PageLoader">
           <Loader />
         </div>
+      );
+    }
+
+    if(NPECheck(this.props, 'pipelinesStore/isBlocked', false)) {
+
+      return (
+        <AccessDenied />
       );
     }
 

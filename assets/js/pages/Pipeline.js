@@ -3,7 +3,9 @@ import { Link } from 'react-router'
 import Btn from './../components/Btn'
 import Loader from './../components/Loader'
 import BtnGroup from './../components/BtnGroup'
+import NPECheck from './../util/NPECheck'
 import ControlRoom from './../components/ControlRoom'
+import AccessDenied from './../components/AccessDenied'
 import CenteredConfirm from './../components/CenteredConfirm'
 import PipelineStageItem from './../components/PipelineStageItem'
 import PipelineConnectRepository from './../components/PipelineConnectRepository'
@@ -172,9 +174,10 @@ export default class Pipeline extends Component {
     );
   }
   renderRemovePipelineErrorMsg() {
-    if (this.props.pipelineStore.removePipelineXHRError) {
+    let error = NPECheck(this.props, 'pipelinesStore/removePipelineXHRError', false);
+    if (error) {
       return (
-        <Msg text={this.props.pipelinesStore.removePipelineXHRError}
+        <Msg text={error}
            close={() => this.context.actions.clearPipelinesXHRErrors()} />
       );
     }
@@ -187,6 +190,12 @@ export default class Pipeline extends Component {
         <div className="PageLoader">
           <Loader />
         </div>
+      );
+    }
+
+    if(NPECheck(this.props, 'pipelineStore/isBlocked', false)) {
+      return (
+        <AccessDenied />
       );
     }
 
