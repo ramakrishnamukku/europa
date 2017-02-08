@@ -42,17 +42,14 @@ export default class RepoSettings extends Component {
 							<span className="TealColor">&nbsp;-&nbsp;{creds.provider}</span>
 						</label>
 					</div>
-					<div className="FlexRow">
-						<i className="icon icon-dis-close" 
-						   onClick={() => this.context.actions.toggleActiveRepoSettings()}/>
-					</div>
+					<div className="FlexRow"></div>
 				</div>
 				<div className="FlexRow Row">
 					<div className="Flex1">
 						<label className="small">Key Name</label>
 						<div className="Value">{creds.name}</div>
 					</div>
-					<div className="Flex1">
+					<div className="Flex1" style={(creds.region) ? {} : {display: 'none'}}>
 						<label className="small">Key Region</label>
 						<div className="Value">{creds.region}</div>
 					</div>
@@ -149,7 +146,8 @@ export default class RepoSettings extends Component {
 		let rows = [{
 			columns: [{
                 icon:'icon icon-dis-repo',
-                renderBody: this.renderPublicSettings.bind(this)
+                renderBody: this.renderPublicSettings.bind(this),
+                condition: this.props.activeRepo.local
             }]
 		}, {
 			columns: [{

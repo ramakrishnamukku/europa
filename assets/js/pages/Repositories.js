@@ -67,7 +67,7 @@ export default class Repositories extends Component {
 		let lastEvent = repo.lastEvent
 		let lastSynced = repo.lastSyncTime;
 
-		if(!lastSynced) {
+		if(!repo.local && !lastSynced) {
 			return (
 				<div className="Flex2 FlexColumn UnknownDetails">
 					Retrieving repository details..
@@ -78,7 +78,7 @@ export default class Repositories extends Component {
 		if(!lastEvent) {
 			return (
 				<div className="Flex2 FlexColumn UnknownDetails">
-					No events found. Last synced at {ConvertTimeUTC(new Date(lastSynced))}
+					No events found. {(lastSynced) ? `Last synced at ${ConvertTimeUTC(new Date(lastSynced))}` : null}
 				</div>	
 			);
 		}
