@@ -7,10 +7,15 @@
         color: $light-blue;
         transition: all 0.3s;
         margin-right: 5px;
+        position: relative;
 
         &:hover {
             color: darken($light-blue, 10%);
             cursor: pointer;
+        }
+
+        &:active {
+            top: 1px;
         }
     }
 
@@ -20,7 +25,7 @@
     }
 
     .More {
-        font-size: 0.75rem;
+        font-size: 0.69rem;
         color: $light-blue;
         transition: all 0.3s;
         margin-left: 5px;
@@ -61,6 +66,9 @@
             background-color: #D3EFFA;
             padding: 10px;
             font-size: 0.875rem;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
 
             div {
                 word-wrap: break-word;
@@ -68,9 +76,7 @@
             }
 
             i {
-                position: absolute;
-                right: 10px;
-                top: 35px;
+                margin-left: 21px;
                 font-size: 1.2rem;
                 color: $light-blue;
                 transition: all 0.2s;
@@ -78,6 +84,46 @@
                 &:hover {
                     cursor: pointer;
                     color: darken($light-blue, 10%);
+                }
+            }
+        }
+
+        .SmallPullCommand {
+            display: flex;
+            flex-direction: row;
+            background-color: white;
+            border-bottom: 1px solid $light-grey;
+            color: $grey;
+            padding: 10px;
+            font-size: 0.875rem;
+
+            i.icon-dis-tag {
+                color: $purple;
+                font-size: 1rem;
+                margin-right: 5px;
+                position: relative;
+                top: 2px;
+            }
+
+            div {
+                word-wrap: break-word;
+                max-width: 530px;
+                flex: 1;
+            }
+
+            i.icon-dis-copy {
+                position: relative;
+                font-size: 1.2rem;
+                color: $light-blue;
+                transition: all 0.2s;
+
+                &:hover {
+                    cursor: pointer;
+                    color: darken($light-blue, 10%);
+                }
+
+                &:active {
+                    top: 1px;
                 }
             }
         }

@@ -29,7 +29,7 @@ export default class DockerPullCommands extends Component {
 	renderMore(selectedManifests){
 		if(selectedManifests && selectedManifests.length) {
 			return (
-				<div className="More" onClick={() => this.context.actions.toggleShowPullCommands()}>more..</div>
+				<div className="More" onClick={() => this.context.actions.toggleShowPullCommands()}>View selected tag pull commands...</div>
 			);
 		}
 	}
@@ -51,6 +51,20 @@ export default class DockerPullCommands extends Component {
 										    data-for="ToolTipTop"
 										    onClick={() => CopyToClipboard(document.getElementById(manifest.manifestId))}/>
 									</div>
+									{manifest.tags.map((tag, index) => {
+										return (
+											<div key={index} className="SmallPullCommand">
+												<i className="icon icon-dis-tag" />
+												<div id={(manifest.manifestId + tag)}>
+													{`${pullCommand}:${tag}`}	
+												</div>
+												<i className="icon icon-dis-copy" 
+												   data-tip="Copy Pull Command" 
+												   data-for="ToolTipTop"
+												   onClick={() => CopyToClipboard(document.getElementById((manifest.manifestId + tag)))}/>
+											</div>
+										);
+									})}
 								</div>				
 							);
 						})}
