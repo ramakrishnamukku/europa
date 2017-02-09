@@ -42,7 +42,6 @@ export default class DockerPullCommands extends Component {
 					<div className="Arrow"></div>
 					<div className="FlexColumn">
 						{selectedManifests.map((manifest, index) => {
-							console.log(manifest);
 							return (
 								<div className="FlexColumn" key={index}>
 									<div className="LargePullCommand">

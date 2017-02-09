@@ -418,7 +418,8 @@ export function getEventNotificationRecords(recordIdsArray) {
         notifRecordXHR: true
       })
     }, () => {
-      let records = recordIdsArray.map(getNotificationRecord.bind(this));
+      let repoId = NPECheck(this.state, 'repoDetails/activeRepo/id', '');
+      let records = recordIdsArray.map((recordId) => getNotificationRecord.call(this, recordId, repoId));
       Promise.all(records)
         .then((res) => {
           this.setState({
@@ -476,8 +477,9 @@ export function appendNotificationRecord(newRecord) {
   });
 }
 
-export function getNotificationRecord(recordId) {
+export function getNotificationRecord(recordId, repoId) {
   return RAjax.GET.call(this, 'GetNotificationRecord', {
-    notificationId: recordId
+    notificationId: recordId,
+    repoId: repoId
   });
 }

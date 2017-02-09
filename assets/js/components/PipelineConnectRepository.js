@@ -66,7 +66,6 @@ export default class PipelineConnectRepository extends Component {
     );
   }
   render() {
-    console.log(this.props.pipelineStore)
     return (
       <div>
         <div className="CR_Header">

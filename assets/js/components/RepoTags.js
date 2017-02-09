@@ -45,7 +45,9 @@ export default class RepoTags extends Component {
 		let shortManifestId = tag.manifestId.substring(0, 20) + '...';
 		let icon = 'icon icon-dis-box-uncheck';
 
-		if(NPECheck(this.props, 'repoDetails/selectedManifests', []).includes(tag)) {
+		if(NPECheck(this.props, 'repoDetails/selectedManifests', [])
+			.map((manifest) => manifest.manifestId)
+			.includes(tag.manifestId)) {
 			icon = 'icon icon-dis-box-check';
 		}
 
@@ -67,7 +69,7 @@ export default class RepoTags extends Component {
 				</span>
 				<span className="Size">
 					<span className="Label">Virtual Size:&nbsp;</span>
-					<span className="Value">{tag.virtualSize}</span>
+					<span className="Value">{(tag.virtualSize) ? `${Math.ceil(tag.virtualSize/1000000)}M` : 'Unknown'}</span>
 				</span>
 				<span className="Pushed">
 					<span className="Label">Pushed:&nbsp;</span>
