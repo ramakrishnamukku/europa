@@ -9,6 +9,11 @@ export default class ControlRoom extends Component {
 		super(props);
 		this.state = {};
 	}
+	componentDidMount() {
+		if(this.props.componentDidMount && typeof this.props.componentDidMount == 'function') {
+			this.props.componentDidMount.call(this);
+		}
+	}
 	renderHeader() {
 		if(this.props.renderHeaderContent) {
 			return (

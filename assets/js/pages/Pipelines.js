@@ -17,6 +17,9 @@ export default class Pipelines extends Component {
   }
   componentDidMount() {
     this.context.actions.listPipelines();
+    if(this.refs['createPipeline']) {
+      this.refs['createPipeline'].focus();
+    }
   }
   renderNoPipelines() {
     return (
@@ -48,7 +51,8 @@ export default class Pipelines extends Component {
     if (this.props.pipelinesStore.initNewPipeline) {
       return (
         <div style={ {margin: "14px 0 0"} }>
-          <ControlRoom renderBodyContent={ this.newPipelineForm.bind(this) } />
+          <ControlRoom componentDidMount={ function() { (this.refs['createPipeline']) ?   this.refs['createPipeline'].focus() : null }} 
+                       renderBodyContent={ this.newPipelineForm.bind(this) } />
         </div>
       );
     }
@@ -81,6 +85,7 @@ export default class Pipelines extends Component {
             </label>
             <input className={this.inputClassName("name")}
                    style={ {background: "#fff"} }
+                   ref="createPipeline"
                    value={NPECheck(this.props.pipelinesStore, 'newPipelineTemplate/name', "")}
                    placeholder="Enter Pipeline name..."
                    onChange={(e) => this.context.actions.updateNewPipelineTemplate("name", e.target.value)} />
