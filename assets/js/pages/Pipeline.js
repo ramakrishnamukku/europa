@@ -55,7 +55,6 @@ export default class Pipeline extends Component {
         if (!pipeline.containerRepoId) {
           return (
             <div>
-              <PipelineStageItem {...this.props} empty={true} />
               <div className="FlexRow JustifyCenter AlignCenter">
                 <Btn onClick={() => this.context.actions.setPipelinePageSection("CONNECT_REPOSITORY") }
                      className="LargeBlueButton"

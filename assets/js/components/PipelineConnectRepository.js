@@ -65,6 +65,15 @@ export default class PipelineConnectRepository extends Component {
       </div>
     );
   }
+  filterRepoItems() {
+    let mapOfComponentIds = NPECheck(this.props.pipelineStore, 'pipeline/components', []).reduce((map, component) => {
+      map[component.destinationContainerRepoId] = true;
+      return map;
+    }, {} )
+
+    return this.props.repos.filter(repo => this.props.pipelineStore.pipeline.containerRepoId != repo.id)
+                           .filter(repo => !mapOfComponentIds.hasOwnProperty(repo.id))
+  }
   render() {
     return (
       <div>
@@ -85,7 +94,7 @@ export default class PipelineConnectRepository extends Component {
               </label>
               <Dropdown isOpen={this.state.repoDropdownOpen}
                         toggleOpen={() => this.setState({repoDropdownOpen: !this.state.repoDropdownOpen})}
-                        listItems={this.props.repos.filter( repo => this.props.pipelineStore.pipeline.containerRepoId != repo.id) }
+                        listItems={this.filterRepoItems()}
                         renderItem={(repo, index) => this.renderRepoItem(repo, index)}
                         inputPlaceholder="Docker Image Repository"
                         inputClassName="BlueBorder FullWidth White"
