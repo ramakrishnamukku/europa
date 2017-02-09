@@ -130,7 +130,7 @@ export default class Layout extends Component {
 			 	<div className="MaxWidthContainer">
 					<div className="FlexRow MainNav">
 						<Link to="/repositories">
-							<img src="/public/images/distelli-europa-logo.svg"
+							<img src="/public/images/distelli-europa-community-logo.svg"
 									 alt="Distelli Europa" />
 						</Link>
 						<Link to="/repositories"

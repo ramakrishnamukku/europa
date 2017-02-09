@@ -135,7 +135,7 @@ export default class Repositories extends Component {
 						</div>
 						<div className="Flex1">
 							<Link to="/new-repository">
-								<BtnGroup buttons={[{icon: 'icon icon-dis-repo', toolTip: 'Add Remote Repository', leftMargin: true}]} />
+								<BtnGroup buttons={[{icon: 'icon icon-dis-repo', toolTip: 'Add Remote Repository'}]} />
 							</Link>
 						</div>
 					</div>
