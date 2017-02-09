@@ -73,7 +73,7 @@ public class ListRepoManifests extends AjaxHelper<EuropaRequestContext>
                 else
                 {
                     taggedManifests.add(curItem);
-                    curItem = null;
+                    curItem = MultiTaggedManifest.fromRegistryManifest(manifest);
                 }
             }
         }
