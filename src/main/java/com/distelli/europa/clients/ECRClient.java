@@ -16,6 +16,7 @@ import com.distelli.persistence.PageIterator;
 import com.amazonaws.services.ecr.model.*;
 import com.distelli.europa.models.*;
 import lombok.extern.log4j.Log4j;
+import java.net.URI;
 
 @Log4j
 public class ECRClient
@@ -38,6 +39,21 @@ public class ECRClient
         if(endpoint == null)
             throw(new IllegalArgumentException("Unable to determine ECR endpoint in Region: "+registryCred.getRegion()));
         _awsEcrClient.setEndpoint(endpoint);
+    }
+
+    // Obtain from ContainerRepo.registryId:
+    public AuthorizationToken getAuthorizationToken(String registryId) {
+        List<AuthorizationData> authList =
+            _awsEcrClient.getAuthorizationToken(new GetAuthorizationTokenRequest()
+                                                .withRegistryIds(registryId))
+            .getAuthorizationData();
+        if ( null == authList || authList.isEmpty() ) return null;
+        AuthorizationData data = authList.get(0);
+        if ( null == data ) return null;
+        return AuthorizationToken.builder()
+            .token(data.getAuthorizationToken())
+            .endpoint(URI.create(data.getProxyEndpoint()))
+            .build();
     }
 
     public ContainerRepo getRepository(String repoName)
@@ -86,6 +102,7 @@ public class ECRClient
             .region(_registryCred.getRegion())
             .name(ecrRepo.getRepositoryName())
             .registryId(ecrRepo.getRegistryId())
+            .endpoint(URI.create(ecrRepo.getRepositoryUri()).getHost())
             .build();
             containerRepos.add(repo);
         }

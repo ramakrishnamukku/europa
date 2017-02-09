@@ -17,9 +17,9 @@ import javax.inject.Provider;
 import com.distelli.gcr.GcrClient;
 import com.distelli.gcr.GcrRegion;
 import com.distelli.gcr.exceptions.GcrException;
-import com.distelli.gcr.models.GcrManifest;
 import com.distelli.gcr.models.GcrManifestV2Schema1;
 import com.distelli.gcr.models.GcrManifestMeta;
+import com.distelli.gcr.models.GcrManifest;
 import com.distelli.gcr.models.GcrBlobUpload;
 import com.distelli.gcr.models.GcrBlobReader;
 import com.distelli.gcr.models.GcrBlobMeta;
@@ -27,6 +27,7 @@ import com.distelli.gcr.auth.GcrCredentials;
 import com.distelli.gcr.auth.GcrServiceAccountCredentials;
 import com.distelli.europa.db.RegistryCredsDb;
 import com.distelli.europa.db.RegistryBlobDb;
+import com.distelli.europa.clients.ECRClient;
 import java.net.URI;
 import java.io.IOException;
 import java.io.InputStream;
@@ -370,13 +371,6 @@ public class PCCopyToRepository extends PipelineComponent {
             
         @Override
         public GcrManifestMeta putManifest(String repository, String reference, GcrManifest manifest) throws IOException {
-            // GCR only accepts V2 schema 1 manifests:
-            if ( ! ( GcrManifestV2Schema1.MEDIA_TYPE.equals(manifest.getMediaType())
-                     || GcrManifestV2Schema1.SIGNED_MEDIA_TYPE.equals(manifest.getMediaType()) ) )
-            {
-                log.error("TODO: Support convertion from "+manifest.getMediaType()+" to "+GcrManifestV2Schema1.MEDIA_TYPE);
-                return null;
-            }
             return client.putManifest(repository, reference, manifest);
         }
     }
@@ -388,11 +382,22 @@ public class PCCopyToRepository extends PipelineComponent {
                   .endpoint(URI.create("https://index.docker.io/"))
                   .build());
         }
-        @Override
-        public GcrManifestMeta putManifest(String repository, String reference, GcrManifest manifest) throws IOException {
-            return client.putManifest(repository, reference, manifest);
+    }
+
+    private GcrClient getGcrClientForECR(ContainerRepo repo, RegistryCred cred) {
+        AuthorizationToken token = new ECRClient(cred).getAuthorizationToken(repo.getRegistryId());
+        return _gcrClientBuilderProvider.get()
+            .gcrCredentials(() -> "Basic "+token.getToken())
+            .endpoint(token.getEndpoint())
+            .build();
+    }
+
+    class ECRRegistry extends GcrRegistry {
+        public ECRRegistry(ContainerRepo repo, RegistryCred cred) throws IOException {
+            super(getGcrClientForECR(repo, cred));
         }
     }
+
     private GcrCredentials toGcrCredentials(String repoName, RegistryCred cred, boolean isPush, String crossBlobMountFrom) throws IOException {
         String authHeader = "Bearer " +getToken(repoName, cred, isPush, crossBlobMountFrom);
         return () -> authHeader;
@@ -445,8 +450,7 @@ public class PCCopyToRepository extends PipelineComponent {
             }
             return new GcrRegistry(cred);
         case ECR:
-            // TODO:
-            throw new UnsupportedOperationException();
+            return new ECRRegistry(repo, cred);
         case EUROPA:
             return new EuropaRegistry(repo);
         default:
