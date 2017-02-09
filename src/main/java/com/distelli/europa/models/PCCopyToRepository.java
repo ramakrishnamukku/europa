@@ -152,8 +152,13 @@ public class PCCopyToRepository extends PipelineComponent {
             _eventDb.save(event);
             _repoDb.setLastEvent(event.getDomain(), event.getRepoId(), event);
         } else {
-            Registry srcRegistry = createRegistry(srcRepo);
-            Registry dstRegistry = createRegistry(destRepo);
+            boolean crossRepositoryBlobMount =
+                ( srcRepo.getProvider() == destRepo.getProvider() &&
+                  srcRepo.getCredId() == destRepo.getCredId() );
+
+            Registry srcRegistry = createRegistry(srcRepo, false, null);
+            Registry dstRegistry = createRegistry(
+                destRepo, true, crossRepositoryBlobMount ? srcRepo.getName() : null);
             if ( null == dstRegistry || null == srcRegistry ) return true;
             GcrManifest manifest = srcRegistry.getManifest(srcRepo.getName(), manifestDigestSha);
             if ( null == manifest ) {
@@ -162,7 +167,8 @@ public class PCCopyToRepository extends PipelineComponent {
             }
             String reference = tag;
             if ( null == reference ) reference = srcTag;
-            genericCopy(manifest, srcRegistry, srcRepo.getName(), srcTag, dstRegistry, destRepo.getName(),reference);
+
+            genericCopy(manifest, srcRegistry, srcRepo.getName(), srcTag, crossRepositoryBlobMount, dstRegistry, destRepo.getName(),reference);
         }
         return true;
     }
@@ -332,7 +338,7 @@ public class PCCopyToRepository extends PipelineComponent {
     }
 
     class GcrRegistry implements Registry {
-        private GcrClient client;
+        protected GcrClient client;
         public GcrRegistry(RegistryCred cred) {
             this(_gcrClientBuilderProvider.get()
                  .gcrCredentials(new GcrServiceAccountCredentials(cred.getSecret()))
@@ -376,21 +382,33 @@ public class PCCopyToRepository extends PipelineComponent {
     }
 
     class DockerHubRegistry extends GcrRegistry {
-        public DockerHubRegistry(String repoName, RegistryCred cred) throws IOException {
+        public DockerHubRegistry(String repoName, RegistryCred cred, boolean isPush, String crossBlobMountFrom) throws IOException {
             super(_gcrClientBuilderProvider.get()
-                  .gcrCredentials(toGcrCredentials(repoName, cred))
+                  .gcrCredentials(toGcrCredentials(repoName, cred, isPush, crossBlobMountFrom))
                   .endpoint(URI.create("https://index.docker.io/"))
                   .build());
         }
+        @Override
+        public GcrManifestMeta putManifest(String repository, String reference, GcrManifest manifest) throws IOException {
+            return client.putManifest(repository, reference, manifest);
+        }
     }
-    private GcrCredentials toGcrCredentials(String repoName, RegistryCred cred) throws IOException {
-        String authHeader = "Bearer " +getToken(repoName, cred);
+    private GcrCredentials toGcrCredentials(String repoName, RegistryCred cred, boolean isPush, String crossBlobMountFrom) throws IOException {
+        String authHeader = "Bearer " +getToken(repoName, cred, isPush, crossBlobMountFrom);
         return () -> authHeader;
     }
-    private String getToken(String repoName, RegistryCred cred) throws IOException {
+    private String getToken(String repoName, RegistryCred cred, boolean isPush, String crossBlobMountFrom) throws IOException {
         OkHttpClient client = new OkHttpClient.Builder()
             .connectionPool(_connectionPool)
             .build();
+        String scope = null;
+        if ( ! isPush ) {
+            scope = "repository:"+repoName+":pull";
+        } else if ( null == crossBlobMountFrom ) {
+            scope = "repository:"+repoName+":pull,push";
+        } else {
+            scope = "repository:"+repoName+":pull,push repository:"+crossBlobMountFrom+":pull";
+        }
         Request req = new Request.Builder()
             .get()
             .header("Authorization",
@@ -400,7 +418,7 @@ public class PCCopyToRepository extends PipelineComponent {
             .url(HttpUrl.get(URI.create("https://auth.docker.io/")).newBuilder()
                  .addPathSegments("/token")
                  .addQueryParameter("service", "registry.docker.io")
-                 .addQueryParameter("scope", "repository:"+repoName+":pull,push")
+                 .addQueryParameter("scope", scope)
                  .build())
             .build();
         try ( Response res = client.newCall(req).execute() ) {
@@ -412,14 +430,14 @@ public class PCCopyToRepository extends PipelineComponent {
         }
     }
 
-    private Registry createRegistry(ContainerRepo repo) throws IOException {
+    private Registry createRegistry(ContainerRepo repo, boolean isPush, String crossBlobMountFrom) throws IOException {
         RegistryCred cred = null;
         if ( null != repo.getCredId() ) {
             cred = _registryCredsDb.getCred(repo.getDomain(), repo.getCredId());
         }
         switch ( repo.getProvider() ) {
         case DOCKERHUB:
-            return new DockerHubRegistry(repo.getName(), cred);
+            return new DockerHubRegistry(repo.getName(), cred, isPush, crossBlobMountFrom);
         case GCR:
             if ( null == cred ) {
                 log.error("Missing creds with id="+repo.getCredId()+" for repo="+repo);
@@ -442,6 +460,7 @@ public class PCCopyToRepository extends PipelineComponent {
         Registry srcRegistry,
         String srcRepo,
         String srcTag,
+        boolean crossRepositoryBlobMount,
         Registry dstRegistry,
         String dstRepo,
         String dstTag)
@@ -449,7 +468,10 @@ public class PCCopyToRepository extends PipelineComponent {
     {
         // Uplaod the referenced digests:
         for ( String digest : srcManifest.getReferencedDigests() ) {
-            GcrBlobUpload upload = dstRegistry.createBlobUpload(dstRepo, digest, srcRepo);
+            GcrBlobUpload upload = dstRegistry.createBlobUpload(
+                dstRepo,
+                digest,
+                ( crossRepositoryBlobMount ) ? srcRepo : null);
             if ( upload.isComplete() ) continue;
             // TODO: Get the media type of the reference digests:
             // upload.setMediaType();
