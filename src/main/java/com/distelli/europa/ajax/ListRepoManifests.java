@@ -7,16 +7,19 @@
 */
 package com.distelli.europa.ajax;
 
-import com.distelli.persistence.PageIterator;
+import java.util.ArrayList;
+import java.util.List;
+import javax.inject.Inject;
 
-import com.distelli.europa.util.PermissionCheck;
+import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
+import com.distelli.europa.util.PermissionCheck;
+import com.distelli.persistence.PageIterator;
 import com.distelli.webserver.*;
-import javax.inject.Inject;
 import com.google.inject.Singleton;
+
 import lombok.extern.log4j.Log4j;
-import com.distelli.europa.EuropaRequestContext;
 
 @Log4j
 @Singleton
@@ -43,10 +46,38 @@ public class ListRepoManifests extends AjaxHelper<EuropaRequestContext>
 
         _permissionCheck.check(ajaxRequest, requestContext, repoId);
 
+        int dbReadPageSize = pageSize*3;
+
         PageIterator pageIterator = new PageIterator()
-        .pageSize(pageSize)
+        .pageSize(dbReadPageSize)
         .marker(marker)
         .forward();
-        return _db.listManifestsByRepoId(domain, repoId, pageIterator);
+
+        List<RegistryManifest> manifestList = _db.listManifestsByRepoManifestId(domain, repoId, pageIterator);
+        if(manifestList == null || manifestList.size() == 0)
+            return manifestList;
+
+        List<MultiTaggedManifest> taggedManifests = new ArrayList<MultiTaggedManifest>();
+        MultiTaggedManifest curItem = null;
+        for(RegistryManifest manifest : manifestList)
+        {
+            if(curItem == null) {
+                if(taggedManifests.size() >= pageSize)
+                    break;
+                curItem = MultiTaggedManifest.fromRegistryManifest(manifest);
+            }
+            else
+            {
+                if(curItem.getManifestId().equalsIgnoreCase(manifest.getManifestId()))
+                    curItem.addTag(manifest.getTag());
+                else
+                {
+                    taggedManifests.add(curItem);
+                    curItem = null;
+                }
+            }
+        }
+
+        return taggedManifests;
     }
 }

@@ -35,6 +35,7 @@ public class RegistryManifestDb extends BaseDb {
     private static final String TABLE_NAME = "rmanifest";
 
     private Index<RegistryManifest> _main;
+    private Index<RegistryManifest> _byRepoManifestId;
 
     private final ObjectMapper _om = new ObjectMapper();
 
@@ -52,6 +53,14 @@ public class RegistryManifestDb extends BaseDb {
                     .indexType(IndexType.MAIN_INDEX)
                     .readCapacity(1L)
                     .writeCapacity(1L)
+                    .build(),
+                    IndexDescription.builder()
+                    .indexName("dom-rmid-index")
+                    .hashKey(attr("dom", AttrType.STR))
+                    .rangeKey(attr("rmid", AttrType.STR))
+                    .indexType(IndexType.GLOBAL_SECONDARY_INDEX)
+                    .readCapacity(1L)
+                    .writeCapacity(1L)
                     .build()))
             .build();
     }
@@ -63,6 +72,7 @@ public class RegistryManifestDb extends BaseDb {
             .put("repo", String.class, "containerRepoId")
             .put("tag", String.class, "tag")
             .put("id", String.class, "manifestId")
+            .put("rmid", String.class, (manifest) -> toRepoManifestIdRK(manifest.getContainerRepoId(), manifest.getManifestId()))
             .put("mds", new TypeReference<Set<String>>(){}, "digests")
             .put("by", String.class, "uploadedBy")
             .put("ty", String.class, "contentType")
@@ -75,6 +85,15 @@ public class RegistryManifestDb extends BaseDb {
         if ( null == repoId ) throw new NullPointerException("containerRepoId can not be null");
         if ( null == tag ) throw new NullPointerException("tag can not be null");
         return repoId + "/" + tag;
+    }
+
+    private String toRepoManifestIdRK(String repoId, String manifestId)
+    {
+        if(manifestId == null || manifestId.trim().isEmpty())
+            manifestId = "";
+        return String.format("%s:%s",
+                             repoId.toLowerCase(),
+                             manifestId.toLowerCase());
     }
 
     @Inject
@@ -108,6 +127,11 @@ public class RegistryManifestDb extends BaseDb {
                     }
                 })
             .build();
+
+        _byRepoManifestId = indexFactory.create(RegistryManifest.class)
+        .withTableDescription(getTableDescription(), "dom-rmid-index")
+        .withConvertValue(_om::convertValue)
+        .build();
     }
 
     /**
@@ -222,5 +246,12 @@ public class RegistryManifestDb extends BaseDb {
                 }
             }
         }
+    }
+
+    public List<RegistryManifest> listManifestsByRepoManifestId(String domain, String repoId, PageIterator pageIterator)
+    {
+        return _byRepoManifestId.queryItems(domain.toLowerCase(), pageIterator)
+        .beginsWith(toRepoManifestIdRK(repoId, null))
+        .list();
     }
 }
