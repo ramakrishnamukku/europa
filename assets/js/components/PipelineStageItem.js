@@ -4,6 +4,7 @@ import ConvertTimeFriendly from './../util/ConvertTimeFriendly'
 import CenteredConfirm from './../components/CenteredConfirm'
 import Loader from './../components/Loader'
 import NPECheck from './../util/NPECheck'
+import RegistryProviderIcons from './../util/RegistryProviderIcons'
 
 export default class PipelineStageItem extends Component {
   constructor(props) {
@@ -33,34 +34,13 @@ export default class PipelineStageItem extends Component {
       return <option value="">Select...</option>
     }
   }
-  renderEmptyStage() {
-    return (
-      <div className="pipeline-stage-item">
-        <div className="pipeline-grey-wrap">
-          <div className="stage-destination-wrap">
-            <div className="left-icon-col"
-                 style={ {background: "#808285"} }>
-              <i className="icon-dis-repo" />
-            </div>
-            <div className="stage-destination">
-              <div className="stage-dest-interior">
-                <div className="stage-dest-details">
-                  <span className="stage-not-connected">You have not connected a repository</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
   renderStage(repo) {
     return (
       <div className="pipeline-stage-item">
         <div className="pipeline-grey-wrap">
           <div className="stage-destination-wrap">
             <div className="left-icon-col" style={ {background: "#2E5597"} }>
-              <img src="/public/images/distelli-europa-mark.svg"/>
+              <img src={RegistryProviderIcons(repo.provider, true)} />
             </div>
             <div className="stage-destinations">
               {this.renderInterior(repo)}

@@ -361,6 +361,7 @@ export function addPipelineComponent() {
           this.setState({
             pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
               pipeline: res,
+              repoConnectTemplate: null,
               addPipelineComponentXHR: false,
               addPipelineComponentXHRError: false,
               section: null,
