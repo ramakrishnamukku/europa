@@ -33,6 +33,7 @@ public class AjaxHelperModule extends AbstractModule
         addBinding(ListPipelines.class);
         addBinding(GetPipeline.class);
         addBinding(SetPipelineContainerRepoId.class);
+        addBinding(DeletePipelineContainerRepoId.class);
         addBinding(NewPipeline.class);
         addBinding(RemovePipeline.class);
         addBinding(AddPipelineComponent.class);

@@ -81,10 +81,40 @@ export default class PipelineStageItem extends Component {
       );
     }
   }
+  renderDeleteMainStage() {
+    if (this.props.firstStage && NPECheck(this.props, 'pipelineStore/pipeline/components', []).length == 0) {
+      return (
+        <div className="delete-stage">
+          <i className="icon-dis-close"
+             onClick={() => this.setState({deleteToggled: !this.state.deleteToggled})} />
+        </div>
+      );
+    }
+  }
+  deleteStage() {
+    if (this.props.firstStage) {
+      this.context.actions.removeMainPipelineStage()
+    } else {
+      this.context.actions.removePipelineComponent(this.state.pipelineComponent.id)
+    }
+  }
+  renderConfirmOrError() {
+    let msg = "Are you sure you want to remove this stage?";
+
+    if (this.props.pipelineStore.removePipelineComponentXHRError) {
+      msg = this.props.pipelineStore.removePipelineComponentXHRError;
+    }
+
+    if (this.props.pipelineStore.removePipelineMainStageXHRError) {
+      msg = this.props.pipelineStore.removePipelineMainStageXHRError;
+    }
+
+    return msg;
+  }
   renderInterior(repo) {
-    if (!this.props.firstStage
-        && this.props.pipelineStore.removePipelineComponentXHR
-        && this.props.pipelineStore.removePipelineComponentXHR == this.state.pipelineComponent.id) {
+    if ( (this.props.pipelineStore.removePipelineComponentXHR
+          && this.props.pipelineStore.removePipelineComponentXHR == this.state.pipelineComponent.id)
+         || this.props.pipelineStore.removePipelineMainStageXHR ) {
       return (
         <div className="stage-destination">
           <div style={ {margin: "15px 0 0"} }>
@@ -97,12 +127,12 @@ export default class PipelineStageItem extends Component {
     if (this.state.deleteToggled) {
       return (
         <div className="stage-destination">
-          <CenteredConfirm onConfirm={ () => this.context.actions.removePipelineComponent(this.state.pipelineComponent.id) }
+          <CenteredConfirm onConfirm={ () => this.deleteStage.call(this) }
                            onCancel={ () => this.setState({deleteToggled: !this.state.deleteToggled}) }
                            confirmButtonStyle={{background: "#df423a"}}
                            confirmButtonText="Remove"
                            messageStyle={ {fontSize: ".75rem", margin: "7px 0 4px"} }
-                           message="Are you sure you want to remove this stage?" />
+                           message={this.renderConfirmOrError()} />
         </div>
       );
     }
@@ -151,7 +181,7 @@ export default class PipelineStageItem extends Component {
               </div>
             </div>
           </div>
-          {this.renderDeleteStage()}
+          {this.props.firstStage ? this.renderDeleteMainStage() : this.renderDeleteStage()}
         </div>
       </div>
     );

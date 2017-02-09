@@ -38,6 +38,7 @@ export function singlePipelineState() {
     pipeline: null,
     repoConnectTemplate: null,
     section: null,
+
     // XHR
     getPipelineXHR: false,
     removePipelineXHR: false,
@@ -45,12 +46,14 @@ export function singlePipelineState() {
     addPipelineComponentXHR: false,
     movePipelineComponentXHR: false,
     removePipelineComponentXHR: false,
+    removePipelineMainStageXHR: false,
 
     // XHR Error
     setContainerRepoXHRError: null,
     addPipelineComponentXHRError: null,
     movePipelineComponentXHRError: null,
     removePipelineComponentXHRError: null,
+    removePipelineMainStageXHRError: null,
   }
 }
 
@@ -338,7 +341,6 @@ export function removePipeline() {
 }
 
 export function addPipelineComponent() {
-  // TODO: require this extra information!
   const postData = {
     type: "CopyToRepository",
     pipelineId: this.state.pipelineStore.pipeline.id,
@@ -394,7 +396,7 @@ export function movePipelineComponent(postData) {
             pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
               movePipelineComponentXHR: false,
             })
-          }, () => reject());
+          });
         });
     });
   });
@@ -425,8 +427,41 @@ export function removePipelineComponent(pipelineComponentId) {
           this.setState({
             pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
               removePipelineComponentXHR: false,
+              removePipelineComponentXHRError: NPECheck(err, 'error/message', "")
             })
-          }, () => reject());
+          });
+        });
+    });
+  });
+}
+
+export function removeMainPipelineStage() {
+  const postData = {
+    pipelineId: NPECheck(this.state.pipelineStore, 'pipeline/id', null),
+  }
+
+  return new Promise((resolve, reject) => {
+    this.setState({
+      pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
+        removePipelineMainStageXHR: true,
+      })
+    }, () => {
+      RAjax.POST.call(this, 'DeletePipelineContainerRepoId', {}, postData)
+        .then(res => {
+          this.setState({
+            pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
+              pipeline: res,
+              removePipelineMainStageXHR: false,
+            })
+          }, () => resolve(res));
+        })
+        .catch(err => {
+          this.setState({
+            pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
+              removePipelineMainStageXHR: false,
+              removePipelineMainStageXHRError: NPECheck(err, 'error/message', "")
+            })
+          });
         });
     });
   });
