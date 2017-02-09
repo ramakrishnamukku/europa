@@ -51,7 +51,7 @@ export default class Pipelines extends Component {
     if (this.props.pipelinesStore.initNewPipeline) {
       return (
         <div style={ {margin: "14px 0 0"} }>
-          <ControlRoom componentDidMount={ function() { (this.refs['createPipeline']) ?   this.refs['createPipeline'].focus() : null }} 
+          <ControlRoom componentDidMount={ function() { (this.refs['createPipeline']) ?   this.refs['createPipeline'].focus() : null }}
                        renderBodyContent={ this.newPipelineForm.bind(this) } />
         </div>
       );
@@ -119,7 +119,7 @@ export default class Pipelines extends Component {
   }
   renderNewPipelineXHRError() {
     let error = NPECheck(this.props, 'pipelinesStore/newPipelineXHRError', false);
-    
+
     if (error) {
       return (
         <Msg text={error}
@@ -147,7 +147,7 @@ export default class Pipelines extends Component {
         {pipes.map((pipeline, idx) => {
           return (
             <div className="PipelinesListItem"
-                 key={pipeline.id}>
+                 key={pipeline.id + idx}>
               <span>
                 <i className="icon-dis-pipeline" />
               </span>
