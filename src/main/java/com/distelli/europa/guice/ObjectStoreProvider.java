@@ -56,6 +56,12 @@ public class ObjectStoreProvider implements Provider<ObjectStore>
         return _objectStore;
     }
 
+    public ObjectStore get(StorageSettings storageSettings)
+    {
+        ObjectStore.Factory objectStoreFactory = getObjectStoreFactory(storageSettings);
+        return objectStoreFactory.create().build();
+    }
+
     private ObjectStore.Factory getObjectStoreFactory(final StorageSettings storageSettings)
     {
         if(storageSettings == null)

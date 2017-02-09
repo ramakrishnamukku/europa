@@ -15,5 +15,8 @@ public class AjaxErrors
         public static final String TokenIsActive = "TokenIsActive";
         public static final String RepoNotFound = "RepoNotFound";
         public static final String BadRepoName = "BadRepoName";
+        public static final String BadS3Credentials = "BadS3Credentials";
+        public static final String BadS3Bucket = "BadS3Bucket";
+        public static final String BadS3Settings = "BadS3Settings";
     }
 }
