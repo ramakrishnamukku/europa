@@ -67,9 +67,9 @@ public class RegistryManifestExists extends RegistryBase {
 
         WebResponse response = new WebResponse(200);
 
-        // TODO: Capture this and return it properly...
-        response.setContentType("application/vnd.docker.distribution.manifest.v1+json");
+        response.setContentType(manifest.getContentType());
         response.setResponseHeader("Content-Length", ""+objMeta.getContentLength());
+        response.setResponseHeader("Docker-Content-Digest", manifest.getManifestId());
         return response;
     }
 }

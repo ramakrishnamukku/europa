@@ -15,15 +15,15 @@ public class RunPipeline {
     private Injector _injector;
 
     public void runPipeline(Pipeline pipeline, ContainerRepo repo, String tag, String digest) {
-        try {
-            for ( PipelineComponent component : pipeline.getComponents() ) {
+        for ( PipelineComponent component : pipeline.getComponents() ) {
+            try {
                 _injector.injectMembers(component);
                 if ( ! component.execute(repo, tag, digest) ) break;
+            } catch ( Exception ex ) {
+                // Ignore exceptions caused by threads being interrupted:
+                if ( ex instanceof java.io.InterruptedIOException ) return;
+                log.error(ex.getMessage(), ex);
             }
-        } catch ( RuntimeException ex ) {
-            throw ex;
-        } catch ( Exception ex ) {
-            throw new RuntimeException(ex);
         }
     }
 }

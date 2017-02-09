@@ -71,10 +71,10 @@ public class RegistryManifestPull extends RegistryBase {
                     return null;
                 }));
 
-        // TODO: Capture this and return it properly...
         response.setContentType(manifest.getContentType());
-        // TODO: Fix gzip'ing so content-length CAN be returned !?
+        // NOTE: since we gzip the response, we shouldn't be doing this:
         //response.setResponseHeader("Content-Length", ""+objMeta.getContentLength());
+        response.setResponseHeader("Docker-Content-Digest", manifest.getManifestId());
         return response;
     }
 }

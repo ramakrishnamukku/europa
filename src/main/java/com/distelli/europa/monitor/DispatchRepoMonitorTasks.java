@@ -65,7 +65,6 @@ public class DispatchRepoMonitorTasks implements Runnable {
             _semaphore.acquire(_taskCount);
             _taskCount = 0;
         } catch ( InterruptedException ex ) {
-            log.error(ex.getMessage(), ex);
             Thread.currentThread().interrupt();
             return;
         }

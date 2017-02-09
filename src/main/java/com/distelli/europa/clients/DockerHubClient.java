@@ -230,6 +230,7 @@ public class DockerHubClient {
                 results.add(tag);
                 req = addRegistryTokenAuth(new Request.Builder(), repoName)
                     .head()
+                    .header("Accept", "application/vnd.docker.distribution.manifest.v2+json")
                     .url(registryEndpoint()
                          .addPathSegments("v2/"+repoName)
                          .addPathSegment("manifests")
@@ -344,7 +345,7 @@ public class DockerHubClient {
 
     private void refreshRegistryToken(String repositoryName) throws IOException {
         synchronized ( _registryTokens ) {
-            Request req = new Request.Builder()
+            Request req = addBasicAuth(new Request.Builder())
                 .get()
                 .url(registryAuthEndpoint()
                      .addPathSegments("/token")

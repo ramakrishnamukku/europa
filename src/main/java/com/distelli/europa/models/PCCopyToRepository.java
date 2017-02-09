@@ -43,6 +43,14 @@ import com.distelli.utils.ResettableInputStream;
 import java.security.MessageDigest;
 import java.security.DigestInputStream;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
+import okhttp3.ConnectionPool;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.HttpUrl;
+import java.util.Base64;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Pipeline component that copies from one repository to another.
@@ -52,6 +60,7 @@ import static javax.xml.bind.DatatypeConverter.printHexBinary;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PCCopyToRepository extends PipelineComponent {
+    private static final ObjectMapper OM = new ObjectMapper();
     private String destinationContainerRepoDomain;
     private String destinationContainerRepoId;
     private String tag;
@@ -74,6 +83,8 @@ public class PCCopyToRepository extends PipelineComponent {
     private Provider<ObjectKeyFactory> _objectKeyFactoryProvider;
     @Inject
     private Provider<ObjectStore> _objectStoreProvider;
+    @Inject
+    private ConnectionPool _connectionPool;
 
     @Override
     public boolean execute(ContainerRepo srcRepo, String srcTag, String manifestDigestSha) throws Exception {
@@ -278,6 +289,11 @@ public class PCCopyToRepository extends PipelineComponent {
             byte[] binary = gcrManifest.toString().getBytes(UTF_8);
             MessageDigest md = getSha256();
             String digest = "sha256:"+printHexBinary(md.digest(binary)).toLowerCase();
+
+            ObjectKey key = _objectKeyFactoryProvider.get()
+                .forRegistryManifest(digest);
+            _objectStoreProvider.get().put(key, binary);
+
             RegistryManifest manifest = RegistryManifest.builder()
                 // TODO: Get the pipeline domain!
                 .uploadedBy(DOMAIN_ZERO)
@@ -289,6 +305,10 @@ public class PCCopyToRepository extends PipelineComponent {
                 .digests(gcrManifest.getReferencedDigests())
                 .pushTime(System.currentTimeMillis())
                 .build();
+            RegistryManifest shaManifest = manifest.toBuilder()
+                .tag(digest)
+                .build();
+            _manifestDb.put(shaManifest);
             _manifestDb.put(manifest);
             RepoEvent event = RepoEvent.builder()
                 .domain(manifest.getDomain())
@@ -314,15 +334,17 @@ public class PCCopyToRepository extends PipelineComponent {
     class GcrRegistry implements Registry {
         private GcrClient client;
         public GcrRegistry(RegistryCred cred) {
-            client = _gcrClientBuilderProvider.get()
-                .gcrCredentials(new GcrServiceAccountCredentials(cred.getSecret()))
-                .gcrRegion(GcrRegion.getRegion(cred.getRegion()))
-                .build();
+            this(_gcrClientBuilderProvider.get()
+                 .gcrCredentials(new GcrServiceAccountCredentials(cred.getSecret()))
+                 .gcrRegion(GcrRegion.getRegion(cred.getRegion()))
+                 .build());
+        }
+        public GcrRegistry(GcrClient client) {
             this.client = client;
         }
         @Override
         public GcrManifest getManifest(String repository, String reference) throws IOException {
-            return client.getManifest(repository, reference);
+            return client.getManifest(repository, reference, "application/vnd.docker.distribution.manifest.v2+json");
         }
             
         @Override
@@ -353,15 +375,51 @@ public class PCCopyToRepository extends PipelineComponent {
         }
     }
 
-    private Registry createRegistry(ContainerRepo repo) {
+    class DockerHubRegistry extends GcrRegistry {
+        public DockerHubRegistry(String repoName, RegistryCred cred) throws IOException {
+            super(_gcrClientBuilderProvider.get()
+                  .gcrCredentials(toGcrCredentials(repoName, cred))
+                  .endpoint(URI.create("https://index.docker.io/"))
+                  .build());
+        }
+    }
+    private GcrCredentials toGcrCredentials(String repoName, RegistryCred cred) throws IOException {
+        String authHeader = "Bearer " +getToken(repoName, cred);
+        return () -> authHeader;
+    }
+    private String getToken(String repoName, RegistryCred cred) throws IOException {
+        OkHttpClient client = new OkHttpClient.Builder()
+            .connectionPool(_connectionPool)
+            .build();
+        Request req = new Request.Builder()
+            .get()
+            .header("Authorization",
+                    "Basic " +
+                    Base64.getEncoder()
+                    .encodeToString((cred.getUsername() + ":" + cred.getPassword()).getBytes(UTF_8)))
+            .url(HttpUrl.get(URI.create("https://auth.docker.io/")).newBuilder()
+                 .addPathSegments("/token")
+                 .addQueryParameter("service", "registry.docker.io")
+                 .addQueryParameter("scope", "repository:"+repoName+":pull,push")
+                 .build())
+            .build();
+        try ( Response res = client.newCall(req).execute() ) {
+            if ( res.code() / 100 != 2 ) {
+                throw new HttpError(res.code(), res.body().string());
+            }
+            JsonNode json = OM.readTree(res.body().byteStream());
+            return json.at("/token").asText();
+        }
+    }
+
+    private Registry createRegistry(ContainerRepo repo) throws IOException {
         RegistryCred cred = null;
         if ( null != repo.getCredId() ) {
             cred = _registryCredsDb.getCred(repo.getDomain(), repo.getCredId());
         }
         switch ( repo.getProvider() ) {
         case DOCKERHUB:
-            // TODO: https://docs.docker.com/registry/spec/auth/token/
-            throw new UnsupportedOperationException();
+            return new DockerHubRegistry(repo.getName(), cred);
         case GCR:
             if ( null == cred ) {
                 log.error("Missing creds with id="+repo.getCredId()+" for repo="+repo);

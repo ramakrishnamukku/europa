@@ -133,7 +133,7 @@ public class RegistryManifestPush extends RegistryBase {
         RegistryManifest oldManifest = null;
         RegistryManifest manifest = RegistryManifest.builder()
             .uploadedBy(requestContext.getRequesterDomain())
-            .contentType(requestContext.getContentType())
+            .contentType(getContentType(manifestJson, requestContext.getContentType()))
             .manifestId(finalDigest)
             .domain(repo.getDomain())
             .containerRepoId(repo.getId())
@@ -143,11 +143,11 @@ public class RegistryManifestPush extends RegistryBase {
             .build();
 
         try {
-            oldManifest = _manifestDb.put(manifest);
             // Always write a reference to support pulling via @sha256:...
             _manifestDb.put(manifest.toBuilder()
                             .tag(finalDigest)
                             .build());
+            oldManifest = _manifestDb.put(manifest);
             success = true;
         } catch ( UnknownDigests ex ) {
             // TODO: make this be a list of digests...
@@ -205,9 +205,20 @@ public class RegistryManifestPush extends RegistryBase {
         return null;
     }
 
+    private String getContentType(JsonNode manifest, String contentType) {
+        if ( null != contentType ) return contentType;
+        JsonNode node = manifest.at("/mediaType");
+        if ( node.isTextual() ) return node.asText();
+        return "application/vnd.docker.distribution.manifest.v1+json";
+    }
+
     private Set<String> getDigests(JsonNode manifest) {
         Set<String> digests = new TreeSet<>();
         if ( manifest.at("/layers").isArray() ) {
+            JsonNode node = manifest.at("/config/digest");
+            if ( node.isTextual() ) {
+                digests.add(node.asText());
+            }
             for ( JsonNode layer : manifest.at("/layers") ) {
                 digests.add(layer.at("/digest").asText());
             }
