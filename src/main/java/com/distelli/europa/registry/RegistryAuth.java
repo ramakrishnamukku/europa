@@ -1,5 +1,6 @@
 package com.distelli.europa.registry;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Base64;
 import java.util.Collections;
@@ -35,8 +36,11 @@ public class RegistryAuth {
         }
         StringTokenizer tokenizer = new StringTokenizer(authorization);
         String scheme = tokenizer.hasMoreTokens() ? tokenizer.nextToken().toLowerCase() : null;
-        if ( "basic".equals(scheme) ) {
+        if ( "basic".equals(scheme)) {
             basicAuth(context, tokenizer.nextToken());
+            return;
+        } else if("bearer".equals(scheme)) {
+            bearerAuth(context, tokenizer.nextToken());
             return;
         }
         if(log.isDebugEnabled())
@@ -44,39 +48,74 @@ public class RegistryAuth {
         RequireAuthError.throwRequireAuth("Unsupported Authorization scheme="+scheme, context);
     }
 
-    private void basicAuth(EuropaRequestContext context, String tokenStr) {
-        byte[] token;
-        try {
-            token = Base64.getDecoder().decode(tokenStr);
-        } catch ( IllegalArgumentException ex ) {
-            log.debug("Illegal Basic token="+tokenStr, ex);
-            RequireAuthError.throwRequireAuth("Illegal Basic token="+tokenStr, context);
+    private void bearerAuth(EuropaRequestContext context, String tokenStr) {
+        String decodedToken = getDecodedToken(tokenStr, context);
+        if(RegistryToken.isPublicToken(decodedToken))
+        {
+            context.setRegistryApiToken(decodedToken);
             return;
         }
-        int colon = 0;
-        for (;;colon++) {
-            if ( colon >= token.length ) {
-                colon = -1;
-                break;
-            }
-            if ( ':' == token[colon] ) {
-                break;
-            }
+
+        //validate api token
+        if(isValidApiToken(decodedToken, context))
+            return;
+        RequireAuthError.throwRequireAuth("Invalid username or password", context);
+    }
+
+    private void basicAuth(EuropaRequestContext context, String tokenStr) {
+        String decodedToken = getDecodedToken(tokenStr, context);
+
+        String[] tokenParts = decodedToken.split(":", 2);
+        if(tokenParts.length != 2)
+        {
+            if(log.isDebugEnabled())
+                log.debug("Illegal Basic Auth Token: "+decodedToken);
+            RequireAuthError.throwRequireAuth("Illegal basic auth token", context);
         }
-        if ( colon < 0 ) {
-            log.debug("Illegal basic token missing :");
-            RequireAuthError.throwRequireAuth("Illegal basic token missing ':'", context);
-        }
-        String user = new String(token, 0, colon, UTF_8);
-        String passwd = new String(token, colon+1, token.length-colon-1, UTF_8);
+        String user = tokenParts[0];
+        String passwd = tokenParts[1];
         if ( "TOKEN".equals(user) ) {
             TokenAuth tokenAuth = _tokenAuthDb.getToken(passwd);
             if(tokenAuth != null && tokenAuth.getStatus() == TokenAuthStatus.ACTIVE) {
                 context.setRemoteUser(tokenAuth.getDomain());
                 context.setRequesterDomain(tokenAuth.getDomain());
+                context.setRegistryApiToken(tokenAuth.getToken());
                 return;
             }
         }
         RequireAuthError.throwRequireAuth("Invalid username or password", context);
+    }
+
+    private boolean isValidApiToken(String token, EuropaRequestContext context)
+    {
+        TokenAuth tokenAuth = _tokenAuthDb.getToken(token);
+        if(tokenAuth == null || tokenAuth.getStatus() != TokenAuthStatus.ACTIVE)
+            return false;
+        context.setRemoteUser(tokenAuth.getDomain());
+        context.setRequesterDomain(tokenAuth.getDomain());
+        context.setRegistryApiToken(tokenAuth.getToken());
+        return true;
+    }
+
+    private String getDecodedToken(String tokenStr, EuropaRequestContext context)
+    {
+        byte[] tokenBytes;
+        try {
+            tokenBytes = Base64.getDecoder().decode(tokenStr);
+        } catch(IllegalArgumentException ex) {
+            log.debug("Illegal Basic token="+tokenStr, ex);
+            tokenBytes = null;
+        }
+
+        if(tokenBytes == null)
+            RequireAuthError.throwRequireAuth("Illegal Basic token="+tokenStr, context);
+
+        String decodedToken = null;
+        try {
+            decodedToken = new String(tokenBytes, "UTF-8");
+        } catch(UnsupportedEncodingException usee) {
+            throw(new RuntimeException(usee));
+        }
+        return decodedToken;
     }
 }

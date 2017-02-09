@@ -44,6 +44,10 @@ public interface RegistryAccess
             //allowed.
             if(requesterDomain != null)
                 return;
+            if(log.isDebugEnabled())
+                log.debug("RegistryAccess: "+operationName+", "+requesterDomain+", "+requestContext.getPath());
+            if(operationName.equalsIgnoreCase("RegistryDefault") || operationName.equalsIgnoreCase("RegistryTokenHandler"))
+                return;
             //Registry Version check should throw an Auth Error
             if(operationName.equalsIgnoreCase("RegistryVersionCheck"))
                 RequireAuthError.throwRequireAuth("Missing Authorization header", requestContext);

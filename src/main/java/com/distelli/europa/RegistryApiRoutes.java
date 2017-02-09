@@ -49,6 +49,7 @@ public class RegistryApiRoutes
         ROUTES.add("GET", "/v2/:name/tags/list", RegistryTagList.class);
         ROUTES.add("GET", "/v2/_catalog", RegistryCatalog.class);
 
+        ROUTES.add("GET", "/v2/token", RegistryTokenHandler.class);
         //TODO: set a default route matcher that returns an error json for the registry API
         ROUTES.setDefaultRequestHandler(RegistryDefault.class);
     }

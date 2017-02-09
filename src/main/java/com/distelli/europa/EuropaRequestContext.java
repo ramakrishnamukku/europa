@@ -35,6 +35,8 @@ public class EuropaRequestContext extends RequestContext
     protected boolean _ajaxRequest = false;
     @Getter @Setter
     protected boolean _registryApiRequest = false;
+    @Getter @Setter
+    protected String _registryApiToken = null;
 
     public EuropaRequestContext(HTTPMethod httpMethod, HttpServletRequest request, boolean unmarshallJson)
     {

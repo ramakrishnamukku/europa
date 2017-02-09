@@ -30,7 +30,7 @@ public class RequireAuthError extends RegistryError
         Map<String, String> headers = new HashMap<>();
         headers.put("Docker-Distribution-Api-Version", "registry/2.0");
         headers.put("WWW-Authenticate",
-                    String.format("Basic realm=\"%s\",service=\"%s\"",
+                    String.format("Bearer realm=\"%s\",service=\"%s\"",
                                   auth.toString(),
                                   SERVICE_NAME));
         return headers;
@@ -41,7 +41,7 @@ public class RequireAuthError extends RegistryError
         int port = context.getPort();
         URI self;
         try {
-            self = new URI(context.getProto(), null, host, port, "/", null, null);
+            self = new URI(context.getProto(), null, host, port, "/v2/token", null, null);
         } catch ( RuntimeException ex ) {
             throw ex;
         } catch ( Exception ex ) {
