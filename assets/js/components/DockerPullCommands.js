@@ -15,7 +15,7 @@ export default class DockerPullCommands extends Component {
 		document.body.addEventListener('click', this.clickListener.bind(this));
 	}
 	clickListener(e){
-		let ignoreClassNames = ['PullCommandsDropDown', 'LargePullCommand', 'TagPullCommand', 'icon icon-dis-repo', 'NoClick'];
+		let ignoreClassNames = ['PullCommandsDropDown', 'LargePullCommand', 'TagPullCommand', 'icon icon-dis-copy', 'NoClick'];
 		let className = e.target.className;
 
 		if(ignoreClassNames.includes(className)){
@@ -46,7 +46,7 @@ export default class DockerPullCommands extends Component {
 								<div className="FlexColumn" key={index}>
 									<div className="LargePullCommand">
 										<div className="NoClick" id={manifest.manifestId}>{`${pullCommand}@${manifest.manifestId}`}</div>
-										<i className="icon icon-dis-repo" 
+										<i className="icon icon-dis-copy" 
 										    data-tip="Copy Pull Command" 
 										    data-for="ToolTipTop"
 										    onClick={() => CopyToClipboard(document.getElementById(manifest.manifestId))}/>
@@ -66,8 +66,11 @@ export default class DockerPullCommands extends Component {
 		return (
 			<div className="DockerPullCommands">
 				<div className="FlexRow Flex1">
-					<i className="icon icon-dis-tag"/>
-					<div className="Commands">{activeRepo.pullCommand}</div>
+					<i className="icon icon-dis-copy" 
+					   data-for="ToolTipTop" 
+					   data-tip="Copy Commands" 
+					   onClick={() => CopyToClipboard(document.getElementById('copyCommands'))}/>
+					<div id="copyCommands"className="Commands">{activeRepo.pullCommand}</div>
 				</div>
 				<div className="FlexRow Flex1">
 					<i className="icon icon-dis-blank"/>
