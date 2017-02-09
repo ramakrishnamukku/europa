@@ -43,6 +43,7 @@
         -moz-box-shadow: 0 1px 20px 0 #C7C7C7;
         -webkit-box-shadow: 0 1px 20px 0 #C7C7C7;
         box-shadow: 0 1px 20px 0 #C7C7C7;
+        z-index: 100;
 
         div.Arrow {
             transform: rotate(45deg);

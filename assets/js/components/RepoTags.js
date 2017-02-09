@@ -61,7 +61,7 @@ export default class RepoTags extends Component {
 					{shortManifestId}
 				</span>
 				<span className="Tags">
-					{tag.digests.map((tag, index) => {
+					{tag.tags.map((tag, index) => {
 						return (
 							<span className="Tag" key={index}>{tag}</span>
 						);
