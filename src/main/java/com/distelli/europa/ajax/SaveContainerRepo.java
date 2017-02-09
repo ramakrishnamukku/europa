@@ -56,7 +56,7 @@ public class SaveContainerRepo extends AjaxHelper<EuropaRequestContext>
 
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
-        _permissionCheck.check(ajaxRequest, requestContext);
+        _permissionCheck.check(ajaxRequest.getOperation(), requestContext);
         ContainerRepo repo = ajaxRequest.convertContent("/repo", ContainerRepo.class,
                                                        true); //throw if null
         //Validate that the fields we want are non-null

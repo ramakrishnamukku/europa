@@ -37,7 +37,7 @@ public class GetPipeline extends AjaxHelper<EuropaRequestContext>
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         String pipelineId = ajaxRequest.getParam("pipelineId", true);
-        _permissionCheck.check(ajaxRequest, requestContext, pipelineId);
+        _permissionCheck.check(ajaxRequest.getOperation(), requestContext, pipelineId);
         return _db.getPipeline(pipelineId);
     }
 }

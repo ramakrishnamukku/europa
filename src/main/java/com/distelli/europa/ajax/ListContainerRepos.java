@@ -76,7 +76,7 @@ public class ListContainerRepos extends AjaxHelper<EuropaRequestContext>
 
         if(repoList == null || repoList.size() == 0)
             return repoList;
-        Map<ContainerRepo, Boolean> permissionResult = _permissionCheck.checkBatch(ajaxRequest,
+        Map<ContainerRepo, Boolean> permissionResult = _permissionCheck.checkBatch(ajaxRequest.getOperation(),
                                                                                    requestContext,
                                                                                    repoList);
         List<ContainerRepo> retval = new ArrayList<ContainerRepo>();

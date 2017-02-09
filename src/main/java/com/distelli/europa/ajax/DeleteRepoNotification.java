@@ -46,7 +46,7 @@ public class DeleteRepoNotification extends AjaxHelper<EuropaRequestContext>
         String notificationId = ajaxRequest.getParam("notificationId", true);
         String repoId = ajaxRequest.getParam("repoId", true);
         String domain = requestContext.getOwnerDomain();
-        _permissionCheck.check(ajaxRequest, requestContext, repoId);
+        _permissionCheck.check(ajaxRequest.getOperation(), requestContext, repoId);
 
         _notificationDb.deleteNotification(domain, notificationId);
         return JsonSuccess.Success;

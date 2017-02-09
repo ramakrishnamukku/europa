@@ -38,7 +38,7 @@ public class RemovePipelineComponent extends AjaxHelper<EuropaRequestContext>
     {
         String pipelineId = ajaxRequest.getParam("pipelineId", true);
         String pipelineComponentId = ajaxRequest.getParam("pipelineComponentId", true);
-        _permissionCheck.check(ajaxRequest, requestContext, pipelineId);
+        _permissionCheck.check(ajaxRequest.getOperation(), requestContext, pipelineId);
 
         _db.removePipelineComponent(pipelineId, pipelineComponentId);
 

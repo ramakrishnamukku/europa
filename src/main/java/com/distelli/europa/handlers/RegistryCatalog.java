@@ -31,7 +31,7 @@ public class RegistryCatalog extends RegistryBase {
     private ContainerRepoDb _reposDb;
 
     private static class Response {
-        public List<String> repositories;
+        public List<String> repositories = new ArrayList<String>();
     }
 
     public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
@@ -41,13 +41,24 @@ public class RegistryCatalog extends RegistryBase {
             .pageSize(getPageSize(requestContext))
             .marker(requestContext.getParameter("last"));
 
-        List<ContainerRepo> repos = _reposDb.listEuropaRepos(ownerDomain,
-                                                             pageIterator);
+        List<ContainerRepo> repoList = _reposDb.listEuropaRepos(ownerDomain,
+                                                                pageIterator);
 
+        Map<ContainerRepo, Boolean> permissionResult = _permissionCheck.checkBatch(this.getClass().getSimpleName(),
+                                                                                   requestContext,
+                                                                                   repoList);
         Response response = new Response();
-        response.repositories = repos.stream()
-            .map((repo) -> joinWithSlash(ownerUsername, repo.getName()))
-            .collect(Collectors.toList());
+        for(ContainerRepo repo : repoList)
+        {
+            boolean allow = repo.isPublicRepo();
+            if(!allow)
+                allow = permissionResult.get(repo);
+            if(allow)
+            {
+                String repoName = joinWithSlash(ownerUsername, repo.getName());
+                response.repositories.add(repoName);
+            }
+        }
 
         String location = null;
         if ( null != pageIterator.getMarker() ) {

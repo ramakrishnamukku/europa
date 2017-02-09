@@ -51,10 +51,10 @@ public class TestWebhookDelivery extends AjaxHelper<EuropaRequestContext>
         String repoId = ajaxRequest.getParam("repoId");
         String domain = requestContext.getOwnerDomain();
         if(repoId != null)
-            _permissionCheck.check(ajaxRequest, requestContext, repoId);
+            _permissionCheck.check(ajaxRequest.getOperation(), requestContext, repoId);
         else {
             boolean local = Boolean.parseBoolean(ajaxRequest.getParam("local"));
-            _permissionCheck.check(ajaxRequest, requestContext, local);
+            _permissionCheck.check(ajaxRequest.getOperation(), requestContext, local);
         }
 
         Webhook webhook = null;

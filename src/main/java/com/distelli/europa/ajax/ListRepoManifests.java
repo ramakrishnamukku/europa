@@ -44,7 +44,7 @@ public class ListRepoManifests extends AjaxHelper<EuropaRequestContext>
         String marker = ajaxRequest.getParam("marker");
         String domain = requestContext.getOwnerDomain();
 
-        _permissionCheck.check(ajaxRequest, requestContext, repoId);
+        _permissionCheck.check(ajaxRequest.getOperation(), requestContext, repoId);
 
         int dbReadPageSize = pageSize*3;
 

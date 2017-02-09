@@ -76,12 +76,8 @@ public class RegistryAuth {
         String passwd = tokenParts[1];
         if ( "TOKEN".equals(user) ) {
             TokenAuth tokenAuth = _tokenAuthDb.getToken(passwd);
-            if(tokenAuth != null && tokenAuth.getStatus() == TokenAuthStatus.ACTIVE) {
-                context.setRemoteUser(tokenAuth.getDomain());
-                context.setRequesterDomain(tokenAuth.getDomain());
-                context.setRegistryApiToken(tokenAuth.getToken());
+            if(isValidApiToken(passwd, context))
                 return;
-            }
         }
         RequireAuthError.throwRequireAuth("Invalid username or password", context);
     }
@@ -110,12 +106,6 @@ public class RegistryAuth {
         if(tokenBytes == null)
             RequireAuthError.throwRequireAuth("Illegal Basic token="+tokenStr, context);
 
-        String decodedToken = null;
-        try {
-            decodedToken = new String(tokenBytes, "UTF-8");
-        } catch(UnsupportedEncodingException usee) {
-            throw(new RuntimeException(usee));
-        }
-        return decodedToken;
+        return new String(tokenBytes, UTF_8);
     }
 }

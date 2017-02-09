@@ -59,9 +59,7 @@ public class RegistryTokenHandler extends RegistryBase
             {
                 //its not the public token so lets just echo it back
                 if(!RegistryToken.isPublicToken(registryApiToken))
-                {
                     return toJson(RegistryToken.fromString(registryApiToken));
-                }
                 return validatePublicRepo(tokenScope, ownerDomain, requestContext);
             }
             else //its a login or push
@@ -84,7 +82,7 @@ public class RegistryTokenHandler extends RegistryBase
         String repoName = tokenScope.getRepoName();
         //The repo could not be found. So throw an auth error
         if(repoName == null)
-            RequireAuthError.throwRequireAuth("Invalid username or password", requestContext);
+            RequireAuthError.throwRequireAuth("Invalid scope", requestContext);
 
         ContainerRepo repo = _repoDb.getLocalRepo(ownerDomain,
                                                   repoName);
@@ -93,7 +91,7 @@ public class RegistryTokenHandler extends RegistryBase
             return WebResponse.toJson(RegistryToken.PUBLIC_TOKEN);
         if(log.isDebugEnabled())
             log.debug("Disallowing Repo public Access to repo: "+repoName);
-        RequireAuthError.throwRequireAuth("Invalid username or password", requestContext);
+        RequireAuthError.throwRequireAuth("Missing username or password", requestContext);
         //Should not have reached here
         return null;
     }

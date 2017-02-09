@@ -42,6 +42,8 @@ public abstract class RegistryBase extends RequestHandler<EuropaRequestContext>
     @Inject
     private ContainerRepoDb _repoDb;
     @Inject
+    private ContainerRepo _repo;
+    @Inject
     protected PermissionCheck _permissionCheck;
 
     public WebResponse handleRequest(EuropaRequestContext requestContext) {

@@ -45,7 +45,7 @@ public class CreateLocalRepo extends AjaxHelper<EuropaRequestContext>
 
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
-        _permissionCheck.check(ajaxRequest, requestContext);
+        _permissionCheck.check(ajaxRequest.getOperation(), requestContext);
 
         String ownerDomain = requestContext.getOwnerDomain();
         String repoName = ajaxRequest.getParam("repoName", true);

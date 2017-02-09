@@ -55,7 +55,7 @@ public class SaveRepoNotification extends AjaxHelper<EuropaRequestContext>
         if(repo == null)
             throw(new AjaxClientException("Invalid RepoId: "+repoId, JsonError.Codes.BadParam, 400));
 
-        _permissionCheck.check(ajaxRequest, requestContext, repo);
+        _permissionCheck.check(ajaxRequest.getOperation(), requestContext, repo);
 
         Notification notification = ajaxRequest.convertContent("/notification", Notification.class,
                                                                true);

@@ -44,7 +44,7 @@ public class DeleteRegistryCreds extends AjaxHelper<EuropaRequestContext>
     */
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
-        _permissionCheck.check(ajaxRequest, requestContext);
+        _permissionCheck.check(ajaxRequest.getOperation(), requestContext);
         String id = ajaxRequest.getParam("id",
                                          true); //throw if missing
         String domain = requestContext.getOwnerDomain();

@@ -47,7 +47,7 @@ public class AddPipelineComponent extends AjaxHelper<EuropaRequestContext>
     {
         String typeName = ajaxRequest.getParam("type", true);
         String pipelineId = ajaxRequest.getParam("pipelineId", true);
-        _permissionCheck.check(ajaxRequest, requestContext, pipelineId);
+        _permissionCheck.check(ajaxRequest.getOperation(), requestContext, pipelineId);
 
         Class<? extends PipelineComponent> type = TYPES.get(typeName);
 

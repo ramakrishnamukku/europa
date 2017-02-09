@@ -59,7 +59,7 @@ public class SaveRepoOverview extends AjaxHelper<EuropaRequestContext>
             throw(new AjaxClientException("The specified Repository was not found",
                                           AjaxErrors.Codes.RepoNotFound, 400));
 
-        _permissionCheck.check(ajaxRequest, requestContext, repo);
+        _permissionCheck.check(ajaxRequest.getOperation(), requestContext, repo);
 
         String overviewId = repo.getOverviewId();
         ObjectKeyFactory objectKeyFactory = _objectKeyFactoryProvider.get();

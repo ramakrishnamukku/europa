@@ -65,7 +65,7 @@ public class RedeliverWebhook extends AjaxHelper<EuropaRequestContext>
         if(type != NotificationType.WEBHOOK)
             throw(new AjaxClientException("Invalid WebhookId: "+id, JsonError.Codes.BadContent, 400));
 
-        _permissionCheck.check(ajaxRequest, requestContext, repoId);
+        _permissionCheck.check(ajaxRequest.getOperation(), requestContext, repoId);
 
         //now get the event
         RepoEvent event = _repoEventsDb.getEventById(domain, repoId, eventId);

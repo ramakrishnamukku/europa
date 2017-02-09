@@ -38,7 +38,7 @@ public class RemovePipeline extends AjaxHelper<EuropaRequestContext>
     {
         String domain = requestContext.getOwnerDomain();
         String pipelineId = ajaxRequest.getParam("pipelineId", true);
-        _permissionCheck.check(ajaxRequest, requestContext, pipelineId);
+        _permissionCheck.check(ajaxRequest.getOperation(), requestContext, pipelineId);
 
         PageIterator pageIterator = new PageIterator().pageSize(100);
 

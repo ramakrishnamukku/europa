@@ -45,7 +45,7 @@ public class DeleteContainerRepo extends AjaxHelper<EuropaRequestContext>
         if(repo == null)
             throw(new AjaxClientException("The specified Repository was not found",
                                           AjaxErrors.Codes.RepoNotFound, 400));
-        _permissionCheck.check(ajaxRequest, requestContext, repo);
+        _permissionCheck.check(ajaxRequest.getOperation(), requestContext, repo);
         _repoDb.deleteRepo(domain, repoId);
         return JsonSuccess.Success;
     }

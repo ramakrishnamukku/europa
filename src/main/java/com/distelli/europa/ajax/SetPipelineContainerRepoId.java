@@ -39,7 +39,7 @@ public class SetPipelineContainerRepoId extends AjaxHelper<EuropaRequestContext>
         String domain = requestContext.getOwnerDomain();
         String pipelineId = ajaxRequest.getParam("pipelineId", true);
         String containerRepoId = ajaxRequest.getParam("containerRepoId", true);
-        _permissionCheck.check(ajaxRequest, requestContext, pipelineId);
+        _permissionCheck.check(ajaxRequest.getOperation(), requestContext, pipelineId);
         _db.setContainerRepo(pipelineId, domain, containerRepoId);
 
         return _db.getPipeline(pipelineId);

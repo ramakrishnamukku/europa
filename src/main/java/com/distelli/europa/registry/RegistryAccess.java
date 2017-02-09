@@ -24,9 +24,9 @@ public interface RegistryAccess
     @Log4j
     public static class Default implements RegistryAccess {
         @Inject
-        private ContainerRepoDb _repoDb;
+        protected ContainerRepoDb _repoDb;
 
-        private static final Set<String> READ_OPERATIONS = new HashSet<String>();
+        protected static final Set<String> READ_OPERATIONS = new HashSet<String>();
 
         static {
             READ_OPERATIONS.add("RegistryLayerPull");
@@ -39,22 +39,36 @@ public interface RegistryAccess
 
         public void checkAccess(String operationName, EuropaRequestContext requestContext)
         {
-            String requesterDomain = requestContext.getRequesterDomain();
+            if(operationName.equalsIgnoreCase("RegistryDefault") || operationName.equalsIgnoreCase("RegistryTokenHandler"))
+                return;
+
             //Its an authenticated request with a valid token so its
             //allowed.
-            if(requesterDomain != null)
-                return;
-            if(log.isDebugEnabled())
-                log.debug("RegistryAccess: "+operationName+", "+requesterDomain+", "+requestContext.getPath());
-            if(operationName.equalsIgnoreCase("RegistryDefault") || operationName.equalsIgnoreCase("RegistryTokenHandler"))
+            if(allowAuthenticatedRequest(operationName, requestContext))
                 return;
             //Registry Version check should throw an Auth Error
             if(operationName.equalsIgnoreCase("RegistryVersionCheck"))
                 RequireAuthError.throwRequireAuth("Missing Authorization header", requestContext);
+            checkPublicRepo(operationName, requestContext);
+        }
 
-            boolean isReadOperation = READ_OPERATIONS.contains(operationName);
+        protected boolean allowAuthenticatedRequest(String operationName, EuropaRequestContext requestContext)
+        {
+            String requesterDomain = requestContext.getRequesterDomain();
+            if(requesterDomain != null)
+                return true;
+            return false;
+        }
+
+        protected boolean isReadOperation(String operationName)
+        {
+            return READ_OPERATIONS.contains(operationName);
+        }
+
+        protected void checkPublicRepo(String operationName, EuropaRequestContext requestContext)
+        {
             //Don't allow access to non-read operations
-            if(!isReadOperation)
+            if(!isReadOperation(operationName))
                 throw(new RegistryError("You do not have access to this operation",
                                         RegistryErrorCode.UNAUTHORIZED));
             String ownerDomain = requestContext.getOwnerDomain();

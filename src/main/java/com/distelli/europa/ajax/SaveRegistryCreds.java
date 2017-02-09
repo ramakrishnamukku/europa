@@ -66,13 +66,13 @@ public class SaveRegistryCreds extends AjaxHelper<EuropaRequestContext>
         cred.setDomain(credDomain);
         String id = cred.getId();
         if(id != null) {
-            _permissionCheck.check(ajaxRequest, requestContext, Boolean.TRUE);
+            _permissionCheck.check(ajaxRequest.getOperation(), requestContext, Boolean.TRUE);
             //check that cred with that id exists
             RegistryCred existingCred = _db.getCred(credDomain, id.toLowerCase());
             if(existingCred == null)
                 throw(new AjaxClientException("Invalid Registry Cred Id: "+id, JsonError.Codes.BadContent, 400));
         } else {
-            _permissionCheck.check(ajaxRequest, requestContext, Boolean.FALSE);
+            _permissionCheck.check(ajaxRequest.getOperation(), requestContext, Boolean.FALSE);
             id = CompactUUID.randomUUID().toString();
             cred.setId(id);
         }

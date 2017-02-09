@@ -36,7 +36,7 @@ public class NewPipeline extends AjaxHelper<EuropaRequestContext>
 
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
-        _permissionCheck.check(ajaxRequest, requestContext);
+        _permissionCheck.check(ajaxRequest.getOperation(), requestContext);
 
         String domain = requestContext.getOwnerDomain();
         String name = ajaxRequest.getParam("name", true);

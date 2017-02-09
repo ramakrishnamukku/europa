@@ -39,7 +39,7 @@ public class ListRepoEvents extends AjaxHelper<EuropaRequestContext>
         String marker = ajaxRequest.getParam("marker");
         String domain = requestContext.getOwnerDomain();
 
-        _permissionCheck.check(ajaxRequest, requestContext, repoId);
+        _permissionCheck.check(ajaxRequest.getOperation(), requestContext, repoId);
 
         PageIterator pageIterator = new PageIterator()
         .pageSize(pageSize)

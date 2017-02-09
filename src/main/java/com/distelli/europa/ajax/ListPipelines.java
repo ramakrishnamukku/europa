@@ -42,7 +42,7 @@ public class ListPipelines extends AjaxHelper<EuropaRequestContext>
         List<Pipeline> pipelineList = _db.listByDomain(domain, pageIterator);
         if(pipelineList == null || pipelineList.size() == 0)
             return pipelineList;
-        Map<Pipeline, Boolean> permissionResult = _permissionCheck.checkBatch(ajaxRequest,
+        Map<Pipeline, Boolean> permissionResult = _permissionCheck.checkBatch(ajaxRequest.getOperation(),
                                                                               requestContext,
                                                                               pipelineList);
         List<Pipeline> retval = new ArrayList<Pipeline>();

@@ -47,7 +47,7 @@ public class SetRepoPublic extends AjaxHelper<EuropaRequestContext>
         if(repo == null)
             throw(new AjaxClientException("The specified Repository was not found",
                                           AjaxErrors.Codes.RepoNotFound, 400));
-        _permissionCheck.check(ajaxRequest, requestContext, repo);
+        _permissionCheck.check(ajaxRequest.getOperation(), requestContext, repo);
 
         if(!repo.isLocal())
             throw(new AjaxClientException("Cannot change public / private setting for Remote Repository",
