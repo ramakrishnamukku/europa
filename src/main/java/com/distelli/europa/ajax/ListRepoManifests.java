@@ -9,6 +9,7 @@ package com.distelli.europa.ajax;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 import javax.inject.Inject;
 
 import com.distelli.europa.EuropaRequestContext;
@@ -26,7 +27,7 @@ import lombok.extern.log4j.Log4j;
 public class ListRepoManifests extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
-    private RegistryManifestDb _db;
+    private RegistryManifestDb _manifestDb;
     @Inject
     protected ContainerRepoDb _repoDb;
     @Inject
@@ -39,45 +40,21 @@ public class ListRepoManifests extends AjaxHelper<EuropaRequestContext>
 
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
-        String repoId = ajaxRequest.getParam("repoId", true);
-        int pageSize = ajaxRequest.getParamAsInt("pageSize", 100);
-        String marker = ajaxRequest.getParam("marker");
-        String domain = requestContext.getOwnerDomain();
 
-        _permissionCheck.check(ajaxRequest.getOperation(), requestContext, repoId);
+        PageIterator iter = new PageIterator()
+            .pageSize(ajaxRequest.getParamAsInt("pageSize", 100))
+            .marker(ajaxRequest.getParam("marker"))
+            .setIsForward(!Boolean.parseBoolean(ajaxRequest.getParam("backward")));
 
-        int dbReadPageSize = pageSize*3;
-
-        PageIterator pageIterator = new PageIterator()
-        .pageSize(dbReadPageSize)
-        .marker(marker)
-        .forward();
-
-        List<RegistryManifest> manifestList = _db.listManifestsByRepoManifestId(domain, repoId, pageIterator);
-        if(manifestList == null || manifestList.size() == 0)
-            return manifestList;
-
-        List<MultiTaggedManifest> taggedManifests = new ArrayList<MultiTaggedManifest>();
-        MultiTaggedManifest curItem = null;
-        for(RegistryManifest manifest : manifestList)
-        {
-            if(curItem == null) {
-                if(taggedManifests.size() >= pageSize)
-                    break;
-                curItem = MultiTaggedManifest.fromRegistryManifest(manifest);
-            }
-            else
-            {
-                if(curItem.getManifestId().equalsIgnoreCase(manifest.getManifestId()))
-                    curItem.addTag(manifest.getTag());
-                else
-                {
-                    taggedManifests.add(curItem);
-                    curItem = MultiTaggedManifest.fromRegistryManifest(manifest);
-                }
-            }
-        }
-
-        return taggedManifests;
+        List<MultiTaggedManifest> list = _manifestDb.listMultiTaggedManifest(
+            requestContext.getOwnerDomain(),
+            ajaxRequest.getParam("repoId", true),
+            iter);
+        if ( ! iter.isForward() ) Collections.reverse(list);
+        return Page.<MultiTaggedManifest>builder()
+            .list(list)
+            .next(iter.isForward() ? iter.getMarker() : iter.getPrevMarker())
+            .prev(iter.isForward() ? iter.getPrevMarker() : iter.getMarker())
+            .build();
     }
 }

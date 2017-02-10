@@ -1,5 +1,6 @@
 package com.distelli.europa.db;
 
+import com.distelli.europa.Tag;
 import com.distelli.europa.models.*;
 import com.distelli.jackson.transform.TransformModule;
 import com.distelli.persistence.AttrDescription;
@@ -28,6 +29,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.RollbackException;
 import lombok.extern.log4j.Log4j;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
+import java.util.ArrayList;
 
 @Log4j
 @Singleton
@@ -157,7 +159,7 @@ public class RegistryManifestDb extends BaseDb {
         }
 
         String manifestId = manifest.getManifestId();
-        if ( null == manifestId || ! manifestId.matches("^sha256:[0-9a-f]{64}$") ) {
+        if ( null == manifestId || ! Tag.isDigest(manifestId) ) {
             throw new IllegalArgumentException(
                 "Illegal manifestId="+manifestId+" expected to match sha256:[0-9a-f]{64}");
         }
@@ -248,10 +250,56 @@ public class RegistryManifestDb extends BaseDb {
         }
     }
 
-    public List<RegistryManifest> listManifestsByRepoManifestId(String domain, String repoId, PageIterator pageIterator)
-    {
-        return _byRepoManifestId.queryItems(domain.toLowerCase(), pageIterator)
-        .beginsWith(toRepoManifestIdRK(repoId, null))
-        .list();
+    public List<MultiTaggedManifest> listMultiTaggedManifest(String domain, String repoId, PageIterator outerIter) {
+        // Maybe we should throw an exception?
+        if ( outerIter.getPageSize() <= 0 ) {
+            return Collections.emptyList();
+        }
+
+        List<MultiTaggedManifest> result = new ArrayList<>();
+        MultiTaggedManifest multiManifest = null;
+        RegistryManifest lastManifest = null;
+        RegistryManifest firstManifest = null;
+
+        // We do page size 2x since we KNOW every manifest will have at least
+        // a sha256 entry and possibly one or more tag entries. Ideally we only
+        // do a single iteration of the outer loop.
+        for ( PageIterator iter : new PageIterator()
+                  .pageSize(outerIter.getPageSize()*2)
+                  .marker(outerIter.getMarker())
+                  .setIsForward(outerIter.isForward()) )
+        {
+            for ( RegistryManifest manifest : _byRepoManifestId.queryItems(domain.toLowerCase(), iter)
+                      .beginsWith(toRepoManifestIdRK(repoId, null))
+                      .list() )
+            {
+                // Update firstManifest:
+                if ( null == firstManifest ) firstManifest = manifest;
+
+                if ( null == multiManifest ||
+                     ! multiManifest.getManifestId().equals(manifest.getManifestId()) )
+                {
+                    if ( result.size() >= outerIter.getPageSize() ) {
+                        // Result set is full:
+                        outerIter.setMarker(_byRepoManifestId.toMarker(lastManifest, true));
+                        outerIter.setPrevMarker(_byRepoManifestId.toMarker(firstManifest, true));
+                        return result;
+                    }
+                    // Add new MultiTaggedManifest:
+                    multiManifest = MultiTaggedManifest.fromRegistryManifest(manifest);
+                    result.add(multiManifest);
+                } else if ( null != manifest.getTag() ) {
+                    // Add tag to MultiTaggedManifest:
+                    multiManifest.addTag(manifest.getTag());
+                }
+                // Update lastManifest
+                lastManifest = manifest;
+            }
+        }
+        // No more results:
+        outerIter.setPrevMarker(outerIter.getMarker() == null ? null :
+                                _byRepoManifestId.toMarker(firstManifest, true));
+        outerIter.setMarker(null);
+        return result;
     }
 }

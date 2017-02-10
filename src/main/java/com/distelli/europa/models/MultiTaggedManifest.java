@@ -14,6 +14,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Singular;
+import com.distelli.europa.Tag;
 
 /**
    Same fields as the Registry Manifest but tags is a set and digests
@@ -27,12 +28,16 @@ public class MultiTaggedManifest
 {
     private String domain;
     private String containerRepoId;
-    private TreeSet<String> tags;
+    private TreeSet<String> tags = new TreeSet<>();
     private String manifestId;
     private String uploadedBy;
     private String contentType;
     private Long virtualSize;
     private Long pushTime;
+
+    public static class MultiTaggedManifestBuilder {
+        protected TreeSet<String> tags = new TreeSet<>();
+    }
 
     public static MultiTaggedManifest fromRegistryManifest(RegistryManifest registryManifest)
     {
@@ -47,14 +52,15 @@ public class MultiTaggedManifest
         .pushTime(registryManifest.getPushTime())
         .build();
 
-        multiTaggedManifest.addTag(registryManifest.getTag());
+        if ( null != registryManifest.getTag() )
+            multiTaggedManifest.addTag(registryManifest.getTag());
         return multiTaggedManifest;
     }
 
     public void addTag(String tag)
     {
-        if(this.tags == null)
-            this.tags = new TreeSet<String>();
-        this.tags.add(tag);
+        // Ignore digests since they aren't "tags".
+        if ( Tag.isDigest(tag) ) return;
+        tags.add(tag);
     }
 }
