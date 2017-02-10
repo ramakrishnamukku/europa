@@ -95,10 +95,6 @@ public class SaveRegistryCreds extends AjaxHelper<EuropaRequestContext>
             FieldValidator.validateNonNull(cred, "secret", "region");
             validateGcrCreds(cred);
             break;
-        case PRIVATE:
-            FieldValidator.validateNonNull(cred, "username", "password", "endpoint");
-            // TODO...
-            break;
         case DOCKERHUB:
             FieldValidator.validateNonNull(cred, "username", "password");
             validateDockerHubCreds(cred);
