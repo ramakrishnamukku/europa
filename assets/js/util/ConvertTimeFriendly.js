@@ -6,29 +6,35 @@
 
 export default function(millis){
   var seconds = Math.floor((new Date() - millis) / 1000);
-  var interval = Math.floor(seconds / 2592000);
+  var interval = Math.floor(seconds / 31104000);
+
 
   if(interval >= 1) {
-    return interval + " month(s) ago";
+    return interval + ` year${(interval > 1) ? 's' : '' } ago`;
+  }
+
+  interval  = Math.floor(seconds / 2592000);
+  if(interval >= 1) {
+    return interval + ` month${(interval > 1) ? 's' : '' } ago`;
   }
 
   interval  = Math.floor(seconds / 86400);
   if (interval >= 1) {
-    return interval + " day(s) ago";
+    return interval + ` day${(interval > 1) ? 's' : '' } ago`;
   }
 
   interval = Math.floor(seconds / 3600);
   if (interval >= 1) {
-    return interval + " hour(s) ago";
+    return interval + ` hour${(interval > 1) ? 's' : '' } ago`;
   }
 
   interval = Math.floor(seconds / 60);
   if (interval >= 1) {
-    return interval + " minute(s) ago";
+    return interval + ` minute${(interval > 1) ? 's' : '' } ago`;
   }
 
   if(seconds > 0) {
-    return seconds + " second(s) ago";  
+    return interval + ` second${(interval > 1) ? 's' : '' } ago`;
   }
 
   return 'Moments ago';
