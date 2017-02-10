@@ -104,9 +104,7 @@ public class SaveContainerRepo extends AjaxHelper<EuropaRequestContext>
         if(notification != null)
             _notificationDb.save(notification);
 
-        HashMap<String, String> retVal = new HashMap<String, String>();
-        retVal.put("id", repo.getId());
-        return retVal;
+        return repo;
     }
 
     /**

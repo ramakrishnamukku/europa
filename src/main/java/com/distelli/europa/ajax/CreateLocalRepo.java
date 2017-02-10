@@ -72,6 +72,7 @@ public class CreateLocalRepo extends AjaxHelper<EuropaRequestContext>
         repo.setOverviewId(CompactUUID.randomUUID().toString());
         repo.setId(CompactUUID.randomUUID().toString());
         _repoDb.save(repo);
-        return JsonSuccess.Success;
+
+        return repo;
     }
 }
