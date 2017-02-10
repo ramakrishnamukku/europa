@@ -738,20 +738,36 @@ export function setTimelineSection(section = '') {
 }
 
 // Read Permissions
-export function listRepoEvents(repoId, skipXHR) {
+export function listRepoEvents(repoId, skipXHR, marker, isBackward = null) {
   return new Promise((resolve, reject) => {
     this.setState({
       repoDetails: GA.modifyProperty(this.state.repoDetails, {
         eventsXHR: (skipXHR) ? false : true
       })
     }, () => {
-      RAjax.GET.call(this, 'ListRepoEvents', {
-          repoId
-        })
+
+      let params = {
+        repoId,
+      };
+
+      if(marker) {
+        params.marker = marker;
+      }
+
+      if(isBackward) {
+        params.backward = 'true';
+      }
+
+      console.log(params);
+
+      RAjax.GET.call(this, 'ListRepoEvents', params)
         .then((res) => {
+          console.log(res);
           this.setState({
             repoDetails: GA.modifyProperty(this.state.repoDetails, {
-              events: res,
+              events: res.events,
+              eventsPrevMarker: res.prevMarker,
+              eventsNextMarker: res.nextMarker,
               eventsXHR: false,
               hasRetrievedEvents: true
             })
@@ -778,6 +794,16 @@ export function listRepoEvents(repoId, skipXHR) {
         })
     })
   });
+}
+
+export function paginateEventsForward() {
+  let repoId = NPECheck(this.state, 'repoDetails/activeRepo/id', null);
+  listRepoEvents.call(this, repoId, true, this.state.repoDetails.eventsNextMarker);
+}
+
+export function paginateEventsBackward() {
+  let repoId = NPECheck(this.state, 'repoDetails/activeRepo/id', null);
+  listRepoEvents.call(this, repoId, true, this.state.repoDetails.eventsPrevMarker, true);
 }
 
 export function toggleEventDetails(eventId = null) {

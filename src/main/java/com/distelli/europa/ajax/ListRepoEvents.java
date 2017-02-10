@@ -8,8 +8,9 @@
 package com.distelli.europa.ajax;
 
 import java.util.List;
+import java.util.ArrayList;
 import javax.inject.Inject;
-
+import java.util.Collections;
 import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
@@ -37,13 +38,13 @@ public class ListRepoEvents extends AjaxHelper<EuropaRequestContext>
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         String repoId = ajaxRequest.getParam("repoId", true);
-        int pageSize = ajaxRequest.getParamAsInt("pageSize", 100);
+        int pageSize = ajaxRequest.getParamAsInt("pageSize", 3);
         String marker = ajaxRequest.getParam("marker");
         String domain = requestContext.getOwnerDomain();
 
         _permissionCheck.check(ajaxRequest.getOperation(), requestContext, repoId);
 
-        boolean isForward = Boolean.parseBoolean(ajaxRequest.getParam("forward"));
+        boolean isForward = Boolean.parseBoolean(ajaxRequest.getParam("backward"));
 
         PageIterator pageIterator = new PageIterator()
         .pageSize(pageSize)
@@ -52,10 +53,18 @@ public class ListRepoEvents extends AjaxHelper<EuropaRequestContext>
             pageIterator.backward();
 
         List<RepoEvent> events = _db.listEvents(domain, repoId, pageIterator);
+
+        if(isForward) {
+            List<RepoEvent> reversedEvents = new ArrayList<RepoEvent>();
+            reversedEvents.addAll(events);
+            Collections.reverse(reversedEvents); 
+            events = reversedEvents;
+        }
+            
         RepoEventList eventList = RepoEventList
         .builder()
-        .nextMarker(isForward ? pageIterator.getMarker() : pageIterator.getPrevMarker())
-        .prevMarker(isForward ? pageIterator.getPrevMarker() : pageIterator.getMarker())
+        .prevMarker(isForward ? pageIterator.getMarker() : pageIterator.getPrevMarker())
+        .nextMarker(isForward ? pageIterator.getPrevMarker() : pageIterator.getMarker())
         .events(events)
         .build();
         return eventList;

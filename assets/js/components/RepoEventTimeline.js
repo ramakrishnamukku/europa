@@ -24,11 +24,11 @@ export default class RepoEventTimeline extends Component {
 			 this.context.actions.listRepoEvents(repoId);
 		}
 
-		this.setState({
-			pollEventsInterval: setInterval(() => {
-				this.context.actions.listRepoEvents(repoId, true);
-			}, 15000)
-		});
+		// this.setState({
+		// 	pollEventsInterval: setInterval(() => {
+		// 		this.context.actions.listRepoEvents(repoId, true);
+		// 	}, 15000)
+		// });
 	}
 	componentWillUnmount() {
 		clearInterval(this.state.pollEventsInterval);

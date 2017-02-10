@@ -72,6 +72,13 @@ export default class RepoDetailsContent extends Component {
 					return (
 						<i className="icon icon-dis-waiting rotating" data-tip="Polling for updates" data-for="ToolTipTop"/>
 					);
+				} else {
+					return (
+						<div className="FlexRow">
+							<i className="icon icon-dis-left" onClick={() => this.context.actions.paginateEventsBackward()}/>
+							<i className="icon icon-dis-right" onClick={() => this.context.actions.paginateEventsForward()}/>
+						</div>
+					);
 				}
 			break;
 
