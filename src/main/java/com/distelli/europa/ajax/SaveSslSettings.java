@@ -29,7 +29,7 @@ public class SaveSslSettings extends AjaxHelper<EuropaRequestContext> {
                   ajaxRequest.convertContent(SslSettings.class, true)
                   .toEuropaSettings() )
         {
-            if ( null == setting.getValue() ) {
+            if ( null == setting.getValue() || setting.getValue().trim().isEmpty()) {
                 _settingsDb.delete(setting.getDomain(), EuropaSettingType.SSL, setting.getKey());
             } else {
                 _settingsDb.save(setting);
