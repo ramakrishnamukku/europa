@@ -44,7 +44,7 @@ public class ListRepoManifests extends AjaxHelper<EuropaRequestContext>
         _permissionCheck.check(ajaxRequest.getOperation(), requestContext, repoId);
 
         PageIterator iter = new PageIterator()
-            .pageSize(ajaxRequest.getParamAsInt("pageSize", 100))
+            .pageSize(ajaxRequest.getParamAsInt("pageSize", 10))
             .marker(ajaxRequest.getParam("marker"))
             .setIsForward(!Boolean.parseBoolean(ajaxRequest.getParam("backward")));
 

@@ -14,7 +14,6 @@ import NPECheck from './../util/NPECheck'
 const dnsNameKey = 'dnsName';
 const serverPrivateKey = 'serverPrivateKey';
 const serverCertKey = 'serverCertificate';
-const caPrivateKey = 'authorityPrivateKey';
 const caKey = 'authorityCertificate';
 
 export default class SSLSettings extends Component {
@@ -103,11 +102,7 @@ export default class SSLSettings extends Component {
 					key: serverCertKey
 				},
 				{
-					label: 'CA Private Key',
-					key: caPrivateKey
-				},
-				{
-					label: 'CA Key',
+					label: 'CA Certificate',
 					key: caKey
 				}
 			];

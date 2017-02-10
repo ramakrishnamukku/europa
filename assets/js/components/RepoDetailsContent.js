@@ -92,6 +92,18 @@ export default class RepoDetailsContent extends Component {
 					return (
 						<i className="icon icon-dis-waiting rotating" data-tip="Polling for updates" data-for="ToolTipTop"/>
 					);
+				} else {
+					return (
+						<div className="FlexRow">
+							<i className="icon icon-dis-left" 
+							   style={(NPECheck(this.props, 'repoDetails/manifestsPrevMarker', false)) ? {} : {display: 'none'}} 
+							   onClick={() => this.context.actions.paginateManifestsBackward()} />
+
+							<i className="icon icon-dis-right" 
+							   style={(NPECheck(this.props, 'repoDetails/manifestsNextMarker', false)) ? {} : {display: 'none'}} 
+							   onClick={() => this.context.actions.paginateManifestsForward()} />
+						</div>
+					);
 				}
 			break;
 		}

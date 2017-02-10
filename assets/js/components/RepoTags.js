@@ -27,8 +27,13 @@ export default class RepoTags extends Component {
 
 		this.setState({
 			pollEventsInterval: setInterval(() => {
-				this.context.actions.listRepoManifests(repoId, true);
-			}, 15000)
+				let prevMarker = NPECheck(this.props, 'repoDetails/manifestsPrevMarker', false);	
+
+				if(!prevMarker) {
+					this.context.actions.listRepoManifests(repoId, true);	
+				} 
+				
+			}, 5000)
 		});
 	}
 	componentWillUnmount() {

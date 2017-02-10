@@ -17,7 +17,6 @@ export function sslState() {
 			dnsName: '',
 			serverPrivateKey: '',
 			serverCertificate: '',
-			authorityPrivateKey: '',
 			authorityCertificate: '',
 		},
 		errorFields: {
@@ -184,7 +183,6 @@ export function isSSLValid(sslSettings) {
 		dnsName: 'DNS Name',
 		serverPrivateKey: 'Server Private Key',
 		serverCertificate: 'Server Certificate',
-		authorityPrivateKey: 'Authority Private Key',
 		authorityCertificate: 'Authority Certificate',
 	};
 
@@ -195,5 +193,5 @@ export function isSSLValid(sslSettings) {
 
 function isSSLEnabled(sslSettings) {
 	let s = sslSettings;
-	return !!(s.serverPrivateKey && s.serverCertificate && s.authorityPrivateKey && s.authorityCertificate)
+	return !!(s.serverPrivateKey && s.serverCertificate && s.authorityCertificate)
 }

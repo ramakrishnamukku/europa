@@ -643,7 +643,7 @@ export function confirmPublicStatusChange(publicStatusChange) {
   this.setState({
     repoDetails: GA.modifyProperty(this.state.repoDetails, {
       publicConfirm: !NPECheck(this.state, 'repoDetails/publicConfirm', true),
-      publicStatusChange 
+      publicStatusChange
     })
   });
 }
@@ -752,11 +752,11 @@ export function listRepoEvents(repoId, skipXHR, marker, isBackward = null) {
         repoId,
       };
 
-      if(marker) {
+      if (marker) {
         params.marker = marker;
       }
 
-      if(isBackward) {
+      if (isBackward) {
         params.backward = 'true';
       }
 
@@ -820,20 +820,33 @@ export function toggleEventDetails(eventId = null) {
 // *************************************************
 
 // Read Permissions
-export function listRepoManifests(repoId, skipXHR) {
+export function listRepoManifests(repoId, skipXHR, marker, isBackward = null) {
   return new Promise((resolve, reject) => {
     this.setState({
       repoDetails: GA.modifyProperty(this.state.repoDetails, {
         manifestsXHR: (skipXHR) ? false : true
       })
     }, () => {
-      RAjax.GET.call(this, 'ListRepoManifests', {
-          repoId
-        })
+
+      let params = {
+        repoId
+      };
+
+      if (marker) {
+        params.marker = marker;
+      }
+
+      if (isBackward) {
+        params.backward = 'true';
+      }
+
+      RAjax.GET.call(this, 'ListRepoManifests', params)
         .then((res) => {
           this.setState({
             repoDetails: GA.modifyProperty(this.state.repoDetails, {
-              manifests: res,
+              manifests: res.list,
+              manifestsPrevMarker: res.prev,
+              manifestsNextMarker: res.next,
               manifestsXHR: false,
               manifestsError: '',
               hasRetrievedManifests: true
@@ -862,6 +875,16 @@ export function listRepoManifests(repoId, skipXHR) {
         });
     });
   });
+}
+
+export function paginateManifestsForward() {
+  let repoId = NPECheck(this.state, 'repoDetails/activeRepo/id', null);
+  listRepoManifests.call(this, repoId, true, this.state.repoDetails.manifestsNextMarker);
+}
+
+export function paginateManifestsBackward() {
+  let repoId = NPECheck(this.state, 'repoDetails/activeRepo/id', null);
+  listRepoManifests.call(this, repoId, true, this.state.repoDetails.manifestsPrevMarker, true);
 }
 
 export function toggleSelectedManifest(manifest = null) {
