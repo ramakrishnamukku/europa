@@ -1,4 +1,4 @@
-package com.distelli.europa;
+package com.distelli.europa.util;
 
 import java.util.regex.Pattern;
 

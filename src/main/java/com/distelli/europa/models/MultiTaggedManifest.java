@@ -14,7 +14,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Singular;
-import com.distelli.europa.Tag;
+import com.distelli.europa.util.Tag;
 
 /**
    Same fields as the Registry Manifest but tags is a set and digests

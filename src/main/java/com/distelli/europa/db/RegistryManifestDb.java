@@ -1,6 +1,6 @@
 package com.distelli.europa.db;
 
-import com.distelli.europa.Tag;
+import com.distelli.europa.util.Tag;
 import com.distelli.europa.models.*;
 import com.distelli.jackson.transform.TransformModule;
 import com.distelli.persistence.AttrDescription;

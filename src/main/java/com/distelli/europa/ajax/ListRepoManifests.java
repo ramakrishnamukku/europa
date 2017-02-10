@@ -40,6 +40,8 @@ public class ListRepoManifests extends AjaxHelper<EuropaRequestContext>
 
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
+        String repoId = ajaxRequest.getParam("repoId", true);
+        _permissionCheck.check(ajaxRequest.getOperation(), requestContext, repoId);
 
         PageIterator iter = new PageIterator()
             .pageSize(ajaxRequest.getParamAsInt("pageSize", 100))
@@ -48,7 +50,7 @@ public class ListRepoManifests extends AjaxHelper<EuropaRequestContext>
 
         List<MultiTaggedManifest> list = _manifestDb.listMultiTaggedManifest(
             requestContext.getOwnerDomain(),
-            ajaxRequest.getParam("repoId", true),
+            repoId,
             iter);
         if ( ! iter.isForward() ) Collections.reverse(list);
         return Page.<MultiTaggedManifest>builder()
