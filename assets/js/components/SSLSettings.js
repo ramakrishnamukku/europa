@@ -32,6 +32,7 @@ export default class SSLSettings extends Component {
 	saveSSLSettings(){
 		this.context.actions.saveSSLSettings()
 		.then(this.context.actions.getSSLSettings)
+		.then((sslSettings) => this.context.actions.updateDNSName(sslSettings.dnsName))
 		.catch((err) => {
 			console.error(err);
 		});

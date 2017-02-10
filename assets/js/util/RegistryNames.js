@@ -8,7 +8,7 @@ export default function RegistryNames(includeEuropa = false){
 		'GCR' : 'Google Container Registry',
 		'ECR' : 'EC2 Container Registry',
 		'DOCKERHUB' : 'DockerHub',
-		'PRIVATE': 'Private Registry',
+		// 'PRIVATE': 'Private Registry',
 	};
 
 	if(includeEuropa) {

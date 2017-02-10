@@ -25,8 +25,8 @@ export default class CreateLocalRepo extends Component {
 	}
 	createLocalRepo(){
 		this.context.actions.createLocalRepo()
-		.then(() => {
-			this.context.router.push('/repositories');
+		.then((res) => {
+			this.context.router.push(`/repository/${res.id}`);
 		})
 		.catch(() => {});
 	}
@@ -74,7 +74,7 @@ export default class CreateLocalRepo extends Component {
 				<div>Push a Docker image to a local repository</div>
 				<p><strong>Command</strong> description dolor sit amet, cectetuer adipiscing elit, sed diam nonumy nibh euismod tincidunt ut laoreet dolore magna aliquam erat.</p>
 				<div className="Code">
-					 <span id="copyCommands">$ docker push {this.props.dnsName}/YOUR_NEW_REPO_NAME[:YOUR_IMAGE_TAG]</span>
+					 <span id="copyCommands">$ docker push {this.props.dnsName}/REPO_NAME[:IMAGE_TAG]</span>
 					 <i className="icon icon-dis-copy" 
 					 	onClick={() => CopyToClipboard(document.getElementById('copyCommands'))}
 					 	data-tip="Click To Copy"

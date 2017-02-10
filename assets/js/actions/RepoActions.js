@@ -168,7 +168,7 @@ export function createLocalRepo() {
             addRepo: GA.modifyProperty(this.state.addRepo, {
               createLocalXHR: false
             })
-          }, () => resolve());
+          }, () => resolve(res));
         })
         .catch((err) => {
           console.error(err);

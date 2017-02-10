@@ -72,6 +72,13 @@ export function updateSSLCreds(prop, e, eIsValue = false) {
 	});
 }
 
+
+export function updateDNSName(dnsName){
+	this.setState({
+		dnsName: dnsName
+	});
+}
+
 export function saveSSLSettings() {
 	return new Promise((resolve, reject) => {
 

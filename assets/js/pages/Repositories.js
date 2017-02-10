@@ -32,7 +32,7 @@ export default class Repositories extends Component {
 		let filteredRepos = this.props.repos.sort((repo1, repo2) => repo1.name > repo2.name ? 1 : -1).filter((repo) => {
 			if(!this.props.reposFilterQuery) return true;
 
-			return JSON.stringify(repo).indexOf(this.props.reposFilterQuery) > -1
+			return repo.name.indexOf(this.props.reposFilterQuery) > -1
 		});
 
 		if(!filteredRepos.length) {
@@ -183,7 +183,7 @@ export default class Repositories extends Component {
 						<div>Push a Docker image to a local repository</div>
 						<p><strong>Command</strong> description dolor sit amet, cectetuer adipiscing elit, sed diam nonumy nibh euismod tincidunt ut laoreet dolore magna aliquam erat.</p>
 						<div className="Code">
-							 <span id="copyCommands">$ docker push {this.props.dnsName}/YOUR_NEW_REPO_NAME[:YOUR_IMAGE_TAG]</span>
+							 <span id="copyCommands">$ docker push {this.props.dnsName}/REPO_NAME[:IMAGE_TAG]</span>
 							 <i className="icon icon-dis-copy" 
 							 	onClick={() => CopyToClipboard(document.getElementById('copyCommands'))}
 							 	data-tip="Click To Copy"

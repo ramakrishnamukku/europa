@@ -196,13 +196,15 @@ export default class Pipelines extends Component {
         onClick: this.context.actions.toggleInitNewPipeline,
         isActive: this.props.pipelinesStore.initNewPipeline
       }
-    ]
+    ] 
+
+    let pipelinesLength = NPECheck(this.props, 'pipelinesStore/pipelines/length', 0);
 
     return (
       <div className="ContentContainer">
         <div className="PageHeader">
           <h2>
-             Pipelines
+             {`${pipelinesLength} Pipline${(pipelinesLength != 1) ? 's' : ''}`}
           </h2>
           <div className="FlexRow">
             <div className="Flex1">
