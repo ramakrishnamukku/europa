@@ -8,6 +8,7 @@ import RepoOverview from './RepoOverview'
 import RepoEventItem from './../components/RepoEventItem'
 import RegistryProviderIcons from './../util/RegistryProviderIcons'
 import ConvertTimeFriendly from './../util/ConvertTimeFriendly'
+import CleanSha from './../util/CleanSha'
 import Loader from './../components/Loader'
 
 export default class RepoTags extends Component {
@@ -42,7 +43,7 @@ export default class RepoTags extends Component {
 	renderRepoEventTagItem(tag, index, activeRepo){
 		let time = tag.pushTime;
 		let friendlyTime = ConvertTimeFriendly(time);
-		let shortManifestId = tag.manifestId.substring(0, 20) + '...';
+		let cleanedSha = CleanSha(tag.manifestId)
 		let icon = 'icon icon-dis-box-uncheck';
 
 		if(NPECheck(this.props, 'repoDetails/selectedManifests', [])
@@ -57,8 +58,8 @@ export default class RepoTags extends Component {
 				   data-tip="View Pull Commands For This Tag" 
 				   data-for="ToolTipTop" 
 				   onClick={() => this.context.actions.toggleSelectedManifest(tag)}/>
-				<span className="ImageSha" data-tip={tag.manifestId}>	
-					{shortManifestId}
+				<span className="ImageSha" data-tip={tag.manifestId} data-for="ToolTipTop">	
+					{cleanedSha}
 				</span>
 				<span className="Tags">
 					{tag.tags.map((tag, index) => {

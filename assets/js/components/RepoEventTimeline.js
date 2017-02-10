@@ -10,6 +10,7 @@ import RegistryProviderIcons from './../util/RegistryProviderIcons'
 import ConvertTimeFriendly from './../util/ConvertTimeFriendly'
 import Loader from './../components/Loader'
 
+
 export default class RepoEventTimeline extends Component {
 	constructor(props) {
 		super(props);
@@ -24,11 +25,15 @@ export default class RepoEventTimeline extends Component {
 			 this.context.actions.listRepoEvents(repoId);
 		}
 
-		// this.setState({
-		// 	pollEventsInterval: setInterval(() => {
-		// 		this.context.actions.listRepoEvents(repoId, true);
-		// 	}, 15000)
-		// });
+		this.setState({
+			pollEventsInterval: setInterval(() => {
+				let prevMarker = NPECheck(this.props, 'repoDetails/eventsPrevMarker', false);	
+				// Only poll if on first page of events
+				if(!prevMarker) {
+					this.context.actions.listRepoEvents(repoId, true);	
+				}
+			}, 15000)
+		});
 	}
 	componentWillUnmount() {
 		clearInterval(this.state.pollEventsInterval);

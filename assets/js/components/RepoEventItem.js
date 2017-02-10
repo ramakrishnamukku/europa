@@ -10,6 +10,7 @@ import ConvertTimeUTC from './../util/ConvertTimeUTC'
 import ConvertTimeFriendly from './../util/ConvertTimeFriendly'
 import NPECheck from './../util/NPECheck'
 import Msg from './../components/Msg'
+import CleanSha from './../util/CleanSha'
 
 export default class RepoEventItem extends Component {
 	constructor(props) {
@@ -108,7 +109,7 @@ export default class RepoEventItem extends Component {
 							<span className="Sha">
 								<i className="icon icon-dis-blank" />
 								<span className="Label">SHA:&nbsp;</span>
-								<span className="Value">{SHA}</span></span>
+								<span className="Value">{CleanSha(SHA, 100)}</span></span>
 							<span className="Tags">
 								<i className="icon icon-dis-blank" />
 								{event.imageTags.map((tag, index) => {

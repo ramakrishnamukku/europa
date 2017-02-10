@@ -39,7 +39,7 @@ public class ListRepoEvents extends AjaxHelper<EuropaRequestContext>
     public Object get(AjaxRequest ajaxRequest, EuropaRequestContext requestContext)
     {
         String repoId = ajaxRequest.getParam("repoId", true);
-        int pageSize = ajaxRequest.getParamAsInt("pageSize", 3);
+        int pageSize = ajaxRequest.getParamAsInt("pageSize", 20);
         String marker = ajaxRequest.getParam("marker");
         String domain = requestContext.getOwnerDomain();
 

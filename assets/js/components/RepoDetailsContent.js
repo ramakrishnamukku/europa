@@ -75,8 +75,13 @@ export default class RepoDetailsContent extends Component {
 				} else {
 					return (
 						<div className="FlexRow">
-							<i className="icon icon-dis-left" onClick={() => this.context.actions.paginateEventsBackward()}/>
-							<i className="icon icon-dis-right" onClick={() => this.context.actions.paginateEventsForward()}/>
+							<i className="icon icon-dis-left" 
+							   style={(NPECheck(this.props, 'repoDetails/eventsPrevMarker', false)) ? {} : {display: 'none'}} 
+							   onClick={() => this.context.actions.paginateEventsBackward()} />
+
+							<i className="icon icon-dis-right" 
+							   style={(NPECheck(this.props, 'repoDetails/eventsNextMarker', false)) ? {} : {display: 'none'}} 
+							   onClick={() => this.context.actions.paginateEventsForward()} />
 						</div>
 					);
 				}

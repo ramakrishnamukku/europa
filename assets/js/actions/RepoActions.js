@@ -457,6 +457,8 @@ export function repoDetailsState() {
     eventsXHR: false,
     eventsError: '',
     hasRetrievedEvents: false,
+    eventsPrevMarker: null,
+    eventsNextMarker: null,
     activeEventId: null,
 
     manifests: [],
@@ -758,11 +760,8 @@ export function listRepoEvents(repoId, skipXHR, marker, isBackward = null) {
         params.backward = 'true';
       }
 
-      console.log(params);
-
       RAjax.GET.call(this, 'ListRepoEvents', params)
         .then((res) => {
-          console.log(res);
           this.setState({
             repoDetails: GA.modifyProperty(this.state.repoDetails, {
               events: res.events,

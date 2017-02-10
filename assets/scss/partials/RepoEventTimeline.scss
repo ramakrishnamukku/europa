@@ -50,6 +50,23 @@
                 flex-direction: row;
                 align-items: center;
             }
+
+
+            i.icon-dis-right, i.icon-dis-left {
+                color: $light-blue;
+                font-size: 1.2rem;
+                transition: all 0.3s;
+                position: relative;
+
+                &:hover {
+                    cursor: pointer;
+                }
+
+                &:active {
+                    color: darken($light-blue, 10%);
+                    top: 1px;
+                }
+            }
         }
 
         .TimelineContainer {
