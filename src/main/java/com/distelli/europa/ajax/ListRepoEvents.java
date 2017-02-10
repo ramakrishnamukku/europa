@@ -7,16 +7,18 @@
 */
 package com.distelli.europa.ajax;
 
-import com.distelli.persistence.PageIterator;
+import java.util.List;
+import javax.inject.Inject;
 
-import com.distelli.europa.util.PermissionCheck;
+import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.db.*;
 import com.distelli.europa.models.*;
+import com.distelli.europa.util.PermissionCheck;
+import com.distelli.persistence.PageIterator;
 import com.distelli.webserver.*;
-import javax.inject.Inject;
 import com.google.inject.Singleton;
+
 import lombok.extern.log4j.Log4j;
-import com.distelli.europa.EuropaRequestContext;
 
 @Log4j
 @Singleton
@@ -41,11 +43,21 @@ public class ListRepoEvents extends AjaxHelper<EuropaRequestContext>
 
         _permissionCheck.check(ajaxRequest.getOperation(), requestContext, repoId);
 
+        boolean isForward = Boolean.parseBoolean(ajaxRequest.getParam("forward"));
+
         PageIterator pageIterator = new PageIterator()
         .pageSize(pageSize)
-        .marker(marker)
-        .forward();
+        .marker(marker);
+        if(!isForward)
+            pageIterator.backward();
 
-        return _db.listEvents(domain, repoId, pageIterator);
+        List<RepoEvent> events = _db.listEvents(domain, repoId, pageIterator);
+        RepoEventList eventList = RepoEventList
+        .builder()
+        .nextMarker(isForward ? pageIterator.getMarker() : pageIterator.getPrevMarker())
+        .prevMarker(isForward ? pageIterator.getPrevMarker() : pageIterator.getMarker())
+        .events(events)
+        .build();
+        return eventList;
     }
 }
