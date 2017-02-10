@@ -7,6 +7,7 @@
 */
 package com.distelli.europa.ajax;
 
+import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 import javax.inject.Inject;
@@ -44,27 +45,27 @@ public class ListRepoEvents extends AjaxHelper<EuropaRequestContext>
 
         _permissionCheck.check(ajaxRequest.getOperation(), requestContext, repoId);
 
-        boolean isForward = Boolean.parseBoolean(ajaxRequest.getParam("backward"));
+        boolean dbAscending = Boolean.parseBoolean(ajaxRequest.getParam("backward"));
 
         PageIterator pageIterator = new PageIterator()
         .pageSize(pageSize)
         .marker(marker);
-        if(!isForward)
+        if(!dbAscending)
             pageIterator.backward();
 
         List<RepoEvent> events = _db.listEvents(domain, repoId, pageIterator);
 
-        if(isForward) {
+        if(dbAscending) {
             List<RepoEvent> reversedEvents = new ArrayList<RepoEvent>();
             reversedEvents.addAll(events);
-            Collections.reverse(reversedEvents); 
+            Collections.reverse(reversedEvents);
             events = reversedEvents;
         }
-            
+
         RepoEventList eventList = RepoEventList
         .builder()
-        .prevMarker(isForward ? pageIterator.getMarker() : pageIterator.getPrevMarker())
-        .nextMarker(isForward ? pageIterator.getPrevMarker() : pageIterator.getMarker())
+        .prevMarker(dbAscending ? pageIterator.getMarker() : pageIterator.getPrevMarker())
+        .nextMarker(dbAscending ? pageIterator.getPrevMarker() : pageIterator.getMarker())
         .events(events)
         .build();
         return eventList;
