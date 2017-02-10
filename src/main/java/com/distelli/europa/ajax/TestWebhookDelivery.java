@@ -94,7 +94,7 @@ public class TestWebhookDelivery extends AjaxHelper<EuropaRequestContext>
         webhook.setName(content.getEvent());
         if(log.isDebugEnabled())
             log.debug("Sending Webhook: "+webhook.getEventId()+" for Image: "+image);
-        _webhookClient.send(webhook);
+        _webhookClient.send(webhook, false);
         WebhookRequest request = webhook.getRequest();
         WebhookResponse response = webhook.getResponse();
 

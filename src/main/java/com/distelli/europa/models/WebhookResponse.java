@@ -39,6 +39,12 @@ public class WebhookResponse
     @Singular
     protected Map<String, String> headers;
 
+    public WebhookResponse(String message)
+    {
+        this.body = message;
+        this.httpStatusCode = 0;
+    }
+
     public WebhookResponse(HttpResponse httpResponse)
     {
         this.httpStatusCode = httpResponse.getStatusLine().getStatusCode();

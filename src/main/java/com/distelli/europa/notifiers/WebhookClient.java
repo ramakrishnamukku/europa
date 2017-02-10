@@ -7,30 +7,29 @@
 */
 package com.distelli.europa.notifiers;
 
-import java.util.Map;
-import java.util.HashMap;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
-import com.distelli.europa.models.*;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-
-import org.apache.http.entity.StringEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.HttpEntity;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import com.distelli.europa.models.*;
 import com.google.inject.Singleton;
-
-import lombok.experimental.Accessors;
-import lombok.extern.log4j.Log4j;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
+import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Accessors(prefix = "_")
@@ -48,8 +47,12 @@ public class WebhookClient
         _httpClient = clientBuilder.build();
     }
 
-    public void send(Webhook webhook)
+    public void send(Webhook webhook) {
+        send(webhook, true);
+    }
+    public void send(Webhook webhook, boolean throwOnError)
     {
+        WebhookResponse webhookResponse = null;
         try {
             Map<String, String> headers = new HashMap<String, String>();
             HttpRequestBase httpRequest = new HttpPost();
@@ -76,11 +79,16 @@ public class WebhookClient
             webhook.setRequest(webhookRequest);
 
             HttpResponse httpResponse = _httpClient.execute(httpRequest);
-            WebhookResponse webhookResponse = new WebhookResponse(httpResponse);
-
-            webhook.setResponse(webhookResponse);
+            webhookResponse = new WebhookResponse(httpResponse);
+        } catch(UnknownHostException use) {
+            webhookResponse = new WebhookResponse("Unknown Host: "+webhook.getUrl());
         } catch(Throwable t) {
-            throw(new RuntimeException(t));
+            webhookResponse = new WebhookResponse("Error: "+t.getClass().getSimpleName()+": "+t.getMessage());
+            t.printStackTrace();
+            if(throwOnError)
+                throw(new RuntimeException(t));
         }
+
+        webhook.setResponse(webhookResponse);
     }
 }
