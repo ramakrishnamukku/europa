@@ -92,7 +92,6 @@ public class RepoEventsDb extends BaseDb
                         ConvertMarker.Factory convertMarkerFactory) {
         _om.registerModule(createTransforms(new TransformModule()));
 
-        //NEW WAY
         _main = indexFactory.create(RepoEvent.class)
         .withTableDescription(getTableDescription())
         .withConvertValue(_om::convertValue)
@@ -102,25 +101,6 @@ public class RepoEventsDb extends BaseDb
         .withTableDescription(getTableDescription(), "hk-etime-index")
         .withConvertValue(_om::convertValue)
         .build();
-
-        //OLD WAY
-        // _main = indexFactory.create(RepoEvent.class)
-        // .withTableName("events")
-        // .withNoEncrypt("hk", "id", "etime")
-        // .withHashKeyName("hk")
-        // .withRangeKeyName("id")
-        // .withConvertValue(_om::convertValue)
-        // .withConvertMarker(convertMarkerFactory.create("hk", "id"))
-        // .build();
-
-        // _byTime = indexFactory.create(RepoEvent.class)
-        // .withIndexName("events", "hk-etime-index")
-        // .withNoEncrypt("hk", "id", "etime")
-        // .withHashKeyName("hk")
-        // .withRangeKeyName("etime")
-        // .withConvertValue(_om::convertValue)
-        // .withConvertMarker(convertMarkerFactory.create("hk", "id", "etime"))
-        // .build();
     }
 
     public void save(RepoEvent repoEvent)
