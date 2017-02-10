@@ -35,8 +35,8 @@ public class ContainerRepo
         switch(provider)
         {
         case GCR:
-            //gcr.io/distelli-alpha/api-service"
-            return String.format("gcloud docker pull %s/%s", this.region, this.name);
+            //gcloud docker -- pull us.gcr.io/distelli-alpha/europa-enterprise
+            return String.format("gcloud docker -- pull %s/%s", this.region, this.name);
         case ECR:
             if(this.registryId == null)
                 return null;
