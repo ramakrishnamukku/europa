@@ -2,7 +2,7 @@
   @author Sam Heutmaker [samheutmaker@gmail.com]
 */
 
-export default function validate(postData, required, curKey = "") {
+export default function validate(postData, required, curKey = "", requiredLengths = null) {
   let names = [];
   let keys = [];
 
@@ -14,7 +14,7 @@ export default function validate(postData, required, curKey = "") {
       keys = keys.concat(nestedCheck.keys)
     }
 
-    if (!postData.hasOwnProperty(key) || (postData.hasOwnProperty(key) && !postData[key])) {
+    if (!postData.hasOwnProperty(key) || (postData.hasOwnProperty(key) && !postData[key]) || (requiredLengths && requiredLengths[key] >= postData[key].length)) {
       names.push(required[key]);
       keys.push(`${curKey}${key}`);
     }

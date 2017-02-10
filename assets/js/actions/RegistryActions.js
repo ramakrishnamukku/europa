@@ -377,6 +377,8 @@ function isAddRegistryValid(validateOnInput, skipSetState) {
     name,
   };
 
+  let requiredLengths = {};
+
   let currentProvider = NPECheck(this.state, 'addRegistry/newRegistry/provider', '');
 
   switch (currentProvider) {
@@ -395,6 +397,7 @@ function isAddRegistryValid(validateOnInput, skipSetState) {
         provider,
         region,
         name,
+        secret
       };
 
       break;
@@ -406,6 +409,13 @@ function isAddRegistryValid(validateOnInput, skipSetState) {
         username,
         password,
         name,
+      };
+
+      requiredLengths = {
+        provider: 0,
+        username: 0,
+        password: 7,
+        name: 0,
       };
 
       break;
@@ -423,7 +433,7 @@ function isAddRegistryValid(validateOnInput, skipSetState) {
       break;
   }
 
-  let errorFields = Validate.call(this, this.state.addRegistry.newRegistry, required);
+  let errorFields = Validate.call(this, this.state.addRegistry.newRegistry, required, "", requiredLengths);
 
   if (skipSetState) {
     return (errorFields.names.length) ? false : true

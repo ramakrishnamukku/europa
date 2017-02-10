@@ -1,7 +1,6 @@
 import Reducers from './../reducers/AddRepoReducers'
 import * as GR from './../reducers/GeneralReducers'
 import * as RAjax from './../util/RAjax'
-import Validate from './../util/Validate'
 import NPECheck from './../util/NPECheck'
 import {
   notifState,

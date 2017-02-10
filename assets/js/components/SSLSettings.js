@@ -125,6 +125,8 @@ export default class SSLSettings extends Component {
 		let errorMsg2 = NPECheck(this.props, 'ssl/errorFields/names', []).join(', ')
 
 		if(errorMsg || errorMsg2) {
+			errorMsg2 = (errorMsg2) ? `Missing Required Fields: ${errorMsg2}` : null;
+
 			return (
 				<Msg text={(errorMsg || errorMsg2)} 
     				 close={() => this.context.actions.clearSSLErrors()}

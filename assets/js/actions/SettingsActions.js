@@ -5,7 +5,6 @@
 import Reducers from './../reducers/AddRegistryReducers'
 import * as GA from './../reducers/GeneralReducers'
 import * as RAjax from './../util/RAjax'
-import Validate from './../util/Validate'
 import NPECheck from './../util/NPECheck'
 
 // *************************************************

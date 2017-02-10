@@ -251,7 +251,7 @@ let listReposInRegistryDebounced = Debounce(function() {
           this.setState({
             addRepo: GA.modifyProperty(this.state.addRepo, {
               reposInRegistry: [],
-              errorMsg: 'Unable to list repositories for selected registry',
+              errorMsg: 'Unable to list repositories for selected registry. Please check your credentials.',
               reposInRegistryXHR: false,
             })
           });
@@ -264,7 +264,7 @@ let listReposInRegistryDebounced = Debounce(function() {
       })
     });
   }
-}, 1500);
+}, 200);
 
 export function updateReposInRegisterQuery(e, eIsValue) {
   let value = (eIsValue) ? e : e.target.value;

@@ -115,30 +115,51 @@ export default class WebhookData extends Component {
 	renderDataHeaders(){
 		let headers = this.state.activeData.headers;
 
+		let displayHeaders = (
+			<div className="FlexRow">
+				<div className="Key">
+					{`No ${this.state.viewingType} Headers Available`}
+				</div>
+			</div>
+		);
+
+		if(headers && typeof headers == 'object') {
+			displayHeaders = Object.keys(headers).map((key, index) => {
+								return (
+									<div className="FlexRow" key={index}>
+										<span className="Key">{key}:&nbsp;</span>
+										<span className="Value">{headers[key]}</span>
+									</div>
+								);
+							});
+		}
+
 		return (
 			<div className="DataHeaders">
 			     <div className="Title">
 					{this.state.viewingType}&nbsp;Headers
 				</div>
 				<div className="Headers">
-					{Object.keys(headers).map((key, index) => {
-						return (
-							<div className="FlexRow" key={index}>
-								<span className="Key">{key}:&nbsp;</span>
-								<span className="Value">{headers[key]}</span>
-							</div>
-						);
-					})}
+					{displayHeaders}
 				</div>
 			</div>
 		);
 	}
 	renderDataBody(){
 		let body = this.state.activeData.body;
-		let content = body;
+		let content = (
+			<span style={{fontFamily: 'Courier New', fontSize: '0.875rem'}}>
+				{(body) ? body : `No ${this.state.viewingType} Body Available`}
+			</span>
+		);
 
 		try {
-			content = JSON.stringify(JSON.parse(body), null, 2)
+			content = (
+				<pre>
+					{JSON.stringify(JSON.parse(body), null, 2)}
+				</pre>
+			);
+
 		} catch(e){
 
 		}
@@ -148,9 +169,7 @@ export default class WebhookData extends Component {
 				<div className="Title">
 					{this.state.viewingType}&nbsp;Body
 				</div>
-				<pre>
-					{content}
-				</pre>
+				{content}
 			</div>
 		);
 	}

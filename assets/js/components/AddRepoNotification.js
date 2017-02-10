@@ -143,7 +143,7 @@ export default class AddRepoNotification extends Component {
 					<span className="StatusCode">{ (statusCode) ? `(${statusCode})` : null}</span>&nbsp;
 					<span className="ViewTestResults" 
 						  onClick={() => this.context.actions.toggleShowNotificationTestResults()}>
-						{ (statusCode) ? ' - View Details' : null}
+						{ (statusCode != null) ? ' - View Details' : null}
 					</span>
 				</div>
 			</div>

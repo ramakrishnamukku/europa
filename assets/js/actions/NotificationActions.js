@@ -2,7 +2,6 @@ import * as GA from './../reducers/GeneralReducers'
 import * as RAjax from './../util/RAjax'
 import Reducers from './../reducers/NotificationReducers'
 import StatusCode from './../util/StatusCode'
-import Validate from './../util/Validate'
 import NPECheck from './../util/NPECheck'
 import isValidScheme from './../util/isValidScheme'
 
