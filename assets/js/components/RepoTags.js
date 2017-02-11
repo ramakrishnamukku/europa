@@ -42,7 +42,7 @@ export default class RepoTags extends Component {
 	renderRepoEventTags(){
 		let activeRepo = NPECheck(this.props, 'repoDetails/activeRepo', {});
 
-		return NPECheck(this.props, 'manifests', []).sort((firstTag, secondTag) => (firstTag.pushTime >= secondTag.pushTime) ? -1 : 1 )
+		return this.props.manifests.sort((firstTag, secondTag) => (firstTag.pushTime >= secondTag.pushTime) ? -1 : 1 )
 								.map((tag, index) => this.renderRepoEventTagItem(tag, index, activeRepo))
 	}
 	renderRepoEventTagItem(tag, index, activeRepo){
@@ -105,14 +105,14 @@ export default class RepoTags extends Component {
 		);
 	}
 	render() {
-		let content = this.renderNoContent();
+		let content = this.renderRepoEventTags();
 
-		if (NPECheck(this.props, 'repoDetails/manifestsXHR', false)) {
-			content = this.renderNoContent(<Loader />);
+		if(!NPECheck(this.props, 'manifests/length', true)) {
+			content = this.renderNoContent();
 		}
 
-		if (NPECheck(this.props, 'manifests', null)) {
-			content = this.renderRepoEventTags();
+		if(NPECheck(this.props, 'repoDetails/manifestsXHR', false)) {
+			content = this.renderNoContent(<Loader />);
 		}
 
 		return (

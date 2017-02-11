@@ -64,7 +64,7 @@ export default class RepoEventTimeline extends Component {
 		);
 	}
 	render() {
-		let content = NPECheck(this.props, 'events', []).sort((firstEvent, secondEvent) => (firstEvent.eventTime >= secondEvent.eventTime) ? -1 : 1 )
+		let content = this.props.events.sort((firstEvent, secondEvent) => (firstEvent.eventTime >= secondEvent.eventTime) ? -1 : 1 )
 								 .map((event, index) => this.renderRepoEventItem(event, index));
 
 		if(!this.props.events || !this.props.events.length) {
