@@ -26,7 +26,8 @@ import {
 export function listRepos(repoId) {
   return new Promise((resolve, reject) => {
     this.setState({
-      reposXHR: (this.state.repos.length > 1) ? false : true
+      reposXHR: (this.state.repos.length > 1) ? false : true,
+      reposFilterQuery: ""
     }, () => {
 
       let params = {};
