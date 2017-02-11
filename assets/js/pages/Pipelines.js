@@ -80,7 +80,7 @@ export default class Pipelines extends Component {
         </div>
         <div className="CR_BodyContent">
           <div className="Flex1">
-            <label className="small FlexColumn">
+            <label style={{margin: '0px'}}>
               Pipeline name
             </label>
             <input className={this.inputClassName("name")}

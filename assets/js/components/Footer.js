@@ -21,7 +21,7 @@ export default class Footer extends Component {
 				src: '/public/images/k8sdashboard-logo.svg'
 			},
 			{
-				src: '/public/images/europa-logo.svg'
+				src: '/public/images/distelli-europa-cr-logo.svg'
 			},
 			{
 				src: '/public/images/passly-logo.svg'
@@ -37,7 +37,7 @@ export default class Footer extends Component {
 	render(){
 		return (
 			<div className="Footer">
-				<h2>We simplify and expedite devlopment operations.</h2>
+				<h2>We simplify and expedite development operations.</h2>
 				{this.renderLogos()}
 			</div>
 		);

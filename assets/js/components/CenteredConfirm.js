@@ -22,7 +22,7 @@ export default  class CenteredConfirm extends Component {
   }
   render() {
     return (
-      <div className="CenteredDelete">
+      <div className="CenteredDelete" style={this.props.containerStyle || {}}>
         {this.renderMsg()}
         <div>
           <div className="ButtonBlue"
@@ -43,10 +43,11 @@ export default  class CenteredConfirm extends Component {
 CenteredConfirm.propTypes = {
   message: React.PropTypes.string,
   noMessage: React.PropTypes.bool,
+  containerStyle: React.PropTypes.object,
   confirmButtonText:  React.PropTypes.string,
   confirmButtonStyle: React.PropTypes.object,
   onConfirm: React.PropTypes.func.isRequired,
-  onCancel: React.PropTypes.func.isRequired
+  onCancel: React.PropTypes.func.isRequired,
 };
 
 CenteredConfirm.defaultProps = {

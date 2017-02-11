@@ -110,6 +110,7 @@ export function addRepoState() {
         name: ''
       }
     },
+    isCreatingLocalRepo: false,
     createLocalName: '',
     createLocalXHR: false,
     createLocalError: ''
@@ -136,6 +137,14 @@ export function clearCreateLocalRepoErrors() {
   this.setState({
     addRepo: GA.modifyProperty(this.state.addRepo, {
       createLocalError: ''
+    })
+  });
+}
+
+export function toggleCreateNewLocalRepo(){
+  this.setState({
+    addRepo: GA.modifyProperty(this.state.addRepo, {
+      isCreatingLocalRepo: !NPECheck(this.state, 'addRepo/isCreatingLocalRepo', true)
     })
   });
 }

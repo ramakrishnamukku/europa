@@ -9,10 +9,12 @@ import RegistryProviderIcons from './../util/RegistryProviderIcons'
 import Btn from './../components/Btn'
 import Loader from './../components/Loader'
 import BtnGroup from './../components/BtnGroup'
+import NPECheck from './../util/NPECheck'
 import ConvertTimeFriendly from './../util/ConvertTimeFriendly'
 import ConvertTimeUTC from './../util/ConvertTimeUTC'
 import CopyToClipboard from './../util/CopyToClipboard'
-
+import CreateLocalRepo from './../pages/CreateLocalRepo'
+import ControlRoom from './../components/ControlRoom'
 
 export default class Repositories extends Component {
 	constructor(props) {
@@ -24,9 +26,6 @@ export default class Repositories extends Component {
 	}
 	toAddRepo(){
 		this.context.router.push('/new-repository');
-	}
-	toCreateRepo(){
-		this.context.router.push('/create-repository');
 	}
 	renderRepos(){
 		let filteredRepos = this.props.repos.sort((repo1, repo2) => repo1.name > repo2.name ? 1 : -1).filter((repo) => {
@@ -40,7 +39,7 @@ export default class Repositories extends Component {
 		}
 
 		return (
-			<div className="RepoList FlexColumn">
+			<div className="RepoList FlexColumn" key={3}>
 				{filteredRepos.map(this.renderRepoItem.bind(this))}
 			</div>
 		);
@@ -104,7 +103,8 @@ export default class Repositories extends Component {
 	}
 	renderSearchRepos(){
 		return (
-			<input className="BlueBorder Search"
+			<input key={1}
+				   className="BlueBorder Search"
 			       placeholder="Filter repositories.."
 				   onChange={(e) => this.context.actions.filterRepos(e, false)}
 			/>
@@ -112,7 +112,7 @@ export default class Repositories extends Component {
 	}
 	renderLegend(){
 		return (
-			<div className="ReposLegend">
+			<div className="ReposLegend" key={2}>
 				<div style={{flex: '0.91'}}>Repository</div>
 				<div className="Flex2">Last event</div>
 			</div>
@@ -121,6 +121,17 @@ export default class Repositories extends Component {
 	renderRepositories(){
 		let reposLength = this.props.repos.length;
 		let noun = (reposLength == 1) ? 'Repository' : 'Repositories';
+
+		let content = [
+			this.renderSearchRepos(),
+			this.renderLegend(),
+			this.renderRepos()
+		];
+
+		if(NPECheck(this.props, 'addRepo/isCreatingLocalRepo', false)) {
+			content = this.renderCreateNewLocalRepo();
+		}
+
 		return (
 			<div className="ContentContainer">
 				<div className="PageHeader">
@@ -129,9 +140,7 @@ export default class Repositories extends Component {
 					</h2>
 					<div className="FlexRow">
 						<div className="Flex1">
-							<Link to="/create-repository">
-								<BtnGroup buttons={[{icon: 'icon icon-dis-add', toolTip: 'Create Local Repository'}]} />
-							</Link>
+							<BtnGroup buttons={[{icon: 'icon icon-dis-add', toolTip: 'Create Local Repository', onClick: () => this.context.actions.toggleCreateNewLocalRepo() }]} />
 						</div>
 						<div className="Flex1">
 							<Link to="/new-repository">
@@ -141,9 +150,7 @@ export default class Repositories extends Component {
 					</div>
 				</div>
 				<div>
-					{this.renderSearchRepos()}
-					{this.renderLegend()}
-					{this.renderRepos()}
+					{content}
 				</div>
 			</div>
 		);
@@ -157,10 +164,16 @@ export default class Repositories extends Component {
 					</h3>
 					<div className="FlexRow">
 						<div className="Flex1" style={{margin: '0 10px'}}>
-							<p><strong>Local Repositories</strong> are dolor sit amet, cectetuer adipiscing elit, sed diam nonumy nibh euismod tincidunt ut laoreet dolore magna aliquam erat.</p>
+							<p>
+								<strong>Local Repositories</strong>&nbsp;
+								 are hosted by Europa and backed by your storage
+								 backend. Local Repositories support the Docker V2 API and support the
+								 complete range of operations from pull and pull to listing tags and
+								 repositories.
+							</p>
 							<Btn className="LargeBlueButton"
 								 style={{width:'100%', maxWidth: '100%', fontSize: '1.15rem'}}
-							     onClick={() => this.toCreateRepo()}
+							     onClick={() => this.context.actions.toggleCreateNewLocalRepo()}
 							 	 text="Add Repository"
 							 	 canClick={true} >
 							 	 <i className="icon icon-dis-local" />
@@ -168,7 +181,13 @@ export default class Repositories extends Component {
 							 </Btn>
 						</div>
 						<div className="Flex1" style={{margin: '0 10px'}}>
-							<p><strong>Remote Repositories</strong> are dolor sit amet, cectetuer adipiscing elit, sed diam nonumy nibh euismod tincidunt ut laoreet dolore magna aliquam erat.</p>
+							<p>
+								<strong>Remote Repositories</strong>&nbsp;
+								are hosted in third party registries such as EC2
+								Container Registry or Google Container Registry. Europa can scan these
+								remote registries and allow you to create pipelines to them and
+								mirrors remote repositories locally.
+							</p>
 							<Btn className="LargeBlueButton"
 								 style={{width:'100%', maxWidth: '100%', fontSize: '1.15rem'}}
 							     onClick={() => this.toAddRepo()}
@@ -179,18 +198,39 @@ export default class Repositories extends Component {
 						</div>
 					</div>
 					<div className="FlexColumn NewRepoCommands">
-						<div>or</div>
-						<div>Push a Docker image to a local repository</div>
-						<p><strong>Command</strong> description dolor sit amet, cectetuer adipiscing elit, sed diam nonumy nibh euismod tincidunt ut laoreet dolore magna aliquam erat.</p>
-						<div className="Code">
-							 <span id="copyCommands">$ docker push {this.props.dnsName}/REPO_NAME[:IMAGE_TAG]</span>
-							 <i className="icon icon-dis-copy" 
-							 	onClick={() => CopyToClipboard(document.getElementById('copyCommands'))}
-							 	data-tip="Click To Copy"
-							 	data-for="ToolTipTop" />
+						<div className="HelperText">or</div>
+						<div className="HelperText">Push a Docker image to a local repository</div>
+						<div className="HelperText FlexRow">
+							<div className="Code">
+								<span>$ docker push <span id="copyCommands">{`${this.props.dnsName}/${(this.props.isLoggedIn) ? NPECheck(this.props, 'ctx/username', '') + '/': ''}REPO_NAME[:IMAGE_TAG]`}</span></span>
+								<i className="icon icon-dis-copy"
+								onClick={() => CopyToClipboard(document.getElementById('copyCommands'))}
+								data-tip="Click To Copy"
+								data-for="ToolTipTop" />
+							</div>
 						</div>
 					</div>
 				</div>
+			</div>
+		);
+	}
+	renderCreateNewLocalRepo(){
+		return (
+			<div style={{marginTop: '14px'}}>
+				<ControlRoom renderBodyContent={() => <CreateLocalRepo {...this.props} />} 
+							 renderHeaderContent={() => {
+							 	return (
+									<div className="CR_Header">
+										<span className="CR_HeaderTitle">
+											New Repository
+										</span>
+										<span className="CR_HeaderClose">
+											<i className="icon-dis-close"
+											onClick={ () => this.context.actions.toggleCreateNewLocalRepo() } />
+										</span>
+									</div>
+							 	);
+							 }}/>
 			</div>
 		);
 	}
@@ -214,7 +254,7 @@ export default class Repositories extends Component {
 					<Loader />
 				</div>
 			);
-		} else if(this.props.repos.length) {
+		} else if(this.props.repos.length || NPECheck(this.props, 'addRepo/isCreatingLocalRepo', false)) {
 			return this.renderRepositories()
 		} else {
 			return this.renderNoRepositories();
