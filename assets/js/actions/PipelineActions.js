@@ -167,7 +167,7 @@ export function listPipelines() {
           }, () => resolve());
         })
         .catch(err => {
-          let errorMsg = NPEChceck(err, 'error/message', 'There was an error loading your pipelines');
+          let errorMsg = NPECheck(err, 'error/message', 'There was an error loading your pipelines');
           if (errorMsg == 'You do not have access to this operation') {
             this.setState({
               pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
@@ -208,7 +208,7 @@ export function getPipeline(pipelineId) {
           }, () => resolve(res));
         })
         .catch(err => {
-          let errorMsg = NPEChceck(err, 'error/message', 'There was an error loading your pipeline');
+          let errorMsg = NPECheck(err, 'error/message', 'There was an error loading your pipeline');
           if (errorMsg == 'You do not have access to this operation') {
             this.setState({
               pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
