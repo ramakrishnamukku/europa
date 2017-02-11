@@ -21,6 +21,7 @@ import com.distelli.europa.EuropaConfiguration;
 import com.distelli.europa.db.ContainerRepoDb;
 import com.distelli.europa.db.NotificationsDb;
 import com.distelli.europa.db.PipelineDb;
+import com.distelli.europa.db.MonitorDb;
 import com.distelli.europa.db.RegistryBlobDb;
 import com.distelli.europa.db.RegistryCredsDb;
 import com.distelli.europa.db.RegistryManifestDb;
@@ -29,6 +30,7 @@ import com.distelli.europa.db.SequenceDb;
 import com.distelli.europa.db.SettingsDb;
 import com.distelli.europa.db.TokenAuthDb;
 import com.distelli.europa.models.DnsSettings;
+import com.distelli.europa.models.Monitor;
 import com.distelli.europa.models.SslSettings;
 import com.distelli.europa.models.StorageSettings;
 import com.distelli.europa.registry.RegistryAccess;
@@ -76,6 +78,7 @@ public class EuropaInjectorModule extends AbstractModule
         addTableDescription(RegistryManifestDb.getTableDescription());
         addTableDescription(PipelineDb.getTableDescription());
         addTableDescription(SettingsDb.getTableDescription());
+        addTableDescription(MonitorDb.getTableDescription());
 
         _europaConfiguration = europaConfiguration;
     }
@@ -118,6 +121,11 @@ public class EuropaInjectorModule extends AbstractModule
                 }
             });
         return threadPool;
+    }
+
+    @Provides @Singleton
+    protected Monitor getMonitor(MonitorDb monitorDb) {
+        return monitorDb.startMonitor();
     }
 
     protected void configureEuropaConfiguration()

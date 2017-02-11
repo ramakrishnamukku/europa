@@ -51,41 +51,13 @@ public class DispatchRepoMonitorTasks implements Runnable {
         }
     }
 
-    public synchronized void runThrows() throws Exception {
-        StorageSettings storageSettings = _storageSettingsProvider.get();
-        if(storageSettings == null) {
-            if(log.isDebugEnabled())
-                log.debug("Skipping getMonitorTasks. Storage Not Initialized");
-            return;
-        }
+    
+    private synchronized void runThrows() throws Exception {
+        if ( ! isInitialized()
+             || ! waitForPreviousTasks() ) return;
 
-        // Wait for all previous tasks to finish:
-        try {
-            log.debug("Waiting for "+_taskCount+" tasks to complete");
-            _semaphore.acquire(_taskCount);
-            _taskCount = 0;
-        } catch ( InterruptedException ex ) {
-            Thread.currentThread().interrupt();
-            return;
-        }
-        log.debug("Finding all ContainerRepos");
         List<Runnable> tasks = new ArrayList<>();
-        for ( PageIterator iter : new PageIterator().pageSize(100) ) {
-            for ( ContainerRepo repo : _containerRepoDb.listRepos(Constants.DOMAIN_ZERO, iter) ) {
-                Runnable task = _monitorTaskFactory.createMonitorTask(repo);
-                if ( null == task ) continue;
-                String repoPK = repo.getDomain() + ":" + repo.getId();
-                Long syncCount = _syncCounts.get(repoPK);
-                if ( null == syncCount ) {
-                    syncCount = repo.getSyncCount();
-                    _syncCounts.put(repoPK, syncCount);
-                } else {
-                    _syncCounts.put(repoPK, ++syncCount);
-                }
-                repo.setSyncCount(syncCount);
-                tasks.add(task);
-            }
-        }
+        addAllRepoMonitorTasks(tasks);
         Collections.shuffle(tasks);
         log.debug("Scheduling " + tasks.size()+" tasks");
         for ( Runnable task : tasks ) {
@@ -101,6 +73,49 @@ public class DispatchRepoMonitorTasks implements Runnable {
                 ( _taskCount * TIME_INTERVAL_MICROSECONDS ) / tasks.size(),
                 TimeUnit.MICROSECONDS);
             _taskCount++;
+        }
+    }
+
+    private boolean waitForPreviousTasks() {
+        // Wait for all previous tasks to finish:
+        try {
+            log.debug("Waiting for "+_taskCount+" tasks to complete");
+            _semaphore.acquire(_taskCount);
+            _taskCount = 0;
+        } catch ( InterruptedException ex ) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isInitialized() {
+        StorageSettings storageSettings = _storageSettingsProvider.get();
+        if(storageSettings == null) {
+            if(log.isDebugEnabled())
+                log.debug("Skipping getMonitorTasks. Storage Not Initialized");
+            return false;
+        }
+        return true;
+    }
+
+    private void addAllRepoMonitorTasks(List<Runnable> tasks) {
+        log.debug("Finding all ContainerRepos");
+        for ( PageIterator iter : new PageIterator().pageSize(100) ) {
+            for ( ContainerRepo repo : _containerRepoDb.listRepos(Constants.DOMAIN_ZERO, iter) ) {
+                Runnable task = _monitorTaskFactory.createMonitorTask(repo);
+                if ( null == task ) continue;
+                String repoPK = repo.getDomain() + ":" + repo.getId();
+                Long syncCount = _syncCounts.get(repoPK);
+                if ( null == syncCount ) {
+                    syncCount = repo.getSyncCount();
+                    _syncCounts.put(repoPK, syncCount);
+                } else {
+                    _syncCounts.put(repoPK, ++syncCount);
+                }
+                repo.setSyncCount(syncCount);
+                tasks.add(task);
+            }
         }
     }
 }
