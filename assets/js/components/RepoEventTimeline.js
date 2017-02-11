@@ -27,10 +27,10 @@ export default class RepoEventTimeline extends Component {
 
 		this.setState({
 			pollEventsInterval: setInterval(() => {
-				let prevMarker = NPECheck(this.props, 'repoDetails/eventsPrevMarker', false);	
+				let prevMarker = NPECheck(this.props, 'repoDetails/eventsPrevMarker', false);
 				// Only poll if on first page of events
 				if(!prevMarker) {
-					this.context.actions.listRepoEvents(repoId, true);	
+					this.context.actions.listRepoEvents(repoId, true);
 				}
 			}, 15000)
 		});
@@ -64,7 +64,7 @@ export default class RepoEventTimeline extends Component {
 		);
 	}
 	render() {
-		let content = this.props.events.sort((firstEvent, secondEvent) => (firstEvent.eventTime >= secondEvent.eventTime) ? -1 : 1 )
+		let content = NPECheck(this.props, 'events', []).sort((firstEvent, secondEvent) => (firstEvent.eventTime >= secondEvent.eventTime) ? -1 : 1 )
 								 .map((event, index) => this.renderRepoEventItem(event, index));
 
 		if(!this.props.events || !this.props.events.length) {
@@ -80,13 +80,13 @@ export default class RepoEventTimeline extends Component {
 				{content}
 			</div>
 		);
-	}	
+	}
 }
 
 RepoEventTimeline.propTypes = {
 	events: PropTypes.array,
 	manifests: PropTypes.array,
-	
+
 };
 
 RepoEventTimeline.childContextTypes = {

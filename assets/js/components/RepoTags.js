@@ -27,12 +27,12 @@ export default class RepoTags extends Component {
 
 		this.setState({
 			pollEventsInterval: setInterval(() => {
-				let prevMarker = NPECheck(this.props, 'repoDetails/manifestsPrevMarker', false);	
+				let prevMarker = NPECheck(this.props, 'repoDetails/manifestsPrevMarker', false);
 
 				if(!prevMarker) {
-					this.context.actions.listRepoManifests(repoId, true);	
-				} 
-				
+					this.context.actions.listRepoManifests(repoId, true);
+				}
+
 			}, 5000)
 		});
 	}
@@ -42,7 +42,7 @@ export default class RepoTags extends Component {
 	renderRepoEventTags(){
 		let activeRepo = NPECheck(this.props, 'repoDetails/activeRepo', {});
 
-		return this.props.manifests.sort((firstTag, secondTag) => (firstTag.pushTime >= secondTag.pushTime) ? -1 : 1 )
+		return NPECheck(this.props, 'manifests', []).sort((firstTag, secondTag) => (firstTag.pushTime >= secondTag.pushTime) ? -1 : 1 )
 								.map((tag, index) => this.renderRepoEventTagItem(tag, index, activeRepo))
 	}
 	renderRepoEventTagItem(tag, index, activeRepo){
@@ -59,11 +59,11 @@ export default class RepoTags extends Component {
 
 		return (
 			<div key={index} className="RepoTagItem">
-				<i className={icon} 
-				   data-tip="View Pull Commands For This Tag" 
-				   data-for="ToolTipTop" 
+				<i className={icon}
+				   data-tip="View Pull Commands For This Tag"
+				   data-for="ToolTipTop"
 				   onClick={() => this.context.actions.toggleSelectedManifest(tag)}/>
-				<span className="ImageSha" data-tip={tag.manifestId} data-for="ToolTipTop">	
+				<span className="ImageSha" data-tip={tag.manifestId} data-for="ToolTipTop">
 					{cleanedSha}
 				</span>
 				<span className="Tags">
@@ -98,21 +98,21 @@ export default class RepoTags extends Component {
 			<div className="TimelineContainer">
 				<div className="Timeline">
 					<div className="NoContent">
-						{content}				
+						{content}
 					</div>
 				</div>
 			</div>
 		);
 	}
 	render() {
-		let content = this.renderRepoEventTags();
+		let content = this.renderNoContent();
 
-		if(!NPECheck(this.props, 'manifests/length', true)) {
-			content = this.renderNoContent();
+		if (NPECheck(this.props, 'repoDetails/manifestsXHR', false)) {
+			content = this.renderNoContent(<Loader />);
 		}
 
-		if(NPECheck(this.props, 'repoDetails/manifestsXHR', false)) {
-			content = this.renderNoContent(<Loader />);
+		if (NPECheck(this.props, 'manifests', null)) {
+			content = this.renderRepoEventTags();
 		}
 
 		return (
@@ -120,7 +120,7 @@ export default class RepoTags extends Component {
 				{content}
 			</div>
 		);
-	}	
+	}
 }
 
 RepoTags.propTypes = {
