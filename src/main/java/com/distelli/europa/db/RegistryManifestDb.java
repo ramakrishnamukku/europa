@@ -264,6 +264,7 @@ public class RegistryManifestDb extends BaseDb {
         // We do page size 2x since we KNOW every manifest will have at least
         // a sha256 entry and possibly one or more tag entries. Ideally we only
         // do a single iteration of the outer loop.
+        boolean isFirst = true;
         for ( PageIterator iter : new PageIterator()
                   .pageSize(outerIter.getPageSize()*2)
                   .marker(outerIter.getMarker())
@@ -273,6 +274,10 @@ public class RegistryManifestDb extends BaseDb {
                       .beginsWith(toRepoManifestIdRK(repoId, null))
                       .list() )
             {
+                if ( isFirst ) {
+                    outerIter.setPrevMarker(iter.getPrevMarker());
+                    isFirst = false;
+                }
                 // Update firstManifest:
                 if ( null == firstManifest ) firstManifest = manifest;
 
@@ -282,7 +287,6 @@ public class RegistryManifestDb extends BaseDb {
                     if ( result.size() >= outerIter.getPageSize() ) {
                         // Result set is full:
                         outerIter.setMarker(_byRepoManifestId.toMarker(lastManifest, true));
-                        outerIter.setPrevMarker(_byRepoManifestId.toMarker(firstManifest, true));
                         return result;
                     }
                     // Add new MultiTaggedManifest:
@@ -297,8 +301,6 @@ public class RegistryManifestDb extends BaseDb {
             }
         }
         // No more results:
-        outerIter.setPrevMarker(outerIter.getMarker() == null ? null :
-                                _byRepoManifestId.toMarker(firstManifest, true));
         outerIter.setMarker(null);
         return result;
     }
