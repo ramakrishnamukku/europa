@@ -97,6 +97,19 @@ public class SettingsDb extends BaseDb
         _main.putItem(europaSetting);
     }
 
+    public void saveIfNotExists(EuropaSetting europaSetting) {
+        if ( null == europaSetting.getDomain() || europaSetting.getDomain().trim().isEmpty()) {
+            throw new IllegalArgumentException("domain must be non-null and non-empty");
+        }
+        if ( null == europaSetting.getType() ) {
+            throw new IllegalArgumentException("type must be non-null");
+        }
+        if ( null == europaSetting.getKey() || europaSetting.getKey().trim().isEmpty()) {
+            throw new IllegalArgumentException("key must be non-null and non-empty");
+        }
+        _main.putItemIfNotExists(europaSetting);
+    }
+
     public void delete(String domain, EuropaSettingType type, String key) {
         _main.deleteItem(domain.toLowerCase(), toRK(type, key));
     }
