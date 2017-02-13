@@ -1,6 +1,5 @@
 package com.distelli.europa.monitor;
 
-import com.distelli.europa.Constants;
 import com.distelli.europa.db.ContainerRepoDb;
 import com.distelli.europa.models.StorageSettings;
 import com.distelli.persistence.PageIterator;
@@ -102,7 +101,7 @@ public class DispatchRepoMonitorTasks implements Runnable {
     private void addAllRepoMonitorTasks(List<Runnable> tasks) {
         log.debug("Finding all ContainerRepos");
         for ( PageIterator iter : new PageIterator().pageSize(100) ) {
-            for ( ContainerRepo repo : _containerRepoDb.listRepos(Constants.DOMAIN_ZERO, iter) ) {
+            for ( ContainerRepo repo : _containerRepoDb.listRepos(iter) ) {
                 Runnable task = _monitorTaskFactory.createMonitorTask(repo);
                 if ( null == task ) continue;
                 String repoPK = repo.getDomain() + ":" + repo.getId();

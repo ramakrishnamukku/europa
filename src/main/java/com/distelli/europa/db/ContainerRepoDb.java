@@ -208,6 +208,11 @@ public class ContainerRepoDb extends BaseDb
                          id.toLowerCase());
     }
 
+    public List<ContainerRepo> listRepos(PageIterator pageIterator)
+    {
+        return _main.scanItems(pageIterator);
+    }
+
     public List<ContainerRepo> listRepos(String domain, PageIterator pageIterator)
     {
         return _main.queryItems(getHashKey(domain), pageIterator).list();
