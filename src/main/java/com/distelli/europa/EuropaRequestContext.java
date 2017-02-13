@@ -28,6 +28,8 @@ public class EuropaRequestContext extends RequestContext
     @Getter @Setter
     protected String _requesterUsername = null;
     @Getter @Setter
+    protected boolean _isSuperUser = false;
+    @Getter @Setter
     protected String _ownerDomain = Constants.DOMAIN_ZERO;
     @Getter @Setter
     protected String _ownerUsername = null;
