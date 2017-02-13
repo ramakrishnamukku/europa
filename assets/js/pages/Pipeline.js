@@ -31,11 +31,19 @@ export default class Pipeline extends Component {
             return map;
           }, {} )
         })
+
+        this.pollForUpdates();
       });
     })
   }
   componentWillUnmount() {
     this.context.actions.resetSinglePipelineState();
+  }
+  pollForUpdates() {
+    setTimeout(function() {
+      this.context.actions.getPipeline(this.props.params.pipelineId)
+      .then(pipeline => this.pollForUpdates() )
+    }.bind(this), 25000)
   }
   renderPage(pipeline) {
     switch (this.props.pipelineStore.section) {
