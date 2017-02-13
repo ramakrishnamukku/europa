@@ -59,7 +59,7 @@ public class EuropaConfiguration
             if(dbPoolSizeStr != null && !dbPoolSizeStr.trim().isEmpty())
                 dbPoolSize = Integer.parseInt(dbPoolSizeStr);
         } catch(Throwable t) {
-            log.error("Invalid Value for Env Variable: EUROPA_DB_POOL_SIZE");
+            log.error("Invalid Value ["+dbPoolSizeStr+"] for Env Variable: EUROPA_DB_POOL_SIZE");
             dbPoolSize = 2;
         }
 
