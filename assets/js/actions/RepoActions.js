@@ -241,7 +241,7 @@ let listReposInRegistryDebounced = Debounce(function() {
   if (registry && registriesWithRepos.includes(registry.provider)) {
     this.setState({
       addRepo: GA.modifyProperty(this.state.addRepo, {
-        reposInRegistryXHR: true,
+        reposInRegistryXHR: (!NPECheck(this.state, 'addRepo/reposInRegistry/length', false)),
         reposInRegistryQuery: '',
       })
     }, () => {
@@ -276,6 +276,16 @@ let listReposInRegistryDebounced = Debounce(function() {
   }
 }, 200);
 
+export function clearReposInRegistry(){
+  return new Promise((resolve, reject) => {
+    this.setState({
+      addRepo: GA.modifyProperty(this.state.addRepo, {
+        reposInRegistry: [],
+      })
+    }, () => resolve());
+  });
+}
+
 export function updateReposInRegisterQuery(e, eIsValue) {
   let value = (eIsValue) ? e : e.target.value;
 
@@ -287,10 +297,12 @@ export function updateReposInRegisterQuery(e, eIsValue) {
 }
 
 export function toggleSelectRepoDropdown() {
-  this.setState({
-    addRepo: GA.modifyProperty(this.state.addRepo, {
-      selectRepoDropdown: !this.state.addRepo.selectRepoDropdown
-    })
+  return new Promise((resolve, reject) => {
+    this.setState({
+      addRepo: GA.modifyProperty(this.state.addRepo, {
+        selectRepoDropdown: !this.state.addRepo.selectRepoDropdown
+      })
+    }, () => resolve());
   });
 }
 

@@ -196,9 +196,6 @@ export function updateNewRegistryField(prop, e, eIsValue = false) {
         })
       }, () => {
         if (prop == 'provider') getRegionsForProvider.call(this);
-        if (isAddRegistryValid.call(this, true, !this.state.addRegistry.validateOnInput)) {
-          listReposForRegistry.call(this)
-        }
       });
     })
 };

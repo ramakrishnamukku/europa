@@ -56,11 +56,24 @@ export default class AddRepository extends Component {
 			</div>
 		);
 	}
+	toggleDockerRepositoryInput(){
+		this.context.actions.toggleSelectRepoDropdown()
+		.then(() => {
+			if( NPECheck(this.props, 'addRepo/selectRepoDropdown', false) 
+				&& !NPECheck(this.props, 'addRepo/newRepo/repo/credId', true)) {
+				return this.context.actions.listReposForRegistry()
+			}
+		})
+		.then(() => {})
+		.catch((err) => {
+			console.error(err);
+		});
+	}
 	renderDockerRepositoryInput(){
 		if(NPECheck(this.props, 'addRepo/reposInRegistry/length', false) || NPECheck(this.props, 'addRepo/reposInRegistryXHR', false)) {
 			return (
 				<Dropdown isOpen={this.props.addRepo.selectRepoDropdown}
-						  toggleOpen={() => this.context.actions.toggleSelectRepoDropdown()}
+						  toggleOpen={() => this.toggleDockerRepositoryInput()}
 						  listItems={this.props.addRepo.reposInRegistry.sort((repo1, repo2) => repo1 > repo2 ? 1 : -1)} 
 						  renderItem={(repo, index) => this.renderRepoInRegistryListItem(repo, index)}
 						  filterFn={(item) => item.indexOf(this.props.addRepo.reposInRegistryQuery) > -1}
@@ -74,6 +87,7 @@ export default class AddRepository extends Component {
 		} else {
 			return (
 				<input className={this.inputClassName(dockerRepoNameKey)} 
+					   onClick={() => this.toggleDockerRepositoryInput()}
 				       onChange={(e) => this.context.actions.updateNewRepoField(dockerRepoNameKey, e)}
 				       placeholder="Search or enter repository name"/>
 			);
