@@ -168,7 +168,7 @@ export default class Repositories extends Component {
 								<strong>Local Repositories</strong>&nbsp;
 								 are hosted by Europa and backed by your storage
 								 backend. Local Repositories support the Docker V2 API and support the
-								 complete range of operations from pull and pull to listing tags and
+								 complete range of operations from push and pull to listing tags and
 								 repositories.
 							</p>
 							<Btn className="LargeBlueButton"
@@ -186,7 +186,7 @@ export default class Repositories extends Component {
 								are hosted in third party registries such as EC2
 								Container Registry or Google Container Registry. Europa can scan these
 								remote registries and allow you to create pipelines to them and
-								mirrors remote repositories locally.
+								mirror remote repositories locally.
 							</p>
 							<Btn className="LargeBlueButton"
 								 style={{width:'100%', maxWidth: '100%', fontSize: '1.15rem'}}

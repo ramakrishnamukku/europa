@@ -103,13 +103,13 @@ export default class RepoEventItem extends Component {
 						<div className="ImageInfo">
 							<span className="Image">
 								<i className="icon icon-dis-push" />
-								<span className="Label">Push Image:&nbsp;</span>
+								<span className="Label">Image:&nbsp;</span>
 								<span className="Value">{name}</span>
 							</span>
-							<span className="Sha">
+							<span className="Sha" data-tip={SHA} data-for="ToolTipTop">
 								<i className="icon icon-dis-blank" />
-								<span className="Label">SHA:&nbsp;</span>
-								<span className="Value">{CleanSha(SHA, 100)}</span></span>
+								<span className="Value">{CleanSha(SHA)}</span>
+							</span>
 							<span className="Tags">
 								<i className="icon icon-dis-blank" />
 								{event.imageTags.map((tag, index) => {
