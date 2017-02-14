@@ -1,60 +1,68 @@
 package com.distelli.europa.handlers;
 
-import com.distelli.europa.EuropaRequestContext;
-import org.eclipse.jetty.http.HttpMethod;
-import com.distelli.webserver.RequestHandler;
-import com.distelli.webserver.WebResponse;
-import com.distelli.webserver.RequestContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import javax.inject.Singleton;
-import java.util.Map;
-import java.util.HashMap;
-import javax.inject.Inject;
-import lombok.extern.log4j.Log4j;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.mrbean.MrBeanModule;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import java.util.List;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.distelli.utils.ResettableInputStream;
 import java.io.InputStream;
-import com.distelli.utils.CountingInputStream;
-import com.distelli.utils.ResettableInputStream;
-import java.security.MessageDigest;
 import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+
+import org.eclipse.jetty.http.HttpMethod;
+import com.distelli.europa.EuropaRequestContext;
+import com.distelli.europa.db.ContainerRepoDb;
+import com.distelli.europa.db.NotificationsDb;
+import com.distelli.europa.db.PipelineDb;
+import com.distelli.europa.db.RegistryBlobDb;
+import com.distelli.europa.db.RegistryManifestDb;
+import com.distelli.europa.db.RepoEventsDb;
+import com.distelli.europa.models.ContainerRepo;
+import com.distelli.europa.models.DockerImage;
+import com.distelli.europa.models.Notification;
+import com.distelli.europa.models.NotificationId;
+import com.distelli.europa.models.Pipeline;
+import com.distelli.europa.models.PipelineComponent;
+import com.distelli.europa.models.RegistryManifest;
+import com.distelli.europa.models.RegistryProvider;
+import com.distelli.europa.models.RepoEvent;
+import com.distelli.europa.models.RepoEventType;
+import com.distelli.europa.models.UnknownDigests;
+import com.distelli.europa.notifiers.Notifier;
+import com.distelli.europa.pipeline.RunPipeline;
+import com.distelli.europa.registry.RegistryError;
+import com.distelli.europa.registry.RegistryErrorCode;
 import com.distelli.europa.util.ObjectKeyFactory;
 import com.distelli.objectStore.ObjectKey;
 import com.distelli.objectStore.ObjectStore;
-import com.distelli.europa.models.ContainerRepo;
 import com.distelli.persistence.PageIterator;
-import com.distelli.europa.models.Pipeline;
-import com.distelli.europa.models.PipelineComponent;
-import com.distelli.europa.models.RepoEvent;
-import com.distelli.europa.models.RepoEventType;
-import com.distelli.europa.models.RegistryProvider;
-import com.distelli.europa.models.RegistryManifest;
-import com.distelli.europa.models.UnknownDigests;
-import com.distelli.europa.db.RegistryBlobDb;
-import com.distelli.europa.db.RepoEventsDb;
-import com.distelli.europa.db.ContainerRepoDb;
-import com.distelli.europa.db.RegistryManifestDb;
-import com.distelli.europa.db.PipelineDb;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.TreeSet;
-import java.util.Collections;
-import com.distelli.europa.registry.RegistryError;
-import com.distelli.europa.registry.RegistryErrorCode;
+import com.distelli.utils.CompactUUID;
+import com.distelli.utils.CountingInputStream;
+import com.distelli.utils.ResettableInputStream;
+import com.distelli.utils.ResettableInputStream;
+import com.distelli.webserver.RequestContext;
+import com.distelli.webserver.RequestHandler;
+import com.distelli.webserver.WebResponse;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
-import com.distelli.utils.CompactUUID;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.module.mrbean.MrBeanModule;
 import com.google.inject.Injector;
+
+import lombok.extern.log4j.Log4j;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
-import javax.inject.Provider;
-import com.distelli.europa.pipeline.RunPipeline;
 
 @Log4j
 @Singleton
@@ -87,6 +95,10 @@ public class RegistryManifestPush extends RegistryBase {
     private PipelineDb _pipelineDb;
     @Inject
     private RunPipeline _runPipeline;
+    @Inject
+    protected NotificationsDb _notificationDb = null;
+    @Inject
+    protected Notifier _notifier = null;
 
     public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
         try {
@@ -131,6 +143,7 @@ public class RegistryManifestPush extends RegistryBase {
 
         boolean success = false;
         RegistryManifest oldManifest = null;
+        long pushTime = System.currentTimeMillis();
         RegistryManifest manifest = RegistryManifest.builder()
             .uploadedBy(requestContext.getRequesterDomain())
             .contentType(getContentType(manifestJson, requestContext.getContentType()))
@@ -139,7 +152,7 @@ public class RegistryManifestPush extends RegistryBase {
             .containerRepoId(repo.getId())
             .tag(reference)
             .digests(digests)
-            .pushTime(System.currentTimeMillis())
+            .pushTime(pushTime)
             .build();
 
         try {
@@ -162,17 +175,26 @@ public class RegistryManifestPush extends RegistryBase {
 
         // Best-effort:
         try {
+            List<String> imageTags = Collections.singletonList(reference);
             RepoEvent event = RepoEvent.builder()
                 .domain(ownerDomain)
                 .repoId(repo.getId())
                 .eventType(RepoEventType.PUSH)
-                .eventTime(System.currentTimeMillis())
-                .imageTags(Collections.singletonList(reference))
+                .eventTime(pushTime)
+                .imageTags(imageTags)
                 .imageSha(finalDigest)
                 .build();
             _eventDb.save(event);
             _repoDb.setLastEvent(repo.getDomain(), repo.getId(), event);
 
+            DockerImage image = DockerImage
+            .builder()
+            .imageTags(imageTags)
+            .pushTime(pushTime)
+            .imageSha(finalDigest)
+            .build();
+
+            notify(repo, image, event);
             executePipeline(repo, reference, finalDigest);
         } catch ( Throwable ex ) {
             log.error(ex.getMessage(), ex);
@@ -183,6 +205,29 @@ public class RegistryManifestPush extends RegistryBase {
         response.setResponseHeader("Location", joinWithSlash("/v2", name, "manifests", finalDigest));
         response.setResponseHeader("Docker-Content-Digest", finalDigest);
         return response;
+    }
+
+    private void notify(ContainerRepo repo, DockerImage image, RepoEvent event)
+    {
+        try {
+            //first get the list of notifications.
+            //for each notification call the notifier
+            List<Notification> notifications = _notificationDb.listNotifications(repo.getDomain(),
+                                                                                 repo.getId(),
+                                                                                 new PageIterator().pageSize(100));
+            List<String> nfIdList = new ArrayList<String>();
+            for(Notification notification : notifications)
+            {
+                if(log.isDebugEnabled())
+                    log.debug("Triggering Notification: "+notification+" for Image: "+image+" and Event: "+event);
+                NotificationId nfId = _notifier.notify(notification, image, repo);
+                if(nfId != null)
+                    nfIdList.add(nfId.toCanonicalId());
+            }
+            _eventDb.setNotifications(event.getDomain(), event.getRepoId(), event.getId(), nfIdList);
+        } catch(Throwable t) {
+            log.error(t.getMessage(), t);
+        }
     }
 
     private void executePipeline(ContainerRepo repo, String tag, String digest) {
