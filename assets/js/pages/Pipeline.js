@@ -16,7 +16,8 @@ export default class Pipeline extends Component {
     super(props);
     this.state = {
       repoMapById: {},
-      loading: true
+      loading: true,
+      timeoutInterval: null,
     };
   }
   componentDidMount() {
@@ -38,12 +39,15 @@ export default class Pipeline extends Component {
   }
   componentWillUnmount() {
     this.context.actions.resetSinglePipelineState();
+    clearInterval(this.state.timeoutInterval);
   }
   pollForUpdates() {
-    setTimeout(function() {
-      this.context.actions.getPipeline(this.props.params.pipelineId)
-      .then(pipeline => this.pollForUpdates() )
-    }.bind(this), 25000)
+    this.setState({
+      timeoutInterval: setTimeout(function() {
+        this.context.actions.getPipeline(this.props.params.pipelineId)
+        .then(pipeline => this.pollForUpdates() )
+      }.bind(this), 3000)
+    })
   }
   renderPage(pipeline) {
     switch (this.props.pipelineStore.section) {

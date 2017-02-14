@@ -205,7 +205,7 @@ export function getPipeline(pipelineId) {
               pipeline: res,
               getPipelineXHR: false,
             })
-          }, () => resolve(res));
+          }, () => resolve(res) );
         })
         .catch(err => {
           let errorMsg = NPECheck(err, 'error/message', 'There was an error loading your pipeline');
