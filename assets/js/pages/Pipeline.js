@@ -45,7 +45,7 @@ export default class Pipeline extends Component {
     this.setState({
       timeoutInterval: setTimeout(function() {
         this.context.actions.getPipeline(this.props.params.pipelineId)
-        .then(pipeline => this.pollForUpdates() )
+        .then(pipeline => this.pollForUpdates());
       }.bind(this), 25000)
     })
   }
@@ -95,7 +95,7 @@ export default class Pipeline extends Component {
             <PipelineStageItem {...this.props}
                                key={component.id}
                                idx={idx}
-                               pipelineComponent={component}
+                               pipelineComponentObj={component}
                                repo={this.state.repoMapById[component.destinationContainerRepoId]} />
           );
         })}

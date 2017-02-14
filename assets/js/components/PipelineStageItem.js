@@ -11,7 +11,7 @@ export default class PipelineStageItem extends Component {
     super(props);
     this.state = {
       deleteToggled: false,
-      pipelineComponent: this.props.pipelineComponent
+      pipelineComponentObj: this.props.pipelineComponentObj
     };
   }
   renderTrigger() {
@@ -75,7 +75,7 @@ export default class PipelineStageItem extends Component {
     if (this.props.firstStage) {
       this.context.actions.removeMainPipelineStage()
     } else {
-      this.context.actions.removePipelineComponent(this.state.pipelineComponent.id)
+      this.context.actions.removePipelineComponent(this.state.pipelineComponentObj.id)
     }
   }
   renderConfirmOrError() {
@@ -91,10 +91,18 @@ export default class PipelineStageItem extends Component {
 
     return msg;
   }
+  isDeletingStage() {
+    if (this.props.pipelineStore.removePipelineMainStageXHR) {
+      return true;
+    }
+    // NPECheck has a backup result of unallowable ID characters, because removePipelineComponentXHR could be null/false
+    if (this.props.pipelineStore.removePipelineComponentXHR == NPECheck(this.state, 'pipelineComponentObj/id', "!@#$%^&*()(&^)*^&$%")) {
+      return true;
+    }
+    return false;
+  }
   renderInterior(repo) {
-    if ( (this.props.pipelineStore.removePipelineComponentXHR
-          && this.props.pipelineStore.removePipelineComponentXHR == this.state.pipelineComponent.id)
-         || this.props.pipelineStore.removePipelineMainStageXHR ) {
+    if (this.isDeletingStage()) {
       return (
         <div className="stage-destination">
           <div style={ {margin: "15px 0 0"} }>
