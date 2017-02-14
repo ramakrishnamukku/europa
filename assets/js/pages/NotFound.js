@@ -17,19 +17,15 @@ export default class NotFound extends Component {
 	render() {
 		return (
 			<div className="ContentContainer">
-				<div className="PageHeader">
-					<h2>
-						Page Not Found
-					</h2>
-				</div>
-				<div>
+				<div className="NoContent" style={{marginTop: '42px'}}>
+					<h3>Page Not Found.</h3>
 					<Btn onClick={() => this.toHome()} 
 						 className="LargeBlueButton"
 						 text="Take Me Home" 
-						 style={{marginTop: '21px'}}
 						 canClick={true}/>
 				</div>
 			</div>
+
 		);
 	}
 }
