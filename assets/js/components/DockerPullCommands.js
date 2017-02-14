@@ -5,6 +5,7 @@
 import React, { Component, PropTypes } from 'react'
 import NPECheck from './../util/NPECheck'
 import CopyToClipboard from './../util/CopyToClipboard'
+import RepoPullCommand from './../util/RepoPullCommand'
 
 export default class DockerPullCommands extends Component {
 	constructor(props) {
@@ -35,7 +36,7 @@ export default class DockerPullCommands extends Component {
 	}
 	renderPullCommands(selectedManifests, activeRepo){
 		if(NPECheck(this.props, 'repoDetails/showPullCommands', false)) {
-			let pullCommand = activeRepo.pullCommand;
+			let pullCommand = RepoPullCommand(activeRepo, this.props.dnsName, this.props.ctx);
 
 			return (
 				<div className="PullCommandsDropDown">
@@ -76,7 +77,9 @@ export default class DockerPullCommands extends Component {
 	render(){
 		let activeRepo = NPECheck(this.props, 'repoDetails/activeRepo', {});
 		let selectedManifests = NPECheck(this.props, 'repoDetails/selectedManifests', []);
-
+		let pullCommand = RepoPullCommand(activeRepo, this.props.dnsName, this.props.ctx);
+		
+		
 		return (
 			<div className="DockerPullCommands">
 				<div className="FlexRow Flex1">
@@ -84,7 +87,7 @@ export default class DockerPullCommands extends Component {
 					   data-for="ToolTipTop" 
 					   data-tip="Copy Commands" 
 					   onClick={() => CopyToClipboard(document.getElementById('copyCommands'))}/>
-					<div id="copyCommands"className="Commands">{activeRepo.pullCommand}</div>
+					<div id="copyCommands"className="Commands">{pullCommand}</div>
 				</div>
 				<div className="FlexRow Flex1">
 					<i className="icon icon-dis-blank"/>
