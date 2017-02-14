@@ -32,8 +32,6 @@ public class ListContainerRepos extends AjaxHelper<EuropaRequestContext>
     @Inject
     private ContainerRepoDb _db;
     @Inject
-    private Provider<DnsSettings> _dnsSettingsProvider;
-    @Inject
     protected PermissionCheck _permissionCheck;
 
     public ListContainerRepos()
@@ -85,13 +83,6 @@ public class ListContainerRepos extends AjaxHelper<EuropaRequestContext>
             Boolean allow = permissionResult.get(repo);
             if(allow == null || allow == Boolean.FALSE)
                 continue;
-            if(repo.isLocal())
-            {
-                DnsSettings dnsSettings = _dnsSettingsProvider.get();
-                if(dnsSettings == null)
-                    dnsSettings = DnsSettings.fromHostHeader(requestContext);
-                repo.setEndpoint(dnsSettings.getDnsName());
-            }
             retval.add(repo);
         }
 

@@ -29,8 +29,6 @@ public class GetContainerRepo extends AjaxHelper<EuropaRequestContext>
     private ContainerRepoDb _db;
     @Inject
     protected PermissionCheck _permissionCheck;
-    @Inject
-    private Provider<DnsSettings> _dnsSettingsProvider;
 
     public GetContainerRepo()
     {
@@ -51,15 +49,6 @@ public class GetContainerRepo extends AjaxHelper<EuropaRequestContext>
             throw(new AjaxClientException("The specified Repository was not found",
                                           AjaxErrors.Codes.RepoNotFound, 400));
         _permissionCheck.check(ajaxRequest.getOperation(), requestContext, repo);
-
-        if(repo.isLocal())
-        {
-            DnsSettings dnsSettings = _dnsSettingsProvider.get();
-            if(dnsSettings == null)
-                dnsSettings = DnsSettings.fromHostHeader(requestContext);
-            repo.setEndpoint(dnsSettings.getDnsName());
-        }
-
         return repo;
     }
 }
