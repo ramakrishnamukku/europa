@@ -22,18 +22,22 @@ export default class Pipeline extends Component {
   }
   componentDidMount() {
     this.context.actions.listRepos()
-    .then( () => {
-      this.context.actions.getPipeline(this.props.params.pipelineId)
-      .then(pipeline => {
-        this.setState({
-          loading: false,
-          repoMapById: this.props.repos.reduce((map, repo) => {
-            map[repo.id] = repo;
-            return map;
-          }, {} )
-        })
+    .then(() => this.context.actions.getPipeline(this.props.params.pipelineId))
+    .then(pipeline => {
+      this.setState({
+        loading: false,
+        repoMapById: this.props.repos.reduce((map, repo) => {
+          map[repo.id] = repo;
+          return map;
+        }, {} )
+      })
 
-        this.pollForUpdates();
+      this.pollForUpdates();
+    })
+    .catch((err) => {
+      console.error(err);
+      this.setState({
+        loading: false
       });
     })
   }
@@ -196,17 +200,17 @@ export default class Pipeline extends Component {
   render() {
     let pipeline = this.props.pipelineStore.pipeline;
 
+    if(NPECheck(this.props, 'pipelineStore/isBlocked', false)) {
+      return (
+        <AccessDenied />
+      );
+    }
+
     if (this.state.loading) {
       return (
         <div className="PageLoader">
           <Loader />
         </div>
-      );
-    }
-
-    if(NPECheck(this.props, 'pipelineStore/isBlocked', false)) {
-      return (
-        <AccessDenied />
       );
     }
 
