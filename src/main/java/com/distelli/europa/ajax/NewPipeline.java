@@ -46,9 +46,7 @@ public class NewPipeline extends AjaxHelper<EuropaRequestContext>
                                     .domain(domain)
                                     .name(name)
                                     .build();
-
         _db.createPipeline(pipeline);
-
-        return _db.listByDomain(domain, pageIterator);
+        return pipeline;
     }
 }
