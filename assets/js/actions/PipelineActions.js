@@ -281,15 +281,9 @@ export function createPipeline() {
     }, () => {
       RAjax.POST.call(this, 'NewPipeline', {}, newPipeline)
         .then(res => {
-          this.setState({
-            pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
-              pipelines: res,
-              newPipelineXHR: false,
-              newPipelineXHRError: false,
-              newPipelineTemplate: pipelinesState()["newPipelineTemplate"],
-              initNewPipeline: false
-            })
-          }, () => resolve());
+          // Redirect to the pipeline
+          this.context.router.push(`/pipelines/${res.id}`);
+          resolve();
         })
         .catch(err => {
           this.setState({
