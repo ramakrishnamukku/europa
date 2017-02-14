@@ -153,7 +153,7 @@ export function listPipelines() {
   return new Promise((resolve, reject) => {
     this.setState({
       pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
-        pipelinesXHR: true,
+        pipelinesXHR: !NPECheck(this.state, 'pipelinesStore/pipelines/length', false),
       })
     }, () => {
       RAjax.GET.call(this, 'ListPipelines')

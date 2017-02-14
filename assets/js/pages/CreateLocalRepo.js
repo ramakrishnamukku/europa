@@ -32,8 +32,8 @@ export default class CreateLocalRepo extends Component {
 	}
 	renderRepoNameInput(){
 		return (
-			<div>
-				<label>Repository Name</label>
+			<div className="FlexColumn">
+				<label style={{marginBottom: '5px'}}>Repository Name</label>
 				<input className="BlueBorder FullWidth White" 
 					   onChange={(e) => this.context.actions.updateNewLocalRepoName(e)}
 					   placeholder="Enter repository name.."
