@@ -56,7 +56,7 @@ export default class RepoDetailsContent extends Component {
 					let actionText = (isEdit) ? (NPECheck(this.props, 'repoDetails/isOverviewModified')) ? 'Preview Changes' : 'Cancel' : 'Edit Read Me';
 
 					if(!NPECheck(this.props, 'repoDetails/repoOverviewContent/length', true) && !NPECheck(this.props, 'repoDetails/isOverviewModified', true)) {
-						actionText = 'Create Read Me'
+						actionText = 'Create Readme'
 					}
 
 					return (

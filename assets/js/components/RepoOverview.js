@@ -32,11 +32,11 @@ export default class RepoOverview extends Component {
 					<div className="Timeline">
 						<div className="NoContent">
 							<h3 key={1}>
-								No Read Me Found
+								No Readme Found
 							</h3>
 							<Btn className="LargeBlueButton"
 							     style={{maxWidth: '100%'}}
-								 text="Create Read Me"
+								 text="Create Readme"
 								 onClick={() => this.context.actions.toggleRepoOverviewEdit()}/>
 						</div>
 					</div>

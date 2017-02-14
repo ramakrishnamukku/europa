@@ -6,6 +6,8 @@ import React, { Component, PropTypes } from 'react'
 import NPECheck from './../util/NPECheck'
 import CopyToClipboard from './../util/CopyToClipboard'
 import RepoPullCommand from './../util/RepoPullCommand'
+import CleanSha from './../util/CleanSha'
+
 
 export default class DockerPullCommands extends Component {
 	constructor(props) {
@@ -46,7 +48,10 @@ export default class DockerPullCommands extends Component {
 							return (
 								<div className="FlexColumn" key={index}>
 									<div className="LargePullCommand">
-										<div className="NoClick" id={manifest.manifestId}>{`${pullCommand}@${manifest.manifestId}`}</div>
+										<div style={{display: 'none'}} id={manifest.manifestId}>
+											{`${pullCommand}@${manifest.manifestId}`}
+										</div>
+										<div className="NoClick" data-tip={manifest.manifestId} data-for="ToolTipTop">{`${pullCommand}@${CleanSha(manifest.manifestId)}..`}</div>
 										<i className="icon icon-dis-copy" 
 										    data-tip="Copy Pull Command" 
 										    data-for="ToolTipTop"
