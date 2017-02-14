@@ -32,7 +32,6 @@ public class RegistryLayerUploadCancel extends RegistryBase {
     @Inject
     private RegistryBlobDb _blobDb;
     public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
-        String ownerUsername = requestContext.getOwnerUsername();
         String ownerDomain = requestContext.getOwnerDomain();
         String blobId = requestContext.getMatchedRoute().getParam("uuid");
         if ( null == blobId || blobId.isEmpty() ) {

@@ -31,7 +31,6 @@ public class RegistryLayerExists extends RegistryBase {
     @Inject
     private Provider<ObjectKeyFactory> _objectKeyFactoryProvider;
     public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
-        String ownerUsername = requestContext.getOwnerUsername();
         String ownerDomain = requestContext.getOwnerDomain();
         String name = requestContext.getMatchedRoute().getParam("name");
         String digest = requestContext.getMatchedRoute().getParam("digest");

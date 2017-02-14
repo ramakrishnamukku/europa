@@ -36,7 +36,6 @@ public class RegistryManifestPull extends RegistryBase {
     private RegistryManifestDb _manifestDb;
 
     public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
-        String ownerUsername = requestContext.getOwnerUsername();
         String ownerDomain = requestContext.getOwnerDomain();
         String name = requestContext.getMatchedRoute().getParam("name");
         String reference = requestContext.getMatchedRoute().getParam("reference");

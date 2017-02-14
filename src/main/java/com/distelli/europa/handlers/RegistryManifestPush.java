@@ -110,7 +110,6 @@ public class RegistryManifestPush extends RegistryBase {
         }
     }
     public WebResponse handleRegistryRequestThrows(EuropaRequestContext requestContext) throws Exception {
-        String ownerUsername = requestContext.getOwnerUsername();
         String ownerDomain = requestContext.getOwnerDomain();
         String name = requestContext.getMatchedRoute().getParam("name");
         String reference = requestContext.getMatchedRoute().getParam("reference");
