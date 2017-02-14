@@ -219,18 +219,20 @@ export default class StorageSettings extends Component {
 		}
 	}
 	renderSaveButton(){
-		if(NPECheck(this.props, 'settings/storage/saveStorageXHR', false)) {
+		if(!this.state.isEdit || (this.state.isEdit && NPECheck(this.props, `settings/storage/storageCreds/${typeKey}`, '') == 'S3')) {
+			if(NPECheck(this.props, 'settings/storage/saveStorageXHR', false)) {
+				return (
+					<Loader />
+				);
+			}
+
 			return (
-				<Loader />
+				<Btn onClick={() => this.saveStorageSettings()}
+					 text="Save" 
+					 canClick={true} 
+					 style={{width: '200px', margin: '28px auto'}}/>
 			);
 		}
-
-		return (
-			<Btn onClick={() => this.saveStorageSettings()}
-				 text="Save" 
-				 canClick={true} 
-				 style={{width: '200px', margin: '28px auto'}}/>
-		);
 	}
 	renderSuccess(){
 		if(NPECheck(this.props, 'settings/storage/saveStorageSuccess', false)) {
