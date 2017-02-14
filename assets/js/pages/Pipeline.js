@@ -46,7 +46,7 @@ export default class Pipeline extends Component {
       timeoutInterval: setTimeout(function() {
         this.context.actions.getPipeline(this.props.params.pipelineId)
         .then(pipeline => this.pollForUpdates() )
-      }.bind(this), 3000)
+      }.bind(this), 25000)
     })
   }
   renderPage(pipeline) {
