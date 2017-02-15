@@ -38,6 +38,10 @@ public class GetPipeline extends AjaxHelper<EuropaRequestContext>
     {
         String pipelineId = ajaxRequest.getParam("pipelineId", true);
         _permissionCheck.check(ajaxRequest.getOperation(), requestContext, pipelineId);
-        return _db.getPipeline(pipelineId);
+        Pipeline pipeline = _db.getPipeline(pipelineId);
+        if(pipeline == null)
+            throw(new AjaxClientException("The specified Pipeline was not found",
+                                          AjaxErrors.Codes.PipelineNotFound, 404));
+        return pipeline;
     }
 }

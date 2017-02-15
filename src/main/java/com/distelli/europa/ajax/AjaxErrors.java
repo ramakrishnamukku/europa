@@ -15,6 +15,7 @@ public class AjaxErrors
         public static final String RepoAlreadyConnected = "RepoAlreadyConnected";
         public static final String TokenIsActive = "TokenIsActive";
         public static final String RepoNotFound = "RepoNotFound";
+        public static final String PipelineNotFound = "PipelineNotFound";
         public static final String BadRepoName = "BadRepoName";
         public static final String BadPipelineName = "BadPipelineName";
         public static final String BadS3Credentials = "BadS3Credentials";
