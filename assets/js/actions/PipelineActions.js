@@ -310,8 +310,10 @@ export function removePipeline() {
     }, () => {
       RAjax.POST.call(this, 'RemovePipeline', {}, postData)
         .then(res => {
-          resetSinglePipelineState.call(this)
           this.context.router.push('/pipelines')
+          setTimeout(function() {
+            resetSinglePipelineState.call(this)
+          }.bind(this), 0)
         })
         .catch(err => {
           this.setState({
