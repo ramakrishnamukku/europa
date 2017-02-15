@@ -232,10 +232,13 @@ public class RegistryManifestPush extends RegistryBase {
     private void executePipeline(ContainerRepo repo, String tag, String digest) {
         String domain = repo.getDomain();
         String repoId = repo.getId();
-        log.debug("Finding pipelines to execute for domain="+domain+" repoId="+repoId);
+        if(log.isDebugEnabled())
+            log.debug("Finding pipelines to execute for domain="+domain+" repoId="+repoId);
         for ( PageIterator it : new PageIterator() ) {
             for ( Pipeline pipeline : _pipelineDb.listByContainerRepoId(domain, repoId, it) ) {
                 // Get the full pipeline:
+                if(log.isDebugEnabled())
+                    log.debug("Getting Pipeline for Id: "+pipeline.getId());
                 pipeline = _pipelineDb.getPipeline(pipeline.getId());
                 _runPipeline.runPipeline(pipeline, repo, tag, digest);
             }
