@@ -11,6 +11,7 @@ target/**
 node_modules/*
 public/*
 
+src/main/java/com/distelli/europa/EuropaVersion.java
 pom.xml.releaseBackup
 release.properties
 

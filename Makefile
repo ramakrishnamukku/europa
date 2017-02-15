@@ -1,7 +1,6 @@
 SHELL := /bin/bash
 .SILENT:
 .PHONY: git-has-pushed git-is-clean assets
-POM_VERSION=$(shell mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version 2> /dev/null | grep -Ev '(^\[|Download\w+:)')
 
 all:
 	mvn -q -U dependency:build-classpath compile -DincludeScope=runtime -Dmdep.outputFile=target/.classpath -Dmaven.compiler.debug=false
@@ -19,8 +18,7 @@ clean:
 	mvn -q clean
 
 package:
-	echo "Building Europa Version: ${POM_VERSION}/${DISTELLI_BUILDNUM}"
-	printf "package com.distelli.europa;\n\npublic class EuropaVersion\n{\n    public static final String VERSION = \"${POM_VERSION}/${DISTELLI_BUILDNUM}\";\n}" > src/main/java/com/distelli/europa/EuropaVersion.java
+	./update-version.sh
 	mvn -q -DincludeScope=runtime dependency:copy-dependencies package assembly:single
 
 show-deps:
