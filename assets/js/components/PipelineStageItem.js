@@ -109,7 +109,7 @@ export default class PipelineStageItem extends Component {
         <div className="stage-dest-interior">
           <div className="stage-dest-details">
             <div style={ {position: "relative"} }>
-              <span style={{color: "#E14034", fontSize: ".85rem", fontWeight: "900"}}>
+              <span style={{color: "grey", fontSize: ".85rem", fontWeight: "400"}}>
                 You are not authorized to view this Repository
               </span>
             </div>
