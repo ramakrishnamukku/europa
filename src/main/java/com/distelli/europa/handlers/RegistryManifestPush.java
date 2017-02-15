@@ -18,15 +18,12 @@ import javax.inject.Singleton;
 import org.eclipse.jetty.http.HttpMethod;
 import com.distelli.europa.EuropaRequestContext;
 import com.distelli.europa.db.ContainerRepoDb;
-import com.distelli.europa.db.NotificationsDb;
 import com.distelli.europa.db.PipelineDb;
 import com.distelli.europa.db.RegistryBlobDb;
 import com.distelli.europa.db.RegistryManifestDb;
 import com.distelli.europa.db.RepoEventsDb;
 import com.distelli.europa.models.ContainerRepo;
 import com.distelli.europa.models.DockerImage;
-import com.distelli.europa.models.Notification;
-import com.distelli.europa.models.NotificationId;
 import com.distelli.europa.models.Pipeline;
 import com.distelli.europa.models.PipelineComponent;
 import com.distelli.europa.models.RegistryManifest;
@@ -34,7 +31,6 @@ import com.distelli.europa.models.RegistryProvider;
 import com.distelli.europa.models.RepoEvent;
 import com.distelli.europa.models.RepoEventType;
 import com.distelli.europa.models.UnknownDigests;
-import com.distelli.europa.notifiers.Notifier;
 import com.distelli.europa.pipeline.RunPipeline;
 import com.distelli.europa.registry.RegistryError;
 import com.distelli.europa.registry.RegistryErrorCode;
@@ -95,10 +91,6 @@ public class RegistryManifestPush extends RegistryBase {
     private PipelineDb _pipelineDb;
     @Inject
     private RunPipeline _runPipeline;
-    @Inject
-    protected NotificationsDb _notificationDb = null;
-    @Inject
-    protected Notifier _notifier = null;
 
     public WebResponse handleRegistryRequest(EuropaRequestContext requestContext) {
         try {
@@ -172,77 +164,11 @@ public class RegistryManifestPush extends RegistryBase {
             }
         }
 
-        // Best-effort:
-        try {
-            List<String> imageTags = Collections.singletonList(reference);
-            RepoEvent event = RepoEvent.builder()
-                .domain(ownerDomain)
-                .repoId(repo.getId())
-                .eventType(RepoEventType.PUSH)
-                .eventTime(pushTime)
-                .imageTags(imageTags)
-                .imageSha(finalDigest)
-                .build();
-            _eventDb.save(event);
-            _repoDb.setLastEvent(repo.getDomain(), repo.getId(), event);
-
-            DockerImage image = DockerImage
-            .builder()
-            .imageTags(imageTags)
-            .pushTime(pushTime)
-            .imageSha(finalDigest)
-            .build();
-
-            notify(repo, image, event);
-            executePipeline(repo, reference, finalDigest);
-        } catch ( Throwable ex ) {
-            log.error(ex.getMessage(), ex);
-        }
-
         WebResponse response = new WebResponse();
         response.setHttpStatusCode(201);
         response.setResponseHeader("Location", joinWithSlash("/v2", name, "manifests", finalDigest));
         response.setResponseHeader("Docker-Content-Digest", finalDigest);
         return response;
-    }
-
-    private void notify(ContainerRepo repo, DockerImage image, RepoEvent event)
-    {
-        try {
-            //first get the list of notifications.
-            //for each notification call the notifier
-            List<Notification> notifications = _notificationDb.listNotifications(repo.getDomain(),
-                                                                                 repo.getId(),
-                                                                                 new PageIterator().pageSize(100));
-            List<String> nfIdList = new ArrayList<String>();
-            for(Notification notification : notifications)
-            {
-                if(log.isDebugEnabled())
-                    log.debug("Triggering Notification: "+notification+" for Image: "+image+" and Event: "+event);
-                NotificationId nfId = _notifier.notify(notification, image, repo);
-                if(nfId != null)
-                    nfIdList.add(nfId.toCanonicalId());
-            }
-            _eventDb.setNotifications(event.getDomain(), event.getRepoId(), event.getId(), nfIdList);
-        } catch(Throwable t) {
-            log.error(t.getMessage(), t);
-        }
-    }
-
-    private void executePipeline(ContainerRepo repo, String tag, String digest) {
-        String domain = repo.getDomain();
-        String repoId = repo.getId();
-        if(log.isDebugEnabled())
-            log.debug("Finding pipelines to execute for domain="+domain+" repoId="+repoId);
-        for ( PageIterator it : new PageIterator() ) {
-            for ( Pipeline pipeline : _pipelineDb.listByContainerRepoId(domain, repoId, it) ) {
-                // Get the full pipeline:
-                if(log.isDebugEnabled())
-                    log.debug("Getting Pipeline for Id: "+pipeline.getId());
-                pipeline = _pipelineDb.getPipeline(pipeline.getId());
-                _runPipeline.runPipeline(pipeline, repo, tag, digest);
-            }
-        }
     }
 
     private String getImageId(JsonNode manifest) {

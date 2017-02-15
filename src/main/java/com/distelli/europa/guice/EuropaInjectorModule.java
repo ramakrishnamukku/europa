@@ -15,6 +15,10 @@ import java.util.List;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import com.distelli.europa.tasks.ReapMonitorTask;
+import com.distelli.europa.tasks.PipelineTask;
+import com.distelli.europa.tasks.TaskFactory;
+import com.google.inject.multibindings.MapBinder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import com.distelli.cred.CredPair;
 import com.distelli.europa.EuropaConfiguration;
@@ -29,6 +33,7 @@ import com.distelli.europa.db.RepoEventsDb;
 import com.distelli.europa.db.SequenceDb;
 import com.distelli.europa.db.SettingsDb;
 import com.distelli.europa.db.TokenAuthDb;
+import com.distelli.europa.db.TasksDb;
 import com.distelli.europa.models.DnsSettings;
 import com.distelli.europa.models.Monitor;
 import com.distelli.europa.models.SslSettings;
@@ -79,6 +84,8 @@ public class EuropaInjectorModule extends AbstractModule
         addTableDescription(PipelineDb.getTableDescription());
         addTableDescription(SettingsDb.getTableDescription());
         addTableDescription(MonitorDb.getTableDescription());
+        addTableDescription(TasksDb.getTasksTableDescription());
+        addTableDescription(TasksDb.getLocksTableDescription());
 
         _europaConfiguration = europaConfiguration;
     }
@@ -183,5 +190,10 @@ public class EuropaInjectorModule extends AbstractModule
         for ( Provider<TableDescription> tableProvider : _tables ) {
             tableBinder.addBinding().toProvider(tableProvider);
         }
+
+        MapBinder<String, TaskFactory> taskFactoryBinder =
+            MapBinder.newMapBinder(binder(), String.class, TaskFactory.class);
+        taskFactoryBinder.addBinding(PipelineTask.ENTITY_TYPE).to(PipelineTask.Factory.class);
+        taskFactoryBinder.addBinding(ReapMonitorTask.ENTITY_TYPE).to(ReapMonitorTask.Factory.class);
     }
 }

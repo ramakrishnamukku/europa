@@ -76,4 +76,8 @@ public class SequenceDb extends BaseDb
     public Long nextManifestId() {
         return next("rmanifest");
     }
+
+    public Long nextTaskId() {
+        return next("task");
+    }
 }

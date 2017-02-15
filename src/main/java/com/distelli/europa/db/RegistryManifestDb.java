@@ -1,5 +1,6 @@
 package com.distelli.europa.db;
 
+import com.distelli.europa.notifiers.Notifier;
 import com.distelli.europa.util.Tag;
 import com.distelli.europa.models.*;
 import com.distelli.jackson.transform.TransformModule;
@@ -30,6 +31,7 @@ import javax.persistence.RollbackException;
 import lombok.extern.log4j.Log4j;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
 import java.util.ArrayList;
+import com.distelli.europa.tasks.PipelineTask;
 
 @Log4j
 @Singleton
@@ -43,6 +45,20 @@ public class RegistryManifestDb extends BaseDb {
 
     @Inject
     private RegistryBlobDb _blobDb;
+    @Inject
+    private TasksDb _tasksDb;
+    @Inject
+    private Monitor _monitor;
+    @Inject
+    private RepoEventsDb _eventsDb;
+    @Inject
+    private PipelineDb _pipelineDb;
+    @Inject
+    private ContainerRepoDb _repoDb;
+    @Inject
+    protected NotificationsDb _notificationDb = null;
+    @Inject
+    protected Notifier _notifier = null;
 
     public static TableDescription getTableDescription() {
         return TableDescription.builder()
@@ -195,6 +211,51 @@ public class RegistryManifestDb extends BaseDb {
         RegistryManifest old = null;
         try {
             old = _main.putItem(manifest);
+
+            if ( ! Tag.isDigest(manifest.getTag()) ) {
+                RepoEvent event = RepoEvent.builder()
+                    .domain(manifest.getDomain())
+                    .repoId(manifest.getContainerRepoId())
+                    .eventType(RepoEventType.PUSH)
+                    .eventTime(System.currentTimeMillis())
+                    .imageTags(Collections.singletonList(manifest.getTag()))
+                    .imageSha(manifest.getManifestId())
+                    .build();
+                _eventsDb.save(event);
+                _repoDb.setLastEvent(event.getDomain(), event.getRepoId(), event);
+
+                DockerImage image = DockerImage
+                    .builder()
+                    .imageTags(event.getImageTags())
+                    .pushTime(manifest.getPushTime())
+                    .imageSha(manifest.getManifestId())
+                    .build();
+
+                notify(manifest, image, event);
+
+                if(log.isDebugEnabled())
+                    log.debug(
+                        "Finding pipelines to execute for domain="+manifest.getDomain()+
+                        " repoId="+manifest.getContainerRepoId());
+                for ( PageIterator it : new PageIterator() ) {
+                    for ( Pipeline pipeline : _pipelineDb.listByContainerRepoId(
+                              manifest.getDomain(),
+                              manifest.getContainerRepoId(),
+                              it) )
+                    {
+                        if(log.isDebugEnabled())
+                            log.debug("Adding Pipeline task for id: "+pipeline.getId());
+                        _tasksDb.addTask(_monitor,
+                                         PipelineTask.builder()
+                                         .domain(manifest.getDomain())
+                                         .tag(manifest.getTag())
+                                         .containerRepoId(manifest.getContainerRepoId())
+                                         .manifestId(manifest.getManifestId())
+                                         .pipelineId(pipeline.getId())
+                                         .build());
+                    }
+                }
+            }
             if ( null != old && null != old.getDigests() && null != old.getManifestId() ) {
                 // clean-up references:
                 for ( String digest : old.getDigests() ) {
@@ -214,7 +275,73 @@ public class RegistryManifestDb extends BaseDb {
 
     public void remove(String domain, String repoId, String tag) {
         if ( null == domain ) domain = "d0";
-        _main.deleteItem(domain, toRK(repoId, tag));
+
+        RegistryManifest manifest = null;
+        while ( true ) {
+            manifest = _main.getItem(domain, toRK(repoId, tag));
+            if ( null == manifest ) return;
+
+            try {
+                String manifestId = manifest.getManifestId();
+                _main.deleteItem(domain, toRK(repoId, tag),
+                                 (expr) -> expr.eq("id", manifestId));
+            } catch ( RollbackException ex ) {
+                continue;
+            }
+            break;
+        }
+        String deletedManifestId = manifest.getManifestId();
+        manifest.setManifestId(null);
+
+        if ( ! Tag.isDigest(tag) ) {
+            RepoEvent event = RepoEvent.builder()
+                .domain(manifest.getDomain())
+                .repoId(manifest.getContainerRepoId())
+                .eventType(RepoEventType.DELETE)
+                .eventTime(System.currentTimeMillis())
+                .imageTags(Collections.singletonList(manifest.getTag()))
+                .imageSha(manifest.getManifestId())
+                .build();
+            _eventsDb.save(event);
+            _repoDb.setLastEvent(event.getDomain(), event.getRepoId(), event);
+
+            DockerImage image = DockerImage.builder()
+                .imageTags(event.getImageTags())
+                .pushTime(manifest.getPushTime())
+                .imageSha(manifest.getManifestId())
+                .build();
+
+            notify(manifest, image, event);
+
+            if(log.isDebugEnabled())
+                log.debug(
+                    "Finding pipelines to execute for domain="+manifest.getDomain()+
+                    " repoId="+manifest.getContainerRepoId());
+            for ( PageIterator it : new PageIterator() ) {
+                for ( Pipeline pipeline : _pipelineDb.listByContainerRepoId(
+                          manifest.getDomain(),
+                          manifest.getContainerRepoId(),
+                          it) )
+                {
+                    if(log.isDebugEnabled())
+                        log.debug("Adding Pipeline task for id: "+pipeline.getId());
+                    _tasksDb.addTask(_monitor,
+                                     PipelineTask.builder()
+                                     .domain(manifest.getDomain())
+                                     .tag(manifest.getTag())
+                                     .containerRepoId(manifest.getContainerRepoId())
+                                     .manifestId(manifest.getManifestId())
+                                     .pipelineId(pipeline.getId())
+                                     .build());
+                }
+            }
+        }
+
+        // clean-up references:
+        for ( String digest : manifest.getDigests() ) {
+            _blobDb.removeReference(digest, deletedManifestId);
+        }
+
     }
 
     public RegistryManifest getManifestByRepoIdTag(String domain, String repoId, String tag) {
@@ -305,5 +432,38 @@ public class RegistryManifestDb extends BaseDb {
         // No more results:
         outerIter.setMarker(null);
         return result;
+    }
+
+    private void notify(RegistryManifest manifest, DockerImage image, RepoEvent event)
+    {
+        try {
+            ContainerRepo repo = null;
+            //first get the list of notifications.
+            //for each notification call the notifier
+            List<Notification> notifications = _notificationDb.listNotifications(manifest.getDomain(),
+                                                                                 manifest.getContainerRepoId(),
+                                                                                 new PageIterator().pageSize(100));
+            List<String> nfIdList = new ArrayList<String>();
+            for(Notification notification : notifications)
+            {
+                if ( null == repo ) {
+                    repo = _repoDb.getRepo(manifest.getDomain(), manifest.getContainerRepoId());
+                    if ( null == repo ) {
+                        log.error("Manifest references null ContainerRepo domain="+manifest.getDomain()+
+                                  " repoId="+manifest.getContainerRepoId());
+                        break;
+                    }
+                }
+                if(log.isDebugEnabled())
+                    log.debug("Triggering Notification: "+notification+" for Image: "+image+" and Event: "+event);
+                NotificationId nfId = _notifier.notify(notification, image, repo);
+                if(nfId != null)
+                    nfIdList.add(nfId.toCanonicalId());
+            }
+            _eventsDb.setNotifications(event.getDomain(), event.getRepoId(), event.getId(), nfIdList);
+            event.setNotifications(nfIdList);
+        } catch(Throwable t) {
+            log.error(t.getMessage(), t);
+        }
     }
 }
