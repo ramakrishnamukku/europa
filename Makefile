@@ -21,7 +21,7 @@ clean:
 package:
 	echo "Building Europa Version: ${POM_VERSION}/${DISTELLI_BUILDNUM}"
 	printf "package com.distelli.europa;\n\npublic class EuropaVersion\n{\n    public static final String VERSION = \"${POM_VERSION}/${DISTELLI_BUILDNUM}\";\n}" > src/main/java/com/distelli/europa/EuropaVersion.java
-#	mvn -q -DincludeScope=runtime dependency:copy-dependencies package assembly:single
+	mvn -q -DincludeScope=runtime dependency:copy-dependencies package assembly:single
 
 show-deps:
 	mvn dependency:tree
