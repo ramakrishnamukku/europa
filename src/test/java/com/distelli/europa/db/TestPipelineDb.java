@@ -66,6 +66,7 @@ public class TestPipelineDb {
         String domain = UUID.randomUUID().toString();
         Pipeline pipeline = Pipeline.builder()
             .name("super-pipes")
+            .domain(domain)
             .components(
                 Arrays.asList(
                     PCCopyToRepository.builder()
