@@ -310,16 +310,8 @@ export function removePipeline() {
     }, () => {
       RAjax.POST.call(this, 'RemovePipeline', {}, postData)
         .then(res => {
-          this.setState({
-            pipelinesStore: GR.modifyProperty(this.state.pipelinesStore, {
-              pipelines: res,
-              removePipelineXHRError: false,
-              removePipelineXHR: false,
-            })
-          }, () => {
-            this.context.router.push('/pipelines')
-            resetSinglePipelineState.call(this)
-          });
+          resetSinglePipelineState.call(this)
+          this.context.router.push('/pipelines')
         })
         .catch(err => {
           this.setState({
