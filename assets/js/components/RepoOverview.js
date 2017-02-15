@@ -75,11 +75,11 @@ export default class RepoOverview extends Component {
 		if(NPECheck(this.props, 'repoDetails/isOverviewModified', false)) {
 			return(
 				<div className="FlexRow ButtonContainer">
+					<Btn text="Save Changes"
+					 	 onClick={() => this.saveRepoOverview()}/>
 					<Btn className="Btn Cancel"
 					     text="Discard Changes"
 					 	 onClick={() => this.context.actions.discardRepoOverviewChanges()}/>
-					<Btn text="Save Changes"
-					 	 onClick={() => this.saveRepoOverview()}/>
 				</div>
 			);
 		}
