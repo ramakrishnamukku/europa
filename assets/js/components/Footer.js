@@ -37,7 +37,8 @@ export default class Footer extends Component {
 	render(){
 		return (
 			<div className="Footer">
-				<h2>We simplify and expedite development operations.</h2>
+				<img className="Distelli" src='/public/images/distelli-mark.svg' />
+				<h2>Automation for software teams</h2>
 				{this.renderLogos()}
 			</div>
 		);
