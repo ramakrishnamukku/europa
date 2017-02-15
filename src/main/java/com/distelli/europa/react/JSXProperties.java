@@ -3,6 +3,7 @@ package com.distelli.europa.react;
 import java.net.InetAddress;
 import javax.inject.Inject;
 
+import com.distelli.europa.EuropaVersion;
 import com.distelli.europa.models.DnsSettings;
 import com.distelli.webserver.*;
 
@@ -28,5 +29,10 @@ public class JSXProperties
         if(_dnsSettings == null)
             return null;
         return _dnsSettings.getDnsName();
+    }
+
+    public String getVersion()
+    {
+        return EuropaVersion.VERSION;
     }
 }

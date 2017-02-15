@@ -275,6 +275,7 @@ public class PipelineDb extends BaseDb
     }
 
     public Pipeline getPipeline(String pipelineId) {
+        pipelineId = pipelineId.toLowerCase();
         Pipeline result = null;
 
         List<PipelineItem> items = new ArrayList<>();
@@ -297,6 +298,7 @@ public class PipelineDb extends BaseDb
     }
 
     public void setContainerRepo(String pipelineId, String domain, String containerRepoId) {
+        pipelineId = pipelineId.toLowerCase();
         try {
             _main.updateItem(pipelineId, CID_FOR_PIPELINE)
                 .set("dom", domain)
@@ -311,6 +313,7 @@ public class PipelineDb extends BaseDb
     // to make this component come first.
     public void addPipelineComponent(String pipelineId, PipelineComponent component, String beforeComponentId) {
         if ( null == pipelineId ) throw new NullPointerException("pipelineId must not be null");
+        pipelineId = pipelineId.toLowerCase();
         Pipeline pipeline = new Pipeline();
         pipeline.setId(pipelineId);
         long idx = allocateIdxBefore(pipelineId, beforeComponentId);
@@ -319,6 +322,7 @@ public class PipelineDb extends BaseDb
     }
 
     public void movePipelineComponent(String pipelineId, String componentId, String beforeComponentId) {
+        pipelineId = pipelineId.toLowerCase();
         long idx = allocateIdxBefore(pipelineId, beforeComponentId);
         try {
             _main.updateItem(pipelineId, componentId)
@@ -330,10 +334,12 @@ public class PipelineDb extends BaseDb
     }
 
     public void removePipelineComponent(String pipelineId, String pipelineComponentId) {
+        pipelineId = pipelineId.toLowerCase();
         _main.deleteItem(pipelineId, pipelineComponentId);
     }
 
     public void removePipeline(String pipelineId) {
+        pipelineId = pipelineId.toLowerCase();
         for ( PageIterator it : new PageIterator().backward() ) {
             for ( Map item : _main.queryItems(pipelineId, it).list(Arrays.asList("cid"), Map.class) ) {
                 String componentId = (String)item.get("cid");
