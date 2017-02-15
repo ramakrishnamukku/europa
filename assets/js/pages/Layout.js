@@ -160,12 +160,10 @@ export default class Layout extends Component {
 			</nav>
 		);
 	}
-	renderFooter(){
-		if(NPECheck(this.props, 'location/pathname', '') == '/') {
-			return (
-				<Footer />
-			);
-		}
+	renderFooter(){	
+		return (
+			<Footer />
+		);
 	}
 	render() {
 		let pageContainerClassName = 'PageContainer';
@@ -174,14 +172,17 @@ export default class Layout extends Component {
 
 
 		return (
-			<div className={pageContainerClassName}>
-				{this.renderNav()}
-				<div className="PageContent">
-					<div className="MaxWidthContainer">
-						{React.cloneElement(this.props.children, {...this.state}, null)}
-						<ReactTooltip id="ToolTipBottom" place="top" type="dark" effect="float"/>
-						<ReactTooltip id="ToolTipTop" place="top" type="dark" effect="float"/>
+			<div style={{position: 'relative', height: '100%'}}>
+				<div className={pageContainerClassName} style={{minHeight: '100%', position: 'relative'}}>
+					{this.renderNav()}
+					<div className="PageContent">
+						<div className="MaxWidthContainer">
+							{React.cloneElement(this.props.children, {...this.state}, null)}
+							<ReactTooltip id="ToolTipBottom" place="top" type="dark" effect="float"/>
+							<ReactTooltip id="ToolTipTop" place="top" type="dark" effect="float"/>
+						</div>
 					</div>
+					
 				</div>
 				{this.renderFooter()}
 			</div>

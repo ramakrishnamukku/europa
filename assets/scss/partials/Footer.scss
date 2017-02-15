@@ -1,5 +1,40 @@
 .Footer {
     position: relative;
+    height: 45px;
+    width: 100%;
+    background-color: #E6E7E8;
+    bottom: 0px;
+    font-size: 0.6875rem;
+    font-weight: 300;
+
+
+
+    .FooterInside {
+        max-width: 1080px;
+        position: relative;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: row;
+        height: 100%;
+    }
+
+    .Version {
+        flex: 1;
+        color: $grey;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+
+        span {
+            font-weight: 600;
+        }
+    }
+}
+
+
+.LogoFooter {
+    position: relative;
     bottom: 0px;
     width: 100%;
     display: flex;

@@ -4,6 +4,7 @@
 
 import React, { Component, PropTypes } from 'react'
 import {Link} from 'react-router'
+import NPECheck from './../util/NPECheck'
 
 export default class Footer extends Component {
 	constructor(props) {
@@ -34,14 +35,39 @@ export default class Footer extends Component {
 			</div>
 		);
 	}
-	render(){
+	logoFooter(){
 		return (
-			<div className="Footer">
+			<div className="LogoFooter">
 				<img className="Distelli" src='/public/images/distelli-mark.svg' />
 				<h2>Automation for software teams</h2>
 				{this.renderLogos()}
 			</div>
 		);
+	}
+	footer(){
+		let europa;
+
+		if(this.props.requester) {
+			europa = (this.props.isEnterprise) ? 'Enterprise' : 'Premium';
+		} else {
+			europa = 'Community';
+		}
+		return (
+			<div className="Footer">
+				<div className="FooterInside">
+					<div className="Flex1"></div>
+					<div className="Flex1"></div>
+					<div className="Version"><span>Europa&nbsp;</span> {europa} - Version {PAGE_PROPS.version || 'Version Unknown'}</div>
+				</div>
+			</div>
+		);
+	}
+	render(){
+		if(NPECheck(this.props, 'location/pathname', '') == '/') {
+			return this.logoFooter();
+		} else {
+			return this.footer();
+		}
 	}
 }
 
