@@ -63,7 +63,9 @@ export default class Footer extends Component {
 		);
 	}
 	render(){
-		if(window.location.pathname == '/' || !this.props.isLoggedIn) {
+		console.log(this.props);
+
+		if(window.location.pathname == '/' || typeof this.props.isLoggedIn != 'undefined' && !this.props.isLoggedIn) {
 			return this.logoFooter();
 		} else {
 			return this.footer();
