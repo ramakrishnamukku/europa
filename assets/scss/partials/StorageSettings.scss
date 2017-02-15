@@ -4,13 +4,14 @@
 
 .StorageSettings {
     position: relative;
-    width: 635px;
+    max-width: 850px;
     margin: 2rem auto 1rem;
     background-color: white;
     height: auto;
     padding: 14px;
     display: flex;
     flex-direction: column;
+    margin-top: 0px;
 
     .Title {
         color: $teal;
@@ -22,5 +23,11 @@
 
     .InputRow {
     	margin-bottom: 0.5rem;
+        display: flex;
+        flex-direction: column;
+
+        label {
+            margin-bottom: 5px;
+        }
     }
 }

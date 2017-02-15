@@ -137,7 +137,9 @@ export default class StorageSettings extends Component {
 		}
 
 		let readOnly = {};
-		let label = inputConfig.label;
+		let label = [
+			<label key={1} style={(!inputConfig.editableOnceSet) ? {color: '#808285'} : {}}>{inputConfig.label}</label>
+		];
 		let className = "BlueBorder FullWidth";
 
 		if(this.state.isEdit) {
@@ -150,13 +152,18 @@ export default class StorageSettings extends Component {
 					disabled: 'disabled'
 				};
 
-				label += '  (This value cannot be changed)';
+				label.push(
+					<label key={2} style={{fontStyle: 'italic', color: '#808285'}}>&nbsp;(This value cannot be changed)</label>
+				);
+
 			}
 		}
 
 		return (
 			<div key={index} className="InputRow">
-				<label>{label}</label>
+				<div className="FlexRow">
+					{label}
+				</div>
 				<input className={className}
 				       value={NPECheck(this.props, `settings/storage/storageCreds/${inputConfig.key}`, '')}
 				       onChange={(e) => this.context.actions.updateStorageCreds(inputConfig.key, e)} 
@@ -171,7 +178,9 @@ export default class StorageSettings extends Component {
 		let regions = AWSRegions;
 		
 		let readOnly = false
-		let label = inputConfig.label;
+		let label = [
+			<label key={1} style={(this.state.isEdit) ? {color: '#808285'} : {}}>{inputConfig.label}</label>
+		];
 		let className = "BlueBorder FullWidth";
 
 		if(this.state.isEdit) {
@@ -179,13 +188,17 @@ export default class StorageSettings extends Component {
 
 			if(!inputConfig.editableOnceSet) {
 				readOnly = true;
-				label += '  (This value cannot be changed)';
+				label.push(
+					<label key={2} style={{fontStyle: 'italic', color: '#808285'}}>&nbsp;(This value cannot be changed)</label>
+				);
 			}
 		}
 
 		return (
-			<div>
-				<label>{label}</label>
+			<div className="FlexColumn">
+				<div className="FlexRow">
+					{label}
+				</div>
 				<Dropdown isOpen={NPECheck(this.props, 'settings/storage/regionDropDownIsOpen', false)}
 						  toggleOpen={() => this.context.actions.toggleSelectRegionForStorageCredentialsDropDown()}
 						  listItems={regions} 

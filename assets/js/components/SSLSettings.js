@@ -182,10 +182,8 @@ export default class SSLSettings extends Component {
 	render(){
 		return (
 			<div className="ContentContainer">
-		        <div className="PageHeader">
-		          <h2>
-		             SSL Settings
-		          </h2>
+		        <div className="SSLHeader">
+		             SSL Configuration
 		        </div>
 		        {this.renderEnableStatus()}
 		        <div className="SSLSettings">
