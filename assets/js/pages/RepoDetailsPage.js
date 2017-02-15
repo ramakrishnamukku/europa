@@ -14,7 +14,7 @@ import RepoDetailsContent from './../components/RepoDetailsContent'
 import ControlRoom from './../components/ControlRoom'
 import BtnGroup from './../components/BtnGroup'
 import Msg from './../components/Msg'
-
+import NotFound from './../pages/NotFound'
 import AccessDenied from './../components/AccessDenied';
 
 export default class RepoDetailsPage extends Component {
@@ -35,7 +35,8 @@ export default class RepoDetailsPage extends Component {
 			return new Promise((resolve, reject) => {
 				let activeRepo = this.props.reposNameMap[this.props.params.repoName];
 
-				resolve(activeRepo.id);
+
+				resolve((activeRepo) ? activeRepo.id : null);
 			});
 		})
 		.then((repoId) => {
@@ -47,7 +48,8 @@ export default class RepoDetailsPage extends Component {
 			return Promise.all(repoDeps);
 		})
 		.then(this.context.actions.toggleRepoDetailsPageXHR.bind(this, false))
-		.catch(() => {
+		.catch((err) => {
+			console.error(err);
 			this.context.actions.toggleRepoDetailsPageXHR(false);
 		});
 	}
@@ -192,6 +194,12 @@ export default class RepoDetailsPage extends Component {
 		if(isBlocked) {
 			return (
 				<AccessDenied />
+			);
+		}
+
+		if(NPECheck(this.props, 'repoDetails/noRepo', false)) {
+			return (
+				<NotFound {...this.props}/>
 			);
 		}
 

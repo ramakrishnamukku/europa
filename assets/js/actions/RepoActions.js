@@ -466,6 +466,7 @@ export function repoDetailsState() {
   return {
     isBlocked: false,
     activeRepo: {},
+    noRepo: false,
     repoOverviewContent: '',
     repoOverviewContentOriginal: '',
     isOverviewModified: false,
@@ -531,12 +532,21 @@ export function toggleRepoDetailsPageXHR(loading) {
 
 export function setActiveRepoDetails(repoId) {
   return new Promise((resolve, reject) => {
+    let newState = {}
     let repo = this.state.reposMap[repoId];
 
-    this.setState({
-      repoDetails: GA.modifyProperty(this.state.repoDetails, {
+    if(!repo || !repo.id) {
+      newState = {
+        noRepo: true
+      };
+    } else {
+      newState = {
         activeRepo: repo
-      })
+      };
+    }
+
+    this.setState({
+      repoDetails: GA.modifyProperty(this.state.repoDetails, newState)
     }, () => resolve());
   });
 }
