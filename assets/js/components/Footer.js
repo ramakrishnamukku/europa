@@ -63,7 +63,7 @@ export default class Footer extends Component {
 		);
 	}
 	render(){
-		if(NPECheck(this.props, 'location/pathname', '') == '/') {
+		if(window.location.pathname == '/' || !this.props.isLoggedIn) {
 			return this.logoFooter();
 		} else {
 			return this.footer();
