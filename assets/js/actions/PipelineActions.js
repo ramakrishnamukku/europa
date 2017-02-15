@@ -282,7 +282,7 @@ export function createPipeline() {
       RAjax.POST.call(this, 'NewPipeline', {}, newPipeline)
         .then(res => {
           // Redirect to the pipeline
-          this.context.router.push(`/pipelines/${res.id}`);
+          this.context.router.push(`/pipelines/${res.name}`);
           resolve();
         })
         .catch(err => {

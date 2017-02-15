@@ -14,7 +14,8 @@ export default class PipelineStageItem extends Component {
       pipelineComponentObj: this.props.pipelineComponentObj
     };
   }
-  renderTrigger() {
+  renderTrigger(repo) {
+    if (!repo) return;
     if (this.props.empty) return;
     // Don't render for the last stage
     if (this.props.pipelineStore.pipeline.components.length - 1 == this.props.idx) return;
@@ -41,14 +42,14 @@ export default class PipelineStageItem extends Component {
         <div className="pipeline-grey-wrap">
           <div className="stage-destination-wrap">
             <div className="left-icon-col" style={ {background: "#2E5597"} }>
-              <img src={RegistryProviderIcons(NPECheck(repo, 'provider', "DELETED"), true)} />
+              <img src={RegistryProviderIcons(NPECheck(repo || {}, 'provider', "DELETED"), true)} />
             </div>
             <div className="stage-destinations">
               { repo ? this.renderInterior(repo) : this.renderUnauthorizedInterior() }
             </div>
           </div>
         </div>
-        {this.renderTrigger()}
+        {this.renderTrigger(repo)}
       </div>
     );
   }

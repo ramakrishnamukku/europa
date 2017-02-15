@@ -20,8 +20,10 @@ export default class Pipeline extends Component {
     };
   }
   componentDidMount() {
+    let id = `${(this.props.isEnterprise) ? this.props.ctx.domain : 'd0'}:${this.props.params.pipelineId}`
+    
     this.context.actions.listRepos()
-    .then(() => this.context.actions.getPipeline(this.props.params.pipelineId))
+    .then(() => this.context.actions.getPipeline(id))
     .then(pipeline => {
       this.setState({
         loading: false,

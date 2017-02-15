@@ -147,12 +147,12 @@ export default class Pipelines extends Component {
         {pipes.map((pipeline, idx) => {
           return (
             <div className="PipelinesListItem"
-                 key={pipeline.id + idx}>
+                 key={pipeline.id + idx}
+                 onClick={() => this.context.router.push(`/pipelines/${pipeline.name}`)}>
               <span>
                 <i className="icon-dis-pipeline" />
               </span>
-              <span onClick={ () => this.context.router.push(`/pipelines/${pipeline.id}`) }
-                    style={ { color: "#1DAFE9"} }>
+              <span style={ { color: "#1DAFE9"} }>
                 {pipeline.name}
               </span>
               <span>
