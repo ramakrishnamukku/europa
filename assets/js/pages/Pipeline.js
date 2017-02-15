@@ -15,7 +15,6 @@ export default class Pipeline extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      repoMapById: {},
       loading: true,
       timeoutInterval: null,
     };
@@ -26,13 +25,7 @@ export default class Pipeline extends Component {
     .then(pipeline => {
       this.setState({
         loading: false,
-        repoMapById: this.props.repos.reduce((map, repo) => {
-          map[repo.id] = repo;
-          return map;
-        }, {} )
-      })
-
-      this.pollForUpdates();
+      } , () => this.pollForUpdates() );
     })
     .catch((err) => {
       console.error(err);
@@ -48,8 +41,8 @@ export default class Pipeline extends Component {
   pollForUpdates() {
     this.setState({
       timeoutInterval: setTimeout(function() {
-        this.context.actions.getPipeline(this.props.params.pipelineId)
-        .then(pipeline => this.pollForUpdates());
+        this.context.actions.listRepos()
+          .then(pipeline => this.pollForUpdates());
       }.bind(this), 25000)
     })
   }
@@ -86,8 +79,8 @@ export default class Pipeline extends Component {
     }
   }
   renderPipeline() {
-    if (!this.state.repoMapById) return;
-    let repoContainerPipeline = this.state.repoMapById[this.props.pipelineStore.pipeline.containerRepoId]
+    if (!this.props.reposMap) return;
+    let repoContainerPipeline = this.props.reposMap[this.props.pipelineStore.pipeline.containerRepoId]
 
     return (
       <div>
@@ -100,7 +93,7 @@ export default class Pipeline extends Component {
                                key={component.id}
                                idx={idx}
                                pipelineComponentObj={component}
-                               repo={this.state.repoMapById[component.destinationContainerRepoId]} />
+                               repo={this.props.reposMap[component.destinationContainerRepoId]} />
           );
         })}
         <div className="FlexRow JustifyCenter AlignCenter">
