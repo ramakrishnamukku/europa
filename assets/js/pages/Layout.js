@@ -170,10 +170,9 @@ export default class Layout extends Component {
 
 		if((NPECheck(this.props, 'location/pathname', '') == '/')) pageContainerClassName += ' Dark';
 
-
 		return (
-			<div style={{position: 'relative', height: '100%'}}>
-				<div className={pageContainerClassName} style={{minHeight: '100%', position: 'relative'}}>
+			<div className="TopLevelContainer">
+				<div className={pageContainerClassName}>
 					{this.renderNav()}
 					<div className="PageContent">
 						<div className="MaxWidthContainer">
