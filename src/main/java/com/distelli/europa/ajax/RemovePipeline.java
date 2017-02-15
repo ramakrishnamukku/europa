@@ -25,7 +25,7 @@ import com.distelli.europa.util.PermissionCheck;
 public class RemovePipeline extends AjaxHelper<EuropaRequestContext>
 {
     @Inject
-    private PipelineDb _db;
+    protected PipelineDb _db;
     @Inject
     protected PermissionCheck _permissionCheck;
 
@@ -39,9 +39,6 @@ public class RemovePipeline extends AjaxHelper<EuropaRequestContext>
         String domain = requestContext.getOwnerDomain();
         String pipelineId = ajaxRequest.getParam("pipelineId", true);
         _permissionCheck.check(ajaxRequest.getOperation(), requestContext, pipelineId);
-
-        PageIterator pageIterator = new PageIterator().pageSize(100);
-
         _db.removePipeline(pipelineId);
         return JsonSuccess.Success;
     }
