@@ -18,7 +18,7 @@ export default class NotFound extends Component {
 		return (
 			<div className="ContentContainer">
 				<div className="NoContent" style={{marginTop: '42px'}}>
-					<h3>Page Not Found.</h3>
+					<h3>{this.props.message}</h3>
 					<Btn onClick={() => this.toHome()} 
 						 className="LargeBlueButton"
 						 text="Take Me Home" 
@@ -29,6 +29,14 @@ export default class NotFound extends Component {
 		);
 	}
 }
+
+NotFound.propTypes = {
+	messsage: PropTypes.string
+};
+
+NotFound.defaultProps = {
+	message: 'Page Not Found.'
+};
 
 NotFound.childContextTypes = {
     actions: PropTypes.object,

@@ -199,7 +199,7 @@ export default class RepoDetailsPage extends Component {
 
 		if(NPECheck(this.props, 'repoDetails/noRepo', false)) {
 			return (
-				<NotFound {...this.props}/>
+				<NotFound {...this.props} message="Repository Not Found."/>
 			);
 		}
 

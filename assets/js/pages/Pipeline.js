@@ -4,6 +4,7 @@ import Btn from './../components/Btn'
 import Loader from './../components/Loader'
 import BtnGroup from './../components/BtnGroup'
 import NPECheck from './../util/NPECheck'
+import NotFound from './../pages/NotFound'
 import ControlRoom from './../components/ControlRoom'
 import AccessDenied from './../components/AccessDenied'
 import CenteredConfirm from './../components/CenteredConfirm'
@@ -200,6 +201,13 @@ export default class Pipeline extends Component {
         <AccessDenied />
       );
     }
+
+    if(NPECheck(this.props, 'pipelineStore/noPipeline', false)) {
+      return (
+        <NotFound {...this.props} message="Pipeline Not Found."/> 
+      );
+    }
+
 
     if (this.state.loading) {
       return (

@@ -34,6 +34,7 @@ export function pipelinesState() {
 export function singlePipelineState() {
   return {
     isBlocked: false,
+    noPipeline: false,
     pipeline: null,
     repoConnectTemplate: null,
     section: null,
@@ -205,7 +206,7 @@ export function getPipeline(pipelineId) {
               pipeline: res,
               getPipelineXHR: false,
             })
-          }, () => resolve(res) );
+          }, () => resolve(res));
         })
         .catch(err => {
           let errorMsg = NPECheck(err, 'error/message', 'There was an error loading your pipeline');
@@ -214,11 +215,21 @@ export function getPipeline(pipelineId) {
               pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
                 isBlocked: true,
                 getPipelineXHR: false,
+                noPipeline: false,
+              })
+            }, () => reject());
+          } else if (errorMsg == 'The specified Pipeline was not found') {
+            this.setState({
+              pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
+                noPipeline: true,
+                isBlocked: false,
+                getPipelineXHR: false,
               })
             }, () => reject());
           } else {
             this.setState({
               pipelineStore: GR.modifyProperty(this.state.pipelineStore, {
+                noPipeline: false,
                 isBlocked: false,
                 getPipelineXHR: false,
               })
