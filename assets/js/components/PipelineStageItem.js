@@ -35,15 +35,16 @@ export default class PipelineStageItem extends Component {
     }
   }
   renderStage(repo) {
+    // If repo is null, the user doesn't have access
     return (
       <div className="pipeline-stage-item">
         <div className="pipeline-grey-wrap">
           <div className="stage-destination-wrap">
             <div className="left-icon-col" style={ {background: "#2E5597"} }>
-              <img src={RegistryProviderIcons(repo.provider, true)} />
+              <img src={RegistryProviderIcons(NPECheck(repo, 'provider', "DELETED"), true)} />
             </div>
             <div className="stage-destinations">
-              {this.renderInterior(repo)}
+              { repo ? this.renderInterior(repo) : this.renderUnauthorizedInterior() }
             </div>
           </div>
         </div>
@@ -100,6 +101,21 @@ export default class PipelineStageItem extends Component {
       return true;
     }
     return false;
+  }
+  renderUnauthorizedInterior() {
+    return (
+      <div className="stage-destination">
+        <div className="stage-dest-interior">
+          <div className="stage-dest-details">
+            <div style={ {position: "relative"} }>
+              <span style={{color: "#E14034", fontSize: ".85rem", fontWeight: "900"}}>
+                You are not authorized to view this Repository
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
   renderInterior(repo) {
     if (this.isDeletingStage()) {

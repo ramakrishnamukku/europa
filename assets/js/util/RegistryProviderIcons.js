@@ -10,7 +10,8 @@ export default function RegistryProviderIcons(provider, useWhiteIcons=false) {
     'ECR': '/public/images/registry-icons/ecr.svg',
     'DOCKERHUB': '/public/images/registry-icons/dockerhub.svg',
     'PRIVATE': '/public/images/registry-icons/private.svg',
-    'EUROPA': '/public/images/registry-icons/europa.svg'
+    'EUROPA': '/public/images/registry-icons/europa.svg',
+    "DELETED": '/public/images/registry-icons/europa.svg'
   };
 
   let whiteIcons = {
@@ -18,7 +19,8 @@ export default function RegistryProviderIcons(provider, useWhiteIcons=false) {
     'ECR': '/public/images/registry-icons/ecr-white.svg',
     'DOCKERHUB': '/public/images/registry-icons/dockerhub-white.svg',
     'PRIVATE': '/public/images/registry-icons/private-white.svg',
-    'EUROPA': '/public/images/registry-icons/europa.svg'
+    'EUROPA': '/public/images/registry-icons/europa.svg',
+    "DELETED": '/public/images/registry-icons/europa.svg'
   };
 
   if (useWhiteIcons) {
