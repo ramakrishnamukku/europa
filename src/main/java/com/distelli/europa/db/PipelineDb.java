@@ -238,7 +238,13 @@ public class PipelineDb extends BaseDb
 
     // Populates the id fields.
     public void createPipeline(Pipeline pipeline) {
-        pipeline.setId(CompactUUID.randomUUID().toString());
+        String pipelineId = String.format("%s:%s",
+                                          pipeline.getDomain().toLowerCase(),
+                                          pipeline.getName().toLowerCase());
+        pipeline.setId(pipelineId);
+        //First put the pipeline so that it throws if the pipeline
+        //with the same name exists
+        _main.putItemOrThrow(new PipelineItem(pipeline));
         if ( null != pipeline.getComponents() ) {
             long idx = SPACING;
             for ( PipelineComponent component : pipeline.getComponents() ) {
@@ -247,7 +253,6 @@ public class PipelineDb extends BaseDb
                 idx += SPACING;
             }
         }
-        _main.putItemOrThrow(new PipelineItem(pipeline));
     }
 
     // NOTE: this does NOT include the PipelineComponents!

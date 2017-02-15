@@ -56,10 +56,9 @@ public class CreateLocalRepo extends AjaxHelper<EuropaRequestContext>
                                           400));
         Matcher m = repoNamePattern.matcher(repoName);
         if(!m.matches())
-            throw(new AjaxClientException("The Repo Name is invalid. It must match regex [a-zA-Z_.-]",
+            throw(new AjaxClientException("The Repo Name is invalid. It must match regex [a-zA-Z0-9_.-]",
                                           AjaxErrors.Codes.BadRepoName,
                                           400));
-
         repo = ContainerRepo.builder()
             .domain(ownerDomain)
             .name(repoName)

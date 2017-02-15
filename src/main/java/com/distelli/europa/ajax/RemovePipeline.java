@@ -43,7 +43,6 @@ public class RemovePipeline extends AjaxHelper<EuropaRequestContext>
         PageIterator pageIterator = new PageIterator().pageSize(100);
 
         _db.removePipeline(pipelineId);
-
-        return _db.listByDomain(domain, pageIterator);
+        return JsonSuccess.Success;
     }
 }
