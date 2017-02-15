@@ -13,6 +13,7 @@ import NPECheck from './../util/NPECheck'
 import ConvertTimeFriendly from './../util/ConvertTimeFriendly'
 import ConvertTimeUTC from './../util/ConvertTimeUTC'
 import CopyToClipboard from './../util/CopyToClipboard'
+import { getRepoRedirect } from './../util/RedirectHelper'
 import CreateLocalRepo from './../pages/CreateLocalRepo'
 import ControlRoom from './../components/ControlRoom'
 
@@ -46,7 +47,7 @@ export default class Repositories extends Component {
 	}
 	renderRepoItem(repo, index){
 		return (
-			<Link to={`/repository/${repo.id}`}  key={index}>
+			<Link to={`/repository/${getRepoRedirect(repo)}`}  key={index}>
 			<div className="Flex1 RepoItem FlexColumn">
 				<div className="Inside FlexRow">
 					<img className="ProviderIcon"

@@ -50,9 +50,15 @@ export function listRepos(repoId) {
             return cur;
           }, {});
 
+          let reposNameMap = res.reduce((cur, repo) => {
+            cur[(repo.local) ? repo.name : repo.id] = repo  
+            return cur;
+          }, {});
+
           this.setState({
             repos: res,
             reposMap: reposMap,
+            reposNameMap: reposNameMap,
             reposXHR: false
           }, () => resolve());
         })

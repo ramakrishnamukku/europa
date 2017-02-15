@@ -20,8 +20,11 @@ import AccessDenied from './../components/AccessDenied';
 export default class RepoDetailsPage extends Component {
 	constructor(props) {
 		super(props);
+
+		let activeRepo = this.props.reposNameMap[this.props.params.repoName];
+
 		this.state = {
-			repoId: this.props.params.repoId
+			repoId: (activeRepo && activeRepo.id) ? activeRepo.id : this.props.repoName
 		};
 	}
 	componentDidMount() {
@@ -29,9 +32,16 @@ export default class RepoDetailsPage extends Component {
 		this.context.actions.toggleRepoDetailsPageXHR(true);
 		this.context.actions.listRepos(this.state.repoId)
 		.then(() => {
+			return new Promise((resolve, reject) => {
+				let activeRepo = this.props.reposNameMap[this.props.params.repoName];
+
+				resolve(activeRepo.id);
+			});
+		})
+		.then((repoId) => {
 			let repoDeps = [
-				this.context.actions.setActiveRepoDetails(this.state.repoId),
-				this.context.actions.getRepoOverview(this.state.repoId)
+				this.context.actions.setActiveRepoDetails(repoId),
+				this.context.actions.getRepoOverview(repoId)
 			];
 
 			return Promise.all(repoDeps);
