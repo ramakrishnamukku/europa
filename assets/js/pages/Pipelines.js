@@ -21,6 +21,11 @@ export default class Pipelines extends Component {
       this.refs['createPipeline'].focus();
     }
   }
+  keyPress(e) {
+    if(e.keyCode == 13) {
+      this.context.actions.createPipeline();
+    }
+  }
   renderNoPipelines() {
     return (
       <div className="ContentContainer">
@@ -68,7 +73,7 @@ export default class Pipelines extends Component {
   }
   newPipelineForm() {
     return (
-      <div>
+      <div onKeyDown={(e) => this.keyPress(e)}>
         <div className="CR_Header">
           <span className="CR_HeaderTitle">
             New Pipeline
@@ -123,7 +128,8 @@ export default class Pipelines extends Component {
     if (error) {
       return (
         <Msg text={error}
-             close={() => this.context.actions.clearPipelinesXHRErrors()} />
+             close={() => this.context.actions.clearPipelinesXHRErrors()} 
+             style={{marginTop: '1rem'}}/>
       );
     }
   }
