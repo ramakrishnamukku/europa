@@ -12,10 +12,12 @@ import {
   notifState,
   isAddNotificationValid
 } from './NotificationActions'
-
 import {
   newRegistryState
 } from './RegistryActions'
+import {
+  getRepoRedirect
+} from './../util/RedirectHelper'
 
 // *************************************************
 // General Repo Actions
@@ -51,7 +53,7 @@ export function listRepos(repoId) {
           }, {});
 
           let reposNameMap = res.reduce((cur, repo) => {
-            cur[(repo.local) ? repo.name : repo.id] = repo  
+            cur[getRepoRedirect(repo)] = repo
             return cur;
           }, {});
 
@@ -147,7 +149,7 @@ export function clearCreateLocalRepoErrors() {
   });
 }
 
-export function toggleCreateNewLocalRepo(){
+export function toggleCreateNewLocalRepo() {
   this.setState({
     addRepo: GA.modifyProperty(this.state.addRepo, {
       isCreatingLocalRepo: !NPECheck(this.state, 'addRepo/isCreatingLocalRepo', true)
@@ -282,7 +284,7 @@ let listReposInRegistryDebounced = Debounce(function() {
   }
 }, 200);
 
-export function clearReposInRegistry(){
+export function clearReposInRegistry() {
   return new Promise((resolve, reject) => {
     this.setState({
       addRepo: GA.modifyProperty(this.state.addRepo, {
@@ -535,7 +537,7 @@ export function setActiveRepoDetails(repoId) {
     let newState = {}
     let repo = this.state.reposMap[repoId];
 
-    if(!repo || !repo.id) {
+    if (!repo || !repo.id) {
       newState = {
         noRepo: true
       };

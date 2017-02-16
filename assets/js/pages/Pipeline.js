@@ -10,7 +10,6 @@ import AccessDenied from './../components/AccessDenied'
 import CenteredConfirm from './../components/CenteredConfirm'
 import PipelineStageItem from './../components/PipelineStageItem'
 import PipelineConnectRepository from './../components/PipelineConnectRepository'
-import * as GR from './../reducers/GeneralReducers'
 
 export default class Pipeline extends Component {
   constructor(props) {

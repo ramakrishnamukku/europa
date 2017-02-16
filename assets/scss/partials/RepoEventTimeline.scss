@@ -51,7 +51,6 @@
                 align-items: center;
             }
 
-
             i.icon-dis-right, i.icon-dis-left {
                 color: $light-blue;
                 font-size: 1.2rem;
@@ -65,6 +64,20 @@
                 &:active {
                     color: darken($light-blue, 10%);
                     top: 1px;
+                }
+            }
+
+            i.icon-dis-right.disabled, i.icon-dis-left.disabled {            
+                color: $grey;
+
+                &:hover {
+                    color: $grey;
+                    cursor: inherit;
+                }
+
+                &:active {
+                    color: $grey;
+                    top: 0px;
                 }
             }
         }

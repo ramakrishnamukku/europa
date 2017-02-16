@@ -73,15 +73,15 @@ export default class RepoDetailsContent extends Component {
 						<i className="icon icon-dis-waiting rotating" data-tip="Polling for updates" data-for="ToolTipTop"/>
 					);
 				} else {
+					let leftClassName = (NPECheck(this.props, 'repoDetails/eventsPrevMarker', false)) ? 'icon icon-dis-left' : 'icon icon-dis-left disabled';
+					let rightClassName = (NPECheck(this.props, 'repoDetails/eventsNextMarker', false)) ? 'icon icon-dis-right' : 'icon icon-dis-right disabled';
+					
 					return (
 						<div className="FlexRow">
-							<i className="icon icon-dis-left" 
-							   style={(NPECheck(this.props, 'repoDetails/eventsPrevMarker', false)) ? {} : {display: 'none'}} 
-							   onClick={() => this.context.actions.paginateEventsBackward()} />
-
-							<i className="icon icon-dis-right" 
-							   style={(NPECheck(this.props, 'repoDetails/eventsNextMarker', false)) ? {} : {display: 'none'}} 
-							   onClick={() => this.context.actions.paginateEventsForward()} />
+							<i className={leftClassName} 
+							   onClick={(NPECheck(this.props, 'repoDetails/eventsPrevMarker', false)) ? () => this.context.actions.paginateEventsBackward() : () => {}} />
+							<i className={rightClassName} 
+							   onClick={(NPECheck(this.props, 'repoDetails/eventsNextMarker', false)) ? () => this.context.actions.paginateEventsForward() : () => {}} />
 						</div>
 					);
 				}
@@ -93,15 +93,15 @@ export default class RepoDetailsContent extends Component {
 						<i className="icon icon-dis-waiting rotating" data-tip="Polling for updates" data-for="ToolTipTop"/>
 					);
 				} else {
+					let leftClassName = (NPECheck(this.props, 'repoDetails/manifestsPrevMarker', false)) ? 'icon icon-dis-left' : 'icon icon-dis-left disabled';
+					let rightClassName = (NPECheck(this.props, 'repoDetails/manifestsNextMarker', false)) ? 'icon icon-dis-right' : 'icon icon-dis-right disabled';
+
 					return (
 						<div className="FlexRow">
-							<i className="icon icon-dis-left" 
-							   style={(NPECheck(this.props, 'repoDetails/manifestsPrevMarker', false)) ? {} : {display: 'none'}} 
-							   onClick={() => this.context.actions.paginateManifestsBackward()} />
-
-							<i className="icon icon-dis-right" 
-							   style={(NPECheck(this.props, 'repoDetails/manifestsNextMarker', false)) ? {} : {display: 'none'}} 
-							   onClick={() => this.context.actions.paginateManifestsForward()} />
+							<i className={leftClassName} 
+							   onClick={(NPECheck(this.props, 'repoDetails/manifestsPrevMarker', false)) ? () => this.context.actions.paginateManifestsBackward() : () => {}} />
+							<i className={rightClassName} 
+							   onClick={(NPECheck(this.props, 'repoDetails/manifestsNextMarker', false)) ? () => this.context.actions.paginateManifestsForward() : () => {}} />
 						</div>
 					);
 				}

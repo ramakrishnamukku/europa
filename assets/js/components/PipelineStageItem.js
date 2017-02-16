@@ -5,6 +5,9 @@ import CenteredConfirm from './../components/CenteredConfirm'
 import Loader from './../components/Loader'
 import NPECheck from './../util/NPECheck'
 import RegistryProviderIcons from './../util/RegistryProviderIcons'
+import {
+  getRepoRedirect
+} from './../util/RedirectHelper'
 
 export default class PipelineStageItem extends Component {
   constructor(props) {
@@ -154,7 +157,7 @@ export default class PipelineStageItem extends Component {
           <div className="stage-dest-details">
             <div style={ {position: "relative", top: "2px"} }>
               <span style={{color: "#1DAFE9", fontSize: ".75rem", fontWeight: "900"}}>
-                <Link to={`/repository/${repo.id}`}>
+                <Link to={`/repository/${getRepoRedirect(repo)}`}>
                   {repo.name}
                 </Link>
               </span>
