@@ -30,6 +30,11 @@ export default class CreateLocalRepo extends Component {
 		})
 		.catch(() => {});
 	}
+	keyPress(e) {
+		if(e.keyCode == 13) {
+			this.createLocalRepo();
+		}
+	}
 	renderRepoNameInput(){
 		return (
 			<div className="FlexColumn">
@@ -64,7 +69,8 @@ export default class CreateLocalRepo extends Component {
 		if(error) {
 			return (
 				<Msg text={error} 
-			     close={() => this.context.actions.clearCreateLocalRepoErrors()}/>
+			         close={() => this.context.actions.clearCreateLocalRepoErrors()}
+			         style={{marginTop: '1rem'}}/>
 			);
 		}
 	}
@@ -87,7 +93,7 @@ export default class CreateLocalRepo extends Component {
 	}
 	render() {
 		return (
-			<div className="CR_BodyContent">
+			<div className="CR_BodyContent" onKeyDown={(e) => this.keyPress(e)}>
 				{this.renderRepoNameInput()}
 				{this.renderCommands()}
 			</div>
