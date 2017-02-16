@@ -55,7 +55,7 @@ public class EuropaConfiguration
         int dbPoolSize = 2;
         String dbPoolSizeStr = null;
         try {
-            dbPoolSizeStr = getEnvVar("EUROPA_DB_POOL_SIZE");
+            dbPoolSizeStr = getEnvVar("EUROPA_DB_POOL_SIZE", false);
             if(dbPoolSizeStr != null && !dbPoolSizeStr.trim().isEmpty())
                 dbPoolSize = Integer.parseInt(dbPoolSizeStr);
         } catch(Throwable t) {
@@ -73,10 +73,17 @@ public class EuropaConfiguration
 
     private static final String getEnvVar(String varName)
     {
+        return getEnvVar(varName, true);
+    }
+
+    private static final String getEnvVar(String varName, boolean required)
+    {
         String value = System.getenv(varName);
         if(value != null)
             return value;
-        throw(new IllegalStateException("Missing Env Variable: "+varName));
+        if(required)
+            throw(new IllegalStateException("Missing Env Variable: "+varName));
+        return null;
     }
 
     public static final EuropaConfiguration fromFile(File configFile)
