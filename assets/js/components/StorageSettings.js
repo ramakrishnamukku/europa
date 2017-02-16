@@ -18,6 +18,7 @@ const diskRootKey = 'osDiskRoot';
 export default class StorageSettings extends Component {
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			isEdit: !(this.props.hasOwnProperty('storage') && this.props.storage == false)
 		};
@@ -257,6 +258,8 @@ export default class StorageSettings extends Component {
 		}
 	}
 	render(){
+
+		console.log(this.state.isEdit);
 		let className = "StorageSettings";
 
 		if(this.state.isEdit) {
@@ -272,7 +275,7 @@ export default class StorageSettings extends Component {
 		}
 
 		return (
-			<div className={className}>
+			<div className={className} style={(this.state.isEdit) ? {} : {marginTop: '28px'}}>
 				<div className="Title">
 					Configure Storage
 				</div>

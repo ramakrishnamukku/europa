@@ -29,7 +29,7 @@ export default class Layout extends Component {
 	}
 	getBaseState() {
 		return {
-			storage: PAGE_PROPS.storage || {},
+			storage: PAGE_PROPS.storage,
 			dnsName: PAGE_PROPS.dnsName,
 			registries: [],
 			registriesMap: {},

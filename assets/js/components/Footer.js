@@ -57,7 +57,7 @@ export default class Footer extends Component {
 				<div className="FooterInside">
 					<div className="Flex1"></div>
 					<div className="Flex1"></div>
-					<div className="Version"><span>Europa&nbsp;</span> {europa} - Version {PAGE_PROPS.version || 'Version Unknown'}</div>
+					<div className="Version"><span>Europa&nbsp;</span> {europa} - Version {PAGE_PROPS.version || 'Unknown'}</div>
 				</div>
 			</div>
 		);
