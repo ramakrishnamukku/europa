@@ -11,7 +11,7 @@ There are three editions of Europa:
 - Europa Premium Edition (PE) includes extra features that are useful for small teams
 - Europa Enterprise Edition (EE) includes even more feautures (Teams, SAML, Service Accounts) useful for enterprises.
 
-For pricing and support for Europa PE && EE please visit https://distelli.com/europa.
+For pricing and support for Europa Premium & Enterprise Editions please visit https://distelli.com/europa.
 
 ### Getting Started
 
