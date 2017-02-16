@@ -15,9 +15,11 @@ For pricing and support for Europa PE && EE please visit https://distelli.com/eu
 
 ### Getting Started
 
+To get started with Europa Community Edition you can pull the latest image from Docker Hub:
 
+`docker pull distelli/europa:latest`
 
-Full documentation is available at https://www.distelli.com/docs/europa
+Full documentation and a getting started guide is available at https://www.distelli.com/docs/europa
 
 ### Contribute
 
