@@ -45,7 +45,7 @@ https://europa-community.slack.com
 	Issue Tracker
 	</th>
 	<td>
-	github.com/distelli/europa/issues
+	https://github.com/distelli/europa/issues
 	</td>
 </tr>
 <tr>
