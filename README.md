@@ -1,7 +1,7 @@
 # europa
 Europa is a new Container Registry that makes it easy for software teams to host docker images within their infrastructure along with a unified view of all their images stored in local and remote repositories.
 
-<img src="https://www-beta.distelli.com/images/europa/distelli-europa-cr-logo.svg" width="100px"></img>
+<img src="https://www.distelli.com/images/europa/distelli-europa-cr-logo.svg" width="100px"></img>
 https://www.distelli.com/europa
 
 ### Features & Editions
