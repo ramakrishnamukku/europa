@@ -7,6 +7,7 @@ import Registries from './../components/Registries'
 import APITokens from './../components/APITokens'
 import StorageSettings from './../components/StorageSettings'
 import SSLSettings from './../components/SSLSettings'
+import { parseQueryString } from './../util/UrlManager'
 
 let credKey = 'CREDENTIALS';
 let apiTokensKey = "API_TOKENS";
@@ -17,6 +18,12 @@ export default class Settings extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
+	}
+	componentWillMount() {
+		let section = parseQueryString(window.location).section;
+		if(section) {
+			this.context.actions.setSettingsSection(section);	
+		}
 	}
 	getSideBarItemClassName(key){
 		let section = this.props.settings.section;

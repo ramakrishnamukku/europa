@@ -6,6 +6,7 @@ import Reducers from './../reducers/AddRegistryReducers'
 import * as GA from './../reducers/GeneralReducers'
 import * as RAjax from './../util/RAjax'
 import NPECheck from './../util/NPECheck'
+import { updateUrlParams } from './../util/UrlManager'
 
 // *************************************************
 // General Settings Actions
@@ -30,7 +31,7 @@ export function setSettingsSection(section) {
     settings: GA.modifyProperty(this.state.settings, {
       section
     })
-  });
+  }, () => updateUrlParams({ section }));
 }
 
 
