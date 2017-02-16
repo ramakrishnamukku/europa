@@ -206,19 +206,16 @@ public class TasksDb extends BaseDb
     }
 
     private void startRunnableTasks() {
-        log.info("> start runnable tasks");
         List<RawTaskEntry> tasks = _tasksForMonitor
             .queryItems("#", new PageIterator().pageSize(MAX_TASKS_IN_INTERVAL))
             .list();
         // Randomly distribute the tasks over poll interval:
         for ( RawTaskEntry task : tasks ) {
-            log.info("scheduling taskId="+task.getTaskId());
             _executor.schedule(
                 () -> runTask(_monitor, task.getTaskId()),
                 ThreadLocalRandom.current().nextLong(POLL_INTERVAL_MS),
                 TimeUnit.MILLISECONDS);
         }
-        log.info("< start runnable tasks");
     }
 
     //////////////////////////////////////////////////////////////////////
