@@ -14,7 +14,7 @@ import { updateUrlParams } from './../util/UrlManager'
 
 export function settingsState() {
   return {
-    section: 'CREDENTIALS',
+    section: 'creds',
     tokens: tokensState.call(this),
     storage: storageState.call(this)
   }

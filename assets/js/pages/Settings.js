@@ -9,10 +9,10 @@ import StorageSettings from './../components/StorageSettings'
 import SSLSettings from './../components/SSLSettings'
 import { parseQueryString } from './../util/UrlManager'
 
-let credKey = 'CREDENTIALS';
-let apiTokensKey = "API_TOKENS";
-let storageKey = "STORAGE";
-let sslKey = "SSL";
+let credKey = 'creds';
+let apiTokensKey = "tokens";
+let storageKey = "storage";
+let sslKey = "ssl";
 
 export default class Settings extends Component {
 	constructor(props) {
@@ -77,18 +77,18 @@ export default class Settings extends Component {
 	renderContent(){
 		let section = this.props.settings.section;
 		switch(section) {
-			case 'CREDENTIALS':
+			case credKey:
 				return this.renderRegistries();
 			break;
-			case 'API_TOKENS':
+			case apiTokensKey:
 				return this.renderAPITokens();
 			break;
 
-			case 'STORAGE':
+			case storageKey:
 				return this.renderStorage();
 			break;
 
-			case 'SSL':
+			case sslKey:
 				return this.renderSSL();
 			break;
 
