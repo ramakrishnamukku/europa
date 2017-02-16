@@ -157,7 +157,7 @@ export default class PipelineStageItem extends Component {
           <div className="stage-dest-details">
             <div style={ {position: "relative", top: "2px"} }>
               <span style={{color: "#1DAFE9", fontSize: ".75rem", fontWeight: "900"}}>
-                <Link to={`/repository/${getRepoRedirect(repo)}`}>
+                <Link to={`/repositories/${getRepoRedirect(repo)}`}>
                   {repo.name}
                 </Link>
               </span>

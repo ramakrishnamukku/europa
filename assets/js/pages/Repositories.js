@@ -47,7 +47,7 @@ export default class Repositories extends Component {
 	}
 	renderRepoItem(repo, index){
 		return (
-			<Link to={`/repository/${getRepoRedirect(repo)}`}  key={index}>
+			<Link to={`/repositories/${getRepoRedirect(repo)}`}  key={index}>
 			<div className="Flex1 RepoItem FlexColumn">
 				<div className="Inside FlexRow">
 					<img className="ProviderIcon"

@@ -26,7 +26,7 @@ export default class CreateLocalRepo extends Component {
 	createLocalRepo(){
 		this.context.actions.createLocalRepo()
 		.then((res) => {
-			this.context.router.push(`/repository/${res.name}`);
+			this.context.router.push(`/repositories/${res.name}`);
 		})
 		.catch(() => {});
 	}

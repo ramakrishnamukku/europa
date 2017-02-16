@@ -26,7 +26,7 @@ export default class App extends Component {
         <Route component={Layout}>
           <Route component={LandingPage} path="/" />
           <Route component={Repositories} path="/repositories" />
-          <Route component={RepoDetailsPage} path="/repository/:repoName" />
+          <Route component={RepoDetailsPage} path="/repositories/:repoName" />
           <Route component={AddRepo} path="/new-repository" />
           <Route component={NewPipeline} path="/new-pipeline" />
           <Route component={Pipelines} path="/pipelines" />
