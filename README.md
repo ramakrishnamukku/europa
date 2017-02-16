@@ -1,9 +1,23 @@
 # europa
 Europa is a new Container Registry that makes it easy for software teams to host docker images within their infrastructure along with a unified view of all their images stored in local and remote repositories.
 
+https://www.distelli.com/europa
+
 ### Features & Editions
 
-Europa community is an open source container registry with all the essential features. Europa Premium and Enterprise Editions are available with additional features.
+There are three editions of Europa:
+
+- Europa Community Edition (CE) is available freely under the Apache 2.0 license.
+- Europa Premium Edition (PE) includes extra features that are useful for small teams
+- Europa Enterprise Edition (EE) includes even more feautures (Teams, SAML, Service Accounts) useful for enterprises.
+
+For pricing and support for Europa PE && EE please visit https://distelli.com/europa.
+
+### Getting Started
+
+
+
+Full documentation is available at https://www.distelli.com/docs/europa
 
 ### Contribute
 
