@@ -25,6 +25,7 @@ public class Monitor {
 
     private String id; // Compact UUID.
     private String nodeName; // ManagementFactory.getRuntimeMXBean().getName()
+    private String version; // EuropaVersion.VERSION
     private long heartbeat; // incremented HEARTBEAT_INTERVAL_MS
     private boolean failHeartbeat = false;
 
@@ -113,12 +114,15 @@ public class Monitor {
                 t0 = lastHeartbeatNanos;
                 if ( running == old ) {
                     if ( null == newMonitor ) {
+                        // Indicates we are shutting down:
                         id = null;
                         nodeName = null;
+                        version = null;
                         heartbeat = 0;
                     } else {
                         id = newMonitor.id;
                         nodeName = newMonitor.nodeName;
+                        version = newMonitor.version;
                         heartbeat = newMonitor.heartbeat;
                         failHeartbeat = false;
                     }

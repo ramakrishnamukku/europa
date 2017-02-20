@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.lang.management.ManagementFactory;
 import javax.persistence.RollbackException;
+import com.distelli.europa.EuropaVersion;
 
 @Log4j
 @Singleton
@@ -59,6 +60,7 @@ public class MonitorDb extends BaseDb
         module.createTransform(Monitor.class)
             .put("id", String.class, "id")
             .put("nam", String.class, "nodeName")
+            .put("ver", String.class, "version")
             .put("hb", Long.class, "heartbeat");
         return module;
     }
@@ -115,6 +117,7 @@ public class MonitorDb extends BaseDb
         Monitor monitor = Monitor.builder()
             .id(CompactUUID.randomUUID().toString())
             .nodeName(ManagementFactory.getRuntimeMXBean().getName())
+            .version(EuropaVersion.VERSION)
             .heartbeat(1)
             .build();
         _main.putItem(monitor);
