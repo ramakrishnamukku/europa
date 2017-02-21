@@ -129,7 +129,7 @@ export default class APITokens extends Component{
 		);
 	}
 	renderTokenString(tokenString){
-		let displayToken = '************************';
+		let displayToken = '••••••••••••••••••••';
 		let verb = 'Show';
 		let isActive = NPECheck(this.props, 'settings/tokens/showingTokens').includes(tokenString);
 
@@ -140,14 +140,14 @@ export default class APITokens extends Component{
 
 		return (
 			<span className="Flex2 Token">
-				<span id={tokenString} style={{display: 'none'}}>{tokenString}</span>
-				<span className="Flex1">
-					{displayToken}
-				</span>
+				<div style={{width: '200px'}}>
+					<span id={tokenString} style={{display: 'none'}}>{tokenString}</span>
+					<span className="Flex1">{displayToken}</span>
+				</div>
 				<div className="ItalicText">
 					 <span className="Pipe">|</span>
-					 <span onClick={() => this.context.actions.toggleShowingToken(tokenString)}>{verb}</span>&nbsp;&nbsp; 
-					 <span onClick={() => CopyToClipboard(document.getElementById(tokenString))}>Copy</span>
+					 <span className="ItalicItem" onClick={() => this.context.actions.toggleShowingToken(tokenString)}>{verb}</span>&nbsp;&nbsp; 
+					 <span className="ItalicItem" onClick={() => CopyToClipboard(document.getElementById(tokenString))}>Copy</span>
 				</div>
 			</span>
 		);

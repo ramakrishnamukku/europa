@@ -480,11 +480,13 @@ nav {
 }
 
 .ItalicText {
-    @extend .Clickable;
-
     font-size: 0.875rem;
     font-style: italic;
     padding-right: 28px;
+
+    span.ItalicItem {
+        @extend .Clickable;
+    }
 }
 
 .ThickBlueText {

@@ -81,7 +81,7 @@ export default class CreateLocalRepo extends Component {
 				<div className="HelperText">Push a Docker image to a local repository</div>
 				<div className="HelperText FlexRow">
 					<div className="Code White">
-						 <span>$ docker push <span id="copyCommands">{`${this.props.dnsName}/${(this.props.isLoggedIn) ? NPECheck(this.props, 'ctx/username', '') + '/': ''}REPO_NAME[:IMAGE_TAG]`}</span></span>
+						 <span>$&nbsp;<span id="copyCommands">docker push&nbsp;{`${this.props.dnsName}/${(this.props.isLoggedIn) ? NPECheck(this.props, 'ctx/username', '') + '/': ''}REPO_NAME[:IMAGE_TAG]`}</span></span>
 						 <i className="icon icon-dis-copy" 
 						 	onClick={() => CopyToClipboard(document.getElementById('copyCommands'))}
 						 	data-tip="Click To Copy"
