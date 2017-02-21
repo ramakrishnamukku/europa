@@ -73,6 +73,7 @@ export default class PipelineConnectRepository extends Component {
 
     return this.props.repos.filter(repo => this.props.pipelineStore.pipeline.containerRepoId != repo.id)
                            .filter(repo => !mapOfComponentIds.hasOwnProperty(repo.id))
+                           .filter(repo => (this.props.initialConnect && repo.local) ? false : true)
   }
   render() {
     return (
