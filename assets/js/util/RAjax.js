@@ -8,7 +8,7 @@ const baseURL = '/ajax'
 export function POST(operation = '', content = {}, params = {}, url = baseURL) {
   let username = NPECheck(this, 'state/ctx/username', false);
 
-  if (url == baseURL && username) {
+  if (url == baseURL && username && this.state.isEnterprise) {
     url = `/${username}${url}`
   }
 
@@ -47,7 +47,7 @@ export function POST(operation = '', content = {}, params = {}, url = baseURL) {
 export function GET(operation = '', params = {}, url = baseURL) {
   let username = NPECheck(this, 'state/ctx/username', false);
 
-  if (url == baseURL && username) {
+  if (url == baseURL && username && this.state.isEnterprise) {
     url = `/${username}${url}`
   }
 

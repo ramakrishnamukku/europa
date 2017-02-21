@@ -181,7 +181,7 @@ export default class SSLSettings extends Component {
 		}
 	render(){
 		return (
-			<div className="ContentContainer">
+			<div className="ContentContainer" style={(this.props.ctx) ? {marginTop: '2rem'} : {}}>
 		        <div className="SSLHeader">
 		             SSL Configuration
 		        </div>

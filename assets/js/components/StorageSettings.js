@@ -258,8 +258,6 @@ export default class StorageSettings extends Component {
 		}
 	}
 	render(){
-
-		console.log(this.state.isEdit);
 		let className = "StorageSettings";
 
 		if(this.state.isEdit) {
