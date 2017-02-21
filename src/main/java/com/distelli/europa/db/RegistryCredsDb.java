@@ -126,19 +126,18 @@ public class RegistryCredsDb extends BaseDb
 
     private final String getSecondaryRangeKey(RegistryProvider provider, String region, String name)
     {
-        return String.format("%s:%s:%s",
-                             provider.toString().toLowerCase(),
-                             region.toLowerCase(),
-                             name.toLowerCase());
+        return _dbKey.build(provider.toString().toLowerCase(),
+                            region.toLowerCase(),
+                            name.toLowerCase());
     }
 
     public void save(RegistryCred cred)
     {
         String region = cred.getRegion();
         String name = cred.getName();
-        if(region == null || region.contains(":"))
+        if(region == null || region.trim().isEmpty())
             throw(new AjaxClientException("Invalid Region "+region+" in Registry Cred", JsonError.Codes.BadContent, 400));
-        if(name == null || name.contains(":"))
+        if(name == null || name.trim().isEmpty())
             throw(new AjaxClientException("Invalid Name "+name+" in Registry Cred", JsonError.Codes.BadContent, 400));
         String id = cred.getId();
         if(id == null)
@@ -155,7 +154,7 @@ public class RegistryCredsDb extends BaseDb
 
     public List<RegistryCred> listCredsForProvider(String domain, RegistryProvider provider, PageIterator pageIterator)
     {
-        String rangeKey = String.format("%s:", provider.toString().toLowerCase());
+        String rangeKey = _dbKey.buildPrefix(provider.toString().toLowerCase());
         return _secondaryIndex.queryItems(getHashKey(domain), pageIterator)
         .beginsWith(rangeKey)
         .list();

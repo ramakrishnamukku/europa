@@ -3,4 +3,4 @@
 JAVA_HOME=/usr
 CLASSPATH="$(find /europa-85fac6ec/lib/ -name '*.jar' | xargs echo | tr ' ' ':')"
 JVM_ARGS="-Duser.timezone=UTC -Xmx2000M -Xms2000M"
-exec $JAVA_HOME/bin/java $JVM_ARGS -cp $CLASSPATH com.distelli.europa.Europa --stage "$STAGE" --port 80 --ssl-port 443 --log-to-console $@
+exec $JAVA_HOME/bin/java $JVM_ARGS -cp $CLASSPATH com.distelli.europa.Europa --stage prod --port 80 --ssl-port 443 --log-to-console $@

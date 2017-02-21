@@ -82,9 +82,8 @@ public class RepoEventsDb extends BaseDb
 
     private final String getHashKey(String domain, String repoId)
     {
-        return String.format("%s:%s",
-                             domain.toLowerCase(),
-                             repoId.toLowerCase());
+        return _dbKey.build(domain.toLowerCase(),
+                            repoId.toLowerCase());
     }
 
     @Inject

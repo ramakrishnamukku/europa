@@ -64,12 +64,12 @@ public class SettingsDb extends BaseDb
         return module;
     }
 
-    private static String toRK(EuropaSetting setting) {
+    private String toRK(EuropaSetting setting) {
         return toRK(setting.getType(), setting.getKey());
     }
 
-    private static String toRK(EuropaSettingType type, String key) {
-        return String.format("%s:%s",type.toString(), key);
+    private String toRK(EuropaSettingType type, String key) {
+        return _dbKey.build(type.toString(), key);
     }
 
     @Inject
@@ -123,8 +123,12 @@ public class SettingsDb extends BaseDb
     }
 
     public List<EuropaSetting> listSettingsByType(String domain, EuropaSettingType type) {
-        return _main.queryItems(domain.toLowerCase(), new PageIterator().pageSize(1000))
-        .beginsWith(String.format("%s:", type.toString()))
+        System.out.println("Listing Settings By Type: "+_dbKey.buildPrefix(type.toString()));
+        List<EuropaSetting> settings = _main.queryItems(domain.toLowerCase(), new PageIterator().pageSize(1000))
+        .beginsWith(_dbKey.buildPrefix(type.toString()))
         .list();
+
+        System.out.println("Found Settings: "+settings);
+        return settings;
     }
 }

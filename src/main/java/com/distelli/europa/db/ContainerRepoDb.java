@@ -116,10 +116,9 @@ public class ContainerRepoDb extends BaseDb
 
     private final String getSecondaryKey(RegistryProvider provider, String region, String name)
     {
-        return String.format("%s:%s:%s",
-                             provider.toString().toLowerCase(),
-                             region.toLowerCase(),
-                             name.toLowerCase());
+        return _dbKey.build(provider.toString().toLowerCase(),
+                            region.toLowerCase(),
+                            name.toLowerCase());
     }
 
     @Inject
@@ -146,17 +145,19 @@ public class ContainerRepoDb extends BaseDb
             .withConvertMarker(new ConvertMarker() {
                     public String toMarker(Map<String, Object> attributes, boolean hasHashKey) {
                         if ( hasHashKey ) {
-                            return attributes.get("sidx") + ":" +
-                                attributes.get("id");
+                            return _dbKey.build(""+attributes.get("sidx"),
+                                                ""+attributes.get("id"));
                         }
                         // TODO: implement...
                         throw new UnsupportedOperationException("scan is not supported");
                     }
                     public Attribute[] fromMarker(Object hk, String marker) {
-                        String[] attrs = marker.split(":", 4);
+                        String[] attrs = _dbKey.split(marker, 4);
                         if ( null == attrs || attrs.length != 4 ) {
-                            throw new IllegalArgumentException(
-                                "Expected marker in format <provider>:<region>:<name>:<id> got="+marker);
+                            throw new IllegalArgumentException("Expected marker in format "+_dbKey.build("<provider>",
+                                                                                                         "<region>",
+                                                                                                         "<name>",
+                                                                                                         "<id>")+" got="+marker);
                         }
                         return new Attribute[] {
                             new Attribute()
@@ -189,10 +190,10 @@ public class ContainerRepoDb extends BaseDb
     public void save(ContainerRepo repo)
     {
         String region = repo.getRegion();
-        if(region == null || region.contains(":"))
+        if(region == null)
             throw(new AjaxClientException("Invalid Region "+region+" in Container Repo", JsonError.Codes.BadContent, 400));
         String name = repo.getName();
-        if(name == null || name.contains(":"))
+        if(name == null || name.trim().isEmpty())
             throw(new AjaxClientException("Invalid Name "+name+" in Container Repo", JsonError.Codes.BadContent, 400));
         String id = repo.getId();
         if(id == null)
@@ -222,7 +223,7 @@ public class ContainerRepoDb extends BaseDb
                                          RegistryProvider provider,
                                          PageIterator pageIterator)
     {
-        String rangeKey = String.format("%s:", provider.toString().toLowerCase());
+        String rangeKey = _dbKey.buildPrefix(provider.toString().toLowerCase());
         return _secondaryIndex.queryItems(getHashKey(domain), pageIterator)
         .beginsWith(rangeKey)
         .list();
@@ -246,14 +247,14 @@ public class ContainerRepoDb extends BaseDb
                 if ( list.size() > 0 ) repo = list.get(list.size()-1);
             }
             if ( null == repo ) {
-                newMarker = sidx + ":";
+                newMarker = _dbKey.buildPrefix(sidx);
             } else {
                 newMarker = _secondaryIndex.toMarker(repo, true);
             }
             pageIterator.marker(newMarker);
         }
 
-        String rangeKey = String.format("%s:", RegistryProvider.EUROPA.toString().toLowerCase());
+        String rangeKey = _dbKey.buildPrefix(RegistryProvider.EUROPA.toString().toLowerCase());
         try {
             return _secondaryIndex.queryItems(getHashKey(domain), pageIterator)
                 .beginsWith(rangeKey)
@@ -265,7 +266,7 @@ public class ContainerRepoDb extends BaseDb
                     // restore...
                     pageIterator.marker(marker);
                 } else if ( outMarker.startsWith(rangeKey) ) {
-                    String[] attrs = outMarker.split(":", 4);
+                    String[] attrs = _dbKey.split(outMarker, 4);
                     if ( attrs.length != 4 ) throw new IllegalStateException("Unexpected marker="+marker);
                     pageIterator.marker(attrs[2]);
                 } else {
@@ -281,9 +282,8 @@ public class ContainerRepoDb extends BaseDb
                                          String region,
                                          PageIterator pageIterator)
     {
-        String rangeKey = String.format("%s:%s:",
-                                        provider.toString().toLowerCase(),
-                                        region.toLowerCase());
+        String rangeKey = _dbKey.buildPrefix(provider.toString().toLowerCase(),
+                                             region.toLowerCase());
         return _main.queryItems(getHashKey(domain), pageIterator)
         .beginsWith(rangeKey)
         .list();
