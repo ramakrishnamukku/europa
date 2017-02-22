@@ -4,6 +4,7 @@ import Dropdown from './../components/Dropdown'
 import Btn from './../components/Btn'
 import Loader from './../components/Loader'
 import Msg from './../components/Msg'
+import AccessDenied from './../components/AccessDenied'
 import AWSRegions from './../util/AWSRegions'
 import NPECheck from './../util/NPECheck'
 
@@ -262,6 +263,12 @@ export default class StorageSettings extends Component {
 
 		if(this.state.isEdit) {
 			className += ' Edit';
+		}
+
+		if(NPECheck(this.props, 'settings/storage/isBlocked', false)) {
+			return (
+				<AccessDenied />
+			);
 		}
 
 		if(NPECheck(this.props, 'settings/storage/getXHR', false)) {

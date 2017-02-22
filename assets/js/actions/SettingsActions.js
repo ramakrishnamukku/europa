@@ -6,7 +6,9 @@ import Reducers from './../reducers/AddRegistryReducers'
 import * as GA from './../reducers/GeneralReducers'
 import * as RAjax from './../util/RAjax'
 import NPECheck from './../util/NPECheck'
-import { updateUrlParams } from './../util/UrlManager'
+import {
+  updateUrlParams
+} from './../util/UrlManager'
 
 // *************************************************
 // General Settings Actions
@@ -31,7 +33,9 @@ export function setSettingsSection(section) {
     settings: GA.modifyProperty(this.state.settings, {
       section
     })
-  }, () => updateUrlParams({ section }));
+  }, () => updateUrlParams({
+    section
+  }));
 }
 
 
@@ -289,6 +293,7 @@ export function storageState() {
     regionDropDownIsOpen: false,
     regions: [],
     regionsError: '',
+    isBlocked: false
   };
 }
 
@@ -345,25 +350,42 @@ export function getStorageSettings() {
               storage: {
                 ...this.state.settings.storage,
                 getXHR: false,
-                storageCreds: res
+                storageCreds: res,
+                isBlocked: false
               }
             })
           });
         })
         .catch((err) => {
-        console.error(err);
-        let errorMsg = NPECheck(err, 'error/message', 'Please try again or contact support');
-        let error = `There was an error retrieving your storage settings: ${errorMsg}`
-          this.setState({
-            settings: GA.modifyProperty(this.state.settings, {
-              ...this.state.settings,
-              storage: {
-                ...this.state.settings.storage,
-                getXHR: false,
-                getError: error
-              }
-            })
-          });
+          console.error(err);
+          let errorMsg = NPECheck(err, 'error/message', 'Please try again or contact support');
+          let error = `There was an error retrieving your storage settings: ${errorMsg}`
+
+          if (errorMsg == 'You do not have access to this operation') {
+            this.setState({
+              settings: GA.modifyProperty(this.state.settings, {
+                ...this.state.settings,
+                storage: {
+                  ...this.state.settings.storage,
+                  getXHR: false,
+                  getError: error,
+                  isBlocked: true
+                }
+              })
+            }, () => reject(err));
+          } else {
+            this.setState({
+              settings: GA.modifyProperty(this.state.settings, {
+                ...this.state.settings,
+                storage: {
+                  ...this.state.settings.storage,
+                  getXHR: false,
+                  getError: error,
+                  isBlocked: false
+                }
+              })
+            }, () => reject(err));
+          }
         })
     });
   });
@@ -441,12 +463,12 @@ export function saveStorageSettings() {
 
       let op = 'UpdateStorageCreds';
       let path = undefined;
-      
+
       // Is intial save?
-      if(this.state.hasOwnProperty('storage') && this.state.storage == false) {
+      if (this.state.hasOwnProperty('storage') && this.state.storage == false) {
         op = 'SaveStorageSettings';
         path = '/storage'
-      } 
+      }
 
       RAjax.POST.call(this, op, storageSettings, {}, path)
         .then((res) => {

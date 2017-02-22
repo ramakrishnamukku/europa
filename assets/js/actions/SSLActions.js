@@ -28,6 +28,7 @@ export function sslState() {
 		saveSuccess: false,
 		saveXHR: false,
 		saveError: '',
+		isBlocked: false
 	};
 }
 
@@ -72,7 +73,7 @@ export function updateSSLCreds(prop, e, eIsValue = false) {
 }
 
 
-export function updateDNSName(dnsName){
+export function updateDNSName(dnsName) {
 	this.setState({
 		dnsName: dnsName
 	});
@@ -145,34 +146,41 @@ export function getSSLSettings() {
 				getXHR: true
 			})
 		}, () => {
-
 			RAjax.GET.call(this, 'GetSslSettings')
 				.then((res) => {
 					let sslEnabled = isSSLEnabled(res);
-
 					this.setState({
 						ssl: GA.modifyProperty(this.state.ssl, {
 							getXHR: false,
 							sslCreds: res,
 							ogSslEnabled: sslEnabled,
 							hasChanges: false,
-							sslEnabled,
+							sslEnabled: sslEnabled,
+							isBlocked: false,
 
 						})
 					}, () => resolve(res));
-
 				})
 				.catch((err) => {
 					console.error(err);
 					let errorMsg = NPECheck(err, 'error/message', 'There was an error retreiving your SSL settings.');
-
-					this.setState({
-						ssl: GA.modifyProperty(this.state.ssl, {
-							getXHR: false,
-							getError: errorMsg
-						})
-					}, () => reject(err));
-
+					if (errorMsg == 'You do not have access to this operation') {
+						this.setState({
+							ssl: GA.modifyProperty(this.state.ssl, {
+								getXHR: false,
+								getError: errorMsg,
+								isBlocked: true
+							})
+						}, () => reject(err));
+					} else {
+						this.setState({
+							ssl: GA.modifyProperty(this.state.ssl, {
+								getXHR: false,
+								getError: errorMsg,
+								isBlocked: false,
+							})
+						}, () => reject(err));
+					}
 				});
 		});
 	});

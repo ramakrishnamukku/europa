@@ -44,7 +44,7 @@ export default class APITokens extends Component{
 			 	<span className="Flex1">
 			 		Created
 			 	</span>
-			 	<span className="Flex1">
+			 	<span style={{flex: '0.7'}}>
 			 		Status
 			 	</span>
 			 	<span className="ThickBlueText Actions" onClick={() => this.createAuthToken()}>
@@ -72,7 +72,7 @@ export default class APITokens extends Component{
 		return (
 			<div className="APIBody">
 				{tokens.sort((firstEvent, secondEvent) => (firstEvent.created > secondEvent.created) ? -1 : 1 ).map((token, i) => {
-					let statusClassName = (token.status == 'ACTIVE') ? 'Flex1 Active' : 'Flex1 Inactive';
+					let statusClassName = (token.status == 'ACTIVE') ? 'Active' : 'Inactive';
 					 let dateCreated = new Date(token.created);
 					 let dateCreatedUTC = ConvertTimeUTC(dateCreated);
 
@@ -82,7 +82,7 @@ export default class APITokens extends Component{
 								{this.renderTokenString(token.token)}
 								<span className="Flex1" style={(token.username) ? {} : {display: 'none'}}>{token.username}</span>
 								<span className="Flex1">{dateCreatedUTC}</span>
-								<span className={statusClassName}>{token.status}</span>
+								<span className={statusClassName} style={{flex: '0.7'}}>{token.status}</span>
 								{this.renderIcons(token)}
 							</div>
 							{this.renderDeleteToken(token)}
@@ -140,7 +140,7 @@ export default class APITokens extends Component{
 
 		return (
 			<span className="Flex2 Token">
-				<div style={{width: '200px'}}>
+				<div style={{width: '180px'}}>
 					<span id={tokenString} style={{display: 'none'}}>{tokenString}</span>
 					<span className="Flex1">{displayToken}</span>
 				</div>

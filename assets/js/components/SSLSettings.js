@@ -10,6 +10,7 @@ import Loader from './Loader'
 import Checkbox from './Checkbox'
 import Msg from './Msg'
 import NPECheck from './../util/NPECheck'
+import AccessDenied from './../components/AccessDenied'
 
 const dnsNameKey = 'dnsName';
 const serverPrivateKey = 'serverPrivateKey';
@@ -180,6 +181,12 @@ export default class SSLSettings extends Component {
 		    }
 		}
 	render(){
+		if(NPECheck(this.props, 'ssl/isBlocked', false)) {
+			return (
+				<AccessDenied />
+			);
+		}
+
 		return (
 			<div className="ContentContainer" style={(this.props.ctx) ? {marginTop: '2rem'} : {}}>
 		        <div className="SSLHeader">
