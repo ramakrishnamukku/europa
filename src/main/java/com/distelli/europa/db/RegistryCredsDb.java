@@ -135,7 +135,7 @@ public class RegistryCredsDb extends BaseDb
     {
         String region = cred.getRegion();
         String name = cred.getName();
-        if(region == null || region.trim().isEmpty())
+        if(region == null)
             throw(new AjaxClientException("Invalid Region "+region+" in Registry Cred", JsonError.Codes.BadContent, 400));
         if(name == null || name.trim().isEmpty())
             throw(new AjaxClientException("Invalid Name "+name+" in Registry Cred", JsonError.Codes.BadContent, 400));
