@@ -35,14 +35,6 @@ avenues are available for support:
 <table>
 <tr>
 	<th align="left">
-	Slack Community 
-	</th>
-	<td>
-https://europa-community.slack.com
-	</td>
-</tr>
-<tr>
-	<th align="left">
 	Issue Tracker
 	</th>
 	<td>
