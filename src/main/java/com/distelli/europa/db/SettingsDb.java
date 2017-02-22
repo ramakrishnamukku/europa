@@ -123,12 +123,8 @@ public class SettingsDb extends BaseDb
     }
 
     public List<EuropaSetting> listSettingsByType(String domain, EuropaSettingType type) {
-        System.out.println("Listing Settings By Type: "+_dbKey.buildPrefix(type.toString()));
-        List<EuropaSetting> settings = _main.queryItems(domain.toLowerCase(), new PageIterator().pageSize(1000))
+        return _main.queryItems(domain.toLowerCase(), new PageIterator().pageSize(1000))
         .beginsWith(_dbKey.buildPrefix(type.toString()))
         .list();
-
-        System.out.println("Found Settings: "+settings);
-        return settings;
     }
 }
