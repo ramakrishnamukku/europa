@@ -5,7 +5,7 @@ Europa is a new Container Registry that makes it easy for software teams to host
 <br/>
 https://www.distelli.com/europa
 
-### Features & Editions
+### Editions
 
 There are three editions of Europa:
 
@@ -14,6 +14,33 @@ There are three editions of Europa:
 - Europa Enterprise Edition (EE) includes even more feautures (Teams, SAML, Service Accounts) useful for enterprises.
 
 For pricing and support for Europa Premium & Enterprise Editions please visit https://distelli.com/europa.
+
+### Features
+
+<ul>
+  <li>Push and pull images, securely, from the privacy of your own network.</li>
+  <li>Choose where to store your images from a variety of options, including S3 and local disk.</li>
+  <li>Support for Docker v2 API.</li>
+  <li>Support for connecting and synchronizing to other external Docker repositories.</li>
+  <li>Audit trails for repositories with a history of every action.</li>
+  <li>Automated push pipelines allowing the redundant push of images to multiple downstream repositories.</li>
+  <li>Single Sign-on via a SAML IDP</li>
+  <li>Fine Grained Access Control</li>
+  <li>Teams.</li>
+</ul>
+
+<table>
+  <tr><th><br>Feature</th><th style="text-align:center">Europa<br>Community</th><th style="text-align:center">Europa<br>Premium</th><th style="text-align:center">Europa<br>Enterprise</th></tr>
+  <tr><td>Open Source</td>             <td style="text-align:center">Yes</td><td style="text-align:center">.</td><td style="text-align:center">.</td></tr>
+  <tr><td>Local Repositories</td>      <td style="text-align:center">Yes</td><td style="text-align:center">Yes</td><td style="text-align:center">Yes</td></tr>
+  <tr><td>Remote Repositories</td>     <td style="text-align:center">Yes</td><td style="text-align:center">Yes</td><td style="text-align:center">Yes</td></tr>
+  <tr><td>Automated Push Pipelines</td><td style="text-align:center">Yes</td><td style="text-align:center">Yes</td><td style="text-align:center">Yes</td></tr>
+  <tr><td>Multi-user Support</td>      <td style="text-align:center">.</td><td style="text-align:center">Yes</td><td style="text-align:center">Yes</td></tr>
+  <tr><td>Access Control</td>          <td style="text-align:center">.</td><td style="text-align:center">Yes</td><td style="text-align:center">Yes</td></tr>
+  <tr><td>Single Sign-on</td>          <td style="text-align:center">.</td><td style="text-align:center">.</td><td style="text-align:center">Yes</td></tr>
+  <tr><td>Teams</td>                   <td style="text-align:center">.</td><td style="text-align:center">.</td><td style="text-align:center">Yes</td></tr>
+</table>
+
 
 ### Getting Started
 
