@@ -38,4 +38,4 @@ publish: git-is-clean git-is-master
 	git push --follow-tags
 
 up-deps:
-	mvn versions:use-latest-releases -Dincludes='com.distelli*' -DgenerateBackupPoms=false
+	mvn -U versions:use-latest-releases versions:update-properties -Dincludes='com.distelli*' -DgenerateBackupPoms=false
