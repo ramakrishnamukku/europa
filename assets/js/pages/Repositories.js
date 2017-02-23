@@ -81,7 +81,7 @@ export default class Repositories extends Component {
 			return (
 				<div className="Flex2 FlexColumn UnknownDetails">
 					No events found. {(lastSynced) ? `Last synced at ${ConvertTimeUTC(new Date(lastSynced))}` : null}
-				</div>	
+				</div>
 			);
 		}
 
@@ -218,7 +218,7 @@ export default class Repositories extends Component {
 	renderCreateNewLocalRepo(){
 		return (
 			<div style={{marginTop: '14px'}}>
-				<ControlRoom renderBodyContent={() => <CreateLocalRepo {...this.props} />} 
+				<ControlRoom renderBodyContent={() => <CreateLocalRepo {...this.props} />}
 							 renderHeaderContent={() => {
 							 	return (
 									<div className="CR_Header">
