@@ -13,7 +13,7 @@ export default function repoPullCommand(repoObj, dnsName, ctx = null){
 			if(repoObj.registryId == null) {
 				    return null;
 			} else {
-				return `docker pull ${repoObj.registryId}.dkr.ecr.${repoObj.region}.amazonaws.com/${repoObj.name}`;	
+				return `docker pull ${repoObj.registryId}.dkr.ecr.${repoObj.region}.amazonaws.com/${repoObj.name}`;
 			}
 		break;
 
@@ -26,9 +26,13 @@ export default function repoPullCommand(repoObj, dnsName, ctx = null){
 
 		case 'EUROPA':
 			let endpoint = (repoObj.local) ? dnsName : repoObj.endpoint;
-			let username = (ctx && ctx.username) ? (ctx.username + '/') : '';
 
-			return `docker pull ${endpoint}/${username}${repoObj.name}`
+			if (PAGE_PROPS["europa"] == "enterprise") {
+				let username = (ctx && ctx.username) ? (ctx.username + '/') : '';
+				return `docker pull ${endpoint}/${username}${repoObj.name}`
+			} else {
+				return `docker pull ${endpoint}/${repoObj.name}`
+			}
 		break;
 
 		default:
