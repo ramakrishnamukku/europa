@@ -100,7 +100,8 @@ public class DockerHubMonitorTask extends RepoMonitorTask
                     .build();
                 imagesBySha.put(repoTag.getDigest(), image);
             } else {
-                if ( image.getPushTime() > repoTag.getPushTime() ) {
+                if(image.getPushTime() == null || (repoTag.getPushTime() != null && image.getPushTime() > repoTag.getPushTime()))
+                {
                     // Use the oldest push time:
                     image.setPushTime(repoTag.getPushTime());
                 }
