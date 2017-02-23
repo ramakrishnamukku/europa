@@ -28,6 +28,7 @@ public class ObjectKeyFactory
     public static final String BLOBS_PREFIX = "blobs";
     public static final String MANIFESTS_PREFIX = "manifests";
     public static final String OVERVIEW_PREFIX = "overview";
+    public static final String LICENSE_STORAGE_PREFIX = "licenses";
 
     @Inject
     public ObjectKeyFactory(StorageSettings storageSettings)
@@ -44,6 +45,24 @@ public class ObjectKeyFactory
     public String getPathPrefix()
     {
         return _pathPrefix;
+    }
+
+    public ObjectKey forLicense(String licenseId)
+    {
+        String key = null;
+        if(_pathPrefix != null && !_pathPrefix.trim().isEmpty())
+            key = String.format("%s/%s/%s",
+                                _pathPrefix,
+                                LICENSE_STORAGE_PREFIX,
+                                licenseId);
+        else
+            key = String.format("%s/%s",
+                                LICENSE_STORAGE_PREFIX,
+                                licenseId);
+        return ObjectKey.builder()
+        .bucket(_defaultBucket)
+        .key(key)
+        .build();
     }
 
     public ObjectKey forWebhookRecord(NotificationId notificationId)
