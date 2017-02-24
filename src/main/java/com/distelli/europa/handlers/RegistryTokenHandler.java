@@ -28,7 +28,7 @@ import lombok.extern.log4j.Log4j;
 public class RegistryTokenHandler extends RegistryBase
 {
     @Inject
-    private ContainerRepoDb _repoDb;
+    protected ContainerRepoDb _repoDb;
 
     public RegistryTokenHandler()
     {
@@ -76,7 +76,7 @@ public class RegistryTokenHandler extends RegistryBase
         return null;
     }
 
-    private WebResponse validatePublicRepo(TokenScope tokenScope, String ownerDomain, EuropaRequestContext requestContext)
+    protected WebResponse validatePublicRepo(TokenScope tokenScope, String ownerDomain, EuropaRequestContext requestContext)
     {
         //validate the the pull is for a public repo
         String repoName = tokenScope.getRepoName();
@@ -84,8 +84,7 @@ public class RegistryTokenHandler extends RegistryBase
         if(repoName == null)
             RequireAuthError.throwRequireAuth("Invalid scope", requestContext);
 
-        ContainerRepo repo = _repoDb.getLocalRepo(ownerDomain,
-                                                  repoName);
+        ContainerRepo repo = getContainerRepo(ownerDomain, repoName);
         //if its a public repo then return the PUBLIC TOKEN
         if(repo != null && repo.isPublicRepo())
             return WebResponse.toJson(RegistryToken.PUBLIC_TOKEN);
@@ -94,5 +93,11 @@ public class RegistryTokenHandler extends RegistryBase
         RequireAuthError.throwRequireAuth("Missing username or password", requestContext);
         //Should not have reached here
         return null;
+    }
+
+    protected ContainerRepo getContainerRepo(String ownerDomain, String repoName)
+    {
+        return _repoDb.getLocalRepo(ownerDomain,
+                                    repoName);
     }
 }

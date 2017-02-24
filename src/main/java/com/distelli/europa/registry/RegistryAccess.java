@@ -39,7 +39,9 @@ public interface RegistryAccess
 
         public void checkAccess(String operationName, EuropaRequestContext requestContext)
         {
-            if(operationName.equalsIgnoreCase("RegistryDefault") || operationName.equalsIgnoreCase("RegistryTokenHandler"))
+            if(operationName.equalsIgnoreCase("RegistryDefault") ||
+               operationName.equalsIgnoreCase("RegistryTokenHandler") ||
+               operationName.equalsIgnoreCase("PremiumRegistryTokenHandler"))
                 return;
 
             //Its an authenticated request with a valid token so its
