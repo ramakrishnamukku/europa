@@ -1,5 +1,6 @@
 package com.distelli.europa.db;
 
+import com.distelli.utils.CompositeKey;
 import com.distelli.europa.notifiers.Notifier;
 import com.distelli.europa.util.Tag;
 import com.distelli.europa.models.*;
@@ -102,15 +103,15 @@ public class RegistryManifestDb extends BaseDb {
     private String toRK(String repoId, String tag) {
         if ( null == repoId ) throw new NullPointerException("containerRepoId can not be null");
         if ( null == tag ) throw new NullPointerException("tag can not be null");
-        return _dbKey.build(repoId, tag);
+        return CompositeKey.build(repoId, tag);
     }
 
     private String toRepoManifestIdRK(String repoId, String manifestId)
     {
         if(manifestId == null || manifestId.trim().isEmpty())
             manifestId = "";
-        return _dbKey.build(repoId.toLowerCase(),
-                            manifestId.toLowerCase());
+        return CompositeKey.build(repoId.toLowerCase(),
+                                  manifestId.toLowerCase());
     }
 
     @Inject

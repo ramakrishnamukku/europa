@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
 
+import com.distelli.utils.CompositeKey;
 import com.distelli.europa.Constants;
 import com.distelli.persistence.IndexDescription;
 import com.distelli.europa.ajax.*;
@@ -126,9 +127,9 @@ public class RegistryCredsDb extends BaseDb
 
     private final String getSecondaryRangeKey(RegistryProvider provider, String region, String name)
     {
-        return _dbKey.build(provider.toString().toLowerCase(),
-                            region.toLowerCase(),
-                            name.toLowerCase());
+        return CompositeKey.build(provider.toString().toLowerCase(),
+                                  region.toLowerCase(),
+                                  name.toLowerCase());
     }
 
     public void save(RegistryCred cred)
@@ -154,7 +155,7 @@ public class RegistryCredsDb extends BaseDb
 
     public List<RegistryCred> listCredsForProvider(String domain, RegistryProvider provider, PageIterator pageIterator)
     {
-        String rangeKey = _dbKey.buildPrefix(provider.toString().toLowerCase());
+        String rangeKey = CompositeKey.buildPrefix(provider.toString().toLowerCase());
         return _secondaryIndex.queryItems(getHashKey(domain), pageIterator)
         .beginsWith(rangeKey)
         .list();

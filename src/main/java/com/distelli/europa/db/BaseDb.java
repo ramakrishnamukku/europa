@@ -9,7 +9,6 @@
 package com.distelli.europa.db;
 
 import lombok.extern.log4j.Log4j;
-import com.distelli.europa.util.CompositeKey;
 import com.distelli.persistence.AttrDescription;
 import com.distelli.persistence.AttrType;
 import javax.inject.Inject;
@@ -17,9 +16,6 @@ import javax.inject.Inject;
 @Log4j
 public class BaseDb
 {
-    @Inject
-    protected CompositeKey _dbKey;
-
     protected static AttrDescription attr(String name, AttrType type) {
         return AttrDescription.builder()
             .attrName(name)

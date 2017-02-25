@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
 
+import com.distelli.utils.CompositeKey;
 import com.distelli.europa.models.EuropaSetting;
 import com.distelli.europa.models.EuropaSettingType;
 import com.distelli.jackson.transform.TransformModule;
@@ -69,7 +70,7 @@ public class SettingsDb extends BaseDb
     }
 
     private String toRK(EuropaSettingType type, String key) {
-        return _dbKey.build(type.toString(), key);
+        return CompositeKey.build(type.toString(), key);
     }
 
     @Inject
@@ -124,7 +125,7 @@ public class SettingsDb extends BaseDb
 
     public List<EuropaSetting> listSettingsByType(String domain, EuropaSettingType type) {
         return _main.queryItems(domain.toLowerCase(), new PageIterator().pageSize(1000))
-        .beginsWith(_dbKey.buildPrefix(type.toString()))
+        .beginsWith(CompositeKey.buildPrefix(type.toString()))
         .list();
     }
 }

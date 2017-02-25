@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
 
+import com.distelli.utils.CompositeKey;
 import com.distelli.europa.Constants;
 import com.distelli.europa.models.*;
 import com.distelli.jackson.transform.TransformModule;
@@ -82,8 +83,8 @@ public class RepoEventsDb extends BaseDb
 
     private final String getHashKey(String domain, String repoId)
     {
-        return _dbKey.build(domain.toLowerCase(),
-                            repoId.toLowerCase());
+        return CompositeKey.build(domain.toLowerCase(),
+                                  repoId.toLowerCase());
     }
 
     @Inject
