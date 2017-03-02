@@ -57,7 +57,7 @@ export function listRegistries() {
 
       })
       .catch((err) => {
-        let errorMsg = `${err.error.message}`;
+        let errorMsg = NPECheck(err, 'error/message', 'There was an error listing your registries.');
         if (errorMsg == 'You do not have access to this operation') {
           this.setState({
             registries: [],
@@ -107,7 +107,7 @@ export function deleteRegistry() {
         });
       })
       .catch((err) => {
-        let errorMsg = `Failed to delete registry credentials: ${err.error.message}`;
+        let errorMsg = NPECheck(err, 'error/message', 'There was an error deleting your registry credentials.');
         this.setState({
           registry: GA.modifyProperty(this.state.registry, {
             deleteRegistryXHR: false,

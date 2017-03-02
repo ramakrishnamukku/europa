@@ -33,7 +33,7 @@ export function POST(operation = '', content = {}, params = {}, url = baseURL) {
       try {
         json = response.json();
       } catch(e) {
-        return Promise.reject.bind(Promise);
+        return Promise.reject.bind(Promise, e);
       }
 
       if (response.status >= 200 && response.status < 300) {
@@ -77,7 +77,7 @@ export function GET(operation = '', params = {}, url = baseURL) {
       try {
         json = response.json();
       } catch(e) {
-        return Promise.reject.bind(Promise);
+        return Promise.reject.bind(Promise, e);
       }
       
       if (response.status >= 200 && response.status < 300) {
