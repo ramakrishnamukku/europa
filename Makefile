@@ -16,7 +16,7 @@ clean:
 
 package:
 	./update-version.sh
-	mvn -q -DincludeScope=runtime dependency:copy-dependencies package assembly:single
+	mvn -q -DincludeScope=runtime -Dmaven.test.skip=true dependency:copy-dependencies package assembly:single
 
 show-deps:
 	mvn dependency:tree
