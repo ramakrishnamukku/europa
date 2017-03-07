@@ -11,9 +11,6 @@ assets:
 install:
 	mvn -q install
 
-test:
-	mvn -q -Dsurefire.useFile=false test
-
 clean:
 	mvn -q clean
 
