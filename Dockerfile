@@ -7,7 +7,7 @@ ADD public /europa-85fac6ec/public
 EXPOSE 80
 EXPOSE 443
 WORKDIR /europa-85fac6ec
-
+ENV EUROPATEST 1245
 # Add tini:
 ENV TINI_VERSION v0.13.2
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
